@@ -2,7 +2,7 @@
 
 Hub per comunicare con dispositivi tramite Wi-Fi
 
-## preparazione
+## Preparazione
 
 Download zip from GitHub
 Effettaure unzip -xzvf msh.tar.gz
