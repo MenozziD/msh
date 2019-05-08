@@ -65,10 +65,7 @@ class NetCmd(webapp3.RequestHandler):
 
 class Index(webapp3.RequestHandler):
     def get(self):
-        print("ACCESSO ALLA HOME")
-        f = open('webui/index.html', 'r')
-        self.response.write(f.read())
-        f.close()
+        self.redirect('/static/page/index.html')
 
 
 class Static(webapp3.RequestHandler):
@@ -87,7 +84,7 @@ app = webapp3.WSGIApplication([
 
 
 def main():
-    httpserver.serve(app, host='192.168.1.111', port='65177')
+    httpserver.serve(app, host='localhost', port='65177')
 
 
 if __name__ == '__main__':

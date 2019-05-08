@@ -14,7 +14,7 @@ function invia(){
 	} else {
 	    console.log("Tutto ok");
 		$.ajax({
-		    url: "api/netcmd",
+		    url: "/api/netcmd",
 		    type: 'GET',
 		    data: {
 				d: device,
