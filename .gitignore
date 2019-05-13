@@ -1,2 +1,4 @@
 /msh/db/*
 /msh/.idea/*
+/.idea/*
+/msh/module/__pycache__/*
