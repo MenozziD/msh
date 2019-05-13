@@ -79,8 +79,6 @@ cd ..
 python3 msh.py
 ```
 
-## Utilizzo
-
 Accedere con Chrome al seguente indirizzo
 
 ```
@@ -94,7 +92,7 @@ Con i seguenti passaggi si può eseguire l'installazione in un container Docker
 
 ### Prerequisiti
 
-1. Avere [Docker](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe) installato sulla macchina 
+1. Avere [Docker Toolbox](https://download.docker.com/win/stable/DockerToolbox.exe) installato sulla macchina 
 
 ### Preparazione
 
@@ -110,16 +108,38 @@ Eseguire la decompressione dell'archivio appena scaricato
 tar -xvzf msh.tar.gz
 ```
 
-Creare una directory con all'interno i seguenti file/directory
+Accedere alla directory base_image dentro alla cartella Docker contenuta all'interno della cartella ottenuta al passo precedente
 
 ```bash
-Dockerfile library.txt msh
+cd msh/Docker/base_image
 ```
 
 Effettuare una build Docker
 
 ```bash
-docker build --tag=msh:v0.0.1
+docker build . --tag=msh:v0.0.1
+```
+
+Verificare che l'immagine sia stata creata
+
+```bash
+docker image ls
+```
+
+Copiare la cartella msh dentro alla cartella target_image
+```bash
+cp ../../msh ../target_image
+```
+
+Accedere alla cartella target_image
+```bash
+cd ../target_image
+```
+
+Effettuare una build Docker
+
+```bash
+docker build . --tag=msrheal:v0.0.1
 ```
 
 Verificare che l'immagine sia stata creata
@@ -131,7 +151,7 @@ docker image ls
 Lanciare un container Docker con l'immagine appena creata
 
 ```bash
-docekr run -d -p 8080:80 msh:v0.0.1
+docker run -d --name raspberrypi -p 8080:65177 msrheal:v0.0.1
 ```
 
 Verificare che il container sia in esecuzione
@@ -140,24 +160,14 @@ Verificare che il container sia in esecuzione
 docker container ls
 ```
 
-### Utilizzo
+Aprire VirtualBox accedere alle impostazione della macchina default -> Rete -> Scheda 1 -> Avanzate -> Inoltro delle porte e impostare la seguente regola
+```bash
+Protocollo  IP dell'host  Porta dell'host  IP del guest  Porta del guest
+TCP                       80                             8080
+```
 
 Accedere con Chrome al seguente indirizzo
 
 ```
-http://localhost:8080
-```
-
-### Fermare il container
-
-Ricavare il CONTAINER ID
-
-```bash
-docker container ls
-```
-
-Stoppare il container
-
-```bash
-docker container stop CONTAINER ID
+http://localhost
 ```
