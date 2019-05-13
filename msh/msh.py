@@ -81,21 +81,22 @@ class Static(webapp3.RequestHandler):
         self.response.write(f.read())
         f.close()
         logging.info("RESPONSE CODE: %s", self.response.status)
-        logging.info("RESPONSE PAYLOAD: webui\\%s", filename)
+        logging.info("RESPONSE PAYLOAD: webui/%s", filename)
 
 
 class Diff(webapp3.RequestHandler):
     def post(self):
+        body = str(self.request.body)[2:-1]
         logging.info("%s %s", self.request.method, self.request.url)
-        logging.info("BODY %s", loads(self.request.body))
-        data = loads(self.request.body)
+        logging.info("BODY %s", body)
+        data = loads(body)
         res = int(data['primo']) - int(data['secondo'])
         self.response.write(res)
         logging.info("RESPONSE CODE: %s", self.response.status)
         logging.info("RESPONSE PAYLOAD: %s", res)
 
 
-path_error = 'webui\\page\\error\\'
+path_error = 'webui/page/error/'
 
 
 def handle_404(request, response, exception):
@@ -137,6 +138,7 @@ app = webapp3.WSGIApplication([
     ('/api/netcmd', NetCmd),
     ('/', Index),
     (r'/static/(\D+)', Static),
+    (r'/api/diff', Diff),
 ], debug=True)
 app.error_handlers[404] = handle_404
 app.error_handlers[405] = handle_405
@@ -148,7 +150,7 @@ def main():
         # filename='msh.log',
         format='%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s',
         level=logging.INFO)
-    host = '127.0.0.1'
+    host = '192.168.1.111'
     port = '65177'
     logging.info("Server in ascolto su http://%s:%s", host, port)
     httpserver.serve(app, host=host, port=port)
