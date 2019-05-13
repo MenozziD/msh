@@ -1,12 +1,14 @@
 from os import system
 from pexpect import pxssh
 from re import sub
+import logging
 
 
 def cmd_ping(ip, pacchetti=5):
     ping_ok = 0
     ping_err = -1
     ping_fail = 1
+    file_out = 'pingout.txt'
     result = {'ip': ip,
               'pacchetti_tx': 0,
               'pacchetti_rx': 0,
@@ -16,11 +18,11 @@ def cmd_ping(ip, pacchetti=5):
               'cmd_output': ''
               }
     try:
-        system("ping -c %s %s >%s" % (str(pacchetti), ip, "pingout.txt"))
+        system("ping -c %s %s >%s" % (str(pacchetti), ip, file_out))
         f = open("pingout.txt", "r")
         app = f.read()
         f.close()
-        system("sudo rm pingout.txt")
+        system("sudo rm %s" % file_out)
         result['cmd_output'] = app
         app = app.split("\n")
         app = app[len(app) - 3]
@@ -152,6 +154,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
     pcwin_off_err = -1
     pcwin_off_fail = 1
+    file_out = 'winpcoffout.txt'
     result = {'ip': ip,
               'result': 0,
               'cmd_output': ''
@@ -159,15 +162,15 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     try:
         # user%psw
         cred = str(usr) + chr(37) + str(psw)
-        system("net rpc shutdown -I %s -U %s >%s" % (ip, cred, "winpcoffout.txt"))
-        f = open("winpcoffout.txt", "r")
+        system("net rpc shutdown -I %s -U %s >%s" % (ip, cred, file_out))
+        f = open(file_out, "r")
         app = f.read()
         f.close()
-        system("sudo rm winpcoffout.txt")
+        system("sudo rm %s" % file_out)
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
-        print(app)
+        logging.info(app)
         if not app.find('succeeded') == -1:
             result['result'] = pcwin_off_ok
         else:
@@ -184,21 +187,22 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
     wol_ok = 0
     wol_err = -1
     wol_fail = 1
+    file_out = 'wolout.txt'
     result = {'mac': mac,
               'subnet': '',
               'result': 0,
               'cmd_output': ''
               }
     try:
-        system("wakeonlan -i %s %s >%s" % (subnet, mac, "wolout.txt"))
-        f = open("wolout.txt", "r")
+        system("wakeonlan -i %s %s >%s" % (subnet, mac, file_out))
+        f = open(file_out, "r")
         app = f.read()
         f.close()
-        system("sudo rm wolout.txt")
+        system("sudo rm %s" % file_out)
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
-        print(app)
+        logging.info(app)
         if not app.find('Sending magic packet') == -1:
             result['result'] = wol_ok
         else:
