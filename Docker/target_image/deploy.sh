@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -r msh
 cp -r ../../msh .
 docker container stop raspberrypi

@@ -4,6 +4,7 @@ from paste import httpserver
 from datetime import datetime
 from json import dumps, loads
 from module import net, dbmanager
+import socket
 
 
 class NetCmd(webapp3.RequestHandler):
@@ -150,10 +151,13 @@ def main():
         # filename='msh.log',
         format='%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s',
         level=logging.INFO)
-    host = '192.168.1.111'
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    logging.info("Your Computer Name is: %s", hostname)
+    logging.info("Your Computer IP Address is %s", IPAddr)
     port = '65177'
-    logging.info("Server in ascolto su http://%s:%s", host, port)
-    httpserver.serve(app, host=host, port=port)
+    logging.info("Server in ascolto su http://%s:%s", IPAddr, port)
+    httpserver.serve(app, host=IPAddr, port=port)
 
 
 if __name__ == '__main__':

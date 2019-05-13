@@ -1,3 +1,9 @@
+#Accesso alla cartella
+cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/target_image
+
+# Accedere al container
+docker exec -i -t raspberrypi /bin/bash
+
 # Info sulla VM di Docker in utilizzo
 docker version
 
@@ -42,12 +48,3 @@ go get github.com/docker/machine/libmachine/drivers/plugin
 
 #Build di un progetto GO
 go build -i -o docker-machine-driver-qemu.exe
-
-# Accedere al container
-docker exec -i -t raspberrypi /bin/bash
-
-#Vedere processi
-ps -aux
-
-#Testare il server
-curl http://172.17.0.2:65177/static/page/index.html

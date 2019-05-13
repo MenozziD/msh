@@ -2,3 +2,4 @@
 /msh/.idea/*
 /.idea/*
 /msh/module/__pycache__/*
+/Docker/target_image/msh/*
