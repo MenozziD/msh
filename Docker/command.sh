@@ -15,7 +15,7 @@ docker build . --tag=msh:v0.0.1
 
 # Creazione di un'immagine ed esecuzione
 docker build . --tag=msrheal:v0.0.1
-docker run -d --name raspberrypi -p 65177:65177 msrheal:v0.0.1
+docker run -d --name raspberrypi -p 8080:65177 msrheal:v0.0.1
 
 # Stoppare/Avviare il container
 docker container stop raspberrypi
