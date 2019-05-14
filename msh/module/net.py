@@ -1,6 +1,7 @@
 from os import system
 from pexpect import pxssh
 from re import sub
+from module import utility
 import logging
 
 
@@ -8,7 +9,7 @@ def cmd_ping(ip, pacchetti=5):
     ping_ok = 0
     ping_err = -1
     ping_fail = 1
-    file_out = 'pingout.txt'
+    file_out = utility.XmlReader.settings['out_file']['ping']
     result = {'ip': ip,
               'pacchetti_tx': 0,
               'pacchetti_rx': 0,
@@ -18,11 +19,11 @@ def cmd_ping(ip, pacchetti=5):
               'cmd_output': ''
               }
     try:
-        system("ping -c %s %s >%s" % (str(pacchetti), ip, file_out))
-        f = open("pingout.txt", "r")
+        system(utility.XmlReader.settings['shell_command']['ping'] % (str(pacchetti), ip, file_out))
+        f = open(file_out, "r")
         app = f.read()
         f.close()
-        system("sudo rm %s" % file_out)
+        system(utility.XmlReader.settings['shell_command']['remove'] % file_out)
         result['cmd_output'] = app
         app = app.split("\n")
         app = app[len(app) - 3]
@@ -31,13 +32,13 @@ def cmd_ping(ip, pacchetti=5):
         result['pacchetti_tx'] = app[0].split(" ")[0]
         result['pacchetti_rx'] = app[1].split(" ")[0]
         result['tempo'] = app[3].split(" ")[1]
-        if result['pacchetti_lost'] == '0%':
+        if result['pacchetti_lost'] == utility.XmlReader.settings['string_success']['ping']:
             result['result'] = ping_ok
         else:
             result['result'] = ping_fail
     except Exception as e:
         result['result'] = ping_err
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_ping", e)
+        result['cmd_output'] = utility.XmlReader.settings['string_failure']['generic'] % (utility.XmlReader.settings['command']['ping'], e)
     finally:
         return result
 
@@ -46,6 +47,9 @@ def cmd_radioctrl(ip, comando, usr, psw):
     radioctrl_err = -1
     radioctrl_invalid_cred = 2
     radioctrl_no_interface = -2
+    no_interface = utility.XmlReader.settings['string_failure']['noInterface']
+    generic = utility.XmlReader.settings['string_failure']['generic']
+    cmd = utility.XmlReader.settings['command']['radioControl']
     ss = None
     result = {'ip': ip,
               'mac': '',
@@ -58,31 +62,31 @@ def cmd_radioctrl(ip, comando, usr, psw):
         ss = pxssh.pxssh()
         if not ss.login(ip, usr, psw):
             result['result'] = radioctrl_invalid_cred
-            raise ValueError('SSH session failed on login! -->'+str(ss))
+            raise ValueError(utility.XmlReader.settings['string_failure']['sshLogin'] + str(ss))
 
         r = cmd_radiostatus(ip, usr, psw)
         if r['interface'] == '' and r['mac'] == '':
             result['result'] = radioctrl_no_interface
-            raise ValueError('Nessuna Interfaccia WiFi Rilevata!')
+            raise ValueError(no_interface)
 
         result['interface'] = r['interface']
-        ss.sendline("ifconfig %s %s" % (result['interface'], result['cmd']))
+        ss.sendline(utility.XmlReader.settings['shell_command']['ifconfig'] % (result['interface'], result['cmd']))
         ss.prompt()
 
         r = cmd_radiostatus(ip, usr, psw)
         if r['interface'] == '' and r['mac'] == '':
             result['result'] = radioctrl_no_interface
-            raise ValueError('Nessuna Interfaccia WiFi Rilevata!')
+            raise ValueError(no_interface)
 
         result['mac'] = r['mac']
         result['result'] = r['result']
 
     except ValueError as v:
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_radioctrl", v)
+        result['cmd_output'] = generic % (cmd, v)
 
     except Exception as e:
         result['result'] = radioctrl_err
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_radioctrl", e)
+        result['cmd_output'] = generic % (cmd, e)
 
     finally:
         ss.logout()
@@ -95,6 +99,8 @@ def cmd_radiostatus(ip, usr, psw):
     radioctrl_invalid_cred = 2
     radiostatus_err = -1
     radiostatus_no_interface = -2
+    generic = utility.XmlReader.settings['string_failure']['generic']
+    cmd = utility.XmlReader.settings['command']['radioStatus']
     ss = None
     flag_nextrow = False
     result = {'ip': ip,
@@ -107,8 +113,8 @@ def cmd_radiostatus(ip, usr, psw):
         ss = pxssh.pxssh()
         if not ss.login(ip, usr, psw):
             result['result'] = radioctrl_invalid_cred
-            raise ValueError('SSH session failed on login! -->'+str(ss))
-        ss.sendline("iwconfig")
+            raise ValueError(utility.XmlReader.settings['string_failure']['sshLogin'] + str(ss))
+        ss.sendline(utility.XmlReader.settings['shell_command']['iwconfig'])
         ss.prompt()
         app = ss.before
         result['cmd_output'] = app
@@ -136,14 +142,14 @@ def cmd_radiostatus(ip, usr, psw):
 
         if result['interface'] == '' and result['mac'] == '':
             result['result'] = radiostatus_no_interface
-            raise ValueError('Nessuna Interfaccia WiFi Rilevata!')
+            raise ValueError(utility.XmlReader.settings['string_failure']['noInterface'])
 
     except ValueError as v:
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_radiostatus", v)
+        result['cmd_output'] = generic % (cmd, v)
 
     except Exception as e:
         result['result'] = radiostatus_err
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_radiostatus", e)
+        result['cmd_output'] = generic % (cmd, e)
 
     finally:
         ss.logout()
@@ -154,7 +160,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
     pcwin_off_err = -1
     pcwin_off_fail = 1
-    file_out = 'winpcoffout.txt'
+    file_out = utility.XmlReader.settings['out_file']['pcwinShutdown']
     result = {'ip': ip,
               'result': 0,
               'cmd_output': ''
@@ -162,22 +168,22 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     try:
         # user%psw
         cred = str(usr) + chr(37) + str(psw)
-        system("net rpc shutdown -I %s -U %s >%s" % (ip, cred, file_out))
+        system(utility.XmlReader.settings['shell_command']['pcwinShutdown'] % (ip, cred, file_out))
         f = open(file_out, "r")
         app = f.read()
         f.close()
-        system("sudo rm %s" % file_out)
+        system(utility.XmlReader.settings['shell_command']['remove'] % file_out)
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
         logging.info(app)
-        if not app.find('succeeded') == -1:
+        if not app.find(utility.XmlReader.settings['string_success']['pcwinShutdown']) == -1:
             result['result'] = pcwin_off_ok
         else:
             result['result'] = pcwin_off_fail
     except Exception as e:
         result['result'] = pcwin_off_err
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_pcwin_shutdown", e)
+        result['cmd_output'] = utility.XmlReader.settings['string_failure']['generic'] % (utility.XmlReader.settings['command']['pcwinShutdown'], e)
 
     finally:
         return result
@@ -187,29 +193,29 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
     wol_ok = 0
     wol_err = -1
     wol_fail = 1
-    file_out = 'wolout.txt'
+    file_out = utility.XmlReader.settings['out_file']['wakeOnLan']
     result = {'mac': mac,
               'subnet': '',
               'result': 0,
               'cmd_output': ''
               }
     try:
-        system("wakeonlan -i %s %s >%s" % (subnet, mac, file_out))
+        system(utility.XmlReader.settings['shell_command']['wakeOnLan'] % (subnet, mac, file_out))
         f = open(file_out, "r")
         app = f.read()
         f.close()
-        system("sudo rm %s" % file_out)
+        system(utility.XmlReader.settings['shell_command']['remove'] % file_out)
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
         logging.info(app)
-        if not app.find('Sending magic packet') == -1:
+        if not app.find(utility.XmlReader.settings['string_success']['wakeOnLan']) == -1:
             result['result'] = wol_ok
         else:
             result['result'] = wol_fail
     except Exception as e:
         result['result'] = wol_err
-        result['cmd_output'] = "Error-%s:%s " % ("cmd_wakeonlan", e)
+        result['cmd_output'] = utility.XmlReader.settings['string_failure']['generic'] % (utility.XmlReader.settings['command']['wakeOnLan'], e)
 
     finally:
         return result
