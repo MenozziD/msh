@@ -9,6 +9,59 @@ from module.utility import XmlReader
 from module import net
 
 
+class NetScan(webapp3.RequestHandler):
+    def get(self):
+        logging.info("%s %s", self.request.method, self.request.url)
+        device = {'net_code': '',
+                  'net_type': '',
+                  'net_status': '',
+                  'net_ip': '',
+                  'net_mac': '',
+                  'net_mac_info': ''
+                  }
+        db_devices = []
+        response = {}
+        try:
+
+            DbManager(XmlReader.settings['path']['db'])
+            rows = DbManager.select_tb_net_device()
+            for r in rows:
+                device = {'net_code': str(r[0]),
+                          'net_type': str(r[1]),
+                          'net_status': '',
+                          'net_ip': str(r[2]),
+                          'net_mac': str(r[3]),
+                          'net_mac_info': ''
+                          }
+                db_devices.append(device)
+
+            result = net.cmd_netscan()
+            '''
+            for device in result['devices']:
+                for db_device in db_devices:
+                    if device['net_mac'] == db_device['net_mac']:
+                        logging.info("UPDATE")
+                        DbManager.update_tb_net_device(device['net_code'], '', 'ON', device['net_ip'],
+                                                       device['net_mac'], device['net_mac_info'])
+                    else:
+                        logging.info("INSERT")
+                        DbManager.insert_tb_net_device(device['net_code'], '', 'ON', device['net_ip'], device['net_mac'],
+                                                       device['net_mac_info'])
+            '''
+
+            response = result['devices']
+
+            DbManager.close_db()
+        except Exception as e:
+            response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
+        finally:
+            #response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+            self.response.headers.add('Access-Control-Allow-Origin', '*')
+            self.response.headers.add('Content-Type', 'application/json')
+            self.response.write(dumps(response, indent=4, sort_keys=True))
+            logging.info("RESPONSE CODE: %s", self.response.status)
+            logging.info("RESPONSE PAYLOAD: %s", response)
+
 class NetCmd(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
@@ -62,6 +115,8 @@ class NetCmd(webapp3.RequestHandler):
             logging.info("RESPONSE PAYLOAD: %s", response)
 
 
+
+
 class Index(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
@@ -111,6 +166,7 @@ def handle_error(request, response, exception):
 
 app = webapp3.WSGIApplication([
     ('/api/netcmd', NetCmd),
+    ('/api/netscan', NetScan),
     ('/', Index),
     (r'/static/(\D+)', Static),
     (r'/api/diff', Diff),
@@ -126,7 +182,8 @@ def main():
         filename=XmlReader.settings['log']['filename'],
         format=XmlReader.settings['log']['format'],
         level=logging.INFO)
-    ip_address = socket.gethostbyname(socket.gethostname())
+    #ip_address = socket.gethostbyname(socket.gethostname())
+    ip_address = '192.168.1.111'
     logging.info("Your Computer IP Address is %s", ip_address)
     port = XmlReader.settings['porta']
     logging.info("Server in ascolto su http://%s:%s", ip_address, port)

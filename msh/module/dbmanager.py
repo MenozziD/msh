@@ -62,11 +62,24 @@ class DbManager:
             return result
 
     @staticmethod
-    def insert_tb_net_device(net_code, net_desc, net_name, net_type, net_status, net_ip, net_mac, net_mac_info):
+    def insert_tb_net_device(net_code, net_type, net_status, net_ip, net_mac, net_mac_info):
         try:
             if DbManager.db:
                 cur = DbManager.db.cursor()
-                cur.execute(XmlReader.settings['query']['insert_tb_net_device'] % (net_code, net_desc, net_name, net_type, net_status, net_ip, net_mac, net_mac_info))
+                cur.execute(XmlReader.settings['query']['insert_tb_net_device'] % (net_code, net_type, net_status, net_ip, net_mac, net_mac_info))
+                DbManager.db.commit()
+            else:
+                logging.error(DbManager.error_db)
+        except lite.Error as e:
+            DbManager.db.rollback()
+            logging.error(DbManager.error + str(e))
+
+    @staticmethod
+    def update_tb_net_device(net_code, net_type, net_status, net_ip, net_mac, net_mac_info):
+        try:
+            if DbManager.db:
+                cur = DbManager.db.cursor()
+                cur.execute(XmlReader.settings['query']['update_tb_net_device'] % (net_code, net_type, net_status, net_ip, net_mac_info, net_mac))
                 DbManager.db.commit()
             else:
                 logging.error(DbManager.error_db)

@@ -3,6 +3,7 @@ from pexpect import pxssh
 from re import sub
 from module.utility import XmlReader
 import logging
+import os
 
 
 def cmd_ping(ip, pacchetti=5):
@@ -204,5 +205,84 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
     except Exception as e:
         result['result'] = wol_err
         result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['wake_on_lan'], e)
+    finally:
+        return result
+
+
+def cmd_netscan():
+    netscan_ok = 0
+    netscan_err = -1
+    netscan_fail = 1
+    count = 0
+
+    file_out = XmlReader.settings['out_filename']['net_scan']
+
+    result = {'result': 0,
+              'devices': [],
+              'cmd_output': ''
+              }
+    device = {'net_code': '',
+              'net_type': '',
+              'net_status': '',
+              'net_ip': '',
+              'net_mac': '',
+              'net_mac_info': ''
+              }
+    try:
+        system(XmlReader.settings['shell_command']['net_scan'] % file_out)
+        f = open(file_out, "r")
+        app = f.read()
+        f.close()
+        system(XmlReader.settings['shell_command']['remove'] % file_out)
+        result['cmd_output'] = app
+        logging.info(app)
+        rows = app.split("\n")
+        for line in rows:
+
+            if "Nmap scan report for " in line:
+                line = line.replace("Nmap scan report for ", "")
+                if line.find("(") < 1:
+                    device['net_code'] = line
+                    device['net_ip'] = line
+                elif line.find("(") > 1:
+                    a = line.split("(")
+                    device['net_code'] = a[0]
+                    a[1] = a[1].replace(")", "")
+                    device['net_ip'] = a[1]
+
+                count = count + 1
+
+            if "MAC Address" in line:
+                line = line.replace("MAC Address", "")
+                if line.find("(") < 1:
+                    device['net_mac'] = line
+                    device['net_mac_info'] = line
+                elif line.find("(") > 1:
+                    a = line.split("(")
+                    a[0] = a[0].replace(": ", "")
+                    device['net_mac'] = a[0]
+                    a[1] = a[1].replace(")", "")
+                    device['net_mac_info'] = a[1]
+
+            if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
+                result['devices'].append(device)
+                logging.info(str(device))
+                device = {'net_code': '',
+                          'net_type': '',
+                          'net_status': '',
+                          'net_ip': '',
+                          'net_mac': '',
+                          'net_mac_info': ''
+                          }
+
+        if count > 0:
+            result['result']= netscan_ok
+        else:
+            result['result'] = netscan_fail
+
+    except  Exception as e:
+        result['result'] = netscan_err
+        result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % ( XmlReader.settings['command']['net_scan'], e)
+
     finally:
         return result
