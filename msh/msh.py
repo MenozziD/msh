@@ -1,10 +1,11 @@
 import webapp3
 import logging
+import socket
 from paste import httpserver
 from datetime import datetime
 from json import dumps, loads
-from module import net, dbmanager
-import socket
+from module import net, dbmanager, utility
+
 
 
 class NetCmd(webapp3.RequestHandler):
@@ -14,7 +15,7 @@ class NetCmd(webapp3.RequestHandler):
         try:
             dispositivo = self.request.get('d')
             comando = self.request.get('c')
-            db = dbmanager.open_db("db/system.db")
+            db = dbmanager.open_db(utility.XmlReader().settings['path']['db'])
             result = {}
 
             r = dbmanager.select_tb_net_diz_cmd(db, dispositivo, comando)
@@ -45,7 +46,7 @@ class NetCmd(webapp3.RequestHandler):
 
             # Calcolo Stringa Response e Stringa Stato Dispositivo e aggiorno struttura
             row = dbmanager.select_one_tb_res_decode(db, "NET", response['device_type'], response['device_rescmd'],
-                                                     "IT", result['result'])
+                                                     utility.XmlReader().settings['lingua'], result['result'])
 
             if row != "":
                 response['req_response'] = str(row[0])
@@ -58,9 +59,9 @@ class NetCmd(webapp3.RequestHandler):
             dbmanager.close_db(db)
 
         except Exception as e:
-            response['output'] = "Error-%s:%s " % ("net_cmd", e)
+            response['output'] = utility.XmlReader().settings['string_failure']['generic'] % (utility.XmlReader().settings['command']['net'], e)
         finally:
-            response['timestamp'] = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+            response['timestamp'] = datetime.now().strftime(utility.XmlReader().settings['timestamp'])
             self.response.headers.add('Access-Control-Allow-Origin', '*')
             self.response.headers.add('Content-Type', 'application/json')
             self.response.write(dumps(response, indent=4, sort_keys=True))
@@ -71,18 +72,19 @@ class NetCmd(webapp3.RequestHandler):
 class Index(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
-        self.redirect('/static/page/index.html')
+        self.redirect(utility.XmlReader().settings['path']['index'])
         logging.info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
 class Static(webapp3.RequestHandler):
     def get(self, filename):
+        path_ui = utility.XmlReader().settings['path']['ui']
         logging.info("%s %s", self.request.method, self.request.url)
-        f = open('webui/' + filename, 'r')
+        f = open(path_ui + filename, 'r')
         self.response.write(f.read())
         f.close()
         logging.info("RESPONSE CODE: %s", self.response.status)
-        logging.info("RESPONSE PAYLOAD: webui/%s", filename)
+        logging.info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
 
 
 class Diff(webapp3.RequestHandler):
@@ -98,12 +100,11 @@ class Diff(webapp3.RequestHandler):
 
 
 def handle_error(request, response, exception):
-    path_error = 'webui\page\error\\'
+    path_error = utility.XmlReader().settings['path']['error']
     error_code = '500'
-    if str(type(exception)) == "<class 'webob.exc.HTTPNotFound'>":
-        error_code = '404'
-    if str(type(exception)) == "<class 'webob.exc.HTTPMethodNotAllowed'>":
-        error_code = '405'
+    for code, value in utility.XmlReader().settings['class_error'].items():
+        if str(value) == str(type(exception)):
+            error_code = code
     if error_code != '500':
         logging.info("%s %s", request.method, request.url)
     logging.exception(exception)
@@ -127,15 +128,14 @@ app.error_handlers[500] = handle_error
 
 
 def main():
+    utility.XmlReader()
     logging.basicConfig(
-        # filename='msh.log',
-        format='%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s',
+        filename=utility.XmlReader().settings['log']['filename'],
+        format=utility.XmlReader().settings['log']['format'],
         level=logging.INFO)
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)
-    logging.info("Your Computer Name is: %s", hostname)
-    logging.info("Your Computer IP Address is %s", IPAddr)
-    port = '65177'
+    ip_address = socket.gethostbyname(socket.gethostname())
+    logging.info("Your Computer IP Address is %s", ip_address)
+    port = utility.XmlReader().settings['porta']
     logging.info("Server in ascolto su http://%s:%s", IPAddr, port)
     httpserver.serve(app, host=IPAddr, port=port)
 
