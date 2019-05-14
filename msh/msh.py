@@ -4,7 +4,9 @@ import socket
 from paste import httpserver
 from datetime import datetime
 from json import dumps, loads
-from module import net, dbmanager, utility
+from module.dbmanager import DbManager
+from module.utility import XmlReader
+from module import net
 
 
 class NetCmd(webapp3.RequestHandler):
@@ -14,10 +16,9 @@ class NetCmd(webapp3.RequestHandler):
         try:
             dispositivo = self.request.get('d')
             comando = self.request.get('c')
-            db = dbmanager.open_db(utility.XmlReader.settings['path']['db'])
+            DbManager(XmlReader.settings['path']['db'])
             result = {}
-
-            r = dbmanager.select_tb_net_diz_cmd(db, dispositivo, comando)
+            r = DbManager.select_tb_net_diz_cmd(dispositivo, comando)
             response = {'device_code': str(r[0]),
                         'device_type': str(r[1]),
                         'device_ip': str(r[2]),
@@ -40,27 +41,20 @@ class NetCmd(webapp3.RequestHandler):
             if response['device_rescmd'] == "300":
                 result = net.cmd_radiostatus(response['device_ip'], response['device_user'], response['device_psw'])
             if response['device_rescmd'] in ("301", "302"):
-                result = net.cmd_radioctrl(response['device_ip'], response['device_strcmd'].replace("radio_", ""),
-                                           response['device_user'], response['device_psw'])
-
-            # Calcolo Stringa Response e Stringa Stato Dispositivo e aggiorno struttura
-            row = dbmanager.select_one_tb_res_decode(db, "NET", response['device_type'], response['device_rescmd'],
-                                                     utility.XmlReader.settings['lingua'], result['result'])
-
+                result = net.cmd_radioctrl(response['device_ip'], response['device_strcmd'].replace("radio_", ""), response['device_user'], response['device_psw'])
+            row = DbManager.select_one_tb_res_decode("NET", response['device_type'], response['device_rescmd'], XmlReader.settings['lingua'], result['result'])
             if row != "":
                 response['req_response'] = str(row[0])
                 response['device_status'] = str(row[1])
             else:
                 response['req_response'] = "-"
                 response['device_status'] = "-"
-
             response['output'] = result
-            dbmanager.close_db(db)
-
+            DbManager.close_db()
         except Exception as e:
-            response['output'] = utility.XmlReader.settings['string_failure']['generic'] % (utility.XmlReader.settings['command']['net'], e)
+            response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
         finally:
-            response['timestamp'] = datetime.now().strftime(utility.XmlReader.settings['timestamp'])
+            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
             self.response.headers.add('Access-Control-Allow-Origin', '*')
             self.response.headers.add('Content-Type', 'application/json')
             self.response.write(dumps(response, indent=4, sort_keys=True))
@@ -71,13 +65,13 @@ class NetCmd(webapp3.RequestHandler):
 class Index(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
-        self.redirect(utility.XmlReader.settings['path']['index'])
+        self.redirect(XmlReader.settings['path']['index'])
         logging.info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
 class Static(webapp3.RequestHandler):
     def get(self, filename):
-        path_ui = utility.XmlReader.settings['path']['ui']
+        path_ui = XmlReader.settings['path']['ui']
         logging.info("%s %s", self.request.method, self.request.url)
         f = open(path_ui + filename, 'r')
         self.response.write(f.read())
@@ -99,9 +93,9 @@ class Diff(webapp3.RequestHandler):
 
 
 def handle_error(request, response, exception):
-    path_error = utility.XmlReader.settings['path']['error']
+    path_error = XmlReader.settings['path']['error']
     error_code = '500'
-    for code, value in utility.XmlReader.settings['class_error'].items():
+    for code, value in XmlReader.settings['class_error'].items():
         if str(value) == str(type(exception)):
             error_code = code
     if error_code != '500':
@@ -127,14 +121,14 @@ app.error_handlers[500] = handle_error
 
 
 def main():
-    utility.XmlReader()
+    XmlReader()
     logging.basicConfig(
-        filename=utility.XmlReader.settings['log']['filename'],
-        format=utility.XmlReader.settings['log']['format'],
+        filename=XmlReader.settings['log']['filename'],
+        format=XmlReader.settings['log']['format'],
         level=logging.INFO)
     ip_address = socket.gethostbyname(socket.gethostname())
     logging.info("Your Computer IP Address is %s", ip_address)
-    port = utility.XmlReader.settings['porta']
+    port = XmlReader.settings['porta']
     logging.info("Server in ascolto su http://%s:%s", ip_address, port)
     httpserver.serve(app, host=ip_address, port=port)
 

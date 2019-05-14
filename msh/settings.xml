@@ -13,51 +13,52 @@
 		<filename>None</filename>
 		<format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>
 	</log>
-	<classError>
+	<class_error>
 		<error name="404">&lt;class 'webob.exc.HTTPNotFound'&gt;</error>
 		<error name="405">&lt;class 'webob.exc.HTTPMethodNotAllowed'&gt;</error>
-	</classError>
-	<shellCommand>
+	</class_error>
+	<shell_command>
 		<ping>ping -c %s %s >%s</ping>
 		<remove>sudo rm %s</remove>
 		<ifconfig>ifconfig %s %s</ifconfig>
 		<iwconfig>iwconfig</iwconfig>
-		<pcwinShutdown>net rpc shutdown -I %s -U %s >%s</pcwinShutdown>
-		<wakeOnLan>wakeonlan -i %s %s >%s</wakeOnLan>
-	</shellCommand>
-	<outFilename>
+		<pcwin_shutdown>net rpc shutdown -I %s -U %s >%s</pcwin_shutdown>
+		<wake_on_lan>wakeonlan -i %s %s >%s</wake_on_lan>
+	</shell_command>
+	<out_filename>
 		<ping>pingout.txt</ping>
-		<pcwinShutdown>winpcoffout.txt</pcwinShutdown>
-		<wakeOnLan>wolout.txt</wakeOnLan>
-	</outFilename>
-	<stringSuccess>
+		<pcwin_shutdown>winpcoffout.txt</pcwin_shutdown>
+		<wake_on_lan>wolout.txt</wake_on_lan>
+	</out_filename>
+	<string_success>
 		<ping>0%</ping>
-		<pcwinShutdown>succeeded</pcwinShutdown>
-		<wakeOnLan>Sending magic packet</wakeOnLan>
-	</stringSuccess>
-	<stringFailure>
-		<openDB>DB OPEN Error:</openDB>
-		<closeDB>DB CLOSE Error:</closeDB>
-		<errorDB>DB not init!</errorDB>
+		<pcwin_shutdown>succeeded</pcwin_shutdown>
+		<wake_on_lan>Sending magic packet</wake_on_lan>
+	</string_success>
+	<string_failure>
+		<open_db>DB OPEN Error:</open_db>
+		<close_db>DB CLOSE Error:</close_db>
+		<error_db>DB not init!</error_db>
+		<error>Error: </error>
 		<generic>Error-%s:%s </generic>
-		<sshLogin>SSH session failed on login! --></sshLogin>
-		<noInterface>Nessuna Interfaccia WiFi Rilevata!</noInterface>
-	</stringFailure>
+		<ssh_login>SSH session failed on login! --></ssh_login>
+		<no_interface>Nessuna Interfaccia WiFi Rilevata!</no_interface>
+	</string_failure>
 	<command>
 		<net>net_cmd</net>
 		<ping>cmd_ping</ping>
-		<radioControl>cmd_radioctrl</radioControl>
-		<radioStatus>cmd_radiostatus</radioStatus>
-		<pcwinShutdown>cmd_pcwin_shutdown</pcwinShutdown>
-		<wakeOnLan>cmd_wakeonlan</wakeOnLan>
+		<radio_control>cmd_radioctrl</radio_control>
+		<radio_status>cmd_radiostatus</radio_status>
+		<pcwin_shutdown>cmd_pcwin_shutdown</pcwin_shutdown>
+		<wake_on_lan>cmd_wakeonlan</wake_on_lan>
 	</command>
 	<query>
-		<select_tb_net_device>SELECT net_code,net_desc,net_status,NET_LASTUPDATE,net_ip,net_mac FROM TB_NET_DEVICE;</select_tb_net_device>
-		<select_one_tb_net_device>SELECT net_code,net_desc,net_status,NET_LASTUPDATE,net_ip,net_mac,NET_CREDENTIAL FROM TB_NET_DEVICE WHERE net_code like '%s';</select_one_tb_net_device>
-		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (net_code,net_desc,net_name,net_type,net_status,net_ip,net_mac,net_mac_info) VALUES ('%s','%s','%s', '%s','%s','%s','%s','%s');</insert_tb_net_device>
+		<select_tb_net_device>SELECT NET_CODE,NET_DESC,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC FROM TB_NET_DEVICE;</select_tb_net_device>
+		<select_one_tb_net_device>SELECT NET_CODE,NET_DESC,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC,NET_CREDENTIAL FROM TB_NET_DEVICE WHERE NET_CODE LIKE '%s';</select_one_tb_net_device>
+		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_DESC,NET_NAME,NET_TYPE,NET_STATUS,NET_IP,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s', '%s','%s','%s','%s','%s');</insert_tb_net_device>
 		<select_last_tb_net_com>SELECT REQ_ID,REQ_NODE,REQ_CMD,REQ_RESPONSE,REQ_RESULT,REQ_DATETIME FROM TB_NET_COM ORDER BY REQ_ID DESC LIMIT 1;</select_last_tb_net_com>
-		<select_tb_net_diz_cmd>SELECT TB_NET_DEVICE.net_code,TB_NET_DEVICE.net_type, TB_NET_DEVICE.net_ip, TB_NET_DEVICE.net_mac, TB_NET_DIZ_CMD.cmd_str, TB_NET_DIZ_CMD.CMD_RESULT, TB_NET_DEVICE.NET_USER, TB_NET_DEVICE.NET_PSW FROM TB_NET_DEVICE INNER JOIN TB_NET_DIZ_CMD ON TB_NET_DEVICE.net_type = TB_NET_DIZ_CMD.CMD_net_type WHERE TB_NET_DEVICE.net_code LIKE '%s' AND TB_NET_DIZ_CMD.cmd_str LIKE '%s'</select_tb_net_diz_cmd>
-		<update_state_from_ip_tb_net_device>UPDATE TB_NET_DEVICE SET net_status = '%s' WHERE net_ip like '%s';</update_state_from_ip_tb_net_device>
-		<select_one_tb_res_decode>SELECT RES_RESULT, RES_STATE FROM TB_RES_DECODE WHERE res_device_type like '%s' AND res_device_subtype like '%s' AND res_command like '%s' AND res_lang like '%s' AND res_value == %s ;</select_one_tb_res_decode>
+		<select_tb_net_diz_cmd>SELECT TB_NET_DEVICE.NET_CODE,TB_NET_DEVICE.NET_TYPE, TB_NET_DEVICE.NET_IP, TB_NET_DEVICE.NET_MAC, TB_NET_DIZ_CMD.CMD_STR, TB_NET_DIZ_CMD.CMD_RESULT, TB_NET_DEVICE.NET_USER, TB_NET_DEVICE.NET_PSW FROM TB_NET_DEVICE INNER JOIN TB_NET_DIZ_CMD ON TB_NET_DEVICE.NET_TYPE = TB_NET_DIZ_CMD.CMD_NET_TYPE WHERE TB_NET_DEVICE.NET_CODE LIKE '%s' AND TB_NET_DIZ_CMD.CMD_STR LIKE '%s'</select_tb_net_diz_cmd>
+		<update_state_from_ip_tb_net_device>UPDATE TB_NET_DEVICE SET NET_STATUS = '%s' WHERE NET_IP LIKE '%s';</update_state_from_ip_tb_net_device>
+		<select_one_tb_res_decode>SELECT RES_RESULT, RES_STATE FROM TB_RES_DECODE WHERE RES_DEVICE_TYPE LIKE '%s' AND RES_DEVICE_SUBTYPE LIKE '%s' AND RES_COMMAND LIKE '%s' AND RES_LANG LIKE '%s' AND RES_VALUE == %s ;</select_one_tb_res_decode>
 	</query>
 </settings>
