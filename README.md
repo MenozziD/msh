@@ -14,27 +14,6 @@ Di seguito i passi per effettuare la configurazione del dispositivo
 
 ### Installazzione
 
-Effettuare l'installazione di python3
-
-```bash
-sudo apt-get update
-sudo apt-get install python3
-```
-
-Installare le librerie necessarie di python3
-
-```bash
-sudo pip3 install webapp3
-sudo pip3 install paste
-sudo pip3 install pexpect
-```
-
-Installare SQL Lite
-```bash
-sudo apt-get update
-sudo apt-get install sqlite3 libsqlite3-dev
-```
-
 Effettuare il download dello zip da GitHub
 
 ```bash
@@ -47,42 +26,16 @@ Eseguire la decompressione dell'archivio appena scaricato
 tar -xvzf msh.tar.gz
 ```
 
-Entrare nella directoy generata al passo precedente
+Entrare nella directoy setup all'interno della cartella generata al passo precedente
 
 ```bash
-cd msh
+cd msh/setup
 ```
 
-Creare ed accedere alla cartella per il Database
+Eseguire il seguente comando
 
 ```bash
-mkdir db
-cd db
-```
-
-Creare il Database
-
-```bash
-sqlite3 system.db
-```
-
-Creare lo schema del Database
-
-```bash
-sqlite3 system.db < ../script/create.sql
-```
-
-Avviare il server
-
-```bash
-cd ..
-python3 msh.py
-```
-
-Accedere con Chrome al seguente indirizzo
-
-```
-http://localhost:8080
+./setup.sh
 ```
 
 
