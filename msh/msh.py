@@ -97,35 +97,15 @@ class Diff(webapp3.RequestHandler):
         logging.info("RESPONSE PAYLOAD: %s", res)
 
 
-path_error = 'webui/page/error/'
-
-
-def handle_404(request, response, exception):
-    error_code = '404'
-    logging.info("%s %s", request.method, request.url)
-    logging.exception(exception)
-    f = open(path_error + error_code + '.html', 'r')
-    response.write(f.read())
-    response.set_status(int(error_code))
-    f.close()
-    logging.info("RESPONSE CODE: %s", response.status)
-    logging.info("RESPONSE PAYLOAD: %s%s.html", path_error, error_code)
-
-
-def handle_405(request, response, exception):
-    error_code = '405'
-    logging.info("%s %s", request.method, request.url)
-    logging.exception(exception)
-    f = open(path_error + error_code + '.html', 'r')
-    response.write(f.read())
-    response.set_status(int(error_code))
-    f.close()
-    logging.info("RESPONSE CODE: %s", response.status)
-    logging.info("RESPONSE PAYLOAD: %s%s.html", path_error, error_code)
-
-
-def handle_500(request, response, exception):
+def handle_error(request, response, exception):
+    path_error = 'webui\page\error\\'
     error_code = '500'
+    if str(type(exception)) == "<class 'webob.exc.HTTPNotFound'>":
+        error_code = '404'
+    if str(type(exception)) == "<class 'webob.exc.HTTPMethodNotAllowed'>":
+        error_code = '405'
+    if error_code != '500':
+        logging.info("%s %s", request.method, request.url)
     logging.exception(exception)
     f = open(path_error + error_code + '.html', 'r')
     response.write(f.read())
@@ -141,9 +121,9 @@ app = webapp3.WSGIApplication([
     (r'/static/(\D+)', Static),
     (r'/api/diff', Diff),
 ], debug=True)
-app.error_handlers[404] = handle_404
-app.error_handlers[405] = handle_405
-app.error_handlers[500] = handle_500
+app.error_handlers[404] = handle_error
+app.error_handlers[405] = handle_error
+app.error_handlers[500] = handle_error
 
 
 def main():
