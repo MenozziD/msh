@@ -90,3 +90,12 @@ Accedere con Chrome al seguente indirizzo
 ```
 http://localhost
 ```
+
+### Deploy successivi
+
+Se a segutio di modifiche al sorgente si vuole effettuare un nuovo deploy eseguire i seguenti comandi
+
+```
+cd msh/Docker/target_image
+./deploy.sh
+```
