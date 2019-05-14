@@ -7,7 +7,6 @@ from json import dumps, loads
 from module import net, dbmanager, utility
 
 
-
 class NetCmd(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
@@ -136,8 +135,8 @@ def main():
     ip_address = socket.gethostbyname(socket.gethostname())
     logging.info("Your Computer IP Address is %s", ip_address)
     port = utility.XmlReader.settings['porta']
-    logging.info("Server in ascolto su http://%s:%s", IPAddr, port)
-    httpserver.serve(app, host=IPAddr, port=port)
+    logging.info("Server in ascolto su http://%s:%s", ip_address, port)
+    httpserver.serve(app, host=ip_address, port=port)
 
 
 if __name__ == '__main__':
