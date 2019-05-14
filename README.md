@@ -61,50 +61,16 @@ Eseguire la decompressione dell'archivio appena scaricato
 tar -xvzf msh.tar.gz
 ```
 
-Accedere alla directory base_image dentro alla cartella Docker contenuta all'interno della cartella ottenuta al passo precedente
+Entrare nella directoy setup all'interno della cartella generata al passo precedente
 
 ```bash
-cd msh/Docker/base_image
+cd msh/setup
 ```
 
-Effettuare una build Docker
+Eseguire il seguente comando
 
 ```bash
-docker build . --tag=msh:v0.0.1
-```
-
-Verificare che l'immagine sia stata creata
-
-```bash
-docker image ls
-```
-
-Copiare la cartella msh dentro alla cartella target_image
-```bash
-cp ../../msh ../target_image
-```
-
-Accedere alla cartella target_image
-```bash
-cd ../target_image
-```
-
-Effettuare una build Docker
-
-```bash
-docker build . --tag=msrheal:v0.0.1
-```
-
-Verificare che l'immagine sia stata creata
-
-```bash
-docker image ls
-```
-
-Lanciare un container Docker con l'immagine appena creata
-
-```bash
-docker run -d --name raspberrypi -p 8080:65177 msrheal:v0.0.1
+./setupDocker.sh
 ```
 
 Verificare che il container sia in esecuzione
