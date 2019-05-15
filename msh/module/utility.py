@@ -1,4 +1,5 @@
 from xml.dom import minidom
+import logging
 
 
 class XmlReader:
@@ -7,6 +8,13 @@ class XmlReader:
             'error_db': '',
             'error': ''
         }
+    }
+    log_mapping = {
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warning': logging.WARNING,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL
     }
 
     def __init__(self):
@@ -22,7 +30,8 @@ class XmlReader:
         }
         log = {
             'filename': xml.getElementsByTagName('log')[0].getElementsByTagName('filename')[0].firstChild.data,
-            'format': xml.getElementsByTagName('log')[0].getElementsByTagName('format')[0].firstChild.data
+            'format': xml.getElementsByTagName('log')[0].getElementsByTagName('format')[0].firstChild.data,
+            'level': XmlReader.log_mapping[xml.getElementsByTagName('log')[0].getElementsByTagName('level')[0].firstChild.data]
         }
         if log['filename'] == 'None':
             log['filename'] = None
