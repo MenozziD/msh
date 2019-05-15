@@ -3,3 +3,4 @@
 /.idea/*
 /msh/module/__pycache__/*
 /Docker/target_image/msh/*
+/Docker/esp_rele/.idea/*
