@@ -58,10 +58,10 @@
 		<net_scan>cmd_netscan</net_scan>
 	</command>
 	<query>
-		<select_tb_net_device>SELECT NET_CODE,NET_DESC,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC FROM TB_NET_DEVICE;</select_tb_net_device>
+		<select_tb_net_device>SELECT NET_CODE,NET_DESC,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC, NET_MAC_INFO FROM TB_NET_DEVICE;</select_tb_net_device>
 		<select_one_tb_net_device>SELECT NET_CODE,NET_DESC,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC,NET_CREDENTIAL FROM TB_NET_DEVICE WHERE NET_CODE LIKE '%s';</select_one_tb_net_device>
 		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_IP,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s','%s','%s','%s');</insert_tb_net_device>
-		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s',NET_IP = '%s',NET_MAC_INFO = '%s' WHERE NET_MAC =='%s');</update_tb_net_device>
+		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s',NET_IP = '%s',NET_MAC_INFO = '%s' WHERE NET_MAC LIKE '%s';</update_tb_net_device>
 		<select_last_tb_net_com>SELECT REQ_ID,REQ_NODE,REQ_CMD,REQ_RESPONSE,REQ_RESULT,REQ_DATETIME FROM TB_NET_COM ORDER BY REQ_ID DESC LIMIT 1;</select_last_tb_net_com>
 		<select_tb_net_diz_cmd>SELECT TB_NET_DEVICE.NET_CODE,TB_NET_DEVICE.NET_TYPE, TB_NET_DEVICE.NET_IP, TB_NET_DEVICE.NET_MAC, TB_NET_DIZ_CMD.CMD_STR, TB_NET_DIZ_CMD.CMD_RESULT, TB_NET_DEVICE.NET_USER, TB_NET_DEVICE.NET_PSW FROM TB_NET_DEVICE INNER JOIN TB_NET_DIZ_CMD ON TB_NET_DEVICE.NET_TYPE = TB_NET_DIZ_CMD.CMD_NET_TYPE WHERE TB_NET_DEVICE.NET_CODE LIKE '%s' AND TB_NET_DIZ_CMD.CMD_STR LIKE '%s'</select_tb_net_diz_cmd>
 		<update_state_from_ip_tb_net_device>UPDATE TB_NET_DEVICE SET NET_STATUS = '%s' WHERE NET_IP LIKE '%s';</update_state_from_ip_tb_net_device>

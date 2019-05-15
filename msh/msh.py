@@ -20,7 +20,14 @@ class NetScan(webapp3.RequestHandler):
                   'net_mac_info': ''
                   }
         db_devices = []
-        response = {}
+        response = {
+            'output': '',
+            'new_device': '',
+            'updated_device': '',
+            'timestamp': ''
+        }
+        inseriti = 0
+        aggiornati = 0
         try:
 
             DbManager(XmlReader.settings['path']['db'])
@@ -28,34 +35,38 @@ class NetScan(webapp3.RequestHandler):
             for r in rows:
                 device = {'net_code': str(r[0]),
                           'net_type': str(r[1]),
-                          'net_status': '',
-                          'net_ip': str(r[2]),
-                          'net_mac': str(r[3]),
-                          'net_mac_info': ''
+                          'net_status': str(r[2]),
+                          'net_ip': str(r[4]),
+                          'net_mac': str(r[5]),
+                          'net_mac_info': str(r[6])
                           }
                 db_devices.append(device)
 
             result = net.cmd_netscan()
-            '''
+
             for device in result['devices']:
-                for db_device in db_devices:
-                    if device['net_mac'] == db_device['net_mac']:
-                        logging.info("UPDATE")
-                        DbManager.update_tb_net_device(device['net_code'], '', 'ON', device['net_ip'],
-                                                       device['net_mac'], device['net_mac_info'])
-                    else:
-                        logging.info("INSERT")
-                        DbManager.insert_tb_net_device(device['net_code'], '', 'ON', device['net_ip'], device['net_mac'],
-                                                       device['net_mac_info'])
-            '''
+                trovato = False
+                if len(db_devices) > 0:
+                    for db_device in db_devices:
+                        if device['net_mac'] == db_device['net_mac']:
+                            DbManager.update_tb_net_device(db_device['net_code'], db_device['net_type'], db_device['net_status'], device['net_ip'], device['net_mac'], device['net_mac_info'])
+                            trovato = True
+                            aggiornati = aggiornati + 1
+                if not trovato:
+                    DbManager.insert_tb_net_device(device['net_code'], ' ', 'ON', device['net_ip'], device['net_mac'],
+                                                   device['net_mac_info'])
+                    inseriti = inseriti + 1
 
-            response = result['devices']
-
+            response['output'] = 'OK'
+            response['new_device'] = str(inseriti)
+            response['updated_device'] = str(aggiornati)
+            logging.info("INSERITI: %s AGGIORNATI: %s", str(inseriti), str(aggiornati))
             DbManager.close_db()
         except Exception as e:
+            logging.exception("Exception")
             response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
         finally:
-            #response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
             self.response.headers.add('Access-Control-Allow-Origin', '*')
             self.response.headers.add('Content-Type', 'application/json')
             self.response.write(dumps(response, indent=4, sort_keys=True))
@@ -86,6 +97,7 @@ class NetCmd(webapp3.RequestHandler):
                         'device_status': '',
                         'timestamp': '',
                         }
+            logging.info(r)
             if response['device_rescmd'] == "100":
                 result = net.cmd_ping(response['device_ip'])
             if response['device_rescmd'] == "102":
@@ -106,6 +118,7 @@ class NetCmd(webapp3.RequestHandler):
             response['output'] = result
             DbManager.close_db()
         except Exception as e:
+            logging.exception("Exception")
             response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
         finally:
             response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])

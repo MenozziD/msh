@@ -61,9 +61,7 @@ def cmd_radioctrl(ip, comando, usr, psw):
               }
     try:
         ss = pxssh.pxssh()
-        if not ss.login(ip, usr, psw):
-            result['result'] = radioctrl_invalid_cred
-            raise ValueError(XmlReader.settings['string_failure']['ssh_login'] + str(ss))
+        ss.login(ip, usr, psw)
         r = cmd_radiostatus(ip, usr, psw)
         if r['interface'] == '' and r['mac'] == '':
             result['result'] = radioctrl_no_interface
@@ -79,24 +77,30 @@ def cmd_radioctrl(ip, comando, usr, psw):
         result['result'] = r['result']
     except ValueError as v:
         result['cmd_output'] = generic % (cmd, v)
+        logging.exception("Exception")
     except Exception as e:
-        result['result'] = radioctrl_err
-        result['cmd_output'] = generic % (cmd, e)
+        if str(e) == "password refused":
+            result['result'] = radioctrl_invalid_cred
+            result['cmd_output'] = generic % (cmd, XmlReader.settings['string_failure']['ssh_login'])
+        else:
+            result['result'] = radioctrl_err
+            result['cmd_output'] = generic % (cmd, e)
+        logging.exception("Exception")
     finally:
-        ss.logout()
+        if not result['result'] == radioctrl_invalid_cred:
+            ss.logout()
         return result
 
 
 def cmd_radiostatus(ip, usr, psw):
     radiostatus_off = 0
     radiostatus_on = 1
-    radioctrl_invalid_cred = 2
+    radiostatus_invalid_cred = 2
     radiostatus_err = -1
     radiostatus_no_interface = -2
     generic = XmlReader.settings['string_failure']['generic']
     cmd = XmlReader.settings['command']['radio_status']
     ss = None
-    flag_nextrow = False
     result = {'ip': ip,
               'mac': '',
               'interface': '',
@@ -105,44 +109,39 @@ def cmd_radiostatus(ip, usr, psw):
               }
     try:
         ss = pxssh.pxssh()
-        if not ss.login(ip, usr, psw):
-            result['result'] = radioctrl_invalid_cred
-            raise ValueError(XmlReader.settings['string_failure']['ssh_login'] + str(ss))
+        ss.login(ip, usr, psw)
         ss.sendline(XmlReader.settings['shell_command']['iwconfig'])
         ss.prompt()
-        app = ss.before
+        app = str(ss.before)[2:-1]
         result['cmd_output'] = app
-        app = sub(r'[\t\r]', ' ', app)
-        app = app.split("\n")
+        app = app.split("\\r\\n")
         for i in app:
-            while i.find("  ") > 0:
-                i = i.replace("  ", " ")
-            r = i.split(" ")
-            r.remove('')
-            if len(r) > 2:
-                if r[1].find("no") == -1 and r[len(r)-1].find("ESSID:\"\"") == -1 and len(r[0]) > 1:
-                    result['interface'] = r[0]
-                    if any('Point:' in s for s in r):
-                        result['mac'] = r[r.index('Point:')+1]
-                        result['result'] = radiostatus_off
-                    else:
-                        flag_nextrow = True
-
-                elif flag_nextrow and any('Point:' in s for s in r):
-                    result['mac'] = r[r.index('Point:') + 1]
-                    result['result'] = radiostatus_on
-                    flag_nextrow = False
-
+            if i.find("ESSID:") > 0 and i.find("ESSID:\"\"") == -1:
+                result['interface'] = i[:8].strip()
+                result['result'] = radiostatus_on
+            if i.find("Access Point:") > 0 and i.find("Access Point: Not-Associated") == -1:
+                result['mac'] = i.split("Access Point: ")[1].strip()
+                if not i[:8] == "        ":
+                    result['interface'] = i[:8].strip()
+                    result['result'] = radiostatus_off
+        logging.info("%s %s", result['interface'], result['mac'])
         if result['interface'] == '' and result['mac'] == '':
             result['result'] = radiostatus_no_interface
             raise ValueError(XmlReader.settings['string_failure']['no_interface'])
     except ValueError as v:
         result['cmd_output'] = generic % (cmd, v)
+        logging.exception("Exception")
     except Exception as e:
-        result['result'] = radiostatus_err
-        result['cmd_output'] = generic % (cmd, e)
+        if str(e) == "password refused":
+            result['result'] = radiostatus_invalid_cred
+            result['cmd_output'] = generic % (cmd, XmlReader.settings['string_failure']['ssh_login'])
+        else:
+            result['result'] = radiostatus_err
+            result['cmd_output'] = generic % (cmd, e)
+        logging.exception("Exception")
     finally:
-        ss.logout()
+        if not result['result'] == radiostatus_invalid_cred:
+            ss.logout()
         return result
 
 
@@ -235,18 +234,17 @@ def cmd_netscan():
         f.close()
         system(XmlReader.settings['shell_command']['remove'] % file_out)
         result['cmd_output'] = app
-        logging.info(app)
         rows = app.split("\n")
         for line in rows:
 
             if "Nmap scan report for " in line:
                 line = line.replace("Nmap scan report for ", "")
                 if line.find("(") < 1:
-                    device['net_code'] = line
+                    device['net_code'] = line.strip()
                     device['net_ip'] = line
                 elif line.find("(") > 1:
                     a = line.split("(")
-                    device['net_code'] = a[0]
+                    device['net_code'] = a[0].strip()
                     a[1] = a[1].replace(")", "")
                     device['net_ip'] = a[1]
 
@@ -255,12 +253,12 @@ def cmd_netscan():
             if "MAC Address" in line:
                 line = line.replace("MAC Address", "")
                 if line.find("(") < 1:
-                    device['net_mac'] = line
+                    device['net_mac'] = line.strip()
                     device['net_mac_info'] = line
                 elif line.find("(") > 1:
                     a = line.split("(")
                     a[0] = a[0].replace(": ", "")
-                    device['net_mac'] = a[0]
+                    device['net_mac'] = a[0].strip()
                     a[1] = a[1].replace(")", "")
                     device['net_mac_info'] = a[1]
 
@@ -280,7 +278,7 @@ def cmd_netscan():
         else:
             result['result'] = netscan_fail
 
-    except  Exception as e:
+    except Exception as e:
         result['result'] = netscan_err
         result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % ( XmlReader.settings['command']['net_scan'], e)
 
