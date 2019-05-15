@@ -62,6 +62,7 @@ class NetScan(webapp3.RequestHandler):
             logging.info("RESPONSE CODE: %s", self.response.status)
             logging.info("RESPONSE PAYLOAD: %s", response)
 
+            
 class NetCmd(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
@@ -115,8 +116,6 @@ class NetCmd(webapp3.RequestHandler):
             logging.info("RESPONSE PAYLOAD: %s", response)
 
 
-
-
 class Index(webapp3.RequestHandler):
     def get(self):
         logging.info("%s %s", self.request.method, self.request.url)
@@ -167,9 +166,9 @@ def handle_error(request, response, exception):
 app = webapp3.WSGIApplication([
     ('/api/netcmd', NetCmd),
     ('/api/netscan', NetScan),
+    ('/api/diff', Diff),
     ('/', Index),
     (r'/static/(\D+)', Static),
-    (r'/api/diff', Diff),
 ], debug=True)
 app.error_handlers[404] = handle_error
 app.error_handlers[405] = handle_error
@@ -181,7 +180,7 @@ def main():
     logging.basicConfig(
         filename=XmlReader.settings['log']['filename'],
         format=XmlReader.settings['log']['format'],
-        level=logging.INFO)
+        level=XmlReader.settings['log']['level'])
     #ip_address = socket.gethostbyname(socket.gethostname())
     ip_address = '192.168.1.111'
     logging.info("Your Computer IP Address is %s", ip_address)
