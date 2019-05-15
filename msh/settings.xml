@@ -12,6 +12,8 @@
 		<!-- Se valorizzato con None logga in console -->
 		<filename>None</filename>
 		<format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>
+		<!-- debug, info, warning, error, critical -->
+        	<level>info</level>
 	</log>
 	<class_error>
 		<error name="404">&lt;class 'webob.exc.HTTPNotFound'&gt;</error>
