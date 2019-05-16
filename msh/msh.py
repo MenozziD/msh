@@ -27,9 +27,8 @@ def main():
         filename=XmlReader.settings['log']['filename'],
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
-    if XmlReader.settings['ip_mode'] == 'py':
-        ip_address = gethostbyname(gethostname())
-    else:
+    ip_address = gethostbyname(gethostname())
+    if str(ip_address) == '127.0.0.1':
         ip_address = get_ip_and_subnet()['ip']
     info("Your Computer IP Address is %s", ip_address)
     port = XmlReader.settings['porta']

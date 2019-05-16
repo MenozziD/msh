@@ -5,6 +5,7 @@ from module.utility import XmlReader
 from module.net import cmd_netscan, get_ip_and_subnet
 from json import dumps
 from datetime import datetime
+from socket import gethostbyname, gethostname
 
 
 class NetScan(RequestHandler):
@@ -33,7 +34,11 @@ class NetScan(RequestHandler):
                           }
                 db_devices.append(device)
             ip_subnet = get_ip_and_subnet()
-            ip = ip_subnet['ip'].split('.')
+            ip = gethostbyname(gethostname())
+            if str(ip) == '127.0.0.1':
+                ip = ip_subnet['ip'].split('.')
+            else:
+                ip = str(ip).split('.')
             subnet = ip_subnet['subnet'].split('.')
             stri = ''
             for s in subnet:

@@ -229,7 +229,6 @@ def cmd_netscan(ip, subnet):
               }
     try:
         system(XmlReader.settings['shell_command']['net_scan'] % (ip, subnet, file_out))
-        print(XmlReader.settings['shell_command']['net_scan'] % (ip, subnet, file_out))
         f = open(file_out, "r")
         app = f.read()
         f.close()
