@@ -62,7 +62,7 @@ class NetScan(RequestHandler):
                                 trovato = True
                                 aggiornati = aggiornati + 1
                     if not trovato:
-                        DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], ' ', 'ON', device['net_ip'], device['net_mac'], device['net_mac_info']))
+                        DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', device['net_ip'], device['net_mac'], device['net_mac_info']))
                         inseriti = inseriti + 1
             DbManager.close_db()
             response['output'] = 'OK'
