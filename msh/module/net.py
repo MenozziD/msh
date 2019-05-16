@@ -2,11 +2,10 @@ from os import system
 from pexpect import pxssh
 from re import sub
 from module.utility import XmlReader
-import logging
-import os
+from logging import info, exception
 
 
-def cmd_ping(ip, pacchetti=5):
+def cmd_ping(ip, pacchetti=3):
     ping_ok = 0
     ping_err = -1
     ping_fail = 1
@@ -38,6 +37,7 @@ def cmd_ping(ip, pacchetti=5):
         else:
             result['result'] = ping_fail
     except Exception as e:
+        exception("Exception")
         result['result'] = ping_err
         result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['ping'], e)
     finally:
@@ -76,16 +76,16 @@ def cmd_radioctrl(ip, comando, usr, psw):
         result['mac'] = r['mac']
         result['result'] = r['result']
     except ValueError as v:
+        exception("Exception")
         result['cmd_output'] = generic % (cmd, v)
-        logging.exception("Exception")
     except Exception as e:
+        exception("Exception")
         if str(e) == "password refused":
             result['result'] = radioctrl_invalid_cred
             result['cmd_output'] = generic % (cmd, XmlReader.settings['string_failure']['ssh_login'])
         else:
             result['result'] = radioctrl_err
             result['cmd_output'] = generic % (cmd, e)
-        logging.exception("Exception")
     finally:
         if not result['result'] == radioctrl_invalid_cred:
             ss.logout()
@@ -124,21 +124,21 @@ def cmd_radiostatus(ip, usr, psw):
                 if not i[:8] == "        ":
                     result['interface'] = i[:8].strip()
                     result['result'] = radiostatus_off
-        logging.info("%s %s", result['interface'], result['mac'])
+        info("%s %s", result['interface'], result['mac'])
         if result['interface'] == '' and result['mac'] == '':
             result['result'] = radiostatus_no_interface
             raise ValueError(XmlReader.settings['string_failure']['no_interface'])
     except ValueError as v:
+        exception("Exception")
         result['cmd_output'] = generic % (cmd, v)
-        logging.exception("Exception")
     except Exception as e:
+        exception("Exception")
         if str(e) == "password refused":
             result['result'] = radiostatus_invalid_cred
             result['cmd_output'] = generic % (cmd, XmlReader.settings['string_failure']['ssh_login'])
         else:
             result['result'] = radiostatus_err
             result['cmd_output'] = generic % (cmd, e)
-        logging.exception("Exception")
     finally:
         if not result['result'] == radiostatus_invalid_cred:
             ss.logout()
@@ -165,12 +165,13 @@ def cmd_pcwin_shutdown(ip, usr, psw):
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
-        logging.info(app)
-        if app.find(XmlReader.settings['string_success']['pcwin_shutdown']):
+        info(app)
+        if app.find(XmlReader.settings['string_success']['pcwin_shutdown']) > 0:
             result['result'] = pcwin_off_ok
         else:
             result['result'] = pcwin_off_fail
     except Exception as e:
+        exception("Exception")
         result['result'] = pcwin_off_err
         result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['pcwin_shutdown'], e)
     finally:
@@ -196,26 +197,25 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
         result['cmd_output'] = app
         app = sub(r'[\t\n\r]', ' ', app)
         app = app.strip()
-        logging.info(app)
-        if app.find(XmlReader.settings['string_success']['wake_on_lan']):
+        info(app)
+        if app.find(XmlReader.settings['string_success']['wake_on_lan']) > 0:
             result['result'] = wol_ok
         else:
             result['result'] = wol_fail
     except Exception as e:
+        exception("Exception")
         result['result'] = wol_err
         result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['wake_on_lan'], e)
     finally:
         return result
 
 
-def cmd_netscan():
+def cmd_netscan(ip, subnet):
     netscan_ok = 0
     netscan_err = -1
     netscan_fail = 1
     count = 0
-
     file_out = XmlReader.settings['out_filename']['net_scan']
-
     result = {'result': 0,
               'devices': [],
               'cmd_output': ''
@@ -228,7 +228,8 @@ def cmd_netscan():
               'net_mac_info': ''
               }
     try:
-        system(XmlReader.settings['shell_command']['net_scan'] % file_out)
+        system(XmlReader.settings['shell_command']['net_scan'] % (ip, subnet, file_out))
+        print(XmlReader.settings['shell_command']['net_scan'] % (ip, subnet, file_out))
         f = open(file_out, "r")
         app = f.read()
         f.close()
@@ -236,7 +237,6 @@ def cmd_netscan():
         result['cmd_output'] = app
         rows = app.split("\n")
         for line in rows:
-
             if "Nmap scan report for " in line:
                 line = line.replace("Nmap scan report for ", "")
                 if line.find("(") < 1:
@@ -247,9 +247,7 @@ def cmd_netscan():
                     device['net_code'] = a[0].strip()
                     a[1] = a[1].replace(")", "")
                     device['net_ip'] = a[1]
-
                 count = count + 1
-
             if "MAC Address" in line:
                 line = line.replace("MAC Address", "")
                 if line.find("(") < 1:
@@ -261,10 +259,9 @@ def cmd_netscan():
                     device['net_mac'] = a[0].strip()
                     a[1] = a[1].replace(")", "")
                     device['net_mac_info'] = a[1]
-
             if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                 result['devices'].append(device)
-                logging.info(str(device))
+                info(str(device))
                 device = {'net_code': '',
                           'net_type': '',
                           'net_status': '',
@@ -272,15 +269,32 @@ def cmd_netscan():
                           'net_mac': '',
                           'net_mac_info': ''
                           }
-
         if count > 0:
-            result['result']= netscan_ok
+            result['result'] = netscan_ok
         else:
             result['result'] = netscan_fail
-
     except Exception as e:
+        exception("Exception")
         result['result'] = netscan_err
-        result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % ( XmlReader.settings['command']['net_scan'], e)
-
+        result['cmd_output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net_scan'], e)
     finally:
         return result
+
+
+def get_ip_and_subnet():
+    result = {
+        'ip': '',
+        'subnet': ''
+    }
+    file_out = XmlReader.settings['out_filename']['ifconfig']
+    system(XmlReader.settings['shell_command']['ifconfig1'] % file_out)
+    f = open(file_out, "r")
+    app = f.read()
+    f.close()
+    system(XmlReader.settings['shell_command']['remove'] % file_out)
+    app = app.split("\n")
+    for a in app:
+        if a.find("inet addr:127.0.0.1") == -1 and a.find("inet addr:") > 0:
+            result['ip'] = a.split("inet addr:")[1].split("Bcast")[0].strip()
+            result['subnet'] = a.split("Mask:")[1]
+    return result
