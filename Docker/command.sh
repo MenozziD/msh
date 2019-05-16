@@ -1,8 +1,9 @@
 #Accesso alla cartella
-cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/target_image
+cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
 
 # Accedere al container
 docker exec -i -t raspberrypi /bin/bash
+docker exec -i -t esprele /bin/bash
 
 # Info sulla VM di Docker in utilizzo
 docker version
@@ -20,8 +21,8 @@ docker container ls --all | awk '{print $1}' | xargs docker container rm
 docker build . --tag=msh:v0.0.1
 
 # Creazione di un'immagine ed esecuzione
-docker build . --tag=msrheal:v0.0.1
-docker run -d --name raspberrypi -p 8080:65177 msrheal:v0.0.1
+docker build . --tag=raspberrypi:v0.0.1
+docker run -d --name raspberrypi -p 8080:65177 raspberrypi:v0.0.1
 
 # Stoppare/Avviare il container
 docker container stop raspberrypi

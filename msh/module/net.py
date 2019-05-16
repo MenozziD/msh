@@ -294,7 +294,7 @@ def get_ip_and_subnet():
     system(XmlReader.settings['shell_command']['remove'] % file_out)
     app = app.split("\n")
     for a in app:
-        if a.find("inet addr:127.0.0.1") == -1 and a.find("inet addr:") > 0:
-            result['ip'] = a.split("inet addr:")[1].split("Bcast")[0].strip()
-            result['subnet'] = a.split("Mask:")[1]
+        if a.find("127.0.0.1") == -1 and a.find("inet") > 0:
+            result['ip'] = a.split("inet ")[1].split("netmask")[0].strip()
+            result['subnet'] = a.split("netmask ")[1].split("broadcast")[0].strip()
     return result

@@ -4,6 +4,6 @@
 /msh/*.log
 /msh/module/__pycache__/*
 /msh/controller/__pycache__/*
-/Docker/target_image/msh/*
-/Docker/esp_rele/.idea/*
-/Docker/esp_rele/*.log
+/Docker/raspberry_image/msh/*
+/Docker/esp_rele_image/.idea/*
+/Docker/esp_rele_image/*.log

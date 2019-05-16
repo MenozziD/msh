@@ -96,6 +96,15 @@ http://localhost
 Se a segutio di modifiche al sorgente si vuole effettuare un nuovo deploy eseguire i seguenti comandi
 
 ```
-cd msh/Docker/target_image
+cd msh/Docker/raspberry_image
+./deploy.sh
+```
+
+### Avviare altri nodi
+
+Se si desidera creare una rete di nodi con cui comunicare tramite il container del raspberry
+
+```
+cd msh/Docker/esp_rele_image
 ./deploy.sh
 ```
