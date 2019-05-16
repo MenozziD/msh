@@ -21,6 +21,7 @@ class XmlReader:
         porta = xml.getElementsByTagName('porta')[0].firstChild.data
         lingua = xml.getElementsByTagName('lingua')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
+        ip_mode = xml.getElementsByTagName('ip_mode')[0].firstChild.data
         path = {
             'ui': xml.getElementsByTagName('path')[0].getElementsByTagName('ui')[0].firstChild.data,
             'index': xml.getElementsByTagName('path')[0].getElementsByTagName('index')[0].firstChild.data,
@@ -94,6 +95,7 @@ class XmlReader:
             'porta': porta,
             'lingua': lingua,
             'timestamp': timestamp,
+            'ip_mode': ip_mode,
             'path': path,
             'log': log,
             'class_error': class_error,

@@ -2,6 +2,8 @@
 	<porta>65177</porta>
 	<lingua>IT</lingua>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
+	<!-- Se valorizzato con py usa la libreria, in tutti gli altri casi usa la nostra funzione-->
+	<ip_mode>altro</ip_mode>
 	<path>
 		<ui>webui/</ui>
 		<index>/static/page/index.html</index>

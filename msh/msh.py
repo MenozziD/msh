@@ -27,8 +27,10 @@ def main():
         filename=XmlReader.settings['log']['filename'],
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
-    # ip_address = gethostbyname(gethostname())
-    ip_address = get_ip_and_subnet()['ip']
+    if XmlReader.settings['ip_mode'] == 'py':
+        ip_address = gethostbyname(gethostname())
+    else:
+        ip_address = get_ip_and_subnet()['ip']
     info("Your Computer IP Address is %s", ip_address)
     port = XmlReader.settings['porta']
     info("Server in ascolto su http://%s:%s", ip_address, port)
