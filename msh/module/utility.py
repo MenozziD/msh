@@ -1,6 +1,5 @@
 from xml.dom import minidom
-import logging
-
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 class XmlReader:
     settings = {
@@ -10,11 +9,11 @@ class XmlReader:
         }
     }
     log_mapping = {
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warning': logging.WARNING,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL
+        'debug': DEBUG,
+        'info': INFO,
+        'warning': WARNING,
+        'error': ERROR,
+        'critical': CRITICAL
     }
 
     def __init__(self):
@@ -45,6 +44,7 @@ class XmlReader:
             'ping': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ping')[0].firstChild.data,
             'remove': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('remove')[0].firstChild.data,
             'ifconfig': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ifconfig')[0].firstChild.data,
+            'ifconfig1': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ifconfig1')[0].firstChild.data,
             'iwconfig': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('iwconfig')[0].firstChild.data,
             'pcwin_shutdown': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
             'wake_on_lan': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data,
@@ -52,6 +52,7 @@ class XmlReader:
         }
         out_filename = {
             'ping': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('ping')[0].firstChild.data,
+            'ifconfig': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('ifconfig')[0].firstChild.data,
             'pcwin_shutdown': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
             'wake_on_lan': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data,
             'net_scan': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('net_scan')[0].firstChild.data
@@ -83,11 +84,11 @@ class XmlReader:
             'select_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device')[0].firstChild.data,
             'select_one_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('select_one_tb_net_device')[0].firstChild.data,
             'insert_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('insert_tb_net_device')[0].firstChild.data,
-            'update_tb_net_device':xml.getElementsByTagName('query')[0].getElementsByTagName('update_tb_net_device')[0].firstChild.data,
+            'update_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('update_tb_net_device')[0].firstChild.data,
             'select_last_tb_net_com': xml.getElementsByTagName('query')[0].getElementsByTagName('select_last_tb_net_com')[0].firstChild.data,
             'select_tb_net_diz_cmd': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_diz_cmd')[0].firstChild.data,
             'update_state_from_ip_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('update_state_from_ip_tb_net_device')[0].firstChild.data,
-            'select_one_tb_res_decode':xml.getElementsByTagName('query')[0].getElementsByTagName('select_one_tb_res_decode')[0].firstChild.data
+            'select_one_tb_res_decode': xml.getElementsByTagName('query')[0].getElementsByTagName('select_one_tb_res_decode')[0].firstChild.data
         }
         XmlReader.settings = {
             'porta': porta,
