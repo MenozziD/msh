@@ -3,6 +3,7 @@ from pexpect import pxssh
 from re import sub
 from module.utility import XmlReader
 from logging import info, exception
+from psutil import net_if_addrs
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -280,7 +281,7 @@ def cmd_netscan(ip, subnet):
         return result
 
 
-def get_ip_and_subnet():
+def get_ip_and_subnet_custom():
     result = {
         'ip': '',
         'subnet': ''
@@ -296,4 +297,18 @@ def get_ip_and_subnet():
         if a.find("127.0.0.1") == -1 and a.find("inet addr") > 0:
             result['ip'] = a.split("inet addr:")[1].split("Bcast")[0].strip()
             result['subnet'] = a.split("Mask:")[1].strip()
+    return result
+
+
+def get_ip_and_subnet():
+    result = {
+        'ip': '',
+        'subnet': ''
+    }
+    for iface, value in net_if_addrs().items():
+        for addr in value:
+            if addr.netmask is not None:
+                if addr.address.split('.')[0] == '192':
+                    result['ip'] = addr.address
+                    result['subnet'] = addr.netmask
     return result
