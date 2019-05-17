@@ -34,11 +34,7 @@ class NetScan(RequestHandler):
                           }
                 db_devices.append(device)
             ip_subnet = get_ip_and_subnet()
-            ip = gethostbyname(gethostname())
-            if str(ip) == '127.0.0.1':
-                ip = ip_subnet['ip'].split('.')
-            else:
-                ip = str(ip).split('.')
+            ip = ip_subnet['ip'].split('.')
             subnet = ip_subnet['subnet'].split('.')
             stri = ''
             for s in subnet:
