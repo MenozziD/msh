@@ -5,12 +5,14 @@ from module.utility import XmlReader
 from module.net import get_ip_and_subnet
 from controller.net_cmd import NetCmd
 from controller.net_scan import NetScan
+from controller.device_list import DeviceList
 from controller.static import Index, Static, Diff, handle_error
 
 
 app = WSGIApplication([
-    ('/api/netcmd', NetCmd),
-    ('/api/netscan', NetScan),
+    ('/api/device_list', DeviceList),
+    ('/api/net_cmd', NetCmd),
+    ('/api/net_scan', NetScan),
     ('/api/diff', Diff),
     ('/', Index),
     (r'/static/(\D+)', Static),
