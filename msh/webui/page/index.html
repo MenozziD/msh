@@ -7,7 +7,6 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-
 		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 		<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -15,39 +14,62 @@
 	
 		<script src="/static/js/home.js"></script>
 		
-		<title>Test</title>
+		<title>Home</title>
 	</head>
 	<body>
 		<div class="container">
+            		<h4 class="mb-3">Home</h4>
 			<div class="row">
-				<div class="col-md-4 order-md-2 mb-4">
-					<h4 class="d-flex justify-content-between align-items-center mb-3">
-            			<span class="text-muted">Output</span>
-          			</h4>
-					<label for="result">Result</label>
-					<input type="text" class="form-control" id="result" readonly>
-				</div>
-				<div class="col-md-8 order-md-1">
-					<h4 class="mb-3">Home</h4>
+				<div class="col-md-12">
 					<form class="needs-validation" novalidate="" id="form">
 						<div class="row">
-							<div class="col-md-6 mb-3">
+							<div class="col-md-4 mb-3">
 								<label for="device">Device</label>
 								<input type="text" class="form-control" id="device" placeholder="" value="" required="">
 								<div class="invalid-feedback">
 									Il device &egrave un campo obbligatorio
 								</div>
 							</div>
-							<div class="col-md-6 mb-3">
+							<div class="col-md-4 mb-3">
 								<label for="command">Command</label>
 								<input type="text" class="form-control" id="command" placeholder="" value="" required="">
 								<div class="invalid-feedback">
 									Il comando &egrave un campo obbligatorio
 								</div>
 							</div>
+                            				<div class="col-md-4 mb-3">
+								<label for="result">Result</label>
+								<input type="text" class="form-control" id="result" readonly>
+							</div>
 							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="invia()">Invia</button>
 						</div>
 					</form>
+				</div>
+			</div>
+            		<br>
+			<div class="row">
+				<div class="col-md-12">
+				    <form>
+					<div class="row">
+					    <div class="col-md-3 mb-3">
+						<label for="esito">Esito</label>
+						<input type="text" class="form-control" id="esito" readonly>
+					    </div>
+					    <div class="col-md-3 mb-3">
+						<label for="found">Trovati</label>
+						<input type="text" class="form-control" id="found" readonly>
+					    </div>
+					    <div class="col-md-3 mb-3">
+						<label for="new">Nuovi</label>
+						<input type="text" class="form-control" id="new" readonly>
+					    </div>
+					    <div class="col-md-3 mb-3">
+						<label for="update">Aggiornati</label>
+						<input type="text" class="form-control" id="update" readonly>
+					    </div>
+					    <button class="btn btn-primary btn-lg btn-block" type="button" onclick="scan()">Net Scan</button>
+					</div>
+				    </form>
 				</div>
 			</div>
 		</div>
