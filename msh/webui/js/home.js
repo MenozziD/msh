@@ -12,7 +12,7 @@ function invia(){
 	if (ko > 0){
 		console.log("Non faccio niente, ci sono dei campi invaldi");
 	} else {
-	    console.log("Tutto ok");
+	    console.log("Tutto ok, faccio la chiamata");
 		$.ajax({
 		    url: "/api/netcmd",
 		    type: 'GET',
@@ -21,15 +21,27 @@ function invia(){
 				c: command
 			},
 		    success: function(response){
-                console.log("OK");
 				var json = $.parseJSON(JSON.stringify(response));
-				console.log(response);
-				console.log(json["device_status"]);
 				$('#result')[0].value = json["device_status"];
             },
             error: function(xhr){
-                console.log("KO");
             }
         });
 	}
+}
+
+function scan(){
+    $.ajax({
+        url: "/api/netscan",
+        type: 'GET',
+        success: function(response){
+            var json = $.parseJSON(JSON.stringify(response));
+            $('#esito')[0].value = json["output"];
+            $('#found')[0].value = json["find_device"];
+            $('#new')[0].value = json["new_device"];
+            $('#update')[0].value = json["updated_device"];
+        },
+        error: function(xhr){
+        }
+    });
 }
