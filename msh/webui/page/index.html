@@ -7,6 +7,7 @@
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+
 		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 		<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -18,27 +19,27 @@
 	</head>
 	<body>
 		<div class="container">
-            		<h4 class="mb-3">Home</h4>
-			<div class="row">
+            		<h4 class="mb-3 text-center">Home</h4>
+			<div class="mb-3  row">
 				<div class="col-md-12">
 					<form class="needs-validation" novalidate="" id="form">
 						<div class="row">
 							<div class="col-md-4 mb-3">
-								<label for="device">Device</label>
+								<label for="device">Dispositivo</label>
 								<input type="text" class="form-control" id="device" placeholder="" value="" required="">
 								<div class="invalid-feedback">
 									Il device &egrave un campo obbligatorio
 								</div>
 							</div>
 							<div class="col-md-4 mb-3">
-								<label for="command">Command</label>
+								<label for="command">Comando</label>
 								<input type="text" class="form-control" id="command" placeholder="" value="" required="">
 								<div class="invalid-feedback">
 									Il comando &egrave un campo obbligatorio
 								</div>
 							</div>
-                            				<div class="col-md-4 mb-3">
-								<label for="result">Result</label>
+							<div class="col-md-4 mb-3">
+								<label for="result">Esito</label>
 								<input type="text" class="form-control" id="result" readonly>
 							</div>
 							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="invia()">Invia</button>
@@ -46,8 +47,7 @@
 					</form>
 				</div>
 			</div>
-            		<br>
-			<div class="row">
+            		<div class="mb-3 row">
 				<div class="col-md-12">
 				    <form>
 					<div class="row">
@@ -71,7 +71,33 @@
 					</div>
 				    </form>
 				</div>
+		    </div>
+		    <div class="row">
+			<div class="col-md-12">
+			    <form>
+				<div class="row">
+				    <button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="list()">List Device</button>
+				</div>
+				<div class="table-responsive">
+				    <h5 id="errore" class="text-center"></h5>
+				    <table class="table invisible" id="table" >
+					    <thead>
+						<tr>
+						    <th>Codice</th>
+						    <th>Tipo</th>
+						    <th>Stato</th>
+						    <th>IP</th>
+						    <th>MAC</th>
+						    <th>MAC info</th>
+						</tr>
+					    </thead>
+					    <tbody>
+					    </tbody>
+				    </table>
+				</div>
+			    </form>
 			</div>
+		    </div>
 		</div>
 	</body>
 </html>
