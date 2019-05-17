@@ -24,6 +24,7 @@ class NetCmd(RequestHandler):
                         'device_psw': str(r[7]),
                         'device_strcmd': str(r[4]),
                         'device_rescmd': str(r[5]),
+                        'output_command': '',
                         'output': '',
                         'req_response': '',
                         'device_status': '',
@@ -53,7 +54,8 @@ class NetCmd(RequestHandler):
             else:
                 response['req_response'] = "-"
                 response['device_status'] = "-"
-            response['output'] = result
+            response['output_command'] = result
+            response['output'] = 'OK'
             DbManager.close_db()
         except Exception as e:
             exception("Exception")
