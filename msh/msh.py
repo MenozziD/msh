@@ -1,4 +1,3 @@
-from socket import gethostbyname, gethostname
 from webapp3 import WSGIApplication
 from logging import basicConfig, info
 from paste import httpserver
@@ -27,9 +26,7 @@ def main():
         filename=XmlReader.settings['log']['filename'],
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
-    ip_address = gethostbyname(gethostname())
-    if str(ip_address) == '127.0.0.1':
-        ip_address = get_ip_and_subnet()['ip']
+    ip_address = get_ip_and_subnet()['ip']
     info("Your Computer IP Address is %s", ip_address)
     port = XmlReader.settings['porta']
     info("Server in ascolto su http://%s:%s", ip_address, port)
