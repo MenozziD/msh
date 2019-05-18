@@ -1,7 +1,7 @@
 from os import system
 from pexpect import pxssh
 from re import sub
-from module.utility import XmlReader
+from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
 

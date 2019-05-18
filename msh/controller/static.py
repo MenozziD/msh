@@ -1,6 +1,6 @@
 from webapp3 import RequestHandler
 from logging import info, exception
-from module.utility import XmlReader
+from module.xml_reader import XmlReader
 from json import loads
 
 

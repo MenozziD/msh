@@ -23,7 +23,7 @@ class DbManager:
         try:
             cur = DbManager.db.cursor()
             info("ESEGUO LA QUERY: %s", query)
-            cur.execute(query)
+            cur.execute(str(query))
             result = cur.fetchall()
         except Error:
             DbManager.db.rollback()
@@ -35,7 +35,7 @@ class DbManager:
         try:
             cur = DbManager.db.cursor()
             info("ESEGUO LA QUERY: %s", query)
-            cur.execute(query)
+            cur.execute(str(query))
             DbManager.db.commit()
         except Error:
             DbManager.db.rollback()

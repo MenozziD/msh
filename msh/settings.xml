@@ -10,10 +10,10 @@
 	</path>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
-		<filename>None</filename>
+		<filename>msh.log</filename>
 		<format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>
 		<!-- debug, info, warning, error, critical -->
-        	<level>info</level>
+		<level>info</level>
 	</log>
 	<class_error>
 		<error name="404">&lt;class 'webob.exc.HTTPNotFound'&gt;</error>
@@ -65,6 +65,8 @@
 		<select_tb_net_diz_cmd>SELECT TB_NET_DEVICE.NET_CODE,TB_NET_DEVICE.NET_TYPE, TB_NET_DEVICE.NET_IP, TB_NET_DEVICE.NET_MAC, TB_NET_DIZ_CMD.CMD_STR, TB_NET_DIZ_CMD.CMD_RESULT, TB_NET_DEVICE.NET_USER, TB_NET_DEVICE.NET_PSW FROM TB_NET_DEVICE INNER JOIN TB_NET_DIZ_CMD ON TB_NET_DEVICE.NET_TYPE = TB_NET_DIZ_CMD.CMD_NET_TYPE WHERE TB_NET_DEVICE.NET_CODE LIKE '%s' AND TB_NET_DIZ_CMD.CMD_STR LIKE '%s'</select_tb_net_diz_cmd>
 		<select_last_tb_net_com>SELECT REQ_ID,REQ_NODE,REQ_CMD,REQ_RESPONSE,REQ_RESULT,REQ_DATETIME FROM TB_NET_COM ORDER BY REQ_ID DESC LIMIT 1;</select_last_tb_net_com>
 		<select_one_tb_res_decode>SELECT RES_RESULT, RES_STATE FROM TB_RES_DECODE WHERE RES_DEVICE_TYPE LIKE '%s' AND RES_DEVICE_SUBTYPE LIKE '%s' AND RES_COMMAND LIKE '%s' AND RES_LANG LIKE '%s' AND RES_VALUE == %s ;</select_one_tb_res_decode>
+		<select_net_device_type>SELECT DISTINCT CMD_NET_TYPE FROM TB_NET_DIZ_CMD;</select_net_device_type>
+        <select_net_command_for_type>SELECT CMD_STR FROM TB_NET_DIZ_CMD WHERE CMD_NET_TYPE = '%s';</select_net_command_for_type>
 		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_IP,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s','%s','%s','%s');</insert_tb_net_device>
 		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s',NET_IP = '%s',NET_MAC_INFO = '%s' WHERE NET_MAC LIKE '%s';</update_tb_net_device>
 		<update_state_from_ip_tb_net_device>UPDATE TB_NET_DEVICE SET NET_STATUS = '%s' WHERE NET_IP LIKE '%s';</update_state_from_ip_tb_net_device>

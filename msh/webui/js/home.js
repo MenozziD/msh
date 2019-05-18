@@ -54,7 +54,7 @@ function scan(){
     });
 }
 
-function list(){
+function deviceList(){
     $.ajax({
         url: "/api/device_list",
         type: 'GET',

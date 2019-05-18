@@ -1,7 +1,7 @@
 from webapp3 import RequestHandler
 from logging import info, exception
 from module.dbmanager import DbManager
-from module.utility import XmlReader
+from module.xml_reader import XmlReader
 from module.net import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radiostatus, cmd_radioctrl
 from json import dumps
 from datetime import datetime
@@ -15,7 +15,7 @@ class NetCmd(RequestHandler):
             dispositivo = self.request.get('d')
             comando = self.request.get('c')
             DbManager(XmlReader.settings['path']['db'])
-            r = DbManager.select(DbManager.select(XmlReader.settings['query']['select_tb_net_diz_cmd'] % (dispositivo, comando)))
+            r = DbManager.select(XmlReader.settings['query']['select_tb_net_diz_cmd'] % (dispositivo, comando))
             response = {'device_code': str(r[0]),
                         'device_type': str(r[1]),
                         'device_ip': str(r[2]),

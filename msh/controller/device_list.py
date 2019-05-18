@@ -1,7 +1,7 @@
 from webapp3 import RequestHandler
 from logging import info, exception
 from module.dbmanager import DbManager
-from module.utility import XmlReader
+from module.xml_reader import XmlReader
 from json import dumps
 from datetime import datetime
 
@@ -12,7 +12,7 @@ class DeviceList(RequestHandler):
         response = {}
         try:
             DbManager(XmlReader.settings['path']['db'])
-            rows = DbManager.select(DbManager.select(XmlReader.settings['query']['select_tb_net_device']))
+            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
             devices = []
             for r in rows:
                 device = {'device_code': str(r[0]),
