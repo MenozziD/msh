@@ -25,6 +25,7 @@ RUN apt-get install python3-pip -y
 RUN pip3 install --trusted-host pypi.python.org webapp3
 RUN pip3 install --trusted-host pypi.python.org paste
 RUN pip3 install --trusted-host pypi.python.org pexpect
+RUN pip3 install --trusted-host pypi.python.org netifaces
 # SQLITE
 RUN apt-get install sqlite3 libsqlite3-dev -y
 # SUDO

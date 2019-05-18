@@ -3,7 +3,7 @@ from pexpect import pxssh
 from re import sub
 from module.utility import XmlReader
 from logging import info, exception
-from psutil import net_if_addrs
+from netifaces import AF_INET, gateways, ifaddresses
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -301,14 +301,6 @@ def get_ip_and_subnet_custom():
 
 
 def get_ip_and_subnet():
-    result = {
-        'ip': '',
-        'subnet': ''
-    }
-    for iface, value in net_if_addrs().items():
-        for addr in value:
-            if addr.netmask is not None:
-                if addr.address.split('.')[0] == '192':
-                    result['ip'] = addr.address
-                    result['subnet'] = addr.netmask
+    result = {'ip': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'],
+              'subnet': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask']}
     return result
