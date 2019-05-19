@@ -1,3 +1,7 @@
+var device_net_list = [];
+var device_net_commands= [];
+
+
 function invia(){
     var form = $('#form')[0];
 	var device = $('#device')[0].value;
@@ -66,7 +70,9 @@ function deviceNetList(){
                 $('#errore').text("");
                 var devices = json["devices"]
                 $("#table tbody").empty();
+                device_net_list = [];
                 for(var i = 0; i < devices.length;i++) {
+                    device_net_list.push(devices[i]);
                     $('#table tbody').append('<tr>');
                     $('#table tbody').append('<td><input type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
                     $('#table tbody').append('<td><input type="text" id="type' + i + '" value="' + devices[i]['net_type'] + '"></td>');
@@ -86,76 +92,49 @@ function deviceNetList(){
 }
 
 function deviceNetCode(){
-    $.ajax({
-        url: "/api/device_net_list",
-        type: 'GET',
-        success: function(response){
-            var json = $.parseJSON(JSON.stringify(response));
-            if (json["output"].search(":") > -1){
-                $('#errore').text(json["output"].split(": ")[1]);
-            } else {
-                var devices = json["devices"]
-                $("#drop_device").empty();
-                for(var i = 0; i < devices.length;i++) {
-                    $('#drop_device').append('<li class="dropdown-item">' + devices[i]['net_code'] + '</li>');
-                    $("#drop_device li").click(function(){
-                      $('#device').text($(this).text());
-                      $("#device").val($(this).text());
-                   });
-                }
-            }
-        },
-        error: function(xhr){
-        }
-    });
+    $("#drop_device").empty();
+    for(var i = 0; i < device_net_list.length;i++) {
+        $('#drop_device').append('<li class="dropdown-item">' + device_net_list[i]['net_code'] + '</li>');
+        $("#drop_device li").click(function(){
+          $('#device').text($(this).text());
+          $("#device").val($(this).text());
+       });
+    }
 }
 
 function deviceNetCommand(){
-     $.ajax({
-        url: "/api/device_net_list",
-        type: 'GET',
-        success: function(response){
-            var json = $.parseJSON(JSON.stringify(response));
-            if (json["output"].search(":") > -1){
-                $('#errore').text(json["output"].split(": ")[1]);
-            } else {
-                var devices = json["devices"]
-                $("#drop_device").empty();
-                for(var i = 0; i < devices.length;i++) {
-                    if (devices[i]['net_code'] == $('#device')[0].value){
-                        $.ajax({
-                            url: "/api/device_net_command",
-                            type: 'GET',
-                            data: {
-                                d: devices[i]['net_type']
-                            },
-                            success: function(response){
-                                var json = $.parseJSON(JSON.stringify(response));
-                                if (json["output"].search(":") > -1){
-                                    $('#errore').text(json["output"].split(": ")[1]);
-                                } else {
-                                    var commands = json["commands"]
-                                    $("#drop_command").empty();
-                                    for(var i = 0; i < commands.length;i++) {
-                                        $('#drop_command').append('<li class="dropdown-item">' + commands[i]['cmd_str'] + '</li>');
-                                        $("#drop_command li").click(function(){
-                                          $('#command').text($(this).text());
-                                          $("#command").val($(this).text());
+    for(var i = 0; i < device_net_list.length;i++) {
+        if (device_net_list[i]['net_code'] == $('#device')[0].value){
+            $.ajax({
+                url: "/api/device_net_command",
+                type: 'GET',
+                data: {
+                    d: device_net_list[i]['net_type']
+                },
+                success: function(response){
+                    var json = $.parseJSON(JSON.stringify(response));
+                    if (json["output"].search(":") > -1){
+                        $('#errore').text(json["output"].split(": ")[1]);
+                    } else {
+                        var commands = json["commands"]
+                        $("#drop_command").empty();
+                        device_net_commands = [];
+                        for(var i = 0; i < commands.length;i++) {
+                            device_net_commands.push(commands[i]);
+                            $('#drop_command').append('<li class="dropdown-item">' + commands[i]['cmd_str'] + '</li>');
+                            $("#drop_command li").click(function(){
+                              $('#command').text($(this).text());
+                              $("#command").val($(this).text());
 
-                                       });
-                                    }
-                                }
-                            },
-                            error: function(xhr){
-                            }
-                        });
+                           });
+                        }
                     }
+                },
+                error: function(xhr){
                 }
-            }
-        },
-        error: function(xhr){
+            });
         }
-    });
+    }
 }
 
 function deviceNetUpdate(i){
