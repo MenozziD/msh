@@ -64,9 +64,6 @@ class XmlReader:
             'wake_on_lan': xml.getElementsByTagName('string_success')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data
         }
         string_failure = {
-            'open_db': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('open_db')[0].firstChild.data,
-            'close_db': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('close_db')[0].firstChild.data,
-            'error_db': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('error_db')[0].firstChild.data,
             'error': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('error')[0].firstChild.data,
             'generic': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('generic')[0].firstChild.data,
             'ssh_login': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('ssh_login')[0].firstChild.data,
