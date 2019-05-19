@@ -36,8 +36,9 @@ class NetCmd(RequestHandler):
             }
             result = funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
             rows = DbManager.select(XmlReader.settings['query']['select_tb_res_decode'] % ("NET", device_command['cmd_result'], XmlReader.settings['lingua'], result['result']))
-            DbManager.close_db()
             res_decode = DbManager.tb_res_decode(rows)[0]
+            DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (device_command['net_code'], device_command['net_type'], res_decode['res_state'], datetime.now().strftime(XmlReader.settings['timestamp']), device_command['net_ip'], device_command['net_usr'], device_command['net_psw'], device_command['net_mac_info'], device_command['net_mac']))
+            DbManager.close_db()
             response['output'] = 'OK'
             response['result_command'] = result
             response['res_decode'] = res_decode

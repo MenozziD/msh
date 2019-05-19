@@ -10,7 +10,7 @@
 	</path>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
-		<filename>None</filename>
+		<filename>msh.log</filename>
 		<format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>
 		<!-- debug, info, warning, error, critical -->
 		<level>info</level>
@@ -31,7 +31,7 @@
 		<select_tb_res_decode>SELECT * FROM TB_RES_DECODE WHERE RES_DEVICE_TYPE LIKE '%s' AND RES_COMMAND LIKE '%s' AND RES_LANG LIKE '%s' AND RES_VALUE LIKE '%s';</select_tb_res_decode>
 		<select_tb_net_device_type>SELECT * FROM TB_NET_DEVICE_TYPE;</select_tb_net_device_type>
         <select_net_command_for_type>SELECT * FROM TB_NET_DIZ_CMD WHERE CMD_NET_TYPE = '%s';</select_net_command_for_type>
-		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_IP,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s','%s','%s','%s');</insert_tb_net_device>
-		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s',NET_IP = '%s',NET_MAC_INFO = '%s' WHERE NET_MAC LIKE '%s';</update_tb_net_device>
+		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s','%s','%s','%s','%s');</insert_tb_net_device>
+		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s', NET_LASTUPDATE = '%s', NET_IP = '%s', NET_USER = '%s', NET_PSW = '%s', NET_MAC_INFO = '%s' WHERE NET_MAC LIKE '%s';</update_tb_net_device>
 	</query>
 </settings>

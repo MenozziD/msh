@@ -29,6 +29,7 @@ function net_cmd(){
 		    success: function(response){
 				var json = $.parseJSON(JSON.stringify(response));
 				$('#result')[0].value = json["output"];
+				net_device('list');
             },
             error: function(xhr){
             }
@@ -46,6 +47,7 @@ function net_scan(){
             $('#found')[0].value = json["find_device"];
             $('#new')[0].value = json["new_device"];
             $('#update')[0].value = json["updated_device"];
+            net_device('list');
         },
         error: function(xhr){
         }
@@ -56,16 +58,20 @@ function net_device(type_op){
     var code = '';
     var type = '';
     var mac = '';
-    var id = ''
+    var user = '';
+    var password = '';
+    var id = '';
     if (type_op.search('update') >=0){
-        id = type_op.replace('update','')
+        id = type_op.replace('update','');
         type_op = 'update';
         type = $("#type" + id)[0].value;
         code = $("#code" + id)[0].value;
         mac = $("#mac" + id).text();
+        user = $("#usr" + id)[0].value;
+        password = $("#psw" + id)[0].value;
     }
     if (type_op.search('type') >=0){
-        id = type_op.replace('type','')
+        id = type_op.replace('type','');
         type_op = 'type';
     }
     if (type_op == 'command'){
@@ -78,7 +84,9 @@ function net_device(type_op){
         "tipo_operazione": type_op,
         "codice": code,
         "tipo": type,
-        "mac": mac
+        "mac": mac,
+        "user": user,
+        "password": password
     };
     $.ajax({
         url: "/api/net_device",
@@ -116,6 +124,9 @@ function net_device(type_op){
                         $('#table tbody').append('<td>' + devices[i]['net_ip'] + '</td>');
                         $('#table tbody').append('<td><span id="mac' + i + '">' + devices[i]['net_mac'] + '</span></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_mac_info'] + '</td>');
+                        $('#table tbody').append('<td><input type="text" id="usr' + i + '" value="' + devices[i]['net_usr'] + '"></td>');
+                        $('#table tbody').append('<td><input type="password" id="psw' + i + '" value="' + devices[i]['net_psw'] + '"></td>');
+                        $('#table tbody').append('<td>' + devices[i]['net_last_update'] + '</td>');
                         $('#table tbody').append('<td><button class="btn btn-primary btn-lg btn-block" type="button" name=salva"' + i + '" onclick="net_device(\'update' + i + '\')">Salva</button></td>');
                         $('#table tbody').append('</tr>');
                     }

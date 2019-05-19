@@ -38,24 +38,30 @@ class NetScan(RequestHandler):
                 ip = ip[0] + '.0.0.1'
             info("PARTO DA %s/%s", ip, str(count))
             result = cmd_netscan(ip, str(count))
-            if len(result['devices']) > 0:
+            for device in result['devices']:
+                trovato = False
+                for db_device in db_devices:
+                    if device['net_mac'] == db_device['net_mac']:
+                        DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], db_device['net_usr'], db_device['net_psw'], device['net_mac_info'], device['net_mac']))
+                        trovato = True
+                        aggiornati = aggiornati + 1
+                        break
+                if not trovato:
+                    DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], device['net_mac'], device['net_mac_info']))
+                    inseriti = inseriti + 1
+            for db_device in db_devices:
+                trovato = False
                 for device in result['devices']:
-                    trovato = False
-                    if len(db_devices) > 0:
-                        for db_device in db_devices:
-                            if device['net_mac'] == db_device['net_mac']:
-                                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], db_device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
-                                trovato = True
-                                aggiornati = aggiornati + 1
-                    if not trovato:
-                        DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', device['net_ip'], device['net_mac'], device['net_mac_info']))
-                        inseriti = inseriti + 1
+                    if device['net_mac'] == db_device['net_mac']:
+                        trovato = True
+                        break
+                if not trovato:
+                    DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'OFF', datetime.now().strftime(XmlReader.settings['timestamp']), db_device['net_ip'], device['net_usr'], device['net_psw'], db_device['net_mac_info'], db_device['net_mac']))
             DbManager.close_db()
             response['output'] = 'OK'
             response['find_device'] = str(len(result['devices']))
             response['new_device'] = str(inseriti)
             response['updated_device'] = str(aggiornati)
-            info("INSERITI: %s AGGIORNATI: %s", str(inseriti), str(aggiornati))
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)

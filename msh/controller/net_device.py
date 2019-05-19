@@ -18,6 +18,8 @@ class NetDevice(RequestHandler):
             codice = data['codice']
             tipo = data['tipo']
             mac = data['mac']
+            user = data['user']
+            password = data['password']
             DbManager(XmlReader.settings['path']['db'])
             if type_op == 'list':
                 rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
@@ -31,7 +33,7 @@ class NetDevice(RequestHandler):
             if type_op == 'update':
                 rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_from_mac'] % mac)
                 device = DbManager.tb_net_device(rows)[0]
-                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
+                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], user, password, device['net_mac_info'], device['net_mac']))
             DbManager.close_db()
             response['output'] = 'OK'
         except Exception as e:
