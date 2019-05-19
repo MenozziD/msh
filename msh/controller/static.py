@@ -1,7 +1,6 @@
 from webapp3 import RequestHandler
 from logging import info, exception
 from module.xml_reader import XmlReader
-from json import loads
 
 
 class Index(RequestHandler):
@@ -20,18 +19,6 @@ class Static(RequestHandler):
         f.close()
         info("RESPONSE CODE: %s", self.response.status)
         info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
-
-
-class Diff(RequestHandler):
-    def post(self):
-        body = str(self.request.body)[2:-1]
-        info("%s %s", self.request.method, self.request.url)
-        info("BODY %s", body)
-        data = loads(body)
-        res = int(data['primo']) - int(data['secondo'])
-        self.response.write(res)
-        info("RESPONSE CODE: %s", self.response.status)
-        info("RESPONSE PAYLOAD: %s", res)
 
 
 def handle_error(request, response, excep):

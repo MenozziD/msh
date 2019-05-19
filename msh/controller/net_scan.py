@@ -58,7 +58,7 @@ class NetScan(RequestHandler):
             info("INSERITI: %s AGGIORNATI: %s", str(inseriti), str(aggiornati))
         except Exception as e:
             exception("Exception")
-            response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
+            response['output'] = str(e)
         finally:
             response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
             self.response.headers.add('Access-Control-Allow-Origin', '*')

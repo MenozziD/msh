@@ -1,5 +1,6 @@
 var device_net_list = [];
-var device_net_commands= [];
+var device_net_commands = [];
+var device_net_types = [];
 
 function net_cmd(){
     var form = $('#form')[0];
@@ -16,20 +17,18 @@ function net_cmd(){
 		console.log("Non faccio niente, ci sono dei campi invaldi");
 	} else {
 	    console.log("Tutto ok, faccio la chiamata");
+        var body = {
+            "dispositivo": device,
+            "comando": command
+        };
 		$.ajax({
 		    url: "/api/net_cmd",
-		    type: 'GET',
-		    data: {
-				d: device,
-				c: command
-			},
+		    type: 'POST',
+		    contentType: "application/json",
+            data : JSON.stringify(body),
 		    success: function(response){
 				var json = $.parseJSON(JSON.stringify(response));
-				if (json["output"].search(":") > -1){
-                    $('#result')[0].value = json["output"].split(": ")[1];
-                } else {
-                    $('#result')[0].value = json["output"];
-                }
+				$('#result')[0].value = json["output"];
             },
             error: function(xhr){
             }
@@ -43,11 +42,7 @@ function net_scan(){
         type: 'GET',
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            if (json["output"].search(":") > -1){
-                $('#esito')[0].value = json["output"].split(": ")[1];
-            } else {
-                $('#esito')[0].value = json["output"];
-            }
+            $('#result')[0].value = json["output"];
             $('#found')[0].value = json["find_device"];
             $('#new')[0].value = json["new_device"];
             $('#update')[0].value = json["updated_device"];
@@ -58,14 +53,20 @@ function net_scan(){
 }
 
 function net_device(type_op){
-    code = '';
-    type = '';
-    mac = '';
+    var code = '';
+    var type = '';
+    var mac = '';
+    var id = ''
     if (type_op.search('update') >=0){
-        type = $("#type" + type_op.replace('update',''))[0].value;
-        code = $("#code" + type_op.replace('update',''))[0].value;
-        mac = $("#mac" + type_op.replace('update','')).text();
+        id = type_op.replace('update','')
         type_op = 'update';
+        type = $("#type" + id)[0].value;
+        code = $("#code" + id)[0].value;
+        mac = $("#mac" + id).text();
+    }
+    if (type_op.search('type') >=0){
+        id = type_op.replace('type','')
+        type_op = 'type';
     }
     if (type_op == 'command'){
         for(var i = 0; i < device_net_list.length;i++) {
@@ -73,24 +74,34 @@ function net_device(type_op){
                 type = device_net_list[i]['net_type'];
         }
     }
+    var body = {
+        "tipo_operazione": type_op,
+        "codice": code,
+        "tipo": type,
+        "mac": mac
+    };
     $.ajax({
         url: "/api/net_device",
-        type: 'GET',
-        data: {
-            to: type_op,
-            c: code,
-            t: type,
-            m: mac
-        },
+        type: 'POST',
+        contentType: "application/json",
+        data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            if (json["output"].search(":") > -1){
-                $('#errore').text(json["output"].split(": ")[1]);
-            } else {
-                $('#errore').text("");
+            if (json["output"].search("OK") == 0){
+				$('#errore').text("");
                 if (type_op == 'type'){
                     var types = json["types"]
-                    console.log(types);
+                    $("#drop_type" + id).empty();
+                    device_net_types = []
+                    for(var i = 0; i < types.length;i++) {
+                        device_net_types.push(types[i]);
+                        $('#drop_type' + id).append('<li class="dropdown-item">' + types[i]['type_code'] + '</li>');
+                        $('#drop_type' + id + ' li').click(function(){
+                          $('#type' + id).text($(this).text());
+                          $("#type" + id).val($(this).text());
+
+                       });
+                    }
                 }
                 if (type_op == 'list'){
                     var devices = json["devices"]
@@ -100,7 +111,7 @@ function net_device(type_op){
                         device_net_list.push(devices[i]);
                         $('#table tbody').append('<tr>');
                         $('#table tbody').append('<td><input type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
-                        $('#table tbody').append('<td><input type="text" id="type' + i + '" value="' + devices[i]['net_type'] + '"></td>');
+                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_status'] + '</td>');
                         $('#table tbody').append('<td>' + devices[i]['net_ip'] + '</td>');
                         $('#table tbody').append('<td><span id="mac' + i + '">' + devices[i]['net_mac'] + '</span></td>');
@@ -124,6 +135,11 @@ function net_device(type_op){
                        });
                     }
                 }
+                if (type_op == 'update'){
+                    net_device('list');
+                }
+            } else {
+                $('#errore').text(json["output"]);
             }
         },
         error: function(xhr){

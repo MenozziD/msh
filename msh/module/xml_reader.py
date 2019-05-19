@@ -63,21 +63,6 @@ class XmlReader:
             'pcwin_shutdown': xml.getElementsByTagName('string_success')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
             'wake_on_lan': xml.getElementsByTagName('string_success')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data
         }
-        string_failure = {
-            'error': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('error')[0].firstChild.data,
-            'generic': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('generic')[0].firstChild.data,
-            'ssh_login': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('ssh_login')[0].firstChild.data,
-            'no_interface': xml.getElementsByTagName('string_failure')[0].getElementsByTagName('no_interface')[0].firstChild.data
-        }
-        command = {
-            'net': xml.getElementsByTagName('command')[0].getElementsByTagName('net')[0].firstChild.data,
-            'ping': xml.getElementsByTagName('command')[0].getElementsByTagName('ping')[0].firstChild.data,
-            'radio_control': xml.getElementsByTagName('command')[0].getElementsByTagName('radio_control')[0].firstChild.data,
-            'radio_status': xml.getElementsByTagName('command')[0].getElementsByTagName('radio_status')[0].firstChild.data,
-            'pcwin_shutdown': xml.getElementsByTagName('command')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
-            'wake_on_lan': xml.getElementsByTagName('command')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data,
-            'net_scan': xml.getElementsByTagName('command')[0].getElementsByTagName('net_scan')[0].firstChild.data
-        }
         query = {
             'select_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device')[0].firstChild.data,
             'select_tb_net_device_from_mac': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device_from_mac')[0].firstChild.data,
@@ -98,8 +83,6 @@ class XmlReader:
             'shell_command': shell_command,
             'out_filename': out_filename,
             'string_success': string_success,
-            'string_failure': string_failure,
-            'command': command,
             'query': query
         }
         return

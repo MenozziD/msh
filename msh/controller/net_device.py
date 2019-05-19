@@ -2,19 +2,22 @@ from webapp3 import RequestHandler
 from logging import info, exception
 from module.dbmanager import DbManager
 from module.xml_reader import XmlReader
-from json import dumps
+from json import dumps, loads
 from datetime import datetime
 
 
 class NetDevice(RequestHandler):
-    def get(self):
+    def post(self):
+        body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
+        info("BODY %s", body)
         response = {}
         try:
-            type_op = self.request.get('to')
-            codice = self.request.get('c')
-            tipo = self.request.get('t')
-            mac = self.request.get('m')
+            data = loads(body)
+            type_op = data['tipo_operazione']
+            codice = data['codice']
+            tipo = data['tipo']
+            mac = data['mac']
             DbManager(XmlReader.settings['path']['db'])
             if type_op == 'list':
                 rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
@@ -33,7 +36,7 @@ class NetDevice(RequestHandler):
             response['output'] = 'OK'
         except Exception as e:
             exception("Exception")
-            response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
+            response['output'] = str(e)
         finally:
             response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
             self.response.headers.add('Access-Control-Allow-Origin', '*')

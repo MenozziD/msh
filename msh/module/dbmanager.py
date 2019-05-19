@@ -106,7 +106,7 @@ class DbManager:
         list_res_decode = []
         for res_decode in res_decodes:
             tb_res_decode = {}
-            tb_res_decode['res_result'] = str(res_decode[5])
-            tb_res_decode['res_state'] = str(res_decode[6])
+            tb_res_decode['res_result'] = str(res_decode[4])
+            tb_res_decode['res_state'] = str(res_decode[5])
             list_res_decode.append(tb_res_decode)
         return list_res_decode
