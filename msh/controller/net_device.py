@@ -6,18 +6,29 @@ from json import dumps
 from datetime import datetime
 
 
-class DeviceNetUpdate(RequestHandler):
+class NetDevice(RequestHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         response = {}
         try:
+            type_op = self.request.get('to')
             codice = self.request.get('c')
             tipo = self.request.get('t')
             mac = self.request.get('m')
             DbManager(XmlReader.settings['path']['db'])
-            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_from_mac'] % mac)
-            device = DbManager.tb_net_device(rows)[0]
-            DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
+            if type_op == 'list':
+                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
+                response['devices'] = DbManager.tb_net_device(rows)
+            if type_op == 'type':
+                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_type'])
+                response['types'] = DbManager.tb_net_device_type(rows)
+            if type_op == 'command':
+                rows = DbManager.select(XmlReader.settings['query']['select_net_command_for_type'] % tipo)
+                response['commands'] = DbManager.tb_net_diz_cmd(rows)
+            if type_op == 'update':
+                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_from_mac'] % mac)
+                device = DbManager.tb_net_device(rows)[0]
+                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
             DbManager.close_db()
             response['output'] = 'OK'
         except Exception as e:

@@ -35,7 +35,7 @@
                             <div class="col-md-4 mb-3">
 							    <div class="dropdown">
                                     <label for="device">Comando</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="deviceNetCommand()"></button>
+						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="net_device('command')"></button>
                                     <ul class="dropdown-menu" id="drop_command">
                                     </ul>
                                 </div>
@@ -44,7 +44,7 @@
 								<label for="result">Esito</label>
 								<input type="text" class="form-control" id="result" readonly>
 							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="invia()">Invia</button>
+							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net_cmd()">Invia</button>
 						</div>
 					</form>
 				</div>
@@ -69,7 +69,7 @@
 								<label for="update">Aggiornati</label>
 								<input type="text" class="form-control" id="update" readonly>
 							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="scan()">Net Scan</button>
+							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net_scan()">Net Scan</button>
 						</div>
 				    </form>
 				</div>
@@ -78,7 +78,7 @@
 				<div class="col-md-12">
 					<form>
 						<div class="row">
-							<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="deviceNetList()">List Device</button>
+							<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net_device('list')">List Device</button>
 						</div>
 						<div class="table-responsive">
 							<h5 id="errore" class="text-center"></h5>

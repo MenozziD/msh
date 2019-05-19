@@ -5,19 +5,13 @@ from module.xml_reader import XmlReader
 from module.net import get_ip_and_subnet
 from controller.net_cmd import NetCmd
 from controller.net_scan import NetScan
-from controller.device_net_list import DeviceNetList
-from controller.device_net_type import DeviceNetType
-from controller.device_net_command import DeviceNetCommand
-from controller.device_net_update import DeviceNetUpdate
+from controller.net_device import NetDevice
 from controller.static import Index, Static, Diff, handle_error
 
 
 app = WSGIApplication([
-    ('/api/device_net_type', DeviceNetType),
-    ('/api/device_net_command', DeviceNetCommand),
-    ('/api/device_net_list', DeviceNetList),
-    ('/api/device_net_update', DeviceNetUpdate),
     ('/api/net_cmd', NetCmd),
+    ('/api/net_device', NetDevice),
     ('/api/net_scan', NetScan),
     ('/api/diff', Diff),
     ('/', Index),
