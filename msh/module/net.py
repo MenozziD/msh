@@ -1,17 +1,15 @@
-from os import system
 from pexpect import pxssh
-from re import sub
 from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
 from urllib import request
+from subprocess import run, PIPE
 
 
 def cmd_ping(ip, pacchetti=3):
     ping_ok = 0
     ping_err = -1
     ping_fail = 1
-    file_out = XmlReader.settings['out_filename']['ping']
     result = {'ip': ip,
               'pacchetti_tx': 0,
               'pacchetti_rx': 0,
@@ -21,19 +19,14 @@ def cmd_ping(ip, pacchetti=3):
               'cmd_output': ''
               }
     try:
-        system(XmlReader.settings['shell_command']['ping'] % (str(pacchetti), ip, file_out))
-        f = open(file_out, "r")
-        app = f.read()
-        f.close()
-        system(XmlReader.settings['shell_command']['remove'] % file_out)
-        result['cmd_output'] = app
-        app = app.split("\n")
-        app = app[len(app) - 3]
-        app = app.split(", ")
-        result['pacchetti_lost'] = app[2].split(" ")[0]
-        result['pacchetti_tx'] = app[0].split(" ")[0]
-        result['pacchetti_rx'] = app[1].split(" ")[0]
-        result['tempo'] = app[3].split(" ")[1]
+        cmd_out = str(run(['ping', '-c ' + str(pacchetti), ip], stdout=PIPE).stdout)[2:-1].replace("\\n", "\n")
+        result['cmd_output'] = cmd_out
+        cmd_out = cmd_out.split("\n")
+        cmd_out = cmd_out[len(cmd_out) - 3].split(", ")
+        result['pacchetti_lost'] = cmd_out[2].split(" ")[0]
+        result['pacchetti_tx'] = cmd_out[0].split(" ")[0]
+        result['pacchetti_rx'] = cmd_out[1].split(" ")[0]
+        result['tempo'] = cmd_out[3].split(" ")[1]
         if result['pacchetti_lost'] == XmlReader.settings['string_success']['ping']:
             result['result'] = ping_ok
         else:
@@ -51,6 +44,7 @@ def cmd_radio(ip, comando, usr, psw):
     radioctrl_invalid_cred = 2
     ss = None
     login = False
+    command = "ifconfig %s %s"
     result = {'ip': ip,
               'mac': '',
               'cmd': comando,
@@ -59,14 +53,14 @@ def cmd_radio(ip, comando, usr, psw):
               'cmd_output': ''
               }
     try:
-        result = cmd_radiostatus(ip, comando, usr, psw)
+        result = cmd_radio_stato(ip, comando, usr, psw)
         if comando != 'stato' and result['interface'] != '' and result['mac'] != '':
             ss = pxssh.pxssh()
             ss.login(ip, usr, psw)
             login = True
-            ss.sendline(XmlReader.settings['shell_command']['ifconfig'] % (result['interface'], result['cmd']))
+            ss.sendline(command % (result['interface'], result['cmd']))
             ss.prompt()
-            result = cmd_radiostatus(ip, comando, usr, psw)
+            result = cmd_radio_stato(ip, comando, usr, psw)
     except Exception as e:
         exception("Exception")
         if str(e) == "password refused":
@@ -80,7 +74,7 @@ def cmd_radio(ip, comando, usr, psw):
         return result
 
 
-def cmd_radiostatus(ip, comando, usr, psw):
+def cmd_radio_stato(ip, comando, usr, psw):
     radiostatus_off = 0
     radiostatus_on = 1
     radiostatus_invalid_cred = 2
@@ -88,6 +82,7 @@ def cmd_radiostatus(ip, comando, usr, psw):
     radiostatus_no_interface = -2
     ss = None
     login = False
+    command = "iwconfig"
     result = {'ip': ip,
               'mac': '',
               'cmd': comando,
@@ -99,19 +94,19 @@ def cmd_radiostatus(ip, comando, usr, psw):
         ss = pxssh.pxssh()
         ss.login(ip, usr, psw)
         login = True
-        ss.sendline(XmlReader.settings['shell_command']['iwconfig'])
+        ss.sendline(command)
         ss.prompt()
-        app = str(ss.before)[2:-1]
-        result['cmd_output'] = app
-        app = app.split("\\r\\n")
-        for i in app:
-            if i.find("ESSID:") > 0 and i.find("ESSID:\"\"") == -1:
-                result['interface'] = i[:8].strip()
+        cmd_out = str(ss.before)[2:-1].replace("\\r\\n", '\r\n')
+        result['cmd_output'] = cmd_out
+        cmd_out = cmd_out.split("\r\n")
+        for row in cmd_out:
+            if row.find("ESSID:") > 0 and row.find("ESSID:\"\"") == -1:
+                result['interface'] = row[:8].strip()
                 result['result'] = radiostatus_on
-            if i.find("Access Point:") > 0 and i.find("Access Point: Not-Associated") == -1:
-                result['mac'] = i.split("Access Point: ")[1].strip()
-                if not i[:8] == "        ":
-                    result['interface'] = i[:8].strip()
+            if row.find("Access Point:") > 0 and row.find("Access Point: Not-Associated") == -1:
+                result['mac'] = row.split("Access Point: ")[1].strip()
+                if not row[:8] == "        ":
+                    result['interface'] = row[:8].strip()
                     result['result'] = radiostatus_off
         info("%s %s", result['interface'], result['mac'])
         if result['interface'] == '' and result['mac'] == '':
@@ -133,24 +128,17 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
     pcwin_off_err = -1
     pcwin_off_fail = 1
-    file_out = XmlReader.settings['out_filename']['pcwin_shutdown']
     result = {'ip': ip,
               'result': 0,
               'cmd_output': ''
               }
     try:
         # user%psw
-        cred = str(usr) + chr(37) + str(psw)
-        system(XmlReader.settings['shell_command']['pcwin_shutdown'] % (ip, cred, file_out))
-        f = open(file_out, "r")
-        app = f.read()
-        f.close()
-        system(XmlReader.settings['shell_command']['remove'] % file_out)
-        result['cmd_output'] = app
-        app = sub(r'[\t\n\r]', ' ', app)
-        app = app.strip()
-        info(app)
-        if app.find(XmlReader.settings['string_success']['pcwin_shutdown']) > 0:
+        cmd_out = str(run(['net', 'rcp', '-I ' + ip, '-U ' + str(usr) + chr(37) + str(psw)], stdout=PIPE).stdout)[2:-1].replace("\\t", "\t").replace("\\r\\n", "\r\n")
+        result['cmd_output'] = cmd_out
+        cmd_out = cmd_out.replace("\t", "").replace("\r\n", "")
+        cmd_out = cmd_out.strip()
+        if cmd_out.find(XmlReader.settings['string_success']['pcwin_shutdown']) > 0:
             result['result'] = pcwin_off_ok
         else:
             result['result'] = pcwin_off_fail
@@ -166,23 +154,17 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
     wol_ok = 0
     wol_err = -1
     wol_fail = 1
-    file_out = XmlReader.settings['out_filename']['wake_on_lan']
     result = {'mac': mac,
               'subnet': '',
               'result': 0,
               'cmd_output': ''
               }
     try:
-        system(XmlReader.settings['shell_command']['wake_on_lan'] % (subnet, mac, file_out))
-        f = open(file_out, "r")
-        app = f.read()
-        f.close()
-        system(XmlReader.settings['shell_command']['remove'] % file_out)
-        result['cmd_output'] = app
-        app = sub(r'[\t\n\r]', ' ', app)
-        app = app.strip()
-        info(app)
-        if app.find(XmlReader.settings['string_success']['wake_on_lan']) > 0:
+        cmd_out = str(run(['wakeonlan', '-i ' + subnet, mac], stdout=PIPE).stdout)[2:-1].replace("\\t", "\t").replace("\\r\\n", "\r\n")
+        result['cmd_output'] = cmd_out
+        cmd_out = cmd_out.replace("\t", "").replace("\r\n", "")
+        cmd_out = cmd_out.strip()
+        if cmd_out.find(XmlReader.settings['string_success']['wake_on_lan']) > 0:
             result['result'] = wol_ok
         else:
             result['result'] = wol_fail
@@ -199,19 +181,14 @@ def cmd_netscan(ip, subnet):
     netscan_err = -1
     netscan_fail = 1
     count = 0
-    file_out = XmlReader.settings['out_filename']['net_scan']
     result = {'result': 0,
               'devices': [],
               'cmd_output': ''
               }
     try:
-        system(XmlReader.settings['shell_command']['net_scan'] % (ip, subnet, file_out))
-        f = open(file_out, "r")
-        app = f.read()
-        f.close()
-        system(XmlReader.settings['shell_command']['remove'] % file_out)
-        result['cmd_output'] = app
-        rows = app.split("\n")
+        cmd_out = str(run(['sudo', 'nmap', '-sn ' + ip + "/" + subnet], stdout=PIPE).stdout)[2:-1].replace("\\n", "\n")
+        result['cmd_output'] = cmd_out
+        rows = cmd_out.split("\n")
         devices = []
         for line in rows:
             device = {'net_code': '',

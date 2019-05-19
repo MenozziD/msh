@@ -19,23 +19,6 @@
 		<error name="404">&lt;class 'webob.exc.HTTPNotFound'&gt;</error>
 		<error name="405">&lt;class 'webob.exc.HTTPMethodNotAllowed'&gt;</error>
 	</class_error>
-	<shell_command>
-		<ping>ping -c %s %s >%s</ping>
-		<remove>sudo rm %s</remove>
-		<ifconfig>ifconfig %s %s</ifconfig>
-		<ifconfig1>ifconfig >%s</ifconfig1>
-		<iwconfig>iwconfig</iwconfig>
-		<pcwin_shutdown>net rpc shutdown -I %s -U %s >%s</pcwin_shutdown>
-		<wake_on_lan>wakeonlan -i %s %s >%s</wake_on_lan>
-		<net_scan>sudo nmap -sn %s/%s >%s</net_scan>
-	</shell_command>
-	<out_filename>
-		<ping>pingout.txt</ping>
-		<ifconfig>ip_subnet.txt</ifconfig>
-		<pcwin_shutdown>winpcoffout.txt</pcwin_shutdown>
-		<wake_on_lan>wolout.txt</wake_on_lan>
-		<net_scan>netscanout.txt</net_scan>
-	</out_filename>
 	<string_success>
 		<ping>0%</ping>
 		<pcwin_shutdown>succeeded</pcwin_shutdown>

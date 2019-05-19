@@ -41,23 +41,6 @@ class XmlReader:
         }
         for elem in xml.getElementsByTagName('class_error')[0].getElementsByTagName('error'):
             class_error[elem.attributes['name'].value] = elem.firstChild.data
-        shell_command = {
-            'ping': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ping')[0].firstChild.data,
-            'remove': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('remove')[0].firstChild.data,
-            'ifconfig': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ifconfig')[0].firstChild.data,
-            'ifconfig1': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('ifconfig1')[0].firstChild.data,
-            'iwconfig': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('iwconfig')[0].firstChild.data,
-            'pcwin_shutdown': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
-            'wake_on_lan': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data,
-            'net_scan': xml.getElementsByTagName('shell_command')[0].getElementsByTagName('net_scan')[0].firstChild.data
-        }
-        out_filename = {
-            'ping': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('ping')[0].firstChild.data,
-            'ifconfig': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('ifconfig')[0].firstChild.data,
-            'pcwin_shutdown': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
-            'wake_on_lan': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('wake_on_lan')[0].firstChild.data,
-            'net_scan': xml.getElementsByTagName('out_filename')[0].getElementsByTagName('net_scan')[0].firstChild.data
-        }
         string_success = {
             'ping': xml.getElementsByTagName('string_success')[0].getElementsByTagName('ping')[0].firstChild.data,
             'pcwin_shutdown': xml.getElementsByTagName('string_success')[0].getElementsByTagName('pcwin_shutdown')[0].firstChild.data,
@@ -80,8 +63,6 @@ class XmlReader:
             'path': path,
             'log': log,
             'class_error': class_error,
-            'shell_command': shell_command,
-            'out_filename': out_filename,
             'string_success': string_success,
             'query': query
         }
