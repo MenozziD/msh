@@ -4,6 +4,7 @@ from re import sub
 from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
+from urllib import request, response, error
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -281,23 +282,10 @@ def cmd_netscan(ip, subnet):
         return result
 
 
-def get_ip_and_subnet_custom():
-    result = {
-        'ip': '',
-        'subnet': ''
-    }
-    file_out = XmlReader.settings['out_filename']['ifconfig']
-    system(XmlReader.settings['shell_command']['ifconfig1'] % file_out)
-    f = open(file_out, "r")
-    app = f.read()
-    f.close()
-    system(XmlReader.settings['shell_command']['remove'] % file_out)
-    app = app.split("\n")
-    for a in app:
-        if a.find("127.0.0.1") == -1 and a.find("inet addr") > 0:
-            result['ip'] = a.split("inet addr:")[1].split("Bcast")[0].strip()
-            result['subnet'] = a.split("Mask:")[1].strip()
-    return result
+def cmd_rele(ip, command):
+    info("MAKE REQUEST: %s", "http://" + ip + "/cmd?n=" + command)
+    res = request.urlopen("http://" + ip + "/cmd?n=" + command)
+    info("RESPOSNE: %s", res.read())
 
 
 def get_ip_and_subnet():

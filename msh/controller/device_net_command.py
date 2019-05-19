@@ -14,12 +14,9 @@ class DeviceNetCommand(RequestHandler):
             dispositivo = self.request.get('d')
             DbManager(XmlReader.settings['path']['db'])
             rows = DbManager.select(XmlReader.settings['query']['select_net_command_for_type'] % dispositivo)
-            commands = []
-            for r in rows:
-                commands.append(str(r[0]))
             DbManager.close_db()
             response['output'] = 'OK'
-            response['commands'] = commands
+            response['commands'] = DbManager.tb_net_diz_cmd(rows)
         except Exception as e:
             exception("Exception")
             response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)

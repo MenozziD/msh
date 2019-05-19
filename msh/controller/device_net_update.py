@@ -6,16 +6,20 @@ from json import dumps
 from datetime import datetime
 
 
-class DeviceNetType(RequestHandler):
+class DeviceNetUpdate(RequestHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         response = {}
         try:
+            codice = self.request.get('c')
+            tipo = self.request.get('t')
+            mac = self.request.get('m')
             DbManager(XmlReader.settings['path']['db'])
-            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_type'])
+            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_from_mac'] % mac)
+            device = DbManager.tb_net_device(rows)[0]
+            DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
             DbManager.close_db()
             response['output'] = 'OK'
-            response['types'] = DbManager.tb_net_device_type(rows)
         except Exception as e:
             exception("Exception")
             response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)

@@ -5,16 +5,18 @@ from module.xml_reader import XmlReader
 from module.net import get_ip_and_subnet
 from controller.net_cmd import NetCmd
 from controller.net_scan import NetScan
-from controller.device_list import DeviceList
+from controller.device_net_list import DeviceNetList
 from controller.device_net_type import DeviceNetType
 from controller.device_net_command import DeviceNetCommand
+from controller.device_net_update import DeviceNetUpdate
 from controller.static import Index, Static, Diff, handle_error
 
 
 app = WSGIApplication([
     ('/api/device_net_type', DeviceNetType),
     ('/api/device_net_command', DeviceNetCommand),
-    ('/api/device_list', DeviceList),
+    ('/api/device_net_list', DeviceNetList),
+    ('/api/device_net_update', DeviceNetUpdate),
     ('/api/net_cmd', NetCmd),
     ('/api/net_scan', NetScan),
     ('/api/diff', Diff),
@@ -33,7 +35,6 @@ def main():
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
     ip_address = get_ip_and_subnet()['ip']
-    info("Your Computer IP Address is %s", ip_address)
     port = XmlReader.settings['porta']
     info("Server in ascolto su http://%s:%s", ip_address, port)
     httpserver.serve(app, host=ip_address, port=port)

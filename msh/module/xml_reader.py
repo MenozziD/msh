@@ -83,15 +83,13 @@ class XmlReader:
         }
         query = {
             'select_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device')[0].firstChild.data,
-            'select_one_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('select_one_tb_net_device')[0].firstChild.data,
+            'select_tb_net_device_from_mac': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device_from_mac')[0].firstChild.data,
+            'select_tb_net_device_tb_net_diz_cmd': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device_tb_net_diz_cmd')[0].firstChild.data,
+            'select_tb_res_decode': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_res_decode')[0].firstChild.data,
+            'select_tb_net_device_type': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_device_type')[0].firstChild.data,
+            'select_net_command_for_type': xml.getElementsByTagName('query')[0].getElementsByTagName('select_net_command_for_type')[0].firstChild.data,
             'insert_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('insert_tb_net_device')[0].firstChild.data,
             'update_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('update_tb_net_device')[0].firstChild.data,
-            'select_last_tb_net_com': xml.getElementsByTagName('query')[0].getElementsByTagName('select_last_tb_net_com')[0].firstChild.data,
-            'select_tb_net_diz_cmd': xml.getElementsByTagName('query')[0].getElementsByTagName('select_tb_net_diz_cmd')[0].firstChild.data,
-            'update_state_from_ip_tb_net_device': xml.getElementsByTagName('query')[0].getElementsByTagName('update_state_from_ip_tb_net_device')[0].firstChild.data,
-            'select_one_tb_res_decode': xml.getElementsByTagName('query')[0].getElementsByTagName('select_one_tb_res_decode')[0].firstChild.data,
-            'select_net_device_type': xml.getElementsByTagName('query')[0].getElementsByTagName('select_net_device_type')[0].firstChild.data,
-            'select_net_command_for_type': xml.getElementsByTagName('query')[0].getElementsByTagName('select_net_command_for_type')[0].firstChild.data
         }
         XmlReader.settings = {
             'porta': porta,

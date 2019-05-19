@@ -10,7 +10,6 @@ from datetime import datetime
 class NetScan(RequestHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        db_devices = []
         inseriti = 0
         aggiornati = 0
         response = {
@@ -23,15 +22,7 @@ class NetScan(RequestHandler):
         try:
             DbManager(XmlReader.settings['path']['db'])
             rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
-            for r in rows:
-                device = {'net_code': str(r[0]),
-                          'net_type': str(r[1]),
-                          'net_status': str(r[2]),
-                          'net_ip': str(r[4]),
-                          'net_mac': str(r[5]),
-                          'net_mac_info': str(r[6])
-                          }
-                db_devices.append(device)
+            db_devices = DbManager.tb_net_device(rows)
             ip_subnet = get_ip_and_subnet()
             ip = ip_subnet['ip'].split('.')
             subnet = ip_subnet['subnet'].split('.')
@@ -47,13 +38,13 @@ class NetScan(RequestHandler):
                 ip = ip[0] + '.0.0.1'
             info("PARTO DA %s/%s", ip, str(count))
             result = cmd_netscan(ip, str(count))
-            if len(result['devices'] > 0):
+            if len(result['devices']) > 0:
                 for device in result['devices']:
                     trovato = False
                     if len(db_devices) > 0:
                         for db_device in db_devices:
                             if device['net_mac'] == db_device['net_mac']:
-                                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], db_device['net_status'], device['net_ip'], device['net_mac'], device['net_mac_info']))
+                                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], db_device['net_status'], device['net_ip'], device['net_mac_info'], device['net_mac']))
                                 trovato = True
                                 aggiornati = aggiornati + 1
                     if not trovato:
@@ -61,7 +52,7 @@ class NetScan(RequestHandler):
                         inseriti = inseriti + 1
             DbManager.close_db()
             response['output'] = 'OK'
-            response['find_device'] = str(len(result['device']))
+            response['find_device'] = str(len(result['devices']))
             response['new_device'] = str(inseriti)
             response['updated_device'] = str(aggiornati)
             info("INSERITI: %s AGGIORNATI: %s", str(inseriti), str(aggiornati))

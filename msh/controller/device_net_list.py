@@ -6,16 +6,16 @@ from json import dumps
 from datetime import datetime
 
 
-class DeviceNetType(RequestHandler):
+class DeviceNetList(RequestHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         response = {}
         try:
             DbManager(XmlReader.settings['path']['db'])
-            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_type'])
+            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
             DbManager.close_db()
             response['output'] = 'OK'
-            response['types'] = DbManager.tb_net_device_type(rows)
+            response['devices'] = DbManager.tb_net_device(rows)
         except Exception as e:
             exception("Exception")
             response['output'] = XmlReader.settings['string_failure']['generic'] % (XmlReader.settings['command']['net'], e)
