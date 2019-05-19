@@ -2,10 +2,12 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <ArduinoJson.h>
+#include "test.h"
 
 #ifndef STASSID
-#define STASSID "Room WiFi"
-#define STAPSK  "roomwifi3553!"
+#define STASSID "*********"
+#define STAPSK  "*********"
 #endif
 
 const char* ssid = STASSID;
@@ -13,49 +15,48 @@ const char* password = STAPSK;
 
 ESP8266WebServer server(80);
 
+StaticJsonBuffer<200> jsonBuffer;
+JsonObject& root = jsonBuffer.createObject();
+
 const int GPIO0 = 0;
 
 void handleRoot() {
-  server.send(200, "text/plain", "Hello from ESP-01 RELE!");
+  server.send(200, "text/html", file1);
 }
 
 
 void handle_CMD() {
 
   String cmd="";
-  String mex="Stato RELE:";
+  String mex="";
+  String output="";
+    
   int check=0;
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i)=="n")
       cmd=server.arg(i);
   }
-  
-  if (cmd=="on")
+
+  if (cmd=="on" || cmd=="off" || cmd=="stato_rele" || cmd=="toggle")
   {
-    digitalWrite(GPIO0,LOW);
-    check=1;
-  }  
-  else if (cmd=="off")
-  {
-    digitalWrite(GPIO0,HIGH);
-    check=1;
-  }  
-  else if (cmd=="toggle")
-  {
-    digitalWrite(GPIO0,not(digitalRead(GPIO0)));
-    check=1;
-  } 
-  else if (cmd=="stato_rele" or check==1)
-  {
-    delay(50);
-    if (digitalRead(GPIO0)== 0)
-      mex=mex+"ON";
-    else
-      mex=mex+"OFF";
-  }
+    if (cmd=="on")
+      digitalWrite(GPIO0,LOW);
+    else if (cmd=="off")
+      digitalWrite(GPIO0,HIGH);
+    else if (cmd=="toggle")
+      digitalWrite(GPIO0,not(digitalRead(GPIO0)));
+
+    delay(100);  
+    mex = (digitalRead(GPIO0)) ? "OFF" : "ON";
+  }    
   else
-    mex=mex+"CMD SCONOSCIUTO";    
-  server.send(200, "text/plain", mex);
+    mex="Comando Invalido";
+    
+  root["cmd"] = cmd;
+  root["result"] = mex;
+  
+  root.printTo(output);
+  server.send(200, "text/plain", output);
 }
 
 void handleNotFound() {
@@ -80,7 +81,7 @@ void setup(void) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
-
+    
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -97,10 +98,6 @@ void setup(void) {
   }
 
   server.on("/", handleRoot);
-  server.on("/on", handle_ON);
-  server.on("/off", handle_OFF);
-  server.on("/toggle", handle_TOGGLE);
-  server.on("/stato", handle_STATUS);
   server.on("/cmd", handle_CMD);
 
   server.on("/inline", []() {
