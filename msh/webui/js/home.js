@@ -107,7 +107,7 @@ function net_device(type_op){
                         $('#drop_type' + id + ' li').click(function(){
                           $('#type' + id).text($(this).text());
                           $("#type" + id).val($(this).text());
-
+                          must_save(id);
                        });
                     }
                 }
@@ -118,17 +118,21 @@ function net_device(type_op){
                     for(var i = 0; i < devices.length;i++) {
                         device_net_list.push(devices[i]);
                         $('#table tbody').append('<tr>');
-                        $('#table tbody').append('<td><input type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
-                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
+                        $('#table tbody').append('<td><input class="form-control" style="width: auto" type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
+                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button disabled class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_status'] + '</td>');
                         $('#table tbody').append('<td>' + devices[i]['net_ip'] + '</td>');
                         $('#table tbody').append('<td><span id="mac' + i + '">' + devices[i]['net_mac'] + '</span></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_mac_info'] + '</td>');
-                        $('#table tbody').append('<td><input type="text" id="usr' + i + '" value="' + devices[i]['net_usr'] + '"></td>');
-                        $('#table tbody').append('<td><input type="password" id="psw' + i + '" value="' + devices[i]['net_psw'] + '"></td>');
+                        $('#table tbody').append('<td><input class="form-control" style="width: auto" type="text" id="usr' + i + '" value="' + devices[i]['net_usr'] + '"></td>');
+                        $('#table tbody').append('<td ><div class="input-group" style="width: 230px"><input class="form-control" id="psw' + i + '" value="' + devices[i]['net_psw'] + '" type="password"><div class="input-group-append"><button class="btn btn-primary input-group-button" onclick="view_password(' + i + ')"><i id="psw_icon' + i + '" class="fa fa-eye-slash" aria-hidden="true"></i></button></div></div></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_last_update'] + '</td>');
-                        $('#table tbody').append('<td><button class="btn btn-primary btn-lg btn-block" type="button" name=salva"' + i + '" onclick="net_device(\'update' + i + '\')">Salva</button></td>');
+                        $('#table tbody').append('<td><button disabled class="btn btn-primary btn-lg btn-block" type="button" id=salva' + i + ' onclick="net_device(\'update' + i + '\')">Salva</button></td>');
+                        $('#table tbody').append('<td><button disabled class="btn btn-primary btn-lg btn-block" type="button" id=reset' + i + ' onclick="net_reset(' + i + ')">Reset</button></td>');
                         $('#table tbody').append('</tr>');
+                        $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
+                        $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
+                        $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
                     }
                     $('#table')[0].classList.remove('invisible');
                 }
@@ -142,7 +146,6 @@ function net_device(type_op){
                         $("#drop_command li").click(function(){
                           $('#command').text($(this).text());
                           $("#command").val($(this).text());
-
                        });
                     }
                 }
@@ -166,5 +169,52 @@ function deviceNetCode(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
        });
+    }
+}
+
+function must_save(id){
+    var type = $("#type" + id)[0].value;
+    var code = $("#code" + id)[0].value;
+    var mac = $("#mac" + id).text();
+    var user = $("#usr" + id)[0].value;
+    var password = $("#psw" + id)[0].value;
+    for (var i = 0; i < device_net_list.length; i++){
+        if (device_net_list[i]['net_mac'] == mac){
+            if (type != device_net_list[i]['net_type'] || code != device_net_list[i]['net_code'] || user != device_net_list[i]['net_usr'] || password != device_net_list[i]['net_psw']){
+                $("#salva" + i).attr("disabled", false);
+                $("#reset" + i).attr("disabled", false);
+            } else {
+                $("#salva" + i).attr("disabled", true);
+                $("#reset" + i).attr("disabled", true);
+            }
+        }
+    }
+}
+
+function net_reset(id){
+    var mac = $("#mac" + id).text();
+    for (var i = 0; i < device_net_list.length; i++){
+        if (device_net_list[i]['net_mac'] == mac){
+            $("#salva" + i).attr("disabled", true);
+            $("#reset" + i).attr("disabled", true);
+            $("#type" + id)[0].value = device_net_list[i]['net_type'];
+            $("#code" + id)[0].value = device_net_list[i]['net_code'];
+            $("#usr" + id)[0].value = device_net_list[i]['net_usr'];
+            $("#psw" + id)[0].value = device_net_list[i]['net_psw'];
+        }
+    }
+}
+
+function view_password(i){
+    var input_text = $("#psw" + i)[0];
+    var icon = $("#psw_icon" + i)[0];
+    if (input_text.type == 'text'){
+        input_text.type = 'password';
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input_text.type = 'text';
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
     }
 }
