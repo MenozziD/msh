@@ -3,11 +3,11 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
-#include "test.h"
+#include "index.h"
 
 #ifndef STASSID
-#define STASSID "*********"
-#define STAPSK  "*********"
+#define STASSID "Room WiFi"
+#define STAPSK  "roomwifi3553!"
 #endif
 
 const char* ssid = STASSID;
@@ -28,8 +28,9 @@ void handleRoot() {
 void handle_CMD() {
 
   String cmd="";
-  String mex="";
+  String result="";
   String output="";
+  String jsonOut="";
     
   int check=0;
   for (uint8_t i = 0; i < server.args(); i++) {
@@ -46,17 +47,22 @@ void handle_CMD() {
     else if (cmd=="toggle")
       digitalWrite(GPIO0,not(digitalRead(GPIO0)));
 
-    delay(100);  
-    mex = (digitalRead(GPIO0)) ? "OFF" : "ON";
+    delay(100);
+    result = String(!digitalRead(GPIO0));  
+    output = (digitalRead(GPIO0)) ? "OFF" : "ON";
   }    
   else
-    mex="Comando Invalido";
-    
+  {
+    //Comando non valido
+    result = "-1";
+    output="ERR";
+  }  
   root["cmd"] = cmd;
-  root["result"] = mex;
+  root["result"] = result;
+  root["output"] = output;
   
-  root.printTo(output);
-  server.send(200, "text/plain", output);
+  root.printTo(jsonOut);
+  server.send(200, " application/json", jsonOut);
 }
 
 void handleNotFound() {

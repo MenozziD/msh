@@ -13,6 +13,24 @@
 
 		<title>ESP-01 RELE</title>
 	</head>
+	<script type="text/javascript">
+
+		function rele_cmd(str_cmd){
+			$.ajax({
+				url: "cmd",
+				type: 'GET',
+				data: {n:str_cmd},
+				success: function(response){
+					var json = $.parseJSON(JSON.stringify(response));
+					$('#stato').val(json["result"]);
+				},
+				error: function(xhr){
+				}
+			});
+		}
+
+	</script>
+
 	<body>
 		<div class="container">
 			<div class="row">
@@ -25,14 +43,14 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text mb-2 " >STATO:</span>
 								</div>
-								<input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" readonly>
+								<input id ="stato" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" readonly>
 							</div>
 						</div>
 						<div class="py-3 col-md-12 text-center">
-							<button type="button" class="btn btn-primary btn-lg">ON</button>
-							<button type="button" class="btn btn-primary btn-lg">OFF</button>
-							<button type="button" class="btn btn-primary btn-lg">TOGGLE</button>
-							<button type="button" class="btn btn-primary btn-lg">STATUS</button>
+							<button type="button" onclick="rele_cmd('on')" class="btn btn-primary btn-lg">ON</button>
+							<button type="button" onclick="rele_cmd('off')" class="btn btn-primary btn-lg">OFF</button>
+							<button type="button" onclick="rele_cmd('toggle')" class="btn btn-primary btn-lg">TOGGLE</button>
+							<button type="button" onclick="rele_cmd('stato_rele')" class="btn btn-primary btn-lg">STATUS</button>
 
 						</div>
 					</div>
