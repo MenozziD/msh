@@ -24,27 +24,37 @@
 			<h4 class="mb-3 mt-3 text-center">Home</h4>
 			<div class="mb-3 row">
 				<div class="col-md-12">
-					<form class="needs-validation" novalidate="" id="form">
+					<form id="form">
 						<div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
 							    <div class="dropdown">
                                     <label for="device">Dispositivo</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="device" onclick="deviceNetCode()"></button>
-                                    <ul class="dropdown-menu" id="drop_device">
+						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
+									<ul class="dropdown-menu" id="drop_device">
                                     </ul>
                                 </div>
+								<div class="invalid-feedback" id="chk_device">
+									Il dispositivo &egrave un campo obbligatorio
+								</div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
 							    <div class="dropdown">
                                     <label for="device">Comando</label>
 						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="net_device('command')"></button>
                                     <ul class="dropdown-menu" id="drop_command">
                                     </ul>
                                 </div>
+								<div class="invalid-feedback" id="chk_command">
+									Il comando &egrave un campo obbligatorio
+								</div>
                             </div>
-							<div class="col-md-4 mb-3">
+							<div class="col-md-3 mb-3">
 								<label for="result">Esito</label>
 								<input type="text" class="form-control" id="result" readonly>
+							</div>
+							<div class="col-md-3 mb-3">
+								<label for="cmd_result">Esito Comando</label>
+								<input type="text" class="form-control" id="cmd_result" readonly>
 							</div>
 							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net_cmd()">Invia</button>
 						</div>
@@ -81,9 +91,9 @@
 					<div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net_device('list')">List Device</button>
 					</div>
-					<div class="mb-3 table-responsive">
-						<h5 id="errore" class="text-center"></h5>
-						<table class="table invisible" id="table" >
+					<div class="table-responsive">
+						<h5 id="errore" class="text-center d-none"></h5>
+						<table class="table d-none" id="table" >
 							<thead>
 								<tr>
 									<th>Codice</th>

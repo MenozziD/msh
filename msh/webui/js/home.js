@@ -3,20 +3,19 @@ var device_net_commands = [];
 var device_net_types = [];
 
 function net_cmd(){
-    var form = $('#form')[0];
 	var device = $('#device')[0].value;
 	var command = $('#command')[0].value;
-	var ko = 0;
-	form.classList.add('was-validated');
-	Array.prototype.filter.call(form, function (element) {
-      if (element.checkValidity() == false) {
-		  ko++;
-        }
-    })
-	if (ko > 0){
-		console.log("Non faccio niente, ci sono dei campi invaldi");
-	} else {
-	    console.log("Tutto ok, faccio la chiamata");
+	var check_device = $('#chk_device');
+	var check_command = $('#chk_command');
+	if (device == "")
+	    check_device.show();
+	else
+	    check_device.hide();
+    if (command == "")
+	    check_command.show();
+	else
+	    check_command.hide();
+	if (device != "" && command != ""){
         var body = {
             "dispositivo": device,
             "comando": command
@@ -29,11 +28,14 @@ function net_cmd(){
 		    success: function(response){
 				var json = $.parseJSON(JSON.stringify(response));
 				$('#result')[0].value = json["output"];
+				$('#cmd_result')[0].value = json["res_decode"]["res_result"];
 				net_device('list');
             },
             error: function(xhr){
             }
         });
+	} else {
+
 	}
 }
 
@@ -97,6 +99,8 @@ function net_device(type_op){
             var json = $.parseJSON(JSON.stringify(response));
             if (json["output"].search("OK") == 0){
 				$('#errore').text("");
+				$('#errore')[0].classList.remove("d-block");
+                $('#errore')[0].classList.add("d-none")
                 if (type_op == 'type'){
                     var types = json["types"]
                     $("#drop_type" + id).empty();
@@ -119,7 +123,7 @@ function net_device(type_op){
                         device_net_list.push(devices[i]);
                         $('#table tbody').append('<tr>');
                         $('#table tbody').append('<td><input class="form-control" style="width: auto" type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
-                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button disabled class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
+                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
                         $('#table tbody').append('<td>' + devices[i]['net_status'] + '</td>');
                         $('#table tbody').append('<td>' + devices[i]['net_ip'] + '</td>');
                         $('#table tbody').append('<td><span id="mac' + i + '">' + devices[i]['net_mac'] + '</span></td>');
@@ -134,7 +138,7 @@ function net_device(type_op){
                         $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
                         $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
                     }
-                    $('#table')[0].classList.remove('invisible');
+                    $('#table')[0].classList.remove('d-none');
                 }
                 if (type_op == 'command'){
                     var commands = json["commands"]
@@ -146,6 +150,7 @@ function net_device(type_op){
                         $("#drop_command li").click(function(){
                           $('#command').text($(this).text());
                           $("#command").val($(this).text());
+                          $('#chk_command').hide();
                        });
                     }
                 }
@@ -154,6 +159,8 @@ function net_device(type_op){
                 }
             } else {
                 $('#errore').text(json["output"]);
+                $('#errore')[0].classList.remove("d-none");
+                $('#errore')[0].classList.add("d-block");
             }
         },
         error: function(xhr){
@@ -161,13 +168,14 @@ function net_device(type_op){
     });
 }
 
-function deviceNetCode(){
+function device_net_code(){
     $("#drop_device").empty();
     for(var i = 0; i < device_net_list.length;i++) {
         $('#drop_device').append('<li class="dropdown-item">' + device_net_list[i]['net_code'] + '</li>');
         $("#drop_device li").click(function(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
+          $('#chk_device').hide();
        });
     }
 }
