@@ -6,8 +6,8 @@
 #include "index.h"
 
 #ifndef STASSID
-#define STASSID "Room WiFi"
-#define STAPSK  "roomwifi3553!"
+#define STASSID ""
+#define STAPSK  ""
 #endif
 
 const char* ssid = STASSID;

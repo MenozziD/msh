@@ -2,6 +2,7 @@ from pexpect import pxssh
 from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
+from json import  loads
 from urllib import request
 from subprocess import run, PIPE
 
@@ -258,14 +259,19 @@ def cmd_netscan(ip, subnet):
         result['result'] = netscan_err
         result['cmd_output'] = str(e)
     finally:
+        info(str(result))
         return result
 
 
 def cmd_rele(ip, command):
+    result=''
     url = "http://" + ip + "/cmd?n=" + command
     info("MAKE REQUEST: %s", url)
     res = request.urlopen(url)
-    info("RESPOSNE: %s", res.read())
+    result=loads(res.read().decode('utf-8'))
+    info("RESPONSE: %s", result)
+    return result
+
 
 
 def get_ip_and_subnet():
