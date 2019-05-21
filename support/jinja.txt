@@ -1,0 +1,30 @@
+from jinja2 import FileSystemLoader, Environment
+
+
+template = Environment(loader=FileSystemLoader('/webuipage/table_device.html')).get_template('')
+template.render(items=response['devices'])
+
+<table class="table">
+    <thead>
+      <tr>
+        <th>Codice</th>
+        <th>Tipo</th>
+        <th>Stato</th>
+        <th>IP</th>
+        <th>MAC</th>
+        <th>MAC info</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{item.device_code}}</td>
+            <td>{{item.device_type}}</td>
+            <td>{{item.device_status}}</td>
+            <td><SPAN>{{item.device_ip}}</SPAN></td>
+            <td><SPAN>{{item.device_mac}}</SPAN></td>
+            <td><SPAN>{{item.device_mac_info}}</SPAN></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
