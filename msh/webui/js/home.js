@@ -45,7 +45,7 @@ function net_scan(){
         type: 'GET',
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            $('#result')[0].value = json["output"];
+            $('#esito')[0].value = json["output"];
             $('#found')[0].value = json["find_device"];
             $('#new')[0].value = json["new_device"];
             $('#update')[0].value = json["updated_device"];

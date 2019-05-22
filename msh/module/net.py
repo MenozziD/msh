@@ -21,7 +21,7 @@ def cmd_ping(ip, pacchetti=3):
         'cmd_output': ''
     }
     try:
-        cmd = run(['ping', '-c ' + str(pacchetti), ip], stdout=PIPE, stderr=PIPE)
+        cmd = run(['ping', '-c', str(pacchetti), ip], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
         if cmd_out != "":
@@ -145,7 +145,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     }
     try:
         # user%psw
-        cmd = run(['net', 'rcp', '-I ' + ip, '-U ' + str(usr) + chr(37) + str(psw)], stdout=PIPE, stderr=PIPE)
+        cmd = run(['net', 'rcp', '-I', ip, '-U', str(usr) + chr(37) + str(psw)], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         if cmd_out != "":
@@ -167,18 +167,16 @@ def cmd_pcwin_shutdown(ip, usr, psw):
         return result
 
 
-def cmd_wakeonlan(mac, subnet="255.255.255.255"):
+def cmd_wakeonlan(mac):
     wol_ok = 0
     wol_err = -1
     wol_fail = 1
     result = {
         'mac': mac,
-        'subnet': '',
         'result': 0,
         'cmd_output': ''
     }
     try:
-        info(subnet)
         cmd = run(['wakeonlan', mac], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
@@ -205,56 +203,48 @@ def cmd_netscan(ip, subnet):
     netscan_ok = 0
     netscan_err = -1
     netscan_fail = 1
-    count = 0
     result = {
         'result': 0,
         'devices': [],
         'cmd_output': ''
     }
     try:
-        cmd = run(['sudo', 'nmap', '-sn ' + ip + "/" + subnet], stdout=PIPE, stderr=PIPE)
+        cmd = run(['sudo', 'nmap', '-sn', ip + "/" + subnet], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
         if cmd_out != "":
             result['cmd_output'] = cmd_out
             rows = cmd_out.split("\n")
             devices = []
+            device = {
+                'net_code': '',
+                'net_ip': '',
+                'net_mac': '',
+                'net_mac_info': ''
+            }
             for line in rows:
-                device = {
-                    'net_code': '',
-                    'net_type': '',
-                    'net_status': '',
-                    'net_ip': '',
-                    'net_mac': '',
-                    'net_mac_info': ''
-                }
                 if "Nmap scan report for " in line:
                     line = line.replace("Nmap scan report for ", "")
-                    if line.find("(") < 1:
-                        device['net_code'] = line.strip()
+                    if line.find("(") > 0:
+                        device['net_code'] = line.split(" (")[0]
+                        device['net_ip'] = line.split(" (")[1].replace(")", "")
+                    else:
                         device['net_ip'] = line
-                    elif line.find("(") > 1:
-                        a = line.split("(")
-                        device['net_code'] = a[0].strip()
-                        a[1] = a[1].replace(")", "")
-                        device['net_ip'] = a[1]
-                    count = count + 1
+                        device['net_code'] = line
                 if "MAC Address" in line:
-                    line = line.replace("MAC Address", "")
-                    if line.find("(") < 1:
-                        device['net_mac'] = line.strip()
-                        device['net_mac_info'] = line
-                    elif line.find("(") > 1:
-                        a = line.split("(")
-                        a[0] = a[0].replace(": ", "")
-                        device['net_mac'] = a[0].strip()
-                        a[1] = a[1].replace(")", "")
-                        device['net_mac_info'] = a[1]
+                    line = line.replace("MAC Address: ", "")
+                    device['net_mac'] = line.split(" (")[0]
+                    device['net_mac_info'] = line.split(" (")[1].replace(")", "")
                 if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                     devices.append(device)
-                    info(str(device))
+                    device = {
+                        'net_code': '',
+                        'net_ip': '',
+                        'net_mac': '',
+                        'net_mac_info': ''
+                    }
             result['devices'] = devices
-            if count > 0:
+            if len(devices) > 0:
                 result['result'] = netscan_ok
             else:
                 result['result'] = netscan_fail
@@ -282,12 +272,12 @@ def cmd_rele(ip, command):
         response = loads(request.urlopen(url).read().decode('utf-8'))
         info("RESPONSE: %s", response)
         result['cmd_output'] = response
-        if response['output'] == 'ON':
-            result['result'] = esp_on
-        if response['output'] == 'OFF':
-            result['result'] = esp_off
-        if response['output'] == 'ERR':
-            result['result'] = esp_err
+        esp_decode = {
+            'ON': esp_on,
+            'OFF': esp_off,
+            'ERR': esp_err,
+        }
+        result['result'] = esp_decode[response['output']]
     except Exception as e:
         exception("Exception")
         result['result'] = esp_err

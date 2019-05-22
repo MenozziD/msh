@@ -14,6 +14,7 @@ class NetScan(RequestHandler):
         aggiornati = 0
         response = {
             'output': '',
+            'result_command': '',
             'find_device': '',
             'new_device': '',
             'updated_device': '',
@@ -47,7 +48,7 @@ class NetScan(RequestHandler):
                         aggiornati = aggiornati + 1
                         break
                 if not trovato:
-                    DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], device['net_mac'], device['net_mac_info']))
+                    DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], '', '', device['net_mac'], device['net_mac_info']))
                     inseriti = inseriti + 1
             for db_device in db_devices:
                 trovato = False
@@ -56,9 +57,10 @@ class NetScan(RequestHandler):
                         trovato = True
                         break
                 if not trovato:
-                    DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'OFF', datetime.now().strftime(XmlReader.settings['timestamp']), db_device['net_ip'], device['net_usr'], device['net_psw'], db_device['net_mac_info'], db_device['net_mac']))
+                    DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'OFF', datetime.now().strftime(XmlReader.settings['timestamp']), db_device['net_ip'], db_device['net_usr'], db_device['net_psw'], db_device['net_mac_info'], db_device['net_mac']))
             DbManager.close_db()
             response['output'] = 'OK'
+            response['result_command'] = result
             response['find_device'] = str(len(result['devices']))
             response['new_device'] = str(inseriti)
             response['updated_device'] = str(aggiornati)
