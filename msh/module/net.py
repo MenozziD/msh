@@ -2,7 +2,7 @@ from pexpect import pxssh
 from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
-from json import  loads
+from json import loads
 from urllib import request
 from subprocess import run, PIPE
 
@@ -11,14 +11,15 @@ def cmd_ping(ip, pacchetti=3):
     ping_ok = 0
     ping_err = -1
     ping_fail = 1
-    result = {'ip': ip,
-              'pacchetti_tx': 0,
-              'pacchetti_rx': 0,
-              'pacchetti_lost': 0,
-              'tempo': 0,
-              'result': 0,
-              'cmd_output': ''
-              }
+    result = {
+        'ip': ip,
+        'pacchetti_tx': 0,
+        'pacchetti_rx': 0,
+        'pacchetti_lost': 0,
+        'tempo': 0,
+        'result': 0,
+        'cmd_output': ''
+    }
     try:
         cmd = run(['ping', '-c ' + str(pacchetti), ip], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
@@ -52,13 +53,14 @@ def cmd_radio(ip, comando, usr, psw):
     ss = None
     login = False
     command = "ifconfig %s %s"
-    result = {'ip': ip,
-              'mac': '',
-              'cmd': comando,
-              'interface': '',
-              'result': 0,
-              'cmd_output': ''
-              }
+    result = {
+        'ip': ip,
+        'mac': '',
+        'cmd': comando,
+        'interface': '',
+        'result': 0,
+        'cmd_output': ''
+    }
     try:
         result = cmd_radio_stato(ip, comando, usr, psw)
         if comando != 'stato' and result['interface'] != '' and result['mac'] != '':
@@ -90,13 +92,14 @@ def cmd_radio_stato(ip, comando, usr, psw):
     ss = None
     login = False
     command = "iwconfig"
-    result = {'ip': ip,
-              'mac': '',
-              'cmd': comando,
-              'interface': '',
-              'result': 0,
-              'cmd_output': ''
-              }
+    result = {
+        'ip': ip,
+        'mac': '',
+        'cmd': comando,
+        'interface': '',
+        'result': 0,
+        'cmd_output': ''
+    }
     try:
         ss = pxssh.pxssh()
         ss.login(ip, usr, psw)
@@ -135,10 +138,11 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
     pcwin_off_err = -1
     pcwin_off_fail = 1
-    result = {'ip': ip,
-              'result': 0,
-              'cmd_output': ''
-              }
+    result = {
+        'ip': ip,
+        'result': 0,
+        'cmd_output': ''
+    }
     try:
         # user%psw
         cmd = run(['net', 'rcp', '-I ' + ip, '-U ' + str(usr) + chr(37) + str(psw)], stdout=PIPE, stderr=PIPE)
@@ -167,11 +171,12 @@ def cmd_wakeonlan(mac, subnet="255.255.255.255"):
     wol_ok = 0
     wol_err = -1
     wol_fail = 1
-    result = {'mac': mac,
-              'subnet': '',
-              'result': 0,
-              'cmd_output': ''
-              }
+    result = {
+        'mac': mac,
+        'subnet': '',
+        'result': 0,
+        'cmd_output': ''
+    }
     try:
         info(subnet)
         cmd = run(['wakeonlan', mac], stdout=PIPE, stderr=PIPE)
@@ -201,10 +206,11 @@ def cmd_netscan(ip, subnet):
     netscan_err = -1
     netscan_fail = 1
     count = 0
-    result = {'result': 0,
-              'devices': [],
-              'cmd_output': ''
-              }
+    result = {
+        'result': 0,
+        'devices': [],
+        'cmd_output': ''
+    }
     try:
         cmd = run(['sudo', 'nmap', '-sn ' + ip + "/" + subnet], stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
@@ -214,13 +220,14 @@ def cmd_netscan(ip, subnet):
             rows = cmd_out.split("\n")
             devices = []
             for line in rows:
-                device = {'net_code': '',
-                          'net_type': '',
-                          'net_status': '',
-                          'net_ip': '',
-                          'net_mac': '',
-                          'net_mac_info': ''
-                          }
+                device = {
+                    'net_code': '',
+                    'net_type': '',
+                    'net_status': '',
+                    'net_ip': '',
+                    'net_mac': '',
+                    'net_mac_info': ''
+                }
                 if "Nmap scan report for " in line:
                     line = line.replace("Nmap scan report for ", "")
                     if line.find("(") < 1:
@@ -259,22 +266,38 @@ def cmd_netscan(ip, subnet):
         result['result'] = netscan_err
         result['cmd_output'] = str(e)
     finally:
-        info(str(result))
         return result
 
 
 def cmd_rele(ip, command):
-    result=''
+    esp_on = 0
+    esp_off = 1
+    esp_err = -1
     url = "http://" + ip + "/cmd?n=" + command
     info("MAKE REQUEST: %s", url)
-    res = request.urlopen(url)
-    result=loads(res.read().decode('utf-8'))
-    info("RESPONSE: %s", result)
+    result = {
+        'url_request': url
+    }
+    try:
+        response = loads(request.urlopen(url).read().decode('utf-8'))
+        info("RESPONSE: %s", response)
+        result['cmd_output'] = response
+        if response['output'] == 'ON':
+            result['result'] = esp_on
+        if response['output'] == 'OFF':
+            result['result'] = esp_off
+        if response['output'] == 'ERR':
+            result['result'] = esp_err
+    except Exception as e:
+        exception("Exception")
+        result['result'] = esp_err
+        result['cmd_output'] = str(e)
     return result
 
 
-
 def get_ip_and_subnet():
-    result = {'ip': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'],
-              'subnet': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask']}
+    result = {
+        'ip': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'],
+        'subnet': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask']
+    }
     return result
