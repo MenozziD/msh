@@ -10,11 +10,12 @@
         <!-- Font CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS, Handlebars -->
 		<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	
+		<script src="https://twitter.github.io/typeahead.js/js/handlebars.js"></script>
+
 		<script src="/static/js/home.js"></script>
 
 		<title>Home</title>
@@ -33,6 +34,11 @@
 									<ul class="dropdown-menu" id="drop_device">
                                     </ul>
                                 </div>
+                                <script id="drop_device-template" type="text/x-handlebars-template">
+                                    {{#each this}}
+                                        <li class="dropdown-item">{{net_code}}</li>
+                                    {{/each}}
+                                </script>
 								<div class="invalid-feedback" id="chk_device">
 									Il dispositivo &egrave un campo obbligatorio
 								</div>
@@ -44,6 +50,11 @@
                                     <ul class="dropdown-menu" id="drop_command">
                                     </ul>
                                 </div>
+                                <script id="drop_command-template" type="text/x-handlebars-template">
+                                    {{#each this}}
+                                        <li class="dropdown-item">{{cmd_str}}</li>
+                                    {{/each}}
+                                </script>
 								<div class="invalid-feedback" id="chk_command">
 									Il comando &egrave un campo obbligatorio
 								</div>
@@ -91,31 +102,75 @@
 					<div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net_device('list')">List Device</button>
 					</div>
-					<div class="table-responsive">
-						<h5 id="errore" class="text-center d-none"></h5>
-						<table class="table d-none" id="table" >
-							<thead>
-								<tr>
-									<th>Codice</th>
-									<th>Tipo</th>
-									<th>Stato</th>
-									<th>IP</th>
-									<th>MAC</th>
-									<th>MAC info</th>
-									<th>User SSH</th>
-									<th>Password SSH</th>
-									<th>Ultimo aggiornamento</th>
-									<th>Salvataggio</th>
+                    <h5 id="errore" class="text-center d-none"></h5>
+					<div  id="table-device" class="table-responsive"></div>
+                    <script id="table-device-template" type="text/x-handlebars-template">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Codice</th>
+                                    <th>Tipo</th>
+                                    <th>Stato</th>
+                                    <th>IP</th>
+                                    <th>MAC</th>
+                                    <th>MAC info</th>
+                                    <th>User SSH</th>
+                                    <th>Password SSH</th>
+                                    <th>Ultimo aggiornamento</th>
+                                    <th>Salvataggio</th>
                                     <th>Reset</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each this}}
+                                    <tr>
+                                        <td>
+                                            <input class="form-control" style="width: auto" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        </td>
+                                        <td>
+                                            <div class="dropdown{{@index}}">
+                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net_device('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                                <ul class="dropdown-menu" id="drop_type{{@index}}"></ul>
+                                            </div>
+                                        </td>
+                                        <td>{{net_status}}</td>
+                                        <td>{{net_ip}}</td>
+                                        <td>
+                                            <span id="mac{{@index}}">{{net_mac}}</span>
+                                        </td>
+                                        <td>{{net_mac_info}}</td>
+                                        <td>
+                                            <input class="form-control" style="width: auto" type="text" id="usr{{@index}}" value="{{net_usr}}">
+                                        </td>
+                                        <td>
+                                            <div class="input-group" style="width: 230px">
+                                                <input class="form-control" id="psw{{@index}}" value="{{net_psw}}" type="password">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary input-group-button" onclick="view_password({{@index}})">
+                                                        <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{net_last_update}}</td>
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net_device('update{{@index}}')">Salva</button>
+                                        </td>
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </script>
+                    <script id="drop_type-template" type="text/x-handlebars-template">
+                        {{#each this}}
+                            <li class="dropdown-item">{{type_code}}</li>
+                        {{/each}}
+                    </script>
 				</div>
 		    </div>
 		</div>
-
 	</body>
 </html>
