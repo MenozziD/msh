@@ -103,11 +103,11 @@ function net_device(type_op){
                 $('#errore')[0].classList.add("d-none")
                 if (type_op == 'type'){
                     var types = json["types"]
-                    $("#drop_type" + id).empty();
+                    var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
+                    $('#drop_type' + id).html(template(types));
                     device_net_types = []
                     for(var i = 0; i < types.length;i++) {
                         device_net_types.push(types[i]);
-                        $('#drop_type' + id).append('<li class="dropdown-item">' + types[i]['type_code'] + '</li>');
                         $('#drop_type' + id + ' li').click(function(){
                           $('#type' + id).text($(this).text());
                           $("#type" + id).val($(this).text());
@@ -116,37 +116,24 @@ function net_device(type_op){
                     }
                 }
                 if (type_op == 'list'){
-                    var devices = json["devices"]
-                    $("#table tbody").empty();
+                    var devices = json["devices"];
+                    var template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+                    $('#table-device').html(template(devices));
                     device_net_list = [];
                     for(var i = 0; i < devices.length;i++) {
                         device_net_list.push(devices[i]);
-                        $('#table tbody').append('<tr>');
-                        $('#table tbody').append('<td><input class="form-control" style="width: auto" type="text" id="code' + i + '" value="' + devices[i]['net_code'] + '"></td>');
-                        $('#table tbody').append('<td><div class="dropdown' + i + '"><button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type' + i + '" onclick="net_device(\'type' + i + '\')" value="' + devices[i]['net_type'] + '">' + devices[i]['net_type'] + '</button><ul class="dropdown-menu" id="drop_type' + i + '"></ul></div></td>');
-                        $('#table tbody').append('<td>' + devices[i]['net_status'] + '</td>');
-                        $('#table tbody').append('<td>' + devices[i]['net_ip'] + '</td>');
-                        $('#table tbody').append('<td><span id="mac' + i + '">' + devices[i]['net_mac'] + '</span></td>');
-                        $('#table tbody').append('<td>' + devices[i]['net_mac_info'] + '</td>');
-                        $('#table tbody').append('<td><input class="form-control" style="width: auto" type="text" id="usr' + i + '" value="' + devices[i]['net_usr'] + '"></td>');
-                        $('#table tbody').append('<td ><div class="input-group" style="width: 230px"><input class="form-control" id="psw' + i + '" value="' + devices[i]['net_psw'] + '" type="password"><div class="input-group-append"><button class="btn btn-primary input-group-button" onclick="view_password(' + i + ')"><i id="psw_icon' + i + '" class="fa fa-eye-slash" aria-hidden="true"></i></button></div></div></td>');
-                        $('#table tbody').append('<td>' + devices[i]['net_last_update'] + '</td>');
-                        $('#table tbody').append('<td><button disabled class="btn btn-primary btn-lg btn-block" type="button" id=salva' + i + ' onclick="net_device(\'update' + i + '\')">Salva</button></td>');
-                        $('#table tbody').append('<td><button disabled class="btn btn-primary btn-lg btn-block" type="button" id=reset' + i + ' onclick="net_reset(' + i + ')">Reset</button></td>');
-                        $('#table tbody').append('</tr>');
                         $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
                         $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
                         $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
                     }
-                    $('#table')[0].classList.remove('d-none');
                 }
                 if (type_op == 'command'){
                     var commands = json["commands"]
-                    $("#drop_command").empty();
+                    var template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
+                    $('#drop_command').html(template(commands));
                     device_net_commands = [];
                     for(var i = 0; i < commands.length;i++) {
                         device_net_commands.push(commands[i]);
-                        $('#drop_command').append('<li class="dropdown-item">' + commands[i]['cmd_str'] + '</li>');
                         $("#drop_command li").click(function(){
                           $('#command').text($(this).text());
                           $("#command").val($(this).text());
@@ -169,9 +156,9 @@ function net_device(type_op){
 }
 
 function device_net_code(){
-    $("#drop_device").empty();
+    var template = Handlebars.compile($("#drop_device-template")[0].innerHTML);
+    $('#drop_device').html(template(device_net_list));
     for(var i = 0; i < device_net_list.length;i++) {
-        $('#drop_device').append('<li class="dropdown-item">' + device_net_list[i]['net_code'] + '</li>');
         $("#drop_device li").click(function(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
