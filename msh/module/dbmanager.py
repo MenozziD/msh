@@ -45,17 +45,18 @@ class DbManager:
     def tb_net_device(net_devices):
         devices = []
         for net_device in net_devices:
-            tb_net_device = {}
-            tb_net_device['net_code'] = str(net_device[0])
-            tb_net_device['net_desc'] = str(net_device[1])
-            tb_net_device['net_type'] = str(net_device[2])
-            tb_net_device['net_status'] = str(net_device[3])
-            tb_net_device['net_last_update'] = str(net_device[4])
-            tb_net_device['net_ip'] = str(net_device[5])
-            tb_net_device['net_mac'] = str(net_device[6])
-            tb_net_device['net_usr'] = str(net_device[7])
-            tb_net_device['net_psw'] = str(net_device[8])
-            tb_net_device['net_mac_info'] = str(net_device[9])
+            tb_net_device = {
+                'net_code': str(net_device[0]),
+                'net_desc': str(net_device[1]),
+                'net_type': str(net_device[2]),
+                'net_status': str(net_device[3]),
+                'net_last_update': str(net_device[4]),
+                'net_ip': str(net_device[5]),
+                'net_mac': str(net_device[6]),
+                'net_usr': str(net_device[7]),
+                'net_psw': str(net_device[8]),
+                'net_mac_info': str(net_device[9])
+            }
             devices.append(tb_net_device)
         return devices
 
@@ -63,9 +64,10 @@ class DbManager:
     def tb_net_device_type(net_devices_type):
         devices_types = []
         for net_device_type in net_devices_type:
-            tb_net_device_type = {}
-            tb_net_device_type['type_code'] = str(net_device_type[0])
-            tb_net_device_type['type_description'] = str(net_device_type[1])
+            tb_net_device_type = {
+                'type_code': str(net_device_type[0]),
+                'type_description': str(net_device_type[1])
+            }
             devices_types.append(tb_net_device_type)
         return devices_types
 
@@ -73,10 +75,11 @@ class DbManager:
     def tb_net_diz_cmd(net_diz_cmd):
         diz_cmd = []
         for net_cmd in net_diz_cmd:
-            tb_net_diz_cmd = {}
-            tb_net_diz_cmd['cmd_str'] = str(net_cmd[0])
-            tb_net_diz_cmd['cmd_net_type'] = str(net_cmd[1])
-            tb_net_diz_cmd['cmd_result'] = str(net_cmd[2])
+            tb_net_diz_cmd = {
+                'cmd_str': str(net_cmd[0]),
+                'cmd_net_type': str(net_cmd[1]),
+                'cmd_result': str(net_cmd[2])
+            }
             diz_cmd.append(tb_net_diz_cmd)
         return diz_cmd
 
@@ -84,20 +87,20 @@ class DbManager:
     def tb_net_device_tb_net_diz_cmd(net_devices_net_diz_cmd):
         devices_diz_cmd = []
         for net_device in net_devices_net_diz_cmd:
-            tb_net_device = {}
-            tb_net_device['net_code'] = str(net_device[0])
-            tb_net_device['net_desc'] = str(net_device[1])
-            tb_net_device['net_type'] = str(net_device[2])
-            tb_net_device['net_status'] = str(net_device[3])
-            tb_net_device['net_last_update'] = str(net_device[4])
-            tb_net_device['net_ip'] = str(net_device[5])
-            tb_net_device['net_mac'] = str(net_device[6])
-            tb_net_device['net_usr'] = str(net_device[7])
-            tb_net_device['net_psw'] = str(net_device[8])
-            tb_net_device['net_mac_info'] = str(net_device[9])
-            tb_net_device['cmd_str'] = str(net_device[10])
-            tb_net_device['cmd_net_type'] = str(net_device[11])
-            tb_net_device['cmd_result'] = str(net_device[12])
+            tb_net_device = {
+                'net_code': str(net_device[0]),
+                'net_desc': str(net_device[1]),
+                'net_type': str(net_device[2]),
+                'net_status': str(net_device[3]),
+                'net_last_update': str(net_device[4]),
+                'net_ip': str(net_device[5]),
+                'net_mac': str(net_device[6]),
+                'net_usr': str(net_device[7]),
+                'net_psw': str(net_device[8]),
+                'net_mac_info': str(net_device[9]),
+                'cmd_str': str(net_device[10]),
+                'cmd_net_type': str(net_device[11]),
+                'cmd_result': str(net_device[12])}
             devices_diz_cmd.append(tb_net_device)
         return devices_diz_cmd
 
@@ -105,8 +108,9 @@ class DbManager:
     def tb_res_decode(res_decodes):
         list_res_decode = []
         for res_decode in res_decodes:
-            tb_res_decode = {}
-            tb_res_decode['res_result'] = str(res_decode[4])
-            tb_res_decode['res_state'] = str(res_decode[5])
+            tb_res_decode = {
+                'res_result': str(res_decode[4]),
+                'res_state': str(res_decode[5])
+            }
             list_res_decode.append(tb_res_decode)
         return list_res_decode
