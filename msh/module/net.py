@@ -1,5 +1,4 @@
 from pexpect import pxssh
-from module.xml_reader import XmlReader
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
 from json import loads
@@ -32,7 +31,7 @@ def cmd_ping(ip, pacchetti=3):
             result['pacchetti_tx'] = cmd_out[0].split(" ")[0]
             result['pacchetti_rx'] = cmd_out[1].split(" ")[0]
             result['tempo'] = cmd_out[3].split(" ")[1]
-            if result['pacchetti_lost'] == XmlReader.settings['string_success']['ping']:
+            if result['pacchetti_lost'] == '0%':
                 result['result'] = ping_ok
             else:
                 result['result'] = ping_fail
@@ -152,7 +151,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
             result['cmd_output'] = cmd_out
             cmd_out = cmd_out.replace("\t", "").replace("\n", "")
             cmd_out = cmd_out.strip()
-            if cmd_out.find(XmlReader.settings['string_success']['pcwin_shutdown']) > 0:
+            if cmd_out.find('succeeded') > 0:
                 result['result'] = pcwin_off_ok
             else:
                 result['result'] = pcwin_off_fail
@@ -184,7 +183,7 @@ def cmd_wakeonlan(mac):
             result['cmd_output'] = cmd_out
             cmd_out = cmd_out.replace("\t", "").replace("\n", "")
             cmd_out = cmd_out.strip()
-            if cmd_out.find(XmlReader.settings['string_success']['wake_on_lan']) > 0:
+            if cmd_out.find('Sending magic packet') >= 0:
                 result['result'] = wol_ok
             else:
                 result['result'] = wol_fail
