@@ -20,20 +20,15 @@ class NetDevice(RequestHandler):
             mac = data['mac']
             user = data['user']
             password = data['password']
-            DbManager(XmlReader.settings['path']['db'])
+            DbManager()
             if type_op == 'list':
-                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
-                response['devices'] = DbManager.tb_net_device(rows)
+                response['devices'] = DbManager.select_tb_net_device()
             if type_op == 'type':
-                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_type'])
-                response['types'] = DbManager.tb_net_device_type(rows)
+                response['types'] = DbManager.select_tb_net_device_type()
             if type_op == 'command':
-                rows = DbManager.select(XmlReader.settings['query']['select_net_command_for_type'] % tipo)
-                response['commands'] = DbManager.tb_net_diz_cmd(rows)
+                response['commands'] = DbManager.select_tb_net_command_from_type(tipo)
             if type_op == 'update':
-                rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device_from_mac'] % mac)
-                device = DbManager.tb_net_device(rows)[0]
-                DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (codice, tipo, device['net_status'], datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], user, password, device['net_mac_info'], device['net_mac']))
+                DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
             DbManager.close_db()
             response['output'] = 'OK'
         except Exception as e:
