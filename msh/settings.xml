@@ -2,12 +2,6 @@
 	<porta>65177</porta>
 	<lingua>IT</lingua>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
-	<path>
-		<ui>webui/</ui>
-		<index>/static/page/index.html</index>
-		<error>webui/page/error/</error>
-		<db>db/system.db</db>
-	</path>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
 		<filename>None</filename>
@@ -15,23 +9,4 @@
 		<!-- debug, info, warning, error, critical -->
 		<level>info</level>
 	</log>
-	<class_error>
-		<error name="404">&lt;class 'webob.exc.HTTPNotFound'&gt;</error>
-		<error name="405">&lt;class 'webob.exc.HTTPMethodNotAllowed'&gt;</error>
-	</class_error>
-	<string_success>
-		<ping>0%</ping>
-		<pcwin_shutdown>succeeded</pcwin_shutdown>
-		<wake_on_lan>Sending magic packet</wake_on_lan>
-	</string_success>
-	<query>
-		<select_tb_net_device>SELECT * FROM TB_NET_DEVICE;</select_tb_net_device>
-		<select_tb_net_device_from_mac>SELECT * FROM TB_NET_DEVICE WHERE TB_NET_DEVICE.NET_MAC LIKE '%s';</select_tb_net_device_from_mac>
-		<select_tb_net_device_tb_net_diz_cmd>SELECT * FROM TB_NET_DEVICE INNER JOIN TB_NET_DIZ_CMD ON TB_NET_DEVICE.NET_TYPE = TB_NET_DIZ_CMD.CMD_NET_TYPE WHERE TB_NET_DEVICE.NET_CODE LIKE '%s' AND TB_NET_DIZ_CMD.CMD_STR LIKE '%s'</select_tb_net_device_tb_net_diz_cmd>
-		<select_tb_res_decode>SELECT * FROM TB_RES_DECODE WHERE RES_DEVICE_TYPE LIKE '%s' AND RES_COMMAND LIKE '%s' AND RES_LANG LIKE '%s' AND RES_VALUE LIKE '%s';</select_tb_res_decode>
-		<select_tb_net_device_type>SELECT * FROM TB_NET_DEVICE_TYPE;</select_tb_net_device_type>
-        <select_net_command_for_type>SELECT * FROM TB_NET_DIZ_CMD WHERE CMD_NET_TYPE = '%s';</select_net_command_for_type>
-		<insert_tb_net_device>INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s');</insert_tb_net_device>
-		<update_tb_net_device>UPDATE TB_NET_DEVICE SET NET_CODE = '%s', NET_TYPE = '%s',NET_STATUS = '%s', NET_LASTUPDATE = '%s', NET_IP = '%s', NET_USER = '%s', NET_PSW = '%s', NET_MAC_INFO = '%s' WHERE NET_MAC LIKE '%s';</update_tb_net_device>
-	</query>
 </settings>
