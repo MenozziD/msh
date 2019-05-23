@@ -21,9 +21,8 @@ class NetScan(RequestHandler):
             'timestamp': ''
         }
         try:
-            DbManager(XmlReader.settings['path']['db'])
-            rows = DbManager.select(XmlReader.settings['query']['select_tb_net_device'])
-            db_devices = DbManager.tb_net_device(rows)
+            DbManager()
+            db_devices = DbManager.select_tb_net_device()
             ip_subnet = get_ip_and_subnet()
             ip = ip_subnet['ip'].split('.')
             subnet = ip_subnet['subnet'].split('.')
@@ -43,12 +42,12 @@ class NetScan(RequestHandler):
                 trovato = False
                 for db_device in db_devices:
                     if device['net_mac'] == db_device['net_mac']:
-                        DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], db_device['net_usr'], db_device['net_psw'], device['net_mac_info'], device['net_mac']))
+                        DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
                         trovato = True
                         aggiornati = aggiornati + 1
                         break
                 if not trovato:
-                    DbManager.insert_or_update(XmlReader.settings['query']['insert_tb_net_device'] % (device['net_code'], 'NET', 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), device['net_ip'], '', '', device['net_mac'], device['net_mac_info']))
+                    DbManager.insert_tb_net_device(device['net_code'], 'NET', 'ON', device['net_ip'], '', '', device['net_mac'], device['net_mac_info'])
                     inseriti = inseriti + 1
             for db_device in db_devices:
                 trovato = False
@@ -57,7 +56,7 @@ class NetScan(RequestHandler):
                         trovato = True
                         break
                 if not trovato:
-                    DbManager.insert_or_update(XmlReader.settings['query']['update_tb_net_device'] % (db_device['net_code'], db_device['net_type'], 'OFF', datetime.now().strftime(XmlReader.settings['timestamp']), db_device['net_ip'], db_device['net_usr'], db_device['net_psw'], db_device['net_mac_info'], db_device['net_mac']))
+                    DbManager.update_tb_net_device(db_device['net_mac'], net_status='OFF')
             DbManager.close_db()
             response['output'] = 'OK'
             response['result_command'] = result
