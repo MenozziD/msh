@@ -1,7 +1,7 @@
 #ifndef header_h
 #define header_h
 
-String file1=
+String file_head=
 "<html>\r\n"
 "	<head>\r\n"
 "        <meta charset=\"utf-8\">\r\n"
@@ -16,9 +16,12 @@ String file1=
 "		<script src=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js\" integrity=\"sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM\" crossorigin=\"anonymous\"></script>\r\n"
 "\r\n"
 "		<title>ESP-01 RELE</title>\r\n"
-"	</head>\r\n"
+"	</head>\r\n";
+
+String file_index_body=
 "	<script type=\"text/javascript\">\r\n"
-"\r\n"
+"                                  \r\n"
+"   $( document ).ready(rele_cmd('stato_rele'));  \r\n"
 "		function rele_cmd(str_cmd){\r\n"
 "			$.ajax({\r\n"
 "				url: \"cmd\",\r\n"
@@ -64,4 +67,30 @@ String file1=
 "	</body>\r\n"
 "</html>\r\n";
 
+String file_error_body=
+" <body>\r\n"
+"   <div class=\"container\">\r\n"
+"     <div class=\"row\">\r\n"
+"       <div class=\"py-5 col-md-12 text-center\">\r\n"
+"         <div class=\"error-template\">\r\n"
+"           <h1>Oops!</h1>\r\n"
+"           <h2>404 Not Found</h2>\r\n"
+"           <div class=\"error-details\">\r\n"
+"               Scusi, si &egrave verificato un errore, la pagina richiesta non &egrave stata trovata!\r\n"
+"             <br>\r\n"
+"               %mex \n"
+"           </div>\r\n"
+"           <div class=\"error-actions py-4\">\r\n"
+"             <a href=\"/\" class=\"btn btn-primary btn-lg\">\r\n"
+"               Ritorna alla Home\r\n"
+"             </a>\r\n"
+"           </div>\r\n"
+"         </div>\r\n"
+"       </div>\r\n"
+"     </div>\r\n"
+"   </div>\r\n"
+" </body>\r\n"
+"</html>\r\n";
+
 #endif
+

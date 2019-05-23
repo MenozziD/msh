@@ -1,3 +1,10 @@
+/*
+ * ESP01_RELE: Software per nodo ESP01 per MSH.
+ * Espone API per comandare RELE e Homa Page con comandi
+ * Version 1.0  May, 2019
+ * Authors: Davide Menozzi, Simone Sganerzla
+*/
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -21,64 +28,38 @@ JsonObject& root = jsonBuffer.createObject();
 const int GPIO0 = 0;
 
 void handleRoot() {
-  server.send(200, "text/html", file1);
+  server.send(200, "text/html", file_head+file_index_body);
 }
-
 
 void handle_CMD() {
 
-  String cmd="";
-  String result="";
-  String output="";
-  String jsonOut="";
-    
-  int check=0;
+  String jsonOut = "";
+  bool ok = false;
+  
   for (uint8_t i = 0; i < server.args(); i++) {
-    if (server.argName(i)=="n")
-      cmd=server.arg(i);
+    if (server.argName(i) == "n") 
+      root["cmd"] = server.arg(i);
+      if (root["cmd"] == "on" || root["cmd"] == "off" || root["cmd"] == "stato_rele" || root["cmd"] == "toggle")
+        ok=true;
   }
-
-  if (cmd=="on" || cmd=="off" || cmd=="stato_rele" || cmd=="toggle")
+  
+  if (ok)
   {
-    if (cmd=="on")
-      digitalWrite(GPIO0,LOW);
-    else if (cmd=="off")
-      digitalWrite(GPIO0,HIGH);
-    else if (cmd=="toggle")
-      digitalWrite(GPIO0,not(digitalRead(GPIO0)));
-
-    delay(100);
-    result = String(!digitalRead(GPIO0));  
-    output = (digitalRead(GPIO0)) ? "OFF" : "ON";
-  }    
+    if (root["cmd"] == "on")          digitalWrite(GPIO0,LOW);
+    else if (root["cmd"] == "off")    digitalWrite(GPIO0,HIGH);
+    else if (root["cmd"] == "toggle") digitalWrite(GPIO0,not(digitalRead(GPIO0)));
+    delay(10);
+    root["output"] = (digitalRead(GPIO0)) ? "OFF" : "ON";
+  }
   else
-  {
-    //Comando non valido
-    result = "-1";
-    output="ERR";
-  }  
-  root["cmd"] = cmd;
-  root["result"] = result;
-  root["output"] = output;
+    root["output"] = "ERR";    //Comando non valido
   
   root.printTo(jsonOut);
   server.send(200, " application/json", jsonOut);
 }
 
 void handleNotFound() {
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-  server.send(404, "text/plain", message);
-  digitalWrite(GPIO0, 0);
+  server.send(404, "text/html", file_head+file_error_body);
 }
 
 void setup(void) {
@@ -105,10 +86,6 @@ void setup(void) {
 
   server.on("/", handleRoot);
   server.on("/cmd", handle_CMD);
-
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
 
   server.onNotFound(handleNotFound);
 
