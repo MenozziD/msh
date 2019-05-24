@@ -234,6 +234,12 @@ def cmd_netscan(ip, subnet):
                     line = line.replace("MAC Address: ", "")
                     device['net_mac'] = line.split(" (")[0]
                     device['net_mac_info'] = line.split(" (")[1].replace(")", "")
+                    if device['net_mac_info'] == 'Unknown':
+                        url = 'https://api.macvendors.com/' + device['net_mac']
+                        info("MAKE REQUEST: %s", url)
+                        response = request.urlopen(url).read()
+                        info("RESPONSE: %s", response)
+                        device['net_mac_info'] = response
                 if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                     devices.append(device)
                     device = {
