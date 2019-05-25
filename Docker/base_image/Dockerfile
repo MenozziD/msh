@@ -1,6 +1,5 @@
-# Parto da un SO Raspbian di base
+# Parto da un SO Debian di base
 FROM debian:latest
-
 # UPDATE
 RUN apt-get update -y
 # APT-UTILS
@@ -19,6 +18,13 @@ RUN apt-get install ssh -y
 RUN apt-get install wakeonlan -y
 # SAMBA per comando NET
 RUN apt-get install samba-common-bin -y
+# NPM AND NGROK
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get install npm -y
+RUN npm install ngrok -g
+# GACTIONS
+RUN curl https://dl.google.com/gactions/updates/bin/linux/amd64/gactions/gactions --output /usr/bin/gactions
+RUN chmod +x /usr/bin/gactions
 # PYTHON
 RUN apt-get install python3 -y
 RUN apt-get install python3-pip -y
