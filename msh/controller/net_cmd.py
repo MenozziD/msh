@@ -2,7 +2,7 @@ from webapp3 import RequestHandler
 from logging import info, exception
 from module.dbmanager import DbManager
 from module.xml_reader import XmlReader
-from module.net import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_rele
+from module.net import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp
 from json import dumps, loads
 from datetime import datetime
 
@@ -22,7 +22,7 @@ class NetCmd(RequestHandler):
             funzioni = {
                 '100': cmd_ping,
                 '102': cmd_wakeonlan,
-                '130': cmd_rele,
+                '130': cmd_esp,
                 '201': cmd_pcwin_shutdown,
                 '300': cmd_radio,
             }

@@ -264,7 +264,7 @@ def cmd_netscan(ip, subnet):
         return result
 
 
-def cmd_rele(ip, command):
+def cmd_esp(ip, command):
     esp_on = 0
     esp_off = 1
     esp_err = -1

@@ -1,0 +1,11 @@
+- Svuotare il DB
+- Lanciare Net Scan
+- Rilanciare Net Scan
+- Togliere un dispositivo dalla rete
+- Rilanciare Net Scan
+- Provare a cambiare il codice, il tipo, la user e la passowrd di un dispositivo
+- Eseguire il comando stato (ping)
+- Eseguire il comando on su PCWIN (wakeonlan)
+- Eseguire il comando off su PCWIN (pcwin_shutdown)
+- Eseguire il comando on/off su ESP_RELE (rele)
+- Eseguire il comando radio_up/radio_down su AP (radio)

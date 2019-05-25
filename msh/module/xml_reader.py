@@ -3,12 +3,7 @@ from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 
 class XmlReader:
-    settings = {
-        'string_failure': {
-            'error_db': '',
-            'error': ''
-        }
-    }
+    settings = {}
     log_mapping = {
         'debug': DEBUG,
         'info': INFO,
