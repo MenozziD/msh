@@ -31,6 +31,7 @@ def main():
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
     ip_address = get_ip_and_subnet()['ip']
+    ip_address = 'localhost'
     port = XmlReader.settings['porta']
     info("Server in ascolto su http://%s:%s", ip_address, port)
     httpserver.serve(app, host=ip_address, port=port)

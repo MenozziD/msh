@@ -11,7 +11,8 @@
     "automation" :
     {
       "name": "automation",
-      "url": "https://example.com/api/home"
+      "url": "https://c07aa5e5.ngrok.io/api/home"
     }
-  }
+  },
+  "locale": "it"
 }

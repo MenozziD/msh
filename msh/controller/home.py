@@ -1,7 +1,8 @@
 from webapp3 import RequestHandler
 from logging import info
 from json import dumps, loads
-
+from module.net import cmd_esp
+from module.dbmanager import DbManager
 
 class Home(RequestHandler):
     def post(self):
@@ -80,6 +81,7 @@ class Home(RequestHandler):
         if command == 'action.devices.commands.OnOff':
             if device_id == '1':
                 info('device 1 %s', params['on'])
+                cmd_esp('192.168.1.9', 'toggle')
             if device_id == '2':
                 info('ON/OFF device 2')
         if command == 'action.devices.commands.ColorAbsolute':

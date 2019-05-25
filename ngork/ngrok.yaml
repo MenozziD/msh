@@ -1,0 +1,8 @@
+authtoken: 4JVzAsyn748AXyW4Knuyp_2iNm3VuFQEV9HgVb9Mpbr
+tunnels:
+  app-foo:
+    addr: 65177
+    proto: http
+  app-bar:
+    addr: 3000
+    proto: http

@@ -1,8 +1,8 @@
 /*
  * ESP01_RELE: Software per nodo ESP01 per MSH.
- * Espone API per comandare RELE e Homa Page con comandi
+ * Espone API per comandare RELE + Homa Page con comandi
  * Version 1.0  May, 2019
- * Authors: Davide Menozzi, Simone Sganerzla
+ * Authors: Davide Menozzi, Simone Sganzerla
 */
 
 #include <ESP8266WiFi.h>

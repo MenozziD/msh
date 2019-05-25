@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        applicationId 'com.nilhcem.smarthome.androidthings'
+        minSdkVersion 27
+        targetSdkVersion 27
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+ext.arch_version = '1.1.1'
+ext.dagger_version = '2.15'
+ext.gms_version = '12.0.1'
+ext.support_version = '27.1.1'
+
+dependencies {
+    compileOnly 'com.google.android.things:androidthings:1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:support-media-compat:$support_version" // used by firebase
+    implementation "com.android.support:support-v4:$support_version" // used by firebase
+
+    compileOnly "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+
+    implementation "android.arch.lifecycle:extensions:$arch_version"
+    kapt "android.arch.lifecycle:compiler:$arch_version"
+
+    implementation "com.google.firebase:firebase-database:$gms_version"
+
+    implementation 'com.google.android.things.contrib:driver-apa102:1.0'
+    implementation 'com.google.android.things.contrib:driver-rainbowhat:1.0'
+}
+
+apply plugin: 'com.google.gms.google-services'
