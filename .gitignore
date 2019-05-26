@@ -1,9 +1,9 @@
 /.idea/*
-/msh/db/*
-/msh/.idea/*
-/msh/*.log
-/msh/module/__pycache__/*
-/msh/controller/__pycache__/*
-/Docker/raspberry_image/msh/*
+/server/msh/db/*
+/server/msh/.idea/*
+/server/msh/*.log
+/server/msh/module/__pycache__/*
+/server/msh/controller/__pycache__/*
+/Docker/raspberry_image/server/*
 /Docker/esp_rele_image/.idea/*
 /Docker/esp_rele_image/*.log

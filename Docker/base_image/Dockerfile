@@ -18,10 +18,15 @@ RUN apt-get install ssh -y
 RUN apt-get install wakeonlan -y
 # SAMBA per comando NET
 RUN apt-get install samba-common-bin -y
-# NPM AND NGROK
+# NPM
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install npm -y
-RUN npm install ngrok -g
+# UNZIP
+RUN apt-get install unzip -y
+# NGROK
+RUN curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --output /usr/bin/ngrok-stable-linux-amd64.zip
+RUN unzip /usr/bin/ngrok-stable-linux-amd64.zip -d /usr/bin
+RUN rm /usr/bin/ngrok-stable-linux-amd64.zip
 # GACTIONS
 RUN curl https://dl.google.com/gactions/updates/bin/linux/amd64/gactions/gactions --output /usr/bin/gactions
 RUN chmod +x /usr/bin/gactions

@@ -1,6 +1,9 @@
 #Accesso alla cartella
 cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
 
+#Creo la action su google action a partire dal json
+gactions update --action_package ./msh/action.json --project smart-home-android-thing-deadd
+
 # Accedere al container
 docker exec -i -t raspberrypi /bin/bash
 docker exec -i -t esprele /bin/bash
@@ -21,7 +24,7 @@ docker container ls --all | awk '{print $1}' | xargs docker container rm
 docker build . --tag=msh:v0.0.1
 
 # Creazione di un'immagine ed esecuzione
-docker build . --tag=raspberrypi:v0.0.1
+docker build . --build-arg ngrok_auth_token='TOKEN' --build-arg google_actions_project_id='ID_PROJECT' --tag=raspberrypi:v0.0.1
 docker run -d --name raspberrypi -p 8080:65177 raspberrypi:v0.0.1
 
 # Stoppare/Avviare il container
