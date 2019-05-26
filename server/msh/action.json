@@ -1,4 +1,28 @@
 {
+  "manifest": {
+    "displayName": "The MSH",
+    "invocationName": "The MSH",
+    "shortDescription": "Hub domotico per la gestione della casa",
+    "longDescription": "Hub domotico per la gestione della casa e di tutti i dispotivi Wi-Fi",
+    "companyName": "MSH",
+    "contactEmail": "sganzerla.simone.93@gmail.com",
+    "sampleInvocation": [
+      "Fammi parlare con the MSH",
+      "Voglio parlare con the MSH"
+    ],
+    "introduction": "Puoi usare questo agent per comunicare con tutti i dispositivi collegati",
+    "voiceName": "female_1"
+  },
+  "accountLinking": {
+    "clientId": "RKkWfsi0Z9",
+    "clientSecret": "eToBzeBT7OwrPQO8mZHsZtLp1qhQbe",
+    "grantType": "AUTH_CODE",
+    "authenticationUrl": "https://a29efc42.ngrok.io/oauth",
+    "accessTokenUrl": "https://a29efc42.ngrok.io/token",
+    "assertionTypes": [
+      "UNKNOWN_ASSERTION_TYPE"
+    ]
+  },
   "actions": [{
     "name": "actions.devices",
     "deviceControl": {

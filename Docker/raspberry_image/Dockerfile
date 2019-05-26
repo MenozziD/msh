@@ -3,6 +3,7 @@ ARG ngrok_auth_token
 ARG google_actions_project_id
 WORKDIR /server
 COPY server/ /server/
+COPY start.sh /server/
 # SERVER APPLICATIVO
 RUN mkdir msh/db
 RUN sqlite3 ./msh/db/system.db

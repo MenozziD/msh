@@ -1,5 +1,5 @@
 - Schedulatore Ngrok ogni 7 ore
-- action.json con tutte le info necessarie e gestione dell url di account
+- capire perchè non aggiorna altre info ma solo actions
 - Pagina di login
 - Caricare codice su ESP da raspberry
-- 
+- Oauth con Google
