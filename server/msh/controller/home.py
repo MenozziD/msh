@@ -42,6 +42,19 @@ class Home(RequestHandler):
             'willReportState': True
         }
         devices.append(device)
+        device = {
+            'id': '3',
+            "type": "action.devices.types.THERMOSTAT",
+            'traits': ['action.devices.traits.TemperatureSetting'],
+            'name': {
+                'name': 'temperature'
+            },
+            'willReportState': True,
+            "attributes": {
+                "thermostatTemperatureUnit": "C"
+            },
+        }
+        devices.append(device)
         response = {
             'requestId': data['requestId'],
             'payload': {'devices': devices}
@@ -61,9 +74,15 @@ class Home(RequestHandler):
                 'spectrumRGB': 16510692
             }
         }
+        third = {
+            "online": True,
+            "thermostatTemperatureAmbient": 25.1,
+            "thermostatHumidityAmbient": 45.3
+        }
         devices = {
             '1': first,
-            '2': second
+            '2': second,
+            '3': third
         }
         response = {
             'requestId': data['requestId'],

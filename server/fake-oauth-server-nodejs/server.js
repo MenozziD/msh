@@ -28,7 +28,7 @@ const appPort = process.env.PORT || "3000";
 const server = app.listen(appPort, function () {
   const host = server.address().address;
   const port = server.address().port;
-  console.log('Smart Home Cloud and App listening at %s:%s', host, port);
+  console.log('OAuth Server listening at %s:%s', host, port);
 
   authProvider.registerAuth(app);
 });
