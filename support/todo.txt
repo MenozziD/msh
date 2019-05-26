@@ -1,0 +1,5 @@
+- Schedulatore Ngrok ogni 7 ore
+- action.json con tutte le info necessarie e gestione dell url di account
+- Pagina di login
+- Caricare codice su ESP da raspberry
+- 
