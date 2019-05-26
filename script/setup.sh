@@ -60,7 +60,7 @@ tunnels:
     proto: http
   app-bar:
     addr: 3000
-    proto: http" > ../ngrok.yaml
+    proto: http" > ../ngrok/ngrok.yaml
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 echo "<settings>
 	<porta>65177</porta>

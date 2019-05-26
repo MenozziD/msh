@@ -4,6 +4,7 @@ from netifaces import AF_INET, gateways, ifaddresses
 from json import loads
 from urllib import request
 from subprocess import run, PIPE
+from time import sleep
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -237,9 +238,11 @@ def cmd_netscan(ip, subnet):
                     if device['net_mac_info'] == 'Unknown':
                         url = 'https://api.macvendors.com/' + device['net_mac']
                         info("MAKE REQUEST: %s", url)
-                        #response = request.urlopen(url).read()
-                        #info("RESPONSE: %s", response)
-                        #device['net_mac_info'] = response
+                        response = request.urlopen(url).read()
+                        info("RESPONSE: %s", response)
+                        device['net_mac_info'] = response
+                        # aspetto due secondi per non superare il numero di richieste massime
+                        sleep(2)
                 if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                     devices.append(device)
                     device = {
