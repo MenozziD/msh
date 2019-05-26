@@ -1,3 +1,5 @@
 https://docs.pylonsproject.org/projects/webob/en/stable/api/response.html
-http://nilhcem.com/android-things/google-assistant-smart-home
 https://github.com/Nilhcem/smarthome-androidthings
+https://developers.google.com/actions/smarthome/traits/
+https://developers.google.com/actions/reference/rest/Shared.Types/ActionPackage
+https://github.com/actions-on-google
