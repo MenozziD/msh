@@ -1,6 +1,6 @@
 from sqlite3 import Error, connect
 from logging import info
-from module.xml_reader import XmlReader
+from module import XmlReader
 from datetime import datetime
 
 
@@ -177,3 +177,38 @@ class DbManager:
         query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) ' \
                 'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, net_type, net_status, datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, net_user, net_psw, net_mac, net_mac_info)
         DbManager.insert_or_update(query)
+
+    @staticmethod
+    def select_tb_user_from_username(username):
+        query = 'SELECT * ' \
+                'FROM TB_USER ' \
+                'WHERE USERNAME = \'%s\';' % username
+        users = DbManager.select(query)
+        ret_users = []
+        for user in users:
+            tb_user = {
+                'username': str(user[0]),
+                'password': str(user[1]),
+                'role': str(user[2]),
+            }
+            ret_users.append(tb_user)
+        return ret_users
+
+    @staticmethod
+    def update_tb_user(username, password='', role=''):
+        query = 'UPDATE TB_USER SET '
+        fields = {
+            'password': 'PASSWORD = \'%s\',' % password,
+            'role': 'ROLE = \'%s\',' % role,
+        }
+        device = {
+            'password': password,
+            'role': role
+        }
+        for key, value in device.items():
+            if value != '':
+                query = query + fields[key]
+        query = query[:-1]
+        query = query + ' WHERE USERNAME = \'%s\';' % username
+        DbManager.insert_or_update(query)
+        return

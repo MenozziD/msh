@@ -9,4 +9,9 @@
 		<!-- debug, info, warning, error, critical -->
 		<level>info</level>
 	</log>
+	<oauth_google>
+		<client_id>953862069497-kouomekb0g4ol2pgi03ud4gf7avqpq70.apps.googleusercontent.com</client_id>
+		<client_secret>7o3aa-khFkU66eHQJa71fBlM</client_secret>
+		<url_callback>https://c07aa5e5.ngrok.io/login</url_callback>
+	</oauth_google>
 </settings>

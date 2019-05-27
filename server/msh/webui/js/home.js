@@ -90,6 +90,9 @@ function net_device(type_op){
         "user": user,
         "password": password
     };
+    $('#errore').text("");
+    $('#errore')[0].classList.remove("d-block");
+    $('#errore')[0].classList.add("d-none");
     $.ajax({
         url: "/api/net_device",
         type: 'POST',
@@ -98,9 +101,6 @@ function net_device(type_op){
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
             if (json["output"].search("OK") == 0){
-				$('#errore').text("");
-				$('#errore')[0].classList.remove("d-block");
-                $('#errore')[0].classList.add("d-none")
                 if (type_op == 'type'){
                     var types = json["types"]
                     var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);

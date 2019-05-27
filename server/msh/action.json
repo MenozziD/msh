@@ -1,42 +1,38 @@
 {
-  "manifest": {
-    "displayName": "The MSH",
-    "invocationName": "The MSH",
-    "shortDescription": "Hub domotico per la gestione della casa",
-    "longDescription": "Hub domotico per la gestione della casa e di tutti i dispotivi Wi-Fi",
-    "companyName": "MSH",
-    "contactEmail": "sganzerla.simone.93@gmail.com",
-    "sampleInvocation": [
-      "Fammi parlare con the MSH",
-      "Voglio parlare con the MSH"
-    ],
-    "introduction": "Puoi usare questo agent per comunicare con tutti i dispositivi collegati",
-    "voiceName": "female_1"
-  },
-  "accountLinking": {
-    "clientId": "RKkWfsi0Z9",
-    "clientSecret": "eToBzeBT7OwrPQO8mZHsZtLp1qhQbe",
-    "grantType": "AUTH_CODE",
-    "authenticationUrl": "https://a29efc42.ngrok.io/oauth",
-    "accessTokenUrl": "https://a29efc42.ngrok.io/token",
-    "assertionTypes": [
-      "UNKNOWN_ASSERTION_TYPE"
-    ]
-  },
-  "actions": [{
-    "name": "actions.devices",
-    "deviceControl": {
-    },
-    "fulfillment": {
-      "conversationName": "automation"
-    }
-  }],
-  "conversations": {
-    "automation" :
-    {
-      "name": "automation",
-      "url": "https://c07aa5e5.ngrok.io/api/home"
-    }
-  },
-  "locale": "it"
+	"actions": [{
+			"fulfillment": {
+				"conversationName": "automation"
+			},
+			"name": "actions.devices"
+		}
+	],
+	"conversations": {
+		"automation": {
+			"name": "automation",
+			"url": "https://c07aa5e5.ngrok.io/api/home"
+		}
+	},
+	"manifest": {
+		"displayName": "The MSH",
+		"invocationName": "The MSH",
+		"shortDescription": "Hub domotico per la gestione della casa",
+		"longDescription": "Hub domotico per la gestione della casa e di tutti i dispotivi Wi-Fi",
+		"companyName": "MSH",
+		"contactEmail": "sganzerla.simone.93@gmail.com",
+		"sampleInvocation": [
+		  "Fammi parlare con the MSH",
+		  "Voglio parlare con the MSH"
+		],
+		"introduction": "Puoi usare questo agent per comunicare con tutti i dispositivi collegati",
+		"voiceName": "female_1",
+		"testingInstructions": "test"
+	},
+	"accountLinking": {
+		"accessTokenUrl": "https://sdfsf.ngrok.io/token",
+		"authenticationUrl": "https://sdfsf.ngrok.io/oauth",
+		"clientId": "RKkWfsi0Z9",
+		"clientSecret": "eToBzeBT7OwrPQO8mZHsZtLp1qhQbe",
+		"grantType": "AUTH_CODE"
+	},
+	"locale": "it"
 }

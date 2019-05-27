@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+		<!-- Font CSS -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+		<!-- jQuery first, then Popper.js, then Bootstrap JS, Handlebars -->
+		<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+		<link rel="stylesheet" href="/static/css/login.css">
+        <script src="/static/js/login.js"></script>
+
+		<title>Login</title>
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+					<div class="card card-signin my-5">
+						<div class="card-body">
+							<h5 class="card-title text-center">Sign In to MSH</h5>
+							<form class="form-signin needs-validation" novalidate="" id="form">
+								<div class="form-label-group">
+									<input type="text" id="username" class="form-control" required autofocus>
+									<label for="username">Username</label>
+                                    <div class="invalid-feedback">
+									    Username &egrave un campo obbligatorio
+								    </div>
+								</div>
+								<div class="form-label-group">
+									<input type="password" id="password" class="form-control" required>
+									<label for="password">Password</label>
+                                    <div class="invalid-feedback">
+									    Password &egrave un campo obbligatorio
+								    </div>
+								</div>
+								<button class="btn btn-lg btn-primary btn-block text-uppercase mb-3" type="submit" onclick="login()">Sign in</button>
+                                <h5 id="errore" class="text-center d-none"></h5>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

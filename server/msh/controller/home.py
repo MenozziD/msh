@@ -1,10 +1,10 @@
-from webapp3 import RequestHandler
+from controller import BaseHandler
 from logging import info
 from json import dumps, loads
-from module.net import cmd_esp
-from module.dbmanager import DbManager
+from module import cmd_esp
 
-class Home(RequestHandler):
+
+class Home(BaseHandler):
     def post(self):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)

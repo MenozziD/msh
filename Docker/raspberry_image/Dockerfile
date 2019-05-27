@@ -1,13 +1,17 @@
 FROM msh:v0.0.1
 ARG ngrok_auth_token
 ARG google_actions_project_id
+ARG user
+ARG password
 WORKDIR /server
 COPY server/ /server/
 COPY start.sh /server/
-# SERVER APPLICATIVO
+# DATABASE
 RUN mkdir msh/db
 RUN sqlite3 ./msh/db/system.db
 RUN sqlite3 ./msh/db/system.db < ./msh/script/create.sql
+RUN echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$user', '$password', 'ADMIN');" > ./msh/script/user.sql
+RUN sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 RUN rm -r ./msh/script
 # SERVER OAUTH
 WORKDIR ./fake-oauth-server-nodejs
@@ -23,7 +27,6 @@ tunnels: \n\
     proto: http" > ../ngrok/ngrok.yaml
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 RUN echo "<settings> \n\
-	<porta>65177</porta> \n\
 	<lingua>IT</lingua> \n\
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp> \n\
 	<project_id_google_actions>$google_actions_project_id</project_id_google_actions> \n\

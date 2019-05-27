@@ -1,32 +1,36 @@
-from webapp3 import RequestHandler
+from controller import BaseHandler
 from logging import info, exception
 from mimetypes import MimeTypes
 
 
-class Index(RequestHandler):
+class Index(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         self.redirect('/static/page/index.html')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
-class Icon(RequestHandler):
+class Icon(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         self.redirect('/static/image/hub.png')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
-class Static(RequestHandler):
+class Static(BaseHandler):
     def get(self, filename):
-        path_ui = 'webui/'
-        info("%s %s", self.request.method, self.request.url)
-        f = open(path_ui + filename, 'rb')
-        self.response.body = f.read()
-        f.close()
-        self.response.headers['Content-Type'] = MimeTypes().guess_type(filename)[0]
-        info("RESPONSE CODE: %s", self.response.status)
-        info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
+        if self.session.get('user') is not None or filename.find("login") > 0 or filename.find("hub.png") > 0:
+            path_ui = 'webui/'
+            info("%s %s", self.request.method, self.request.url)
+            f = open(path_ui + filename, 'rb')
+            self.response.body = f.read()
+            f.close()
+            self.response.headers['Content-Type'] = MimeTypes().guess_type(filename)[0]
+            info("RESPONSE CODE: %s", self.response.status)
+            info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
+        else:
+            self.redirect('/static/page/login.html')
+            info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
 def handle_error(request, response, excep):

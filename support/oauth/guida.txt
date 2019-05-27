@@ -1,0 +1,48 @@
+pip3 install oauth2client
+
+https://console.developers.google.com/apis/credential per client secret e client id, biosgna aggiornare gli URL ogni volta che strata ngrok
+
+
+CREATE TABLE "TB_USER" ( `NAME` TEXT NOT NULL, `SURNAME` TEXT NOT NULL, `MAIL` TEXT NOT NULL UNIQUE, `PASSWORD` TEXT, `TOKEN_GOOGLE` TEXT, PRIMARY KEY(`MAIL`));
+
+
+    @staticmethod
+    def select_tb_user_from_mail(mail):
+        query = 'SELECT * ' \
+                'FROM TB_USER ' \
+                'WHERE MAIL = \'%s\';' % mail
+        users = DbManager.select(query)
+        ret_users = []
+        for user in users:
+            tb_user = {
+                'name': str(user[0]),
+                'surname': str(user[1]),
+                'mail': str(user[2]),
+                'password': str(user[3]),
+                'token_google': str(user[4]),
+            }
+            ret_users.append(tb_user)
+        return ret_users
+
+    @staticmethod
+    def update_tb_user(mail, name='', surname='', password='', token_google=''):
+        query = 'UPDATE TB_USER SET '
+        fields = {
+            'name': 'NAME = \'%s\',' % name,
+            'surname': 'SURNAME = \'%s\',' % surname,
+            'password': 'PASSWORD = \'%s\',' % password,
+            'token_google': 'TOKEN_GOOGLE = \'%s\',' % token_google
+        }
+        device = {
+            'name': name,
+            'surname': surname,
+            'password': password,
+            'token_google': token_google
+        }
+        for key, value in device.items():
+            if value != '':
+                query = query + fields[key]
+        query = query[:-1]
+        query = query + ' WHERE MAIL = \'%s\';' % mail
+        DbManager.insert_or_update(query)
+        return

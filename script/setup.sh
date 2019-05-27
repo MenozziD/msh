@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 NGROK_AUTHTOKEN GOOGLE_PROJECT_ID" >&2
+if [ "$#" -ne 4 ]; then
+  echo "Usage: $0 NGROK_AUTHTOKEN GOOGLE_PROJECT_ID USERNAME PASSWORD" >&2
   exit 1
 fi
 
@@ -49,6 +49,8 @@ cd ../server
 mkdir msh/db
 sudo sqlite3 ./msh/db/system.db
 sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
+sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$user', '$password', 'ADMIN');" > ./msh/script/user.sql
+sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 # SERVER OAUTH
 cd fake-oauth-server-nodejs
 sudo npm install
@@ -63,7 +65,6 @@ tunnels:
     proto: http" > ../ngrok/ngrok.yaml
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 echo "<settings>
-	<porta>65177</porta>
 	<lingua>IT</lingua>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
 	<project_id_google_actions>$2</project_id_google_actions>
