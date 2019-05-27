@@ -1,0 +1,7 @@
+#Servizio che dovrebbe fornire il server OAuth per login Google Home
+https://auth0.com/
+
+#Guida alla registrzione e Linking Type di Google Action con Auth0
+https://medium.com/google-developer-experts/setup-an-authorization-server-less-for-your-actions-on-google-application-ff56f0328cf8
+https://medium.com/@ekeitho/setup-authenticated-actions-on-google-with-auth0-51748b29c2ed
+
