@@ -49,10 +49,61 @@ cd ../server
 mkdir msh/db
 sudo sqlite3 ./msh/db/system.db
 sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
-sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$user', '$password', 'ADMIN');" > ./msh/script/user.sql
+sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$3', '$4', 'ADMIN');" > ./msh/script/user.sql
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 # SERVER OAUTH
 cd fake-oauth-server-nodejs
+echo "const Data = {};
+
+const Auth = {
+  clients: {
+    'RKkWfsi0Z9': {
+      clientId: 'RKkWfsi0Z9',
+      clientSecret: 'eToBzeBT7OwrPQO8mZHsZtLp1qhQbe'
+    }
+  },
+  tokens: {
+    'psokmCxKjfhk7qHLeYd1': {
+      uid: '1234',
+      accessToken: 'psokmCxKjfhk7qHLeYd1',
+      refreshToken: 'psokmCxKjfhk7qHLeYd1',
+      userId: '1234'
+    }
+  },
+  users: {
+    '1234': {
+      uid: '1234',
+      name: '$3',
+      password: '$4',
+      tokens: ['psokmCxKjfhk7qHLeYd1']
+    }
+  },
+  usernames: {
+    '$3': '1234'
+  },
+  authcodes: {}
+};
+
+Data.version = 0;
+
+Data.getUid = function (uid) {
+  return Data[uid];
+};
+
+/**
+ * checks if user and auth exist and match
+ *
+ * @param uid
+ * @param authToken
+ * @returns {boolean}
+ */
+Data.isValidAuth = function (uid, authToken) {
+  return (Data.getUid(uid));
+};
+
+exports.getUid = Data.getUid;
+exports.isValidAuth = Data.isValidAuth;
+exports.Auth = Auth;" > datastore.js
 sudo npm install
 # CREO NGROK.YAML CON TOKEN PRESO IN INPUT
 echo "authtoken: $1

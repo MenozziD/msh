@@ -15,7 +15,59 @@ RUN sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 RUN rm -r ./msh/script
 # SERVER OAUTH
 WORKDIR ./fake-oauth-server-nodejs
-RUN npm install
+# CREO DATASTORE PER OAUTH SERVER
+RUN echo "const Data = {}; \n\
+ \n\
+const Auth = { \n\
+  clients: { \n\
+    'RKkWfsi0Z9': { \n\
+      clientId: 'RKkWfsi0Z9', \n\
+      clientSecret: 'eToBzeBT7OwrPQO8mZHsZtLp1qhQbe' \n\
+    } \n\
+  }, \n\
+  tokens: { \n\
+    'psokmCxKjfhk7qHLeYd1': { \n\
+      uid: '1234', \n\
+      accessToken: 'psokmCxKjfhk7qHLeYd1', \n\
+      refreshToken: 'psokmCxKjfhk7qHLeYd1', \n\
+      userId: '1234' \n\
+    } \n\
+  }, \n\
+  users: { \n\
+    '1234': { \n\
+      uid: '1234', \n\
+      name: '$user', \n\
+      password: '$password', \n\
+      tokens: ['psokmCxKjfhk7qHLeYd1'] \n\
+    } \n\
+  }, \n\
+  usernames: { \n\
+    '$user': '1234' \n\
+  }, \n\
+  authcodes: {} \n\
+}; \n\
+ \n\
+Data.version = 0; \n\
+ \n\
+Data.getUid = function (uid) { \n\
+  return Data[uid]; \n\
+}; \n\
+ \n\
+/** \n\
+ * checks if user and auth exist and match \n\
+ * \n\
+ * @param uid \n\
+ * @param authToken \n\
+ * @returns {boolean} \n\
+ */ \n\
+Data.isValidAuth = function (uid, authToken) { \n\
+  return (Data.getUid(uid)); \n\
+}; \n\
+ \n\
+exports.getUid = Data.getUid; \n\
+exports.isValidAuth = Data.isValidAuth; \n\
+exports.Auth = Auth;" > datastore.js
+RUN npm install 
 # CREO NGROK.YAML CON TOKEN PRESO IN INPUT
 RUN echo "authtoken: $ngrok_auth_token \n\
 tunnels: \n\
