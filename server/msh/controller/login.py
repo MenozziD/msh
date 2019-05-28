@@ -19,10 +19,11 @@ class Login(BaseHandler):
             username = data['user']
             password = data['password']
             DbManager()
-            user = DbManager.select_tb_user_from_username(username)
+            user = DbManager.select_tb_user(username)
             if len(user) == 1:
                 if password == user[0]['password']:
                     self.session['user'] = username
+                    self.session['role'] = user[0]["role"]
                     response['output'] = 'OK'
                 else:
                     response['output'] = 'Password errata'
