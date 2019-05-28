@@ -3,6 +3,7 @@ from json import loads
 from os import system
 from module import XmlReader
 from logging import basicConfig, info
+from time import sleep
 
 
 def update_url(invocator):
@@ -12,6 +13,11 @@ def update_url(invocator):
             filename='cron.log',
             format=XmlReader.settings['log']['format'],
             level=XmlReader.settings['log']['level'])
+        info("Eseguo kill porcesso ngrok")
+        system("ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9")
+        info("Restrat ngrok")
+        system("ngrok start --config=../ngrok/ngrok.yaml --all 1> /dev/null 2> /dev/null &")
+        sleep(5)
     url = {}
     f = open('action.json', "r")
     cont = f.read()
@@ -32,7 +38,7 @@ def update_url(invocator):
         f = open('action.json', "w")
         f.write(cont)
         f.close()
-        system("gactions update --action_package action.json --project " + XmlReader.settings['project_id_google_actions'])
+        # system("gactions update --action_package action.json --project " + XmlReader.settings['project_id_google_actions'])
         info("URL webapp: %s", new_hostname)
         info("URL fake server %s", new_hostname_auth_token)
     url['webapp'] = new_hostname

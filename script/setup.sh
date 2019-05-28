@@ -25,6 +25,7 @@ sudo apt-get install wakeonlan -y
 sudo apt-get install samba-common-bin -y
 # CRON
 sudo apt-get install cron -y
+sudo service cron start
 # NPM
 sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
 sudo apt-get install npm -y

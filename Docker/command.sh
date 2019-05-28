@@ -7,6 +7,9 @@ cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
 #Creo la action su google action a partire dal json
 gactions --verbose update --action_package ./msh/action.json --project smart-home-android-thing-deadd
 
+# kill processo ngrok
+ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
+
 #Guardo lo stato della google action
 .\gactions --verbose get --project test-rasp-18a53 --version draft
 
