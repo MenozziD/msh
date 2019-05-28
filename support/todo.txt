@@ -1,6 +1,9 @@
 - Schedulatore Ngrok ogni 7 ore
 - Caricare codice su ESP da raspberry
-- Funzionalita per aggiungere/rimuovere utenti, lo può fare solo ADMIN
-- Funzionalità per vedere tutti gli utenti e cambiargli ruolo, lo può fare solo ADMIN
-- Funzionalità per cambio password
+- Effettuare controllo che solo ADMIN può vedere/aggiornare/rimuovere/aggiungere utenti e rimuovere/aggiornare device
+- Effettuare controllo su username già presente in fase di add user
+- Effettuare controllo su codice device se già presente in fase di salva
+- Utenti con ruolo USER possono aggiornare la loro password
+- Utenti con USER possono esegurie tutti command?
+- Provare a simulare request a Google action per update linking account
 - Funzionalita di Logout
