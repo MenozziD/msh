@@ -24,9 +24,9 @@ function login(){
             data : JSON.stringify(body),
             success: function(response){
                 var json = $.parseJSON(JSON.stringify(response));
-                if (json["output"] == 'OK')
+                if (json["output"] == 'OK'){
                     $(window.location).attr('href', '/');
-                else {
+                } else {
                     $('#errore').text(json["output"]);
                     $('#errore')[0].classList.remove("d-none");
                     $('#errore')[0].classList.add("d-block");
