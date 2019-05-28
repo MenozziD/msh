@@ -179,10 +179,13 @@ class DbManager:
         DbManager.insert_or_update(query)
 
     @staticmethod
-    def select_tb_user_from_username(username):
+    def select_tb_user(username=''):
         query = 'SELECT * ' \
-                'FROM TB_USER ' \
-                'WHERE USERNAME = \'%s\';' % username
+                'FROM TB_USER'
+        if username != "":
+            query = query + ' WHERE USERNAME = \'%s\';' % username
+        else:
+            query = query + ';'
         users = DbManager.select(query)
         ret_users = []
         for user in users:
@@ -210,5 +213,24 @@ class DbManager:
                 query = query + fields[key]
         query = query[:-1]
         query = query + ' WHERE USERNAME = \'%s\';' % username
+        DbManager.insert_or_update(query)
+        return
+
+    @staticmethod
+    def delete_tb_user(username):
+        query = 'DELETE FROM TB_USER WHERE USERNAME = \'%s\';' % username
+        DbManager.insert_or_update(query)
+        return
+
+    @staticmethod
+    def insert_tb_user(username, password, role):
+        query = 'INSERT INTO TB_USER (USERNAME,PASSWORD,ROLE) ' \
+                'VALUES (\'%s\',\'%s\',\'%s\');' % (
+                username, password, role)
+        DbManager.insert_or_update(query)
+
+    @staticmethod
+    def delete_tb_net_device(mac):
+        query = 'DELETE FROM TB_NET_DEVICE WHERE NET_MAC = \'%s\';' % mac
         DbManager.insert_or_update(query)
         return
