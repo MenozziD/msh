@@ -27,7 +27,7 @@
             </div>
 			<div class="mb-3 row">
 				<div class="col-md-12">
-					<form id="form">
+					<form>
 						<div class="row">
                             <div class="col-md-3 mb-3">
 							    <div class="dropdown">
@@ -99,7 +99,7 @@
 				    </form>
 				</div>
 		    </div>
-			<div class="row">
+			<div class="mb-3 row">
 				<div class="col-md-12">
 					<div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net_device('list')">List Device</button>
@@ -121,6 +121,7 @@
                                     <th>Ultimo aggiornamento</th>
                                     <th>Salvataggio</th>
                                     <th>Reset</th>
+                                    <th>Elimina</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,6 +162,9 @@
                                         <td>
                                             <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net_device('delete{{@index}}')">Elimina</button>
+                                        </td>
                                     </tr>
                                 {{/each}}
                             </tbody>
@@ -173,6 +177,102 @@
                     </script>
 				</div>
 		    </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="user_function('list')">List User</button>
+                    </div>
+                    <h5 id="errore_user" class="text-center d-none"></h5>
+					<div  id="table-user" class="table-responsive"></div>
+                    <script id="table-user-template" type="text/x-handlebars-template">
+                        <table class="table mb-3">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th>Ruolo</th>
+                                    <th>Salva</th>
+                                    <th>Reset</th>
+                                    <th>Elimina</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each this}}
+                                    <tr>
+                                        <td>
+                                            <span id="username{{@index}}">{{username}}</span>
+                                        </td>
+                                        <td>
+                                            <div class="input-group" style="width: 230px">
+                                                <input class="form-control" id="psw_user{{@index}}" value="{{password}}" type="password">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary input-group-button" onclick="view_password_user({{@index}})">
+                                                        <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown{{@index}}">
+                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
+                                                <ul class="dropdown-menu">
+                                                    <li class="dropdown-item" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
+                                                    <li class="dropdown-item" onclick="user_role('{{@index}}', 'USER')">USER</li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva_user{{@index}}" onclick="user_function('update{{@index}}')">Salva</button>
+                                        </td>
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset_user{{@index}}" onclick="user_reset('{{@index}}')">Reset</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </script>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="username_add">Username</label>
+                                <input type="text" class="form-control" id="username_add">
+                                <div class="invalid-feedback" id="chk_username">
+                                    L username &egrave un campo obbligatorio
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="password_add">Password</label>
+                                <input type="text" class="form-control" id="password_add">
+                                <div class="invalid-feedback" id="chk_password">
+                                    La password &egrave un campo obbligatorio
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="dropdown_add">
+                                    <label for="role_user_add">Ruolo</label>
+                                    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="role_user_add"></button>
+                                    <ul class="dropdown-menu">
+                                        <li class="dropdown-item" onclick="user_role('add', 'ADMIN')">ADMIN</li>
+                                        <li class="dropdown-item" onclick="user_role('add', 'USER')">USER</li>
+                                    </ul>
+                                </div>
+                                <div class="invalid-feedback" id="chk_role">
+                                    Il ruolo &egrave un campo obbligatorio
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-lg btn-block" type="button" onclick="user_function('add')">Add User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 		</div>
 	</body>
 </html>
