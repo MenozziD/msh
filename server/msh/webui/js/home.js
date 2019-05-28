@@ -1,6 +1,7 @@
 var device_net_list = [];
 var device_net_commands = [];
 var device_net_types = [];
+var user_list = [];
 
 function net_cmd(){
 	var device = $('#device')[0].value;
@@ -34,8 +35,6 @@ function net_cmd(){
             error: function(xhr){
             }
         });
-	} else {
-
 	}
 }
 
@@ -81,6 +80,11 @@ function net_device(type_op){
             if (device_net_list[i]['net_code'] == $('#device')[0].value)
                 type = device_net_list[i]['net_type'];
         }
+    }
+    if (type_op.search('delete') >= 0){
+        id = type_op.replace('delete','');
+        type_op = 'delete';
+        mac = $("#mac" + id).text();
     }
     var body = {
         "tipo_operazione": type_op,
@@ -141,7 +145,7 @@ function net_device(type_op){
                        });
                     }
                 }
-                if (type_op == 'update'){
+                if (type_op == 'update' || type_op == 'delete'){
                     net_device('list');
                 }
             } else {
@@ -193,6 +197,7 @@ function net_reset(id){
             $("#salva" + i).attr("disabled", true);
             $("#reset" + i).attr("disabled", true);
             $("#type" + id)[0].value = device_net_list[i]['net_type'];
+            $("#type" + id).text(device_net_list[i]['net_type']);
             $("#code" + id)[0].value = device_net_list[i]['net_code'];
             $("#usr" + id)[0].value = device_net_list[i]['net_usr'];
             $("#psw" + id)[0].value = device_net_list[i]['net_psw'];
@@ -211,5 +216,142 @@ function view_password(i){
         input_text.type = 'text';
         icon.classList.remove("fa-eye-slash");
         icon.classList.add("fa-eye");
+    }
+}
+
+function user_function(type_op){
+    var user = '';
+    var password = '';
+    var role = '';
+    var id = '';
+    if (type_op.search('update') >= 0){
+        id = type_op.replace('update','');
+        type_op = 'update';
+        user = $("#username" + id).text();
+        password = $("#psw_user" + id)[0].value;
+        role = $("#role_user" + id)[0].value;
+    }
+    if (type_op.search('delete') >= 0){
+        id = type_op.replace('delete','');
+        type_op = 'delete';
+        user = $("#username" + id).text();
+    }
+    if (type_op == 'add'){
+        user = $("#username_add")[0].value;
+        password = $("#password_add")[0].value;
+        role = $("#role_user_add" + id)[0].value;
+        var check_username = $('#chk_username');
+	    var check_password = $('#chk_password');
+	    var check_role = $('#chk_role');
+        if (user == "")
+            check_username.show();
+        else
+            check_username.hide();
+        if (password == "")
+            check_password.show();
+        else
+            check_password.hide();
+        if (role == "")
+            check_role.show();
+        else
+            check_role.hide();
+    }
+    if (type_op != 'add' || (user != "" && password != "" && role != "")){
+        var body = {
+            "tipo_operazione": type_op,
+            "username": user,
+            "password": password,
+            "role": role
+        };
+        $('#errore_user').text("");
+        $('#errore_user')[0].classList.remove("d-block");
+        $('#errore_user')[0].classList.add("d-none");
+        $.ajax({
+            url: "/api/user",
+            type: 'POST',
+            contentType: "application/json",
+            data : JSON.stringify(body),
+            success: function(response){
+                var json = $.parseJSON(JSON.stringify(response));
+                if (json["output"].search("OK") == 0){
+                    if (type_op == 'list'){
+                        var users = json["users"];
+                        var template = Handlebars.compile($("#table-user-template")[0].innerHTML);
+                        $('#table-user').html(template(users));
+                        user_list = [];
+                        for(var i = 0; i < users.length;i++) {
+                            user_list.push(users[i]);
+                            $('#psw_user' + i).on('input',function(e){must_save_user(this.id.replace("psw_user", ""))});
+                            $('#username' + i).on('input',function(e){must_save_user(this.id.replace("username", ""))});
+                        }
+                    }
+                    if (type_op == 'update' || type_op == 'delete' || type_op == 'add'){
+                        user_function('list');
+                    }
+                } else {
+                    $('#errore_user').text(json["output"]);
+                    $('#errore_user')[0].classList.remove("d-none");
+                    $('#errore_user')[0].classList.add("d-block");
+                }
+            },
+            error: function(xhr){
+            }
+        });
+    }
+}
+
+function must_save_user(id){
+    var user = $("#username" + id).text();
+    var password = $("#psw_user" + id)[0].value;
+    var role = $("#role_user" + id)[0].value;
+    for (var i = 0; i < user_list.length; i++){
+        if (user_list[i]['username'] == user){
+            if (password != user_list[i]['password'] || role != user_list[i]['role']){
+                $("#salva_user" + i).attr("disabled", false);
+                $("#reset_user" + i).attr("disabled", false);
+            } else {
+                $("#salva_user" + i).attr("disabled", true);
+                $("#reset_user" + i).attr("disabled", true);
+            }
+        }
+    }
+}
+
+function view_password_user(i){
+    var input_text = $("#psw_user" + i)[0];
+    var icon = $("#psw_icon_user" + i)[0];
+    if (input_text.type == 'text'){
+        input_text.type = 'password';
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input_text.type = 'text';
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+
+function user_reset(id){
+    var username = $("#username" + id).text();
+    for (var i = 0; i < user_list.length; i++){
+        if (user_list[i]['username'] == username){
+            $("#salva_user" + i).attr("disabled", true);
+            $("#reset_user" + i).attr("disabled", true);
+            $("#psw_user" + id)[0].value = user_list[i]['password'];
+            $("#role_user" + id)[0].value = user_list[i]['role'];
+            $("#role_user" + id).text(user_list[i]['role']);
+            console.log(user_list[i]['role']);
+        }
+    }
+}
+
+function user_role(id, text){
+    if (id != "add"){
+        $('#role_user' + id).text(text);
+        $("#role_user" + id).val(text);
+        must_save_user(id);
+    } else {
+        $('#role_user_add').text(text);
+        $("#role_user_add").val(text);
     }
 }
