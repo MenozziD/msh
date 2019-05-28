@@ -19,6 +19,7 @@ app = WSGIApplication([
     ('/api/net_scan', 'controller.NetScan'),
     ('/api/home', 'controller.Home'),
     ('/api/login', 'controller.Login'),
+    ('/api/user', 'controller.User'),
     ('/favicon.ico', 'controller.Icon'),
     ('/', 'controller.Index'),
     (r'/static/(\D+)', 'controller.Static'),
