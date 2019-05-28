@@ -39,3 +39,18 @@ class Login(BaseHandler):
             self.response.write(dumps(response, indent=4, sort_keys=True))
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s", response)
+
+
+class Logout(BaseHandler):
+    def get(self):
+        info("%s %s", self.request.method, self.request.url)
+        self.session.clear()
+        response = {
+            'output': 'OK',
+            'timestamp': datetime.now().strftime(XmlReader.settings['timestamp'])
+        }
+        self.response.headers.add('Access-Control-Allow-Origin', '*')
+        self.response.headers.add('Content-Type', 'application/json')
+        self.response.write(dumps(response, indent=4, sort_keys=True))
+        info("RESPONSE CODE: %s", self.response.status)
+        info("RESPONSE PAYLOAD: %s", response)

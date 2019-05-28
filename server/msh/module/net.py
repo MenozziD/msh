@@ -1,4 +1,4 @@
-from pexpect import pxssh
+# from pexpect import pxssh
 from logging import info, exception
 from netifaces import AF_INET, gateways, ifaddresses
 from json import loads
@@ -64,7 +64,7 @@ def cmd_radio(ip, comando, usr, psw):
     try:
         result = cmd_radio_stato(ip, comando, usr, psw)
         if comando != 'stato' and result['interface'] != '' and result['mac'] != '':
-            ss = pxssh.pxssh()
+            # ss = pxssh.pxssh()
             ss.login(ip, usr, psw)
             login = True
             ss.sendline(command % (result['interface'], result['cmd']))
@@ -101,7 +101,7 @@ def cmd_radio_stato(ip, comando, usr, psw):
         'cmd_output': ''
     }
     try:
-        ss = pxssh.pxssh()
+        # ss = pxssh.pxssh()
         ss.login(ip, usr, psw)
         login = True
         ss.sendline(command)

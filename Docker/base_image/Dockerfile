@@ -18,6 +18,8 @@ RUN apt-get install ssh -y
 RUN apt-get install wakeonlan -y
 # SAMBA per comando NET
 RUN apt-get install samba-common-bin -y
+# CRON
+RUN apt-get install cron -y
 # NPM
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install npm -y
@@ -37,6 +39,7 @@ RUN pip3 install --trusted-host pypi.python.org webapp3
 RUN pip3 install --trusted-host pypi.python.org paste
 RUN pip3 install --trusted-host pypi.python.org pexpect
 RUN pip3 install --trusted-host pypi.python.org netifaces
+RUN pip3 install --trusted-host pypi.python.org python-crontab
 # SQLITE
 RUN apt-get install sqlite3 libsqlite3-dev -y
 # SUDO
