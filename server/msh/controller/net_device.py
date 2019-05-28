@@ -30,6 +30,8 @@ class NetDevice(BaseHandler):
                     response['commands'] = DbManager.select_tb_net_command_from_type(tipo)
                 if type_op == 'update':
                     DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                if type_op == 'delete':
+                    DbManager.delete_tb_net_device(mac)
                 DbManager.close_db()
                 response['output'] = 'OK'
             except Exception as e:
