@@ -68,22 +68,22 @@ const Auth = {
   },
   tokens: {
     'psokmCxKjfhk7qHLeYd1': {
-      uid: '1234',
+      uid: '1',
       accessToken: 'psokmCxKjfhk7qHLeYd1',
       refreshToken: 'psokmCxKjfhk7qHLeYd1',
-      userId: '1234'
+      userId: '1'
     }
   },
   users: {
-    '1234': {
-      uid: '1234',
+    '1': {
+      uid: '1',
       name: '$3',
       password: '$4',
       tokens: ['psokmCxKjfhk7qHLeYd1']
     }
   },
   usernames: {
-    '$3': '1234'
+    '$3': '1'
   },
   authcodes: {}
 };
