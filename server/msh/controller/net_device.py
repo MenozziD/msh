@@ -39,21 +39,25 @@ class NetDevice(BaseHandler):
                 if type_op == 'update':
                     if self.session.get('role') == 'ADMIN':
                         devices = DbManager.select_tb_net_device()
-                        to_update = DbManager.select_tb_net_device(mac)[0]
-                        if codice != to_update['net_code']:
-                            trovato = False
-                            for device in devices:
-                                if device['net_code'] == codice:
-                                    trovato = True
-                                    break
-                            if not trovato:
+                        to_update = DbManager.select_tb_net_device(mac)
+                        if len(to_update) == 1:
+                            to_update = to_update[0]
+                            if codice != to_update['net_code']:
+                                trovato = False
+                                for device in devices:
+                                    if device['net_code'] == codice:
+                                        trovato = True
+                                        break
+                                if not trovato:
+                                    DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                                    response['output'] = 'OK'
+                                else:
+                                    response['output'] = 'Esiste già un dispositivo con questo codice'
+                            else:
                                 DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
                                 response['output'] = 'OK'
-                            else:
-                                response['output'] = 'Esiste già un dispositivo con questo codice'
                         else:
-                            DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
-                            response['output'] = 'OK'
+                            response['output'] = 'Non esiste nessun device con questo mac address'
                     else:
                         response['output'] = 'Solo gli ADMIN possono aggiornare i dispositivi'
                 if type_op == 'delete':

@@ -1,0 +1,10 @@
+from subprocess import run, PIPE
+from crontab import CronTab
+
+cmd = run(['pwd'], stdout=PIPE, stderr=PIPE)
+cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "")
+new_url = update_url('msh')
+my_cron = CronTab(user=True)
+job = my_cron.new(command='cd ' + cmd_out + ' && python3 ' + cmd_out + '/ngrok.py')
+job.hour.every(7)
+my_cron.write()

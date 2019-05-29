@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 4 ]; then
-  echo "Usage: $0 NGROK_AUTHTOKEN GOOGLE_PROJECT_ID USERNAME PASSWORD" >&2
+if [ "$#" -ne 5 ]; then
+  echo "Usage: $0 GOOGLE_PROJECT_ID USERNAME PASSWORD DOMINIO_OAUTH DOMINIO_WEBAPP" >&2
   exit 1
 fi
 
@@ -31,10 +31,6 @@ sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
 sudo apt-get install npm -y
 # UNZIP
 sudo apt-get install unzip -y
-# NGROK
-sudo curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-arm.zip --output /usr/bin/ngrok-stable-linux-arm.zip
-sudo unzip /usr/bin/ngrok-stable-linux-arm.zip -d /usr/bin
-sudo rm /usr/bin/ngrok-stable-linux-arm.zip
 # GACTIONS
 sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions
 sudo chmod +x /usr/bin/gactions
@@ -53,10 +49,10 @@ cd ../server
 mkdir msh/db
 sudo sqlite3 ./msh/db/system.db
 sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
-sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$3', '$4', 'ADMIN');" > ./msh/script/user.sql
+sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'ADMIN');" > ./msh/script/user.sql
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 # SERVER OAUTH
-cd fake-oauth-server-nodejs
+cd oauth
 echo "const Data = {};
 
 const Auth = {
@@ -109,20 +105,13 @@ exports.getUid = Data.getUid;
 exports.isValidAuth = Data.isValidAuth;
 exports.Auth = Auth;" > datastore.js
 sudo npm install
-# CREO NGROK.YAML CON TOKEN PRESO IN INPUT
-echo "authtoken: $1
-tunnels:
-  app-foo:
-    addr: 65177
-    proto: http
-  app-bar:
-    addr: 3000
-    proto: http" > ../ngrok/ngrok.yaml
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 echo "<settings>
 	<lingua>IT</lingua>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
-	<project_id_google_actions>$2</project_id_google_actions>
+	<project_id_google_actions>$1</project_id_google_actions>
+	<subdomain_oauth>$4</subdomain_oauth>
+	<subdomain_webapp>$5</subdomain_webapp>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
 		<filename>msh.log</filename>

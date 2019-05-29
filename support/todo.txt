@@ -1,3 +1,2 @@
 - Caricare codice su ESP da raspberry
 - Utenti con USER possono esegurie tutti command?
-- Aggiungere/rimuovere/aggiornare l'utente nel datastore quando viene inserito

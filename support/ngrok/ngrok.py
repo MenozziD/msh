@@ -38,7 +38,7 @@ def update_url(invocator):
         f = open('action.json', "w")
         f.write(cont)
         f.close()
-        # system("gactions update --action_package action.json --project " + XmlReader.settings['project_id_google_actions'])
+        system("gactions update --action_package action.json --project " + XmlReader.settings['project_id_google_actions'])
         info("URL webapp: %s", new_hostname)
         info("URL fake server %s", new_hostname_auth_token)
     url['webapp'] = new_hostname

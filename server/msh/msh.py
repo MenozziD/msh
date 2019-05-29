@@ -3,9 +3,8 @@ from logging import basicConfig, info
 from paste import httpserver
 from module import XmlReader
 from controller import handle_error
-from subprocess import run, PIPE
-from crontab import CronTab
-from ngrok import update_url
+from os import system
+
 
 config = {
     'webapp3_extras.sessions': {
@@ -38,16 +37,10 @@ def main():
         level=XmlReader.settings['log']['level'])
     ip_address = 'localhost'
     port = '65177'
-    cmd = run(['pwd'], stdout=PIPE, stderr=PIPE)
-    cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "")
-    new_url = update_url('msh')
-    my_cron = CronTab(user=True)
-    job = my_cron.new(command='cd ' + cmd_out + ' && python3 ' + cmd_out + '/ngrok.py')
-    job.hour.every(7)
-    my_cron.write()
+    system("ssh -o \"StrictHostKeyChecking no\" -R " + XmlReader.settings['subdomain_webapp'] + ":80:localhost:65177 -R " + XmlReader.settings['subdomain_oauth'] + ":80:localhost:3000 serveo.net 1> /dev/null 2> /dev/null &")
+    info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
+    info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth']  + ".serveo.net")
     info("Server in ascolto su http://%s:%s", ip_address, port)
-    info("URL webapp: %s", new_url['webapp'])
-    info("URL fake server %s", new_url['auth'])
     httpserver.serve(app, host=ip_address, port=port)
 
 

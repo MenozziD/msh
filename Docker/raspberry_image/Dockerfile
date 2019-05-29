@@ -1,8 +1,9 @@
 FROM msh:v0.0.1
-ARG ngrok_auth_token
 ARG google_actions_project_id
 ARG user
 ARG password
+ARG dominio_oauth
+ARG dominio_webapp
 WORKDIR /server
 COPY server/ /server/
 COPY start.sh /server/
@@ -14,7 +15,7 @@ RUN echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$user', '$pass
 RUN sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 RUN rm -r ./msh/script
 # SERVER OAUTH
-WORKDIR ./fake-oauth-server-nodejs
+WORKDIR ./oauth
 # CREO DATASTORE PER OAUTH SERVER
 RUN echo "const Data = {}; \n\
  \n\
@@ -67,21 +68,14 @@ Data.isValidAuth = function (uid, authToken) { \n\
 exports.getUid = Data.getUid; \n\
 exports.isValidAuth = Data.isValidAuth; \n\
 exports.Auth = Auth;" > datastore.js
-RUN npm install 
-# CREO NGROK.YAML CON TOKEN PRESO IN INPUT
-RUN echo "authtoken: $ngrok_auth_token \n\
-tunnels: \n\
-  app-foo: \n\
-    addr: 65177 \n\
-    proto: http \n\
-  app-bar: \n\
-    addr: 3000 \n\
-    proto: http" > ../ngrok/ngrok.yaml
+RUN npm install
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 RUN echo "<settings> \n\
 	<lingua>IT</lingua> \n\
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp> \n\
 	<project_id_google_actions>$google_actions_project_id</project_id_google_actions> \n\
+	<subdomain_oauth>$dominio_oauth</subdomain_oauth> \n\
+	<subdomain_webapp>$dominio_webapp</subdomain_webapp> \n\
 	<log> \n\
 		<!-- Se valorizzato con None logga in console --> \n\
 		<filename>msh.log</filename> \n\

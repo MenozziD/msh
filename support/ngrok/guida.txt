@@ -1,0 +1,16 @@
+# NGROK
+curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --output /usr/bin/ngrok-stable-linux-amd64.zip
+unzip /usr/bin/ngrok-stable-linux-amd64.zip -d /usr/bin
+rm /usr/bin/ngrok-stable-linux-amd64.zip
+
+# CREO NGROK.YAML CON TOKEN PRESO IN INPUT
+echo "authtoken: $ngrok_auth_token \n\
+tunnels: \n\
+  app-foo: \n\
+    addr: 65177 \n\
+    proto: http \n\
+  app-bar: \n\
+    addr: 3000 \n\
+    proto: http" > ../ngrok/ngrok.yaml
+	
+ngrok start --config=../ngrok/ngrok.yaml --all 1> /dev/null 2> /dev/null &

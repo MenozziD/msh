@@ -2,13 +2,16 @@
 cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
 
 #Deploy container
-./deploy.sh 4JVzAsyn748AXyW4Knuyp_2iNm3VuFQEV9HgVb9Mpbr test-rasp-18a53 sgarzo cronaldo7
-
-#Creo la action su google action a partire dal json
-gactions --verbose update --action_package ./msh/action.json --project smart-home-android-thing-deadd
+./deploy.sh test-rasp-18a53 sgarzo cronaldo7 casasga oauthsga
 
 # kill processo ngrok
 ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
+
+# start dns serveo
+ssh -o "StrictHostKeyChecking no" -R casamenoz:80:localhost:65177 -R oauthmenoz:80:localhost:3000 serveo.net
+
+#Creo la action su google action a partire dal json
+gactions --verbose update --action_package ./msh/action.json --project smart-home-android-thing-deadd
 
 #Guardo lo stato della google action
 .\gactions --verbose get --project test-rasp-18a53 --version draft

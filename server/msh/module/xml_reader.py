@@ -17,6 +17,8 @@ class XmlReader:
         lingua = xml.getElementsByTagName('lingua')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data
+        subdomain_oauth = xml.getElementsByTagName('subdomain_oauth')[0].firstChild.data
+        subdomain_webapp = xml.getElementsByTagName('subdomain_webapp')[0].firstChild.data
         log = {
             'filename': xml.getElementsByTagName('log')[0].getElementsByTagName('filename')[0].firstChild.data,
             'format': xml.getElementsByTagName('log')[0].getElementsByTagName('format')[0].firstChild.data,
@@ -28,6 +30,8 @@ class XmlReader:
             'lingua': lingua,
             'timestamp': timestamp,
             'project_id_google_actions': project_id_google_actions,
+            'subdomain_oauth': subdomain_oauth,
+            'subdomain_webapp': subdomain_webapp,
             'log': log
         }
         return
