@@ -27,22 +27,22 @@ const Auth = { \n\
   }, \n\
   tokens: { \n\
     'psokmCxKjfhk7qHLeYd1': { \n\
-      uid: '1234', \n\
+      uid: '1', \n\
       accessToken: 'psokmCxKjfhk7qHLeYd1', \n\
       refreshToken: 'psokmCxKjfhk7qHLeYd1', \n\
-      userId: '1234' \n\
+      userId: '1' \n\
     } \n\
   }, \n\
   users: { \n\
-    '1234': { \n\
-      uid: '1234', \n\
+    '1': { \n\
+      uid: '1', \n\
       name: '$user', \n\
       password: '$password', \n\
       tokens: ['psokmCxKjfhk7qHLeYd1'] \n\
     } \n\
   }, \n\
   usernames: { \n\
-    '$user': '1234' \n\
+    '$user': '1' \n\
   }, \n\
   authcodes: {} \n\
 }; \n\
