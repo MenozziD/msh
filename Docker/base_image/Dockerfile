@@ -20,6 +20,7 @@ RUN apt-get install wakeonlan -y
 RUN apt-get install samba-common-bin -y
 # CRON
 RUN apt-get install cron -y
+RUN service cron start
 # NPM
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install npm -y
