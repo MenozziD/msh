@@ -5,3 +5,4 @@ https://developers.google.com/actions/reference/rest/Shared.Types/ActionPackage
 https://github.com/actions-on-google
 https://developers.google.com/assistant/sdk/guides/library/python/extend/custom-actions
 https://stackoverflow.com/questions/41088596/make-google-actions-development-project-preview-persist-longer
+ssh -R casamenoz:80:localhost:65177 -R oauthmenoz:80:localhost:3000 serveo.net
