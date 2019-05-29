@@ -17,35 +17,9 @@ Auth.getUid = function (request) {
 
 const SmartHomeModel = {};
 
-function genUid() {
-  let uid = Math.floor(Math.random() * 1000).toString();
-  while (authstore.users[uid]) {
-    uid = genUid();
-  }
-  return uid;
-}
-
 function genRandomString() {
   return Math.floor(Math.random() * 10000000000000000000000000000000000000000).toString(36);
 }
-
-SmartHomeModel.genUser = function (username, password) {
-  let uid = genUid();
-  let token = genRandomString();
-
-  authstore.usernames[username] = uid;
-  authstore.users[uid] = {
-    uid: uid,
-    name: username,
-    password: password,
-    tokens: [token]
-  };
-  authstore.tokens[token] = {
-    uid: uid,
-    accessToken: token,
-    refreshToken: token
-  }
-};
 
 SmartHomeModel.generateAuthCode = function (uid, clientId) {
   let authCode = genRandomString();
