@@ -106,15 +106,8 @@ SmartHomeModel.getClient = function (clientId, clientSecret) {
 SmartHomeModel.getUser = function (username, password) {
   console.log('getUser', username);
   let userId = authstore.usernames[username];
-  if (!userId) {
-    console.log('not a user', userId);
-    SmartHomeModel.genUser(username, password);
-    userId = authstore.usernames[username];
-    if (!userId) {
-      console.log('failed to genUser', userId);
-      return false;
-    }
-  }
+  if (!userId) 
+    return false;
 
   let user = authstore.users[userId];
   if (!user) {
