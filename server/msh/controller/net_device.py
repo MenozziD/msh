@@ -23,17 +23,46 @@ class NetDevice(BaseHandler):
                 password = data['password']
                 DbManager()
                 if type_op == 'list':
-                    response['devices'] = DbManager.select_tb_net_device()
+                    devices = DbManager.select_tb_net_device()
+                    if self.session.get('role') != 'ADMIN':
+                        for device in devices:
+                            device['net_usr'] = ''
+                            device['net_psw'] = ''
+                    response['devices'] = devices
+                    response['output'] = 'OK'
                 if type_op == 'type':
                     response['types'] = DbManager.select_tb_net_device_type()
+                    response['output'] = 'OK'
                 if type_op == 'command':
                     response['commands'] = DbManager.select_tb_net_command_from_type(tipo)
+                    response['output'] = 'OK'
                 if type_op == 'update':
-                    DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                    if self.session.get('role') == 'ADMIN':
+                        devices = DbManager.select_tb_net_device()
+                        to_update = DbManager.select_tb_net_device(mac)[0]
+                        if codice != to_update['net_code']:
+                            trovato = False
+                            for device in devices:
+                                if device['net_code'] == codice:
+                                    trovato = True
+                                    break
+                            if not trovato:
+                                DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                                response['output'] = 'OK'
+                            else:
+                                response['output'] = 'Esiste già un dispositivo con questo codice'
+                        else:
+                            DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                            response['output'] = 'OK'
+                    else:
+                        response['output'] = 'Solo gli ADMIN possono aggiornare i dispositivi'
                 if type_op == 'delete':
-                    DbManager.delete_tb_net_device(mac)
+                    if self.session.get('role') == 'ADMIN':
+                        DbManager.delete_tb_net_device(mac)
+                        response['output'] = 'OK'
+                    else:
+                        response['output'] = 'Solo gli ADMIN possono rimuovere i dispositivi'
                 DbManager.close_db()
-                response['output'] = 'OK'
             except Exception as e:
                 exception("Exception")
                 response['output'] = str(e)
