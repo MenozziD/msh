@@ -18,17 +18,58 @@ class User(BaseHandler):
                 password = data['password']
                 role = data['role']
                 tipo_operazione = data['tipo_operazione']
-                DbManager()
-                if tipo_operazione == "list":
-                    response['users'] = DbManager.select_tb_user()
-                if tipo_operazione == "update":
-                    DbManager.update_tb_user(username, password, role)
-                if tipo_operazione == "delete":
-                    DbManager.delete_tb_user(username)
-                if tipo_operazione == "add":
-                    DbManager.insert_tb_user(username, password, role)
-                DbManager.close_db()
-                response['output'] = 'OK'
+                if self.session.get('role') == 'ADMIN' or tipo_operazione == 'update' or tipo_operazione == 'list':
+                    DbManager()
+                    if tipo_operazione == "list":
+                        if self.session.get('role') == 'ADMIN':
+                            response['users'] = DbManager.select_tb_user()
+                        else:
+                            response['users'] = DbManager.select_tb_user(self.session.get('user'))
+                        response['output'] = 'OK'
+                    if tipo_operazione == "update":
+                        to_update = DbManager.select_tb_user(username)[0]
+                        if to_update['role'] != role:
+                            if self.session.get('role') == 'ADMIN':
+                                if to_update['password'] != password:
+                                    if self.session.get('user') == username:
+                                        DbManager.update_tb_user(username, password, role)
+                                        response['output'] = 'OK'
+                                    else:
+                                        response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+                                else:
+                                    DbManager.update_tb_user(username, password, role)
+                                    response['output'] = 'OK'
+                            else:
+                                response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
+                        else:
+                            if to_update['password'] != password:
+                                if self.session.get('user') == username:
+                                    DbManager.update_tb_user(username, password, role)
+                                    response['output'] = 'OK'
+                                else:
+                                    response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+                    if tipo_operazione == "delete":
+                        users = DbManager.select_tb_user()
+                        to_delete = DbManager.select_tb_user(username)[0]
+                        admin = 0
+                        for user in users:
+                            if user['role'] == 'ADMIN':
+                                admin = admin + 1
+                        if to_delete['role'] == 'ADMIN' and admin == 1:
+                            response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
+                        else:
+                            DbManager.delete_tb_user(username)
+                            response['output'] = 'OK'
+                    if tipo_operazione == "add":
+                        users = DbManager.select_tb_user(username)
+                        if len(users) == 0:
+                            DbManager.insert_tb_user(username, password, role)
+                            response['output'] = 'OK'
+                        else:
+                            response['output'] = 'Username già utilizzato'
+                    DbManager.close_db()
+                else:
+                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
             except Exception as e:
                 exception("Exception")
                 response['output'] = str(e)
