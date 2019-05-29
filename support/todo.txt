@@ -1,9 +1,7 @@
 - Caricare codice su ESP da raspberry
-- Effettuare controllo che solo ADMIN può vedere/aggiornare/rimuovere/aggiungere utenti e rimuovere/aggiornare device
-- Effettuare controllo su username già presente in fase di add user
+- Solo ADMIN può aggiornare role utenti e rimuovere/aggiornare device
+- Solo l'utente può cambiare la sua password
 - Effettuare controllo su codice device se già presente in fase di salva
 - Utenti con ruolo USER possono aggiornare la loro password
 - Utenti con USER possono esegurie tutti command?
-- Provare a simulare request a Google action per update linking account
 - Aggiungere/rimuovere/aggiornare l'utente nel datastore quando viene inserito
-- Testare cron
