@@ -2,7 +2,7 @@ from controller import BaseHandler
 from logging import info, exception
 from json import dumps, loads
 from datetime import datetime
-from module import XmlReader, DbManager
+from module import XmlReader, DbManager, add_user, delete_user, update_user
 
 
 class User(BaseHandler):
@@ -33,11 +33,13 @@ class User(BaseHandler):
                                 if to_update['password'] != password:
                                     if self.session.get('user') == username:
                                         DbManager.update_tb_user(username, password, role)
+                                        update_user(username, password)
                                         response['output'] = 'OK'
                                     else:
                                         response['output'] = 'Solo l\'utente propietario può modificare la sua password'
                                 else:
                                     DbManager.update_tb_user(username, password, role)
+                                    update_user(username, password)
                                     response['output'] = 'OK'
                             else:
                                 response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
@@ -45,6 +47,7 @@ class User(BaseHandler):
                             if to_update['password'] != password:
                                 if self.session.get('user') == username:
                                     DbManager.update_tb_user(username, password, role)
+                                    update_user(username, password)
                                     response['output'] = 'OK'
                                 else:
                                     response['output'] = 'Solo l\'utente propietario può modificare la sua password'
@@ -59,11 +62,13 @@ class User(BaseHandler):
                             response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
                         else:
                             DbManager.delete_tb_user(username)
+                            delete_user(username)
                             response['output'] = 'OK'
                     if tipo_operazione == "add":
                         users = DbManager.select_tb_user(username)
                         if len(users) == 0:
                             DbManager.insert_tb_user(username, password, role)
+                            add_user(username, password)
                             response['output'] = 'OK'
                         else:
                             response['output'] = 'Username già utilizzato'
