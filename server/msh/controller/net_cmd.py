@@ -12,9 +12,9 @@ class NetCmd(BaseHandler):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
-        if self.session.get('user') is not None:
-            response = {}
-            try:
+        response = {}
+        try:
+            if self.session.get('user') is not None:
                 data = loads(body)
                 dispositivo = data['dispositivo']
                 comando = data['comando']
@@ -41,16 +41,15 @@ class NetCmd(BaseHandler):
                 response['output'] = 'OK'
                 response['result_command'] = result
                 response['res_decode'] = res_decode
-            except Exception as e:
-                exception("Exception")
-                response['output'] = str(e)
-            finally:
-                response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-                self.response.headers.add('Access-Control-Allow-Origin', '*')
-                self.response.headers.add('Content-Type', 'application/json')
-                self.response.write(dumps(response, indent=4, sort_keys=True))
-                info("RESPONSE CODE: %s", self.response.status)
-                info("RESPONSE PAYLOAD: %s", response)
-        else:
-            self.redirect('/static/page/login.html')
-            info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
+            else:
+                response['output'] = 'Devi effettuare la login per utilizzare questa API'
+        except Exception as e:
+            exception("Exception")
+            response['output'] = str(e)
+        finally:
+            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+            self.response.headers.add('Access-Control-Allow-Origin', '*')
+            self.response.headers.add('Content-Type', 'application/json')
+            self.response.write(dumps(response, indent=4, sort_keys=True))
+            info("RESPONSE CODE: %s", self.response.status)
+            info("RESPONSE PAYLOAD: %s", response)
