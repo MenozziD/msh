@@ -59,8 +59,7 @@ class User(BaseHandler):
                                             response['output'] = 'OK'
                                 else:
                                     response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
-                            else:
-                                if to_update['password'] != password:
+                            elif to_update['password'] != password:
                                     if self.session.get('user') == username:
                                         DbManager.update_tb_user(username, password, role)
                                         update_user(username, password)
@@ -84,16 +83,16 @@ class User(BaseHandler):
                                 DbManager.delete_tb_user(username)
                                 delete_user(username)
                                 response['output'] = 'OK'
-                        if tipo_operazione == "add":
-                            users = DbManager.select_tb_user(username)
-                            if len(users) == 0:
-                                DbManager.insert_tb_user(username, password, role)
-                                add_user(username, password)
-                                response['output'] = 'OK'
-                            else:
-                                response['output'] = 'Username già utilizzato'
                         else:
                             response['output'] = 'Non esiste nessun utente con questo username'
+                    if tipo_operazione == "add":
+                        users = DbManager.select_tb_user(username)
+                        if len(users) == 0:
+                            DbManager.insert_tb_user(username, password, role)
+                            add_user(username, password)
+                            response['output'] = 'OK'
+                        else:
+                            response['output'] = 'Username già utilizzato'
                     DbManager.close_db()
                 else:
                     response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
