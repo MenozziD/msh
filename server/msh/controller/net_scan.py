@@ -10,18 +10,11 @@ from datetime import datetime
 class NetScan(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        if self.session.get('user') is not None:
-            inseriti = 0
-            aggiornati = 0
-            response = {
-                'output': '',
-                'result_command': '',
-                'find_device': '',
-                'new_device': '',
-                'updated_device': '',
-                'timestamp': ''
-            }
-            try:
+        inseriti = 0
+        aggiornati = 0
+        response = {}
+        try:
+            if self.session.get('user') is not None:
                 DbManager()
                 db_devices = DbManager.select_tb_net_device()
                 ip_subnet = get_ip_and_subnet()
@@ -64,16 +57,15 @@ class NetScan(BaseHandler):
                 response['find_device'] = str(len(result['devices']))
                 response['new_device'] = str(inseriti)
                 response['updated_device'] = str(aggiornati)
-            except Exception as e:
-                exception("Exception")
-                response['output'] = str(e)
-            finally:
-                response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-                self.response.headers.add('Access-Control-Allow-Origin', '*')
-                self.response.headers.add('Content-Type', 'application/json')
-                self.response.write(dumps(response, indent=4, sort_keys=True))
-                info("RESPONSE CODE: %s", self.response.status)
-                info("RESPONSE PAYLOAD: %s", response)
-        else:
-            self.redirect('/static/page/login.html')
-            info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
+            else:
+                response['output'] = 'Devi effettuare la login per utilizzare questa API'
+        except Exception as e:
+            exception("Exception")
+            response['output'] = str(e)
+        finally:
+            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+            self.response.headers.add('Access-Control-Allow-Origin', '*')
+            self.response.headers.add('Content-Type', 'application/json')
+            self.response.write(dumps(response, indent=4, sort_keys=True))
+            info("RESPONSE CODE: %s", self.response.status)
+            info("RESPONSE PAYLOAD: %s", response)
