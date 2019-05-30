@@ -14,13 +14,13 @@
 		<script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-		<script src="https://twitter.github.io/typeahead.js/js/handlebars.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
 
 		<script src="/static/js/home.js"></script>
 
 		<title>Home</title>
 	</head>
-	<body onload="net_device('list')">
+	<body onload="carica()">
 		<div class="container">
             <div class="mb-3 mt-3 text-center">
                 <h1><img src="/static/image/hub.png" class="img-fluid" style="width: 200px; height: 200px">Home</h1>
@@ -117,16 +117,20 @@
                                     <th>IP</th>
                                     <th>MAC</th>
                                     <th>MAC info</th>
-                                    <th>User SSH</th>
-                                    <th>Password SSH</th>
+                                    {{#if_eq ../user_role "ADMIN"}}
+                                        <th>User SSH</th>
+                                        <th>Password SSH</th>
+                                    {{/if_eq}}
                                     <th>Ultimo aggiornamento</th>
-                                    <th>Salvataggio</th>
-                                    <th>Reset</th>
-                                    <th>Elimina</th>
+                                    {{#if_eq user_role "ADMIN"}}
+                                        <th>Salvataggio</th>
+                                        <th>Reset</th>
+                                        <th>Elimina</th>
+                                    {{/if_eq}}
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#each this}}
+                                {{#each devices}}
                                     <tr>
                                         <td>
                                             <input class="form-control" style="width: auto" type="text" id="code{{@index}}" value="{{net_code}}">
@@ -143,29 +147,33 @@
                                             <span id="mac{{@index}}">{{net_mac}}</span>
                                         </td>
                                         <td>{{net_mac_info}}</td>
-                                        <td>
-                                            <input class="form-control" style="width: auto" type="text" id="usr{{@index}}" value="{{net_usr}}">
-                                        </td>
-                                        <td>
-                                            <div class="input-group" style="width: 230px">
-                                                <input class="form-control" id="psw{{@index}}" value="{{net_psw}}" type="password">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-primary input-group-button" onclick="view_password({{@index}})">
-                                                        <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
-                                                    </button>
+                                        {{#if_eq ../user_role "ADMIN"}}
+                                            <td>
+                                                <input class="form-control" style="width: auto" type="text" id="usr{{@index}}" value="{{net_usr}}">
+                                            </td>
+                                            <td>
+                                                <div class="input-group" style="width: 230px">
+                                                    <input class="form-control" id="psw{{@index}}" value="{{net_psw}}" type="password">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary input-group-button" onclick="view_password({{@index}})">
+                                                            <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
+                                            </td>
+                                        {{/if_eq}}
                                         <td>{{net_last_update}}</td>
-                                        <td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net_device('update{{@index}}')">Salva</button>
-                                        </td>
-                                        <td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net_device('delete{{@index}}')">Elimina</button>
-                                        </td>
+                                        {{#if_eq ../user_role "ADMIN"}}
+                                            <td>
+                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net_device('update{{@index}}')">Salva</button>
+                                            </td>
+                                            <td>
+                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net_device('delete{{@index}}')">Elimina</button>
+                                            </td>
+                                        {{/if_eq}}
                                     </tr>
                                 {{/each}}
                             </tbody>
@@ -178,7 +186,7 @@
                     </script>
 				</div>
 		    </div>
-            <div class="row">
+            <div class="mb-3 row">
                 <div class="col-md-12">
                     <div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="user_function('list')">List User</button>
@@ -186,7 +194,7 @@
                     <h5 id="errore_user" class="text-center d-none"></h5>
 					<div  id="table-user" class="table-responsive"></div>
                     <script id="table-user-template" type="text/x-handlebars-template">
-                        <table class="table mb-3">
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>Username</th>
@@ -194,11 +202,13 @@
                                     <th>Ruolo</th>
                                     <th>Salva</th>
                                     <th>Reset</th>
-                                    <th>Elimina</th>
+                                    {{#if_eq user_role "ADMIN"}}
+                                        <th>Elimina</th>
+                                    {{/if_eq}}
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#each this}}
+                                {{#each users}}
                                     <tr>
                                         <td>
                                             <span id="username{{@index}}">{{username}}</span>
@@ -228,9 +238,11 @@
                                         <td>
                                             <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset_user{{@index}}" onclick="user_reset('{{@index}}')">Reset</button>
                                         </td>
-                                        <td>
-                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
-                                        </td>
+                                        {{#if_eq ../user_role "ADMIN"}}
+                                            <td>
+                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
+                                            </td>
+                                        {{/if_eq}}
                                     </tr>
                                 {{/each}}
                             </tbody>
@@ -238,7 +250,8 @@
                     </script>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 d-none" id="add-user"></div>
+            <script id="add-user-template" type="text/x-handlebars-template">
                 <div class="col-md-12">
                     <form>
                         <div class="row">
@@ -273,7 +286,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </script>
 		</div>
 	</body>
 </html>
