@@ -10,9 +10,9 @@ class User(BaseHandler):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
-        if self.session.get('user') is not None:
-            response = {}
-            try:
+        response = {}
+        try:
+            if self.session.get('user') is not None:
                 data = loads(body)
                 username = data['username']
                 password = data['password']
@@ -22,7 +22,13 @@ class User(BaseHandler):
                     DbManager()
                     if tipo_operazione == "list":
                         if self.session.get('role') == 'ADMIN':
-                            response['users'] = DbManager.select_tb_user()
+                            users = DbManager.select_tb_user()
+                            for user in users:
+                                if user['username'] != self.session.get('user'):
+                                    user['password'] = ''
+                            response['users'] = users
+                            response['user_role'] = self.session.get('role')
+                            response['user_username'] = self.session.get('user')
                         else:
                             response['users'] = DbManager.select_tb_user(self.session.get('user'))
                         response['output'] = 'OK'
@@ -32,17 +38,25 @@ class User(BaseHandler):
                             to_update = to_update[0]
                             if to_update['role'] != role:
                                 if self.session.get('role') == 'ADMIN':
-                                    if to_update['password'] != password:
-                                        if self.session.get('user') == username:
+                                    users = DbManager.select_tb_user()
+                                    admin = 0
+                                    for user in users:
+                                        if user['role'] == 'ADMIN':
+                                            admin = admin + 1
+                                    if to_update['role'] == 'ADMIN' and admin == 1:
+                                        response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
+                                    else:
+                                        if to_update['password'] != password:
+                                            if self.session.get('user') == username:
+                                                DbManager.update_tb_user(username, password, role)
+                                                update_user(username, password)
+                                                response['output'] = 'OK'
+                                            else:
+                                                response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+                                        else:
                                             DbManager.update_tb_user(username, password, role)
                                             update_user(username, password)
                                             response['output'] = 'OK'
-                                        else:
-                                            response['output'] = 'Solo l\'utente propietario può modificare la sua password'
-                                    else:
-                                        DbManager.update_tb_user(username, password, role)
-                                        update_user(username, password)
-                                        response['output'] = 'OK'
                                 else:
                                     response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
                             else:
@@ -83,16 +97,15 @@ class User(BaseHandler):
                     DbManager.close_db()
                 else:
                     response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
-            except Exception as e:
-                exception("Exception")
-                response['output'] = str(e)
-            finally:
-                response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-                self.response.headers.add('Access-Control-Allow-Origin', '*')
-                self.response.headers.add('Content-Type', 'application/json')
-                self.response.write(dumps(response, indent=4, sort_keys=True))
-                info("RESPONSE CODE: %s", self.response.status)
-                info("RESPONSE PAYLOAD: %s", response)
-        else:
-            self.redirect('/static/page/login.html')
-            info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
+            else:
+                response['output'] = 'Devi effettuare la login per utilizzare questa API'
+        except Exception as e:
+            exception("Exception")
+            response['output'] = str(e)
+        finally:
+            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+            self.response.headers.add('Access-Control-Allow-Origin', '*')
+            self.response.headers.add('Content-Type', 'application/json')
+            self.response.write(dumps(response, indent=4, sort_keys=True))
+            info("RESPONSE CODE: %s", self.response.status)
+            info("RESPONSE PAYLOAD: %s", response)
