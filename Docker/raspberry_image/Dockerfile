@@ -86,5 +86,5 @@ RUN echo "<settings> \n\
 </settings>" > ../msh/settings.xml
 RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | client ID RKkWfsi0Z9"
 RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | client secret eToBzeBT7OwrPQO8mZHsZtLp1qhQbe"
-WORKDIR ../
-CMD ./start.sh
+WORKDIR ../msh
+CMD ["python3", "msh.py"]
