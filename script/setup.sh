@@ -122,4 +122,5 @@ echo "<settings>
 </settings>" > ../msh/settings.xml
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | client ID RKkWfsi0Z9"
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | client secret eToBzeBT7OwrPQO8mZHsZtLp1qhQbe"
-cd ..
+cd ../msh
+python3 msh.py 2> /dev/null &
