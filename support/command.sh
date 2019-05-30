@@ -2,7 +2,7 @@
 cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
 
 #Deploy container
-./deploy.sh test-rasp-18a53 sgarzo cronaldo7 casasga oauthsga
+./deploy.sh test-rasp-18a53 sgarzo cronaldo7 oauthsga casasga 
 
 # kill processo ngrok
 ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
