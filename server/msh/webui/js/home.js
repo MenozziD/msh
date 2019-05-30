@@ -3,6 +3,18 @@ var device_net_commands = [];
 var device_net_types = [];
 var user_list = [];
 
+function carica(){
+    Handlebars.registerHelper('if_eq', function(a, b, opts) {
+        if (a == b) {
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
+    net_device('list');
+    setTimeout(user_function, 250, 'list');
+}
+
 function net_cmd(){
 	var device = $('#device')[0].value;
 	var command = $('#command')[0].value;
@@ -122,13 +134,17 @@ function net_device(type_op){
                 if (type_op == 'list'){
                     var devices = json["devices"];
                     var template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-                    $('#table-device').html(template(devices));
+                    $('#table-device').html(template(json));
                     device_net_list = [];
                     for(var i = 0; i < devices.length;i++) {
                         device_net_list.push(devices[i]);
                         $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
                         $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
                         $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
+                        if (json['user_role'] != 'ADMIN'){
+                            $('#code' + i).prop('readonly', true);
+                            $('#type' + i).prop('disabled', true);
+                        }
                     }
                 }
                 if (type_op == 'command'){
@@ -277,12 +293,22 @@ function user_function(type_op){
                     if (type_op == 'list'){
                         var users = json["users"];
                         var template = Handlebars.compile($("#table-user-template")[0].innerHTML);
-                        $('#table-user').html(template(users));
+                        $('#table-user').html(template(json));
+                        if (json['user_role'] == 'ADMIN'){
+                            template = Handlebars.compile($("#add-user-template")[0].innerHTML);
+                            $('#add-user').html(template(json));
+                            $('#add-user')[0].classList.remove("d-none");
+                            $('#add-user')[0].classList.add("d-block");
+                        }
                         user_list = [];
                         for(var i = 0; i < users.length;i++) {
                             user_list.push(users[i]);
                             $('#psw_user' + i).on('input',function(e){must_save_user(this.id.replace("psw_user", ""))});
-                            $('#username' + i).on('input',function(e){must_save_user(this.id.replace("username", ""))});
+                            if (json['user_username'] != users[i].username)
+                                $('#psw_user' + i).prop('readonly', true);
+                            if (json['user_role'] != 'ADMIN'){
+                                $('#role_user' + i).prop('disabled', true);
+                            }
                         }
                     }
                     if (type_op == 'update' || type_op == 'delete' || type_op == 'add'){
