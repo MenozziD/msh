@@ -1,12 +1,12 @@
 <settings>
 	<lingua>IT</lingua>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
-	<project_id_google_actions>smart-home-android-thing-deadd</project_id_google_actions>
-	<subdomain_oauth>oauthmenoz</subdomain_oauth>
-	<subdomain_webapp>casamenoz</subdomain_webapp>
+	<project_id_google_actions>project_id</project_id_google_actions>
+	<subdomain_oauth>dominio_oauth</subdomain_oauth>
+	<subdomain_webapp>dominio_casa</subdomain_webapp>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
-		<filename>msh.log</filename>
+		<filename>None</filename>
 		<format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>
 		<!-- debug, info, warning, error, critical -->
 		<level>info</level>

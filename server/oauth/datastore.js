@@ -18,13 +18,13 @@ const Auth = {
   users: {
     '1': {
       uid: '1',
-      name: 'rick',
-      password: 'oldman',
+      name: 'user',
+      password: '',
       tokens: ['psokmCxKjfhk7qHLeYd1']
     }
   },
   usernames: {
-    'rick': '1'
+    'user': '1'
   },
   authcodes: {}
 };
