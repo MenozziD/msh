@@ -38,7 +38,7 @@ def main():
         level=XmlReader.settings['log']['level'])
     ip_address = 'localhost'
     port = '65177'
-    cmd = run(["ps", "-aux", "|", "grep", "npm", "|", "grep", "npm"], stdout=PIPE, stderr=PIPE)
+    cmd = run(["ps", "-aux", "|", "grep", "node", "|", "grep", "server.js"], stdout=PIPE, stderr=PIPE)
     cmd_out = str(cmd.stdout)[2:-1]
     if cmd_out == "":
         info("Start oauth server...")

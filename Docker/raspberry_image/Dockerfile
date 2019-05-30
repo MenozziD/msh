@@ -6,7 +6,6 @@ ARG dominio_oauth
 ARG dominio_webapp
 WORKDIR /server
 COPY server/ /server/
-COPY start.sh /server/
 # DATABASE
 RUN mkdir msh/db
 RUN sqlite3 ./msh/db/system.db

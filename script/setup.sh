@@ -124,3 +124,9 @@ echo "impostare credenziali Account Linking | OAuth | Authorization Code | clien
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | client secret eToBzeBT7OwrPQO8mZHsZtLp1qhQbe"
 cd ../msh
 python3 msh.py 2> /dev/null &
+if [ curl -I -X GET http://127.0.0.1:80/static/page/index.html | grep 200 ]
+then
+	echo "INSTALLAZIONE RIUSCITA!!"
+else
+	echo "INSTALLAZIONE KO!!"
+fi
