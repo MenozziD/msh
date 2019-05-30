@@ -5,3 +5,6 @@ https://developers.google.com/actions/reference/rest/Shared.Types/ActionPackage
 https://github.com/actions-on-google
 https://developers.google.com/assistant/sdk/guides/library/python/extend/custom-actions
 https://stackoverflow.com/questions/41088596/make-google-actions-development-project-preview-persist-longer
+
+https://docs.docker.com/install/linux/docker-ce/debian/
+https://ownyourbits.com/2018/06/27/running-and-building-arm-docker-containers-in-x86/

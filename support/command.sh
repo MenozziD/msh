@@ -10,15 +10,12 @@ ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
 # start dns serveo
 ssh -o "StrictHostKeyChecking no" -R casamenoz:80:localhost:65177 -R oauthmenoz:80:localhost:3000 serveo.net
 
-#Creo la action su google action a partire dal json
-gactions --verbose update --action_package ./msh/action.json --project smart-home-android-thing-deadd
-
-#Guardo lo stato della google action
-.\gactions --verbose get --project test-rasp-18a53 --version draft
-
 # Accedere al container
 docker exec -i -t raspberrypi /bin/bash
 docker exec -i -t esprele /bin/bash
+
+#Creare export file system del container
+docker export raspberrypi > msh_so.tar
 
 # Info sulla VM di Docker in utilizzo
 docker version
@@ -64,3 +61,9 @@ go get github.com/docker/machine/libmachine/drivers/plugin
 
 #Build di un progetto GO
 go build -i -o docker-machine-driver-qemu.exe
+
+#Creo la action su google action a partire dal json
+gactions --verbose update --action_package ./msh/action.json --project smart-home-android-thing-deadd
+
+#Guardo lo stato della google action
+.\gactions --verbose get --project test-rasp-18a53 --version draft
