@@ -5,9 +5,20 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+apt-cache madison docker-ce
+sudo apt-get install docker-ce=5:18.09.1~3-0~debian-stretch docker-ce-cli=5:18.09.1~3-0~debian-stretch containerd.io
+apt-get install qemu-user
 cd ../Docker/base_image
-docker build . --tag=msh:v0.0.1
+sudo docker build . --tag=msh:v0.0.1
 cp ../../server ../raspberry_image
 cd ../raspberry_image
-docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberrypi:v0.0.1
-docker run -d --name raspberrypi -p 8080:65177 raspberrypi:v0.0.1
+sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberrypi:v0.0.1
+sudo docker run -d --name raspberrypi -p 8080:65177 raspberrypi:v0.0.1
