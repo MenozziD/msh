@@ -1,5 +1,7 @@
 # Parto da un SO Debian di base
 FROM arm32v7/debian:latest
+# QEMU
+COPY /usr/bin/qemu-arm-static /usr/bin
 # UPDATE
 RUN apt-get update -y
 # APT-UTILS
