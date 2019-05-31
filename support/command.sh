@@ -1,24 +1,33 @@
-#Accesso alla cartella
-cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image
+#Accesso alla cartella ARM con qemu
+cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image_ARM
+
+#Accesso alla cartella ARM senza qemu
+cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image_prod
+
+#Accesso alla cartella x64
+cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image_x64
 
 #Deploy container
 ./deploy.sh test-rasp-18a53 sgarzo cronaldo7 oauthsga casasga 
 
-# kill processo ngrok
+#Kill processo ngrok
 ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
 
-# start dns serveo
+#Start dns serveo
 ssh -o "StrictHostKeyChecking no" -R casamenoz:80:localhost:65177 -R oauthmenoz:80:localhost:3000 serveo.net
 
-# Esecuzione di un'immagine arm con qemu (funziona solo su macchina linux)
-docker run -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static --rm -ti arm32v7/debian:stretch-slim
-
 # Accedere al container
-docker exec -i -t raspberrypi /bin/bash
+docker exec -i -t raspberry-x64 /bin/bash
+docker exec -i -t raspberry-arm /bin/bash
+docker exec -i -t raspberry-arm-prod /bin/bash
 docker exec -i -t esprele /bin/bash
 
 #Creare export file system del container
-docker export raspberrypi > msh_so.tar
+docker export raspberry-arm > raspberry_arm.tar
+docker export raspberry-arm-prod > raspberry_arm_prod.tar
+
+#Convertire tar to img
+dd if=raspberry_arm_prod.tar of=1.img
 
 # Info sulla VM di Docker in utilizzo
 docker version
@@ -34,6 +43,9 @@ docker container ls --all | awk '{print $1}' | xargs docker container rm
 
 # Creazione di un'immagine
 docker build . --tag=msh:v0.0.1
+
+# Esecuzione di un'immagine arm con qemu (funziona solo su macchina linux)
+docker run -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static --rm -ti arm32v7/debian:stretch-slim
 
 # Creazione di un'immagine ed esecuzione
 docker build . --build-arg ngrok_auth_token='TOKEN' --build-arg google_actions_project_id='ID_PROJECT' --tag=raspberrypi:v0.0.1
