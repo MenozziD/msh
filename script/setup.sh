@@ -134,7 +134,7 @@ echo "impostare credenziali Account Linking | OAuth | Authorization Code | Clien
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | Authorization URL: https://$4.serveo.net/oauth" 
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | Token URL: https://$4.serveo.net/token"
 cd ../msh
-python3 msh.py 2> /dev/null &
+sudo python3 msh.py 2> /dev/null &
 if curl -I -X GET http://127.0.0.1:65177/static/page/index.html | grep 200
 then
 	echo "INSTALLAZIONE RIUSCITA!!"
