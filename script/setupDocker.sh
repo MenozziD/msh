@@ -21,17 +21,25 @@ sudo service docker start
 sudo update-rc.d docker enable
 # INSTALLO QEMU
 apt-get install qemu-user -y
-# CREO IMMAGINE BASE ARM
+# CREO IMMAGINE BASE ARM CON QEMU
 cd ../Docker/base_image_ARM
 sudo docker build . --tag=msh-arm:v0.0.1
+# CREO IMMAGINE BASE ARM SENZA QEMU
+cd ../Docker/base_image_ARM_prod
+sudo docker build . --tag=msh-arm-prod:v0.0.1
 # CREO IMMAGINE BASE X64
 cd ../base_image_x64
 sudo docker build . --tag=msh-x64:v0.0.1
-# CREO ED ESEGUO IMMAGINE RASPBERRY ARM
+# CREO ED ESEGUO IMMAGINE RASPBERRY ARM CON QEMU
 cp ../../server ../raspberry_image_ARM
 cd ../raspberry_image_ARM
 sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberry-arm:v0.0.1
 sudo docker run -d --name raspberry-arm raspberry-arm:v0.0.1
+# CREO ED ESEGUO IMMAGINE RASPBERRY ARM SENZA QEMU
+cp ../../server ../raspberry_image_ARM_prod
+cd ../raspberry_image_ARM_prod
+sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberry-arm-prod:v0.0.1
+sudo docker run -d --name raspberry-arm-prod raspberry-arm-prod:v0.0.1
 # CREO ED ESEGUO IMMAGINE RASPBERRY X64
 cp ../../server ../raspberry_image_x64
 cd ../raspberry_image_x64
