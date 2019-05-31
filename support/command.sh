@@ -10,6 +10,9 @@ ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
 # start dns serveo
 ssh -o "StrictHostKeyChecking no" -R casamenoz:80:localhost:65177 -R oauthmenoz:80:localhost:3000 serveo.net
 
+# Esecuzione di un'immagine arm con qemu (funziona solo su macchina linux)
+docker run -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static --rm -ti arm32v7/debian:stretch-slim
+
 # Accedere al container
 docker exec -i -t raspberrypi /bin/bash
 docker exec -i -t esprele /bin/bash
