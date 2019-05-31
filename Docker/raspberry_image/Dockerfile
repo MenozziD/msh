@@ -83,7 +83,9 @@ RUN echo "<settings> \n\
 		<level>info</level> \n\
 	</log> \n\
 </settings>" > ../msh/settings.xml
-RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | client ID RKkWfsi0Z9"
-RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | client secret eToBzeBT7OwrPQO8mZHsZtLp1qhQbe"
+RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | Client ID: RKkWfsi0Z9"
+RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | Client secret: eToBzeBT7OwrPQO8mZHsZtLp1qhQbe"
+RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | Authorization URL: https://$dominio_oauth.serveo.net/oauth" 
+RUN echo "impostare credenziali Account Linking | OAuth | Authorization Code | Token URL: https://$dominio_oauth.serveo.net/token"
 WORKDIR ../msh
 CMD ["python3", "msh.py"]
