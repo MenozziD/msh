@@ -1,4 +1,4 @@
-FROM msh-arm:v0.0.1:v0.0.1
+FROM msh-arm:v0.0.1
 ARG google_actions_project_id
 ARG user
 ARG password
