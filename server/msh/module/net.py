@@ -238,7 +238,9 @@ def cmd_netscan(ip, subnet):
                     if device['net_mac_info'] == 'Unknown':
                         url = 'https://api.macvendors.com/' + device['net_mac']
                         info("MAKE REQUEST: %s", url)
-                        response = request.urlopen(url).read()
+                        response = str(request.urlopen(url).read())
+                        if response.find('b\'') == 0:
+                            response = response[2:-1]
                         info("RESPONSE: %s", response)
                         device['net_mac_info'] = response
                         # aspetto due secondi per non superare il numero di richieste massime
