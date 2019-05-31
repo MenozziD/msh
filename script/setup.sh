@@ -44,6 +44,8 @@ sudo pip3 install --trusted-host pypi.python.org netifaces
 sudo pip3 install --trusted-host pypi.python.org python-crontab
 # SQLITE
 sudo apt-get install sqlite3 libsqlite3-dev -y
+# SET CRON START ON REBOOT
+sudo update-rc.d cron enable
 # CREO GACTIONS
 OK=false
 while [ "$OK" == false ]
