@@ -44,6 +44,15 @@ sudo pip3 install --trusted-host pypi.python.org netifaces
 sudo pip3 install --trusted-host pypi.python.org python-crontab
 # SQLITE
 sudo apt-get install sqlite3 libsqlite3-dev -y
+# CREO GACTIONS
+OK=false
+while [ "$OK" == false ]
+do	
+	if gactions update --action_package action.json --project $1
+	then
+		OK=true
+	fi
+done
 # DATABASE
 cd ../server
 mkdir msh/db
@@ -126,7 +135,7 @@ echo "impostare credenziali Account Linking | OAuth | Authorization Code | Autho
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | Token URL: https://$4.serveo.net/token"
 cd ../msh
 python3 msh.py 2> /dev/null &
-if [ curl -I -X GET http://127.0.0.1:65177/static/page/index.html | grep 200 ]
+if curl -I -X GET http://127.0.0.1:65177/static/page/index.html | grep 200
 then
 	echo "INSTALLAZIONE RIUSCITA!!"
 else
