@@ -7,5 +7,8 @@
 /server/msh/controller/__pycache__/*
 /server/msh/controller/*.pyc
 /Docker/raspberry_image/server/*
+/Docker/raspberry_image_ARM/server/*
+/Docker/raspberry_image_ARM_prod/server/*
+/Docker/raspberry_image_x64/server/*
 /Docker/esp_rele_image/.idea/*
 /Docker/esp_rele_image/*.log
