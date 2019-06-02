@@ -24,6 +24,7 @@ String file_head=
 String file_index_body=
 "	<script type=\"text/javascript\">\r\n"
 "\r\n"
+"   $( document ).ready(dht_cmd('read_dht'));  \r\n"
 "		function dht_cmd(str_cmd){\r\n"
 "			$.ajax({\r\n"
 "				url: \"cmd\",\r\n"
