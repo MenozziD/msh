@@ -1,11 +1,13 @@
+apt-get install extlinux syslinux-common
+apt-get install syslinux-utils syslinux-efi
 docker ps | sed -n 2p | awk '{print $1}' | xargs -I {} docker commit {} initramfs
 docker image save initramfs -o initramfs.tar
 tar xf initramfs.tar
+cat repositories
 mkdir root
-ls
 ####
-tar xf 906cb5487ad7ecda271f9cd1e6f4acf03245d91bb40d941e6ea9edb7989afd49/layer.tar -C root
 tar xf 95c20b5c9ef093a111e6ce206dc1696a12b2e897675ddcca4b696906bc6cb10e/layer.tar -C root
+tar xf 906cb5487ad7ecda271f9cd1e6f4acf03245d91bb40d941e6ea9edb7989afd49/layer.tar -C root/
 mkdir root/proc root/sys
 cd root
 echo "#!/bin/sh
