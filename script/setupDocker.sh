@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 5 ]; then
-  echo "Usage: $0 GOOGLE_PROJECT_ID USERNAME PASSWORD DOMINIO_OAUTH DOMINIO_WEBAPP" >&2
+if [ "$#" -ne 7 ]; then
+  echo "Usage: $0 GOOGLE_PROJECT_ID USERNAME PASSWORD DOMINIO_OAUTH DOMINIO_WEBAPP NAME_WIFI PASSWORD_WIFI" >&2
   exit 1
 fi
 
@@ -21,27 +21,16 @@ sudo service docker start
 sudo update-rc.d docker enable
 # INSTALLO QEMU
 apt-get install qemu-user -y
+apt-get install qemu-user-static -y
 # CREO IMMAGINE BASE ARM CON QEMU
 cd ../Docker/base_image_ARM
-sudo docker build . --tag=msh-arm:v0.0.1
-# CREO IMMAGINE BASE ARM SENZA QEMU
-cd ../Docker/base_image_ARM_prod
-sudo docker build . --tag=msh-arm-prod:v0.0.1
+sudo ./deploy.sh
 # CREO IMMAGINE BASE X64
 cd ../base_image_x64
-sudo docker build . --tag=msh-x64:v0.0.1
+sudo ./deploy.sh
 # CREO ED ESEGUO IMMAGINE RASPBERRY ARM CON QEMU
-cp ../../server ../raspberry_image_ARM
 cd ../raspberry_image_ARM
-sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberry-arm:v0.0.1
-sudo docker run -d --name raspberry-arm raspberry-arm:v0.0.1
-# CREO ED ESEGUO IMMAGINE RASPBERRY ARM SENZA QEMU
-cp ../../server ../raspberry_image_ARM_prod
-cd ../raspberry_image_ARM_prod
-sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberry-arm-prod:v0.0.1
-sudo docker run -d --name raspberry-arm-prod raspberry-arm-prod:v0.0.1
+sudo ./deploy.sh $1 $2 $3 $4 $5 $6 $7
 # CREO ED ESEGUO IMMAGINE RASPBERRY X64
-cp ../../server ../raspberry_image_x64
 cd ../raspberry_image_x64
-sudo docker build . --build-arg google_actions_project_id=$1 --build-arg user=$2 --build-arg password=$3 --build-arg dominio_oauth=$4 --build-arg dominio_webapp=$5 --tag=raspberry-x64:v0.0.1
-sudo docker run -d --name raspberry-x64 raspberry-x64:v0.0.1
+sudo ./deploy.sh $1 $2 $3 $4 $5 $6 $7

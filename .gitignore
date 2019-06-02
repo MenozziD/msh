@@ -6,9 +6,14 @@
 /server/msh/module/*.pyc
 /server/msh/controller/__pycache__/*
 /server/msh/controller/*.pyc
-/Docker/raspberry_image/server/*
+/Docker/base_image_ARM/setup/*
+/Docker/base_image_ARM/qemu-arm-static
+/Docker/base_image_x64/setup/*
+/Docker/raspberry_image_ARM/setup/*
+/Docker/raspberry_image_x64/setup/*
 /Docker/raspberry_image_ARM/server/*
-/Docker/raspberry_image_ARM_prod/server/*
+/Docker/raspberry_image_ARM/*.tar
+/Docker/raspberry_image_ARM/*.img
 /Docker/raspberry_image_x64/server/*
 /Docker/esp_rele_image/.idea/*
 /Docker/esp_rele_image/*.log
