@@ -20,6 +20,8 @@ docker exec -i -t esprele /bin/bash
 
 #Creare export file system del container
 docker export raspberry-arm > raspberry_arm.tar
+# Make tar
+tar -cvf name.tar /path/to/directory
 
 #Convertire tar to img
 dd if=raspberry_arm.tar of=1.img

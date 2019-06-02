@@ -1,0 +1,10 @@
+list disk
+select disk n
+clean
+list disk (You'll see an asterisk next to the disk name)
+create partition primary
+select partition 1
+active
+format FS=NTFS label=Data quick (You can change Data to whatever name you want)
+assign letter = x
+exit

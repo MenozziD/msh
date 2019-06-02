@@ -10,3 +10,4 @@ https://docs.docker.com/install/linux/docker-ce/debian/
 https://ownyourbits.com/2018/06/27/running-and-building-arm-docker-containers-in-x86/
 
 https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
+https://www.quora.com/How-can-I-generate-a-bootable-iso-from-a-Docker-image

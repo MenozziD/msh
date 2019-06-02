@@ -9,6 +9,8 @@ fi
 sudo apt-get remove docker docker-engine docker.io containerd runc -y
 sudo apt-get update -y
 sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
+sudo apt-get install build-essential -y
+sudo apt-get install libncurses-dev -y
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
