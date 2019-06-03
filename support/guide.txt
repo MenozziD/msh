@@ -11,3 +11,4 @@ https://ownyourbits.com/2018/06/27/running-and-building-arm-docker-containers-in
 
 https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
 https://www.quora.com/How-can-I-generate-a-bootable-iso-from-a-Docker-image
+https://www.packer.io/intro/getting-started/build-image.html
