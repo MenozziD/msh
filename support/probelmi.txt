@@ -1,3 +1,0 @@
-- gactions update permettte di aggiornare solo le action, mentre con la get vengono ritornate tutte
-- l'auth con Google non si riesce a fare perchè ogni votla che cambia il dns bisogna aggiornare i dommini autorizzati
-  su https://console.developers.google.com/apis/credential

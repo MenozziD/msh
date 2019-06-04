@@ -1,33 +1,10 @@
 #!/bin/bash
 
-if [ "$#" -ne 7 ]; then
-  echo "Usage: $0 GOOGLE_PROJECT_ID USERNAME_WEBAPP PASSWORD_WEBAPP DOMINIO_OAUTH DOMINIO_WEBAPP NOME_WIFI PASSWORD_WIFI" >&2
+if [ "$#" -ne 5 ]; then
+  echo "Usage: $0 GOOGLE_PROJECT_ID USERNAME_WEBAPP PASSWORD_WEBAPP DOMINIO_OAUTH DOMINIO_WEBAPP" >&2
   exit 1
 fi
 
-# ABILITO WIFI
-sudo echo "auto lo
-
-iface lo inet loopback
-iface eth0 inet dhcp
-
-auto wlan0
-iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" > /etc/network/interfaces
-sudo mkdir /etc/wpa_supplicant/
-sudo echo "ctrl_interface=/var/run/wpa_supplicant
-ctrl_interface_group=0
-update_config=1
-
-network={
-        ssid=\"$6\"
-        psk=\"$7\"
-        proto=WPA
-        key_mgmt=WPA-PSK
-        pairwise=TKIP
-        group=TKIP
-        id_str=\"$6\"
-}" > /etc/wpa_supplicant/wpa_supplicant.conf
 sudo echo "{
 	\"actions\": [{
 			\"fulfillment\": {
@@ -45,14 +22,14 @@ sudo echo "{
 	\"locale\": \"it\"
 }" > action.json
 # CREO GACTIONS
-#OK=false
-#while [ "$OK" == false ]
-#do	
-#	if gactions update --action_package action.json --project $1
-#	then
-#		OK=true
-#	fi
-#done
+OK=false
+while [ "$OK" == false ]
+do	
+	if gactions update --action_package action.json --project $1
+	then
+		OK=true
+	fi
+done
 # DATABASE
 cd server
 mkdir msh/db
@@ -142,10 +119,11 @@ echo "impostare credenziali Account Linking | OAuth | Authorization Code | Clien
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | Authorization URL: https://$4.serveo.net/oauth" 
 echo "impostare credenziali Account Linking | OAuth | Authorization Code | Token URL: https://$4.serveo.net/token"
 cd ../msh
-#sudo python3 msh.py 2> /dev/null &
-#if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
-#then
-#	echo "INSTALLAZIONE RIUSCITA!!"
-#else
-#	echo "INSTALLAZIONE KO!!"
-#fi
+sudo python3 msh.py 2> /dev/null &
+sleep 15
+if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
+then
+	echo "INSTALLAZIONE RIUSCITA!!"
+else
+	echo "INSTALLAZIONE KO!!"
+fi

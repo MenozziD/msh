@@ -1,7 +1,41 @@
 #!/bin/bash
 
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 NOME_WIFI PASSWORD_WIFI" >&2
+  exit 1
+fi
+
+# CONFIGURARE IL LAYOUT DELLA TASTIERA sudo dpkg-reconfigure keyboard-configuration
+# RESTART DEL SERVIZIO PER FARGLI LEGGERE LE NUOVE CONFIGURAZIONI service keyboard-setup restart
+# ABILITO WIFI
+sudo echo "auto lo
+
+iface lo inet loopback
+iface eth0 inet dhcp
+
+auto wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" > /etc/network/interfaces
+sudo mkdir /etc/wpa_supplicant/
+sudo echo "ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=0
+update_config=1
+
+network={
+        ssid=\"$1\"
+        psk=\"$2\"
+        proto=WPA
+        key_mgmt=WPA-PSK
+        pairwise=TKIP
+        group=TKIP
+        id_str=\"$1\"
+}" > /etc/wpa_supplicant/wpa_supplicant.conf
+# RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
+sudo /etc/init.d/networking restart
 # UPDATE
 sudo apt-get update -y
+# UPGRADE
+sudo apt-get upgrade -y
 # APT-UTILS
 sudo apt-get install apt-utils -y
 # PS, TOP, ecc..
@@ -13,7 +47,7 @@ sudo apt-get install curl -y
 # NMAP
 sudo apt-get install nmap -y
 # SSH CLIENT
-sudo apt-get install opessh-client -y
+sudo apt-get install ssh -y
 # SSH SERVER
 sudo apt-get install openssh-server -y
 sudo rm /etc/ssh/ssh_host_*
@@ -27,8 +61,8 @@ sudo apt-get install samba-common-bin -y
 sudo apt-get install cron -y
 sudo service cron start
 # GACTIONS
-# sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions
-# sudo chmod +x /usr/bin/gactions
+sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions
+sudo chmod +x /usr/bin/gactions
 # NPM
 sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
 sudo apt-get install npm -y

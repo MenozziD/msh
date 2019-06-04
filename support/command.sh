@@ -1,8 +1,8 @@
-#Accesso alla cartella ARM con qemu
-cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image_ARM
+# Copiare directory su raspberry con ssh
+scp -r server pi@192.168.1.106:/home/pi
 
-#Accesso alla cartella x64
-cd /c/Users/Simone.simone/Documents/Repository/msh/Docker/raspberry_image_x64
+# Copiare un file su raspberry con ssh
+scp 02_setup.sh pi@192.168.1.106:/home/pi/02_setup.sh
 
 #Deploy container
 ./deploy.sh project-id sga cr7 oauthsga casasga Infostrada-EB3118 G7LLFX7R7G
