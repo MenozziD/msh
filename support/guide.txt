@@ -9,7 +9,6 @@ https://stackoverflow.com/questions/41088596/make-google-actions-development-pro
 https://docs.docker.com/install/linux/docker-ce/debian/
 https://ownyourbits.com/2018/06/27/running-and-building-arm-docker-containers-in-x86/
 
-https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
 https://www.quora.com/How-can-I-generate-a-bootable-iso-from-a-Docker-image
 https://www.packer.io/intro/getting-started/build-image.html
 https://mr.gy/blog/build-vm-image-with-docker.html
@@ -18,3 +17,6 @@ https://github.com/CodersOS/linux-iso-creator
 https://wiki.debian.org/RaspberryPi
 https://wiki.debian.org/RaspberryPi2
 https://wiki.debian.org/ArmPorts
+
+https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
+https://www.raspberryitaly.com/backup-scheda-sd/
