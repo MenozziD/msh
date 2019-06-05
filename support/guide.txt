@@ -20,3 +20,4 @@ https://wiki.debian.org/ArmPorts
 
 https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
 https://www.raspberryitaly.com/backup-scheda-sd/
+https://github.com/Drewsif/PiShrink
