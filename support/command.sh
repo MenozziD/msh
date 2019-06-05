@@ -4,6 +4,11 @@ scp -r server pi@192.168.1.106:/home/pi
 # Copiare un file su raspberry con ssh
 scp 02_setup.sh pi@192.168.1.106:/home/pi/02_setup.sh
 
+# SQLITE 3 cli view
+.mode column
+.header on
+
+
 #Deploy container
 ./deploy.sh project-id sga cr7 oauthsga casasga Infostrada-EB3118 G7LLFX7R7G
 
