@@ -27,10 +27,10 @@ class User(BaseHandler):
                                 if user['username'] != self.session.get('user'):
                                     user['password'] = ''
                             response['users'] = users
-                            response['user_role'] = self.session.get('role')
-                            response['user_username'] = self.session.get('user')
                         else:
                             response['users'] = DbManager.select_tb_user(self.session.get('user'))
+                        response['user_role'] = self.session.get('role')
+                        response['user_username'] = self.session.get('user')
                         response['output'] = 'OK'
                     if tipo_operazione == "update":
                         to_update = DbManager.select_tb_user(username)
