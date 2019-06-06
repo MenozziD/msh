@@ -1,3 +1,9 @@
+# Execute webapp in background
+sudo python3 msh.py 1>/dev/null 2>/dev/null &
+
+# Kill della webapp
+pgrep python | awk '{print $0}' | xargs sudo kill -9
+
 # Copiare directory su raspberry con ssh
 scp -r server pi@192.168.1.106:/home/pi
 
@@ -7,7 +13,6 @@ scp 02_setup.sh pi@192.168.1.106:/home/pi/02_setup.sh
 # SQLITE 3 cli view
 .mode column
 .header on
-
 
 #Deploy container
 ./deploy.sh project-id sga cr7 oauthsga casasga Infostrada-EB3118 G7LLFX7R7G

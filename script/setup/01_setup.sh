@@ -7,6 +7,7 @@ fi
 
 # CONFIGURARE IL LAYOUT DELLA TASTIERA sudo dpkg-reconfigure keyboard-configuration
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE NUOVE CONFIGURAZIONI service keyboard-setup restart
+# CONFIGURARE TIME ZONE sudo dpkg-reconfigure tzdata
 # ABILITO WIFI
 sudo echo "auto lo
 
@@ -46,6 +47,8 @@ sudo apt-get install net-tools -y
 sudo apt-get install curl -y
 # NMAP
 sudo apt-get install nmap -y
+# AUTOSSH
+sudo apt-get install autossh
 # SSH CLIENT
 sudo apt-get install ssh -y
 # SSH SERVER

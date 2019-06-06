@@ -17,18 +17,18 @@ def main():
         level=XmlReader.settings['log']['level'])
     ip_address = 'localhost'
     port = '65177'
-    cmd = run(["ps", "-aux", "|", "grep", "node", "|", "grep", "server.js"], stdout=PIPE, stderr=PIPE)
+    cmd = run(["pgrep", "node"], stdout=PIPE, stderr=PIPE)
     cmd_out = str(cmd.stdout)[2:-1]
     if cmd_out == "":
         info("Start oauth server...")
-        system("cd ../oauth && npm start 1> /dev/null 2> /dev/null &")
+        system("cd ../oauth && npm start 1>/dev/null 2>/dev/null &")
     else:
         info("Oauth server is already running")
-    cmd = run(["ps", "-aux", "|", "grep", "serveo.net", "|", "grep", XmlReader.settings['subdomain_webapp']], stdout=PIPE, stderr=PIPE)
+    cmd = run(["pgrep", "autossh"], stdout=PIPE, stderr=PIPE)
     cmd_out = str(cmd.stdout)[2:-1]
     if cmd_out == "":
         info("Start serveo...")
-        system("ssh -o \"StrictHostKeyChecking no\" -R " + XmlReader.settings['subdomain_webapp'] + ":80:localhost:65177 -R " + XmlReader.settings['subdomain_oauth'] + ":80:localhost:3000 serveo.net 1> /dev/null 2> /dev/null &")
+        system("autossh -M 0 -o \"StrictHostKeyChecking no\" -R " + XmlReader.settings['subdomain_webapp'] + ":80:localhost:65177 -R " + XmlReader.settings['subdomain_oauth'] + ":80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &")
     else:
         info("Serveo is already running")
     info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
