@@ -237,14 +237,20 @@ def cmd_netscan(ip, subnet):
                     device['net_mac_info'] = line.split(" (")[1].replace(")", "")
                     if device['net_mac_info'] == 'Unknown':
                         url = 'https://api.macvendors.com/' + device['net_mac']
-                        info("MAKE REQUEST: %s", url)
-                        response = str(request.urlopen(url).read())
-                        if response.find('b\'') == 0:
-                            response = response[2:-1]
-                        info("RESPONSE: %s", response)
-                        device['net_mac_info'] = response
-                        # aspetto due secondi per non superare il numero di richieste massime
-                        sleep(2)
+                        finito = False
+                        while not finito:
+                            try:
+                                info("MAKE REQUEST: %s", url)
+                                response = str(request.urlopen(url).read())
+                                if response.find('b\'') == 0:
+                                    response = response[2:-1]
+                                info("RESPONSE: %s", response)
+                                device['net_mac_info'] = response
+                                finito = True
+                                sleep(2)
+                            except Exception:
+                                exception("Exception")
+                                sleep(2)
                 if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                     devices.append(device)
                     device = {
