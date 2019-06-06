@@ -40,7 +40,7 @@ sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'A
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 # SERVER OAUTH
 cd oauth
-sudo echo = "from string import ascii_letters, digits
+sudo echo "from string import ascii_letters, digits
 from random import choice
 
 
