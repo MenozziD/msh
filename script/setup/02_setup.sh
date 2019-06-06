@@ -30,15 +30,37 @@ do
 		OK=true
 	fi
 done
+sudo rm -f action.json 
+sudo rm -f creds.data
 # DATABASE
 cd server
 mkdir msh/db
-sudo sqlite3 ./msh/db/system.db
 sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
 sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'ADMIN');" > ./msh/script/user.sql
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 # SERVER OAUTH
 cd oauth
+sudo echo = "from string import ascii_letters, digits
+from random import choice
+
+
+def main():
+    token = ''.join(choice(ascii_letters + digits) for i in range(36))
+    f = open(\"token.txt\", \"w\")
+    f.write(token)
+    f.close()
+    client_id = ''.join(choice(ascii_letters + digits) for i in range(32))
+    f = open(\"clientid.txt\", \"w\")
+    f.write(client_id)
+    f.close()
+    client_secret = ''.join(choice(ascii_letters + digits) for i in range(36))
+    f = open(\"clientsecret.txt\", \"w\")
+    f.write(client_secret)
+    f.close()
+
+
+if __name__ == '__main__':
+    main()" > oauth.py
 python3 oauth.py
 token=`cat token.txt`
 client_id=`cat clientid.txt`
@@ -47,6 +69,7 @@ rm -f token.txt
 rm -f clientid.txt
 rm -f clientsecret.txt
 rm -f token.txt
+rm -f oauth.py
 echo "const Data = {};
 
 const Auth = {
@@ -114,13 +137,14 @@ echo "<settings>
 		<level>info</level>
 	</log>
 </settings>" > ../msh/settings.xml
-echo "impostare credenziali Account Linking | OAuth | Authorization Code | Client ID: $client_id"
-echo "impostare credenziali Account Linking | OAuth | Authorization Code | Client secret: $client_secret"
-echo "impostare credenziali Account Linking | OAuth | Authorization Code | Authorization URL: https://$4.serveo.net/oauth" 
-echo "impostare credenziali Account Linking | OAuth | Authorization Code | Token URL: https://$4.serveo.net/token"
+echo "Impostare credenziali Account Linking | OAuth | Authorization Code
+Client ID: $client_id
+Client secret: $client_secret
+Authorization URL: https://$4.serveo.net/oauth
+Token URL: https://$4.serveo.net/token"
 cd ../msh
 sudo python3 msh.py 2> /dev/null &
-sleep 15
+sleep 10
 if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
 then
 	echo "INSTALLAZIONE RIUSCITA!!"
