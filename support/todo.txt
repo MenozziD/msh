@@ -1,6 +1,7 @@
-- Caricare codice su ESP da raspberry
 - Utenti con USER possono esegurie tutti command?
+- Caricare codice su ESP da raspberry da webapp
 - check su kill python se killa anche i processi generati da lui
 - spostare controlli server in altro file python
 - fare check su assegnazione dominio
+- controllo su nome dispositivo in fase di insert
 - registare msh.py come servizio in modo da impostre l'avvio al reboot
