@@ -41,6 +41,13 @@ class NetScan(BaseHandler):
                             aggiornati = aggiornati + 1
                             break
                     if not trovato:
+                        trovato = False
+                        for db_device in db_devices:
+                            if db_device['net_code'] == device['net_code']:
+                                trovato = True
+                                break
+                        if trovato:
+                            device['net_code'] = device['net_mac']
                         DbManager.insert_tb_net_device(device['net_code'], 'NET', 'ON', device['net_ip'], '', '', device['net_mac'], device['net_mac_info'])
                         inseriti = inseriti + 1
                 for db_device in db_devices:
