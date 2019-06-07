@@ -1,0 +1,9 @@
+open "%1%" -timeout=360
+put msh.zip /home/pi/server/msh.zip
+put update_raspberry.sh /home/pi/server/update_raspberry.sh
+chmod 744 /home/pi/server/update_raspberry.sh
+cd /home/pi/server
+call ./update_raspberry.sh
+rm msh.zip
+rm update_raspberry.sh
+exit

@@ -38,6 +38,7 @@ mkdir msh/db
 sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
 sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'ADMIN');" > ./msh/script/user.sql
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
+sudo rm -rf ./msh/script
 # SERVER OAUTH
 cd oauth
 sudo echo "from string import ascii_letters, digits

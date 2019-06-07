@@ -1,7 +1,7 @@
 from jinja2 import FileSystemLoader, Environment
 
 
-template = Environment(loader=FileSystemLoader('/webuipage/table_device.html')).get_template('')
+template = Environment(loader=FileSystemLoader('/webui/page/table_device.html')).get_template('')
 template.render(items=response['devices'])
 
 <table class="table">
