@@ -46,6 +46,7 @@ def main():
         ('/api/home', 'controller.Home'),
         ('/api/login', 'controller.Login'),
         ('/api/user', 'controller.User'),
+        ('/api/upload_arduino', 'controller.UploadArduino'),
         ('/logout', 'controller.Logout'),
         ('/favicon.ico', 'controller.Icon'),
         ('/', 'controller.Index'),
