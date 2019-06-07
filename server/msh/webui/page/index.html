@@ -287,6 +287,33 @@
                     </form>
                 </div>
             </script>
-		</div>
+            <div class="row mb-3" id="upload-arduino">
+                <div class="col-md-12">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="core">Core</label>
+                                <input type="text" class="form-control" id="core">
+                                <div class="invalid-feedback" id="chk_core">
+                                    Il core &egrave un campo obbligatorio
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="tipologia">Tipologia</label>
+                                <input type="text" class="form-control" id="tipologia">
+                                <div class="invalid-feedback" id="chk_tipologia">
+                                    La tipologia &egrave un campo obbligatorio
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+								<label for="esito_upload">Esito</label>
+								<input type="text" class="form-control" id="esito_upload" readonly>
+							</div>
+                            <button class="btn btn-primary btn-lg btn-block" type="button" onclick="upload_arduino()">Load</button>
+                        </div>
+                    </form>
+                </div>
+		    </div>
+        </div>
 	</body>
 </html>
