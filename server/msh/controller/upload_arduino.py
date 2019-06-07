@@ -20,11 +20,15 @@ class UploadArduino(BaseHandler):
                 cmd = run(["arduino-cli", "board", "list", "|", "grep", "tty", "|", "awk", "'{print $1}'"], stdout=PIPE, stderr=PIPE)
                 cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
                 if cmd_out != "":
+                    run(["mkdir", tipologia])
+                    run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/" + tipologia + ".ino", "--output", tipologia + "/" + tipologia + ".ino"])
+                    run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/index.h", "--output", tipologia + "/" + "index.h"])
                     cmd = run(["sudo", "arduino-cli", "upload", "-p", cmd_out, "--fqbn", core, tipologia], stdout=PIPE, stderr=PIPE)
                     cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
                     cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
                     if cmd_err == "":
                         # fare parsing sull output per creare la response con le info della compilazione
+                        run(["sudo", "rm", "-rf", tipologia])
                         response['output'] = 'OK'
                     else:
                         response['output'] = cmd_err
