@@ -14,8 +14,20 @@ scp 02_setup.sh pi@192.168.1.106:/home/pi/02_setup.sh
 .mode column
 .header on
 
+# Lista board
+sudo arduino-cli board listall
+
+# Compilazione per ESP
+sudo arduino-cli compile --fqbn esp8266:esp8266:generic test
+
+# Ricavare USB utilizzata da dispositivo
+usb=`arduino-cli board list | grep tty | awk '{print $1}'`
+
+# Upload su ESP
+sudo arduino-cli upload -p $usb --fqbn esp8266:esp8266:generic test
+
 #Deploy container
-./deploy.sh project-id sga cr7 oauthsga casasga Infostrada-EB3118 G7LLFX7R7G
+./deploy.sh project-id sga cr7 oauthsga casasga
 
 #Kill processo ngrok
 ps -aux | grep ngrok | grep yaml | awk '{print $2}' | xargs kill -9
