@@ -393,3 +393,36 @@ function logout(){
         }
     });
 }
+
+function upload_arduino(){
+    core = $("#core")[0].value;
+    tipologia = $("#tipologia")[0].value;
+    var check_core = $('#chk_core');
+    var check_tipologia = $('#chk_tipologia');
+    if (core == "")
+        check_core.show();
+    else
+        check_core.hide();
+    if (tipologia == "")
+        check_tipologia.show();
+    else
+        check_tipologia.hide();
+    if (core != "" && tipologia != ""){
+        var body = {
+            "core": core,
+            "tipologia": tipologia
+        };
+        $.ajax({
+            url: "/api/upload_arduino",
+            type: 'POST',
+            contentType: "application/json",
+            data : JSON.stringify(body),
+            success: function(response){
+                var json = $.parseJSON(JSON.stringify(response));
+                $('#esito_upload')[0].value = json["output"];
+            },
+            error: function(xhr){
+            }
+        });
+    }
+}
