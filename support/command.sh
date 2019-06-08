@@ -23,6 +23,12 @@ sudo arduino-cli compile --fqbn esp8266:esp8266:generic test
 # Ricavare USB utilizzata da dispositivo
 usb=`arduino-cli board list | grep tty | awk '{print $1}'`
 
+#Printare tutto tranne ultima colonna
+arduino-cli board listall | awk '{$NF=""; print $0}'
+
+#Printare core del dispositivo
+sudo arduino-cli board listall | grep "ESPresso Lite 1.0" | awk '{print $NF}'
+
 # Upload su ESP
 sudo arduino-cli upload -p $usb --fqbn esp8266:esp8266:generic test
 

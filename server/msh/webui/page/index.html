@@ -291,24 +291,42 @@
                     <form>
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="core">Core</label>
-                                <input type="text" class="form-control" id="core">
-                                <div class="invalid-feedback" id="chk_core">
-                                    Il core &egrave un campo obbligatorio
+							    <div class="dropdown">
+                                    <label for="device_arduino">Dispositivo</label>
+						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="device_arduino" onclick="upload_arduino('core')"></button>
+									<ul class="dropdown-menu" id="drop_device_arduino">
+                                    </ul>
                                 </div>
+                                <script id="drop_device_arduino-template" type="text/x-handlebars-template">
+                                    {{#each this}}
+                                        <li class="dropdown-item">{{this}}</li>
+                                    {{/each}}
+                                </script>
+								<div class="invalid-feedback" id="chk_device_arduino">
+									Il dispositivo &egrave un campo obbligatorio
+								</div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="tipologia">Tipologia</label>
-                                <input type="text" class="form-control" id="tipologia">
-                                <div class="invalid-feedback" id="chk_tipologia">
-                                    La tipologia &egrave un campo obbligatorio
+							    <div class="dropdown">
+                                    <label for="tipo_arduino">Tipologia</label>
+						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="tipo_arduino" onclick="upload_arduino('tipo')"></button>
+									<ul class="dropdown-menu" id="drop_tipo_arduino">
+                                    </ul>
                                 </div>
+                                <script id="drop_tipo_arduino-template" type="text/x-handlebars-template">
+                                    {{#each this}}
+                                        <li class="dropdown-item">{{this}}</li>
+                                    {{/each}}
+                                </script>
+								<div class="invalid-feedback" id="chk_tipo_arduino">
+									La tipologia &egrave un campo obbligatorio
+								</div>
                             </div>
                             <div class="col-md-4 mb-3">
 								<label for="esito_upload">Esito</label>
 								<input type="text" class="form-control" id="esito_upload" readonly>
 							</div>
-                            <button class="btn btn-primary btn-lg btn-block" type="button" onclick="upload_arduino()">Load</button>
+                            <button class="btn btn-primary btn-lg btn-block" type="button" onclick="upload_arduino('upload')">Load</button>
                         </div>
                     </form>
                 </div>

@@ -90,7 +90,6 @@ sudo tar -xaf arduino-cli.tar.bz2
 sudo rm -f arduino-cli.tar.bz2
 sudo mv arduino-cli-* /usr/bin/arduino-cli
 sudo arduino-cli config init
-sudo arduino-cli core update-index
 sudo su
 echo "proxy_type: auto
 sketchbook_path: /root/Arduino
@@ -98,5 +97,6 @@ arduino_data: /root/.arduino15
 board_manager:
   additional_urls:
     - http://arduino.esp8266.com/stable/package_esp8266com_index.json" >  /root/.arduino15/arduino-cli.yaml
+sudo arduino-cli core update-index
 #INSTALLAZIONE CORE SCHEDE
 sudo arduino-cli core install esp8266:esp8266

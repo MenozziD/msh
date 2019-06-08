@@ -8,6 +8,7 @@
 /server/msh/controller/__pycache__/*
 /server/msh/controller/*.pyc
 /server/oauth/datastore.js
+/script/deploy/deploy.bat
 /Docker/base_image_ARM/setup/*
 /Docker/base_image_ARM/qemu-arm-static
 /Docker/base_image_x64/setup/*
