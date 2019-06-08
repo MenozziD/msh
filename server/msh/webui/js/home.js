@@ -295,10 +295,10 @@ function user_function(type_op){
                         var template = Handlebars.compile($("#table-user-template")[0].innerHTML);
                         $('#table-user').html(template(json));
                         if (json['user_role'] == 'ADMIN'){
-                            template = Handlebars.compile($("#add-user-template")[0].innerHTML);
-                            $('#add-user').html(template(json));
                             $('#add-user')[0].classList.remove("d-none");
                             $('#add-user')[0].classList.add("d-block");
+                            $('#upload-arduino')[0].classList.remove("d-none");
+                            $('#upload-arduino')[0].classList.add("d-block");
                         }
                         user_list = [];
                         for(var i = 0; i < users.length;i++) {

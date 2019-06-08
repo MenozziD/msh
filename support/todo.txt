@@ -2,4 +2,3 @@
 - Caricare codice su ESP da raspberry da webapp
 - spostare controlli server in altro file python
 - fare check su assegnazione dominio
-- registare msh.py come servizio in modo da impostre l'avvio al reboot

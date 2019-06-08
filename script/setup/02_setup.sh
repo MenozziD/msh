@@ -143,8 +143,12 @@ Client ID: $client_id
 Client secret: $client_secret
 Authorization URL: https://$4.serveo.net/oauth
 Token URL: https://$4.serveo.net/token"
-cd ../msh
-sudo python3 msh.py 2> /dev/null &
+cd ../..
+sudo mv msh.sh /etc/init.d/
+sudo chmod +x /etc/init.d/msh.sh
+sudo systemctl enable msh.sh
+sudo service msh start
+sudo update-rc.d msh enable
 sleep 10
 if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
 then
