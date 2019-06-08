@@ -399,7 +399,7 @@ function logout(){
 function upload_arduino(tipo_op){
     var core = '';
     var tipologia = '';
-    if (tipo_op == 'update'){
+    if (tipo_op == 'upload'){
         core = $("#device_arduino")[0].value;
         tipologia = $("#tipo_arduino")[0].value;
         var check_core = $('#chk_device_arduino');

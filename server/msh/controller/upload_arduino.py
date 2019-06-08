@@ -21,23 +21,29 @@ class UploadArduino(BaseHandler):
                 tipologia = data['tipologia']
                 if tipo_operazione == "upload":
                     cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
-                    usb = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
+                    usb = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
                     if usb != "":
                         run(["mkdir", tipologia])
                         run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/" + tipologia + ".ino", "--output", tipologia + "/" + tipologia + ".ino"])
-                        run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/index.h", "--output", tipologia + "/" + "index.h"])
+                        run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/" + tipologia + ".ino.bin","--output", tipologia + "/" + tipologia + ".ino.bin"])
+                        # run(["curl", "https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/" + tipologia + "/index.h", "--output", tipologia + "/" + "index.h"])
                         cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
-                        core = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
-                        cmd = run(["sudo", "arduino-cli", "upload", "-p", usb, "--fqbn", core, tipologia], stdout=PIPE, stderr=PIPE)
+                        fqbn = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
+                        info("fqbn: %s usb: %s", fqbn, usb)
+                        # cmd = run(["sudo", "arduino-cli", "upload", "-p", usb, "--fqbn", fqbn, tipologia], stdout=PIPE, stderr=PIPE)
+                        '''
+                        cmd = run(["sudo", "arduino-cli", "compile", "--fqbn", fqbn, tipologia], stdout=PIPE, stderr=PIPE)
                         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
                         cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
-                        run(["sudo", "rm", "-rf", tipologia])
+                        # run(["sudo", "rm", "-rf", tipologia])
                         if cmd_err == "":
                             # fare parsing sull output per creare la response con le info della compilazione
                             response['cmd_output'] = cmd_out
                             response['output'] = 'OK'
                         else:
                             response['output'] = cmd_err
+                        '''
+                        response['output'] = 'OK'
                     else:
                         response['output'] = 'Nessun dispositivo collegato'
                 if tipo_operazione == "core":

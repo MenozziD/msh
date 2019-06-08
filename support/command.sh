@@ -29,6 +29,9 @@ arduino-cli board listall | awk '{$NF=""; print $0}'
 #Printare core del dispositivo
 sudo arduino-cli board listall | grep "ESPresso Lite 1.0" | awk '{print $NF}'
 
+# Compilazione ESP
+sudo arduino-cli compile --fqbn arduino:samd:mkr1000 test
+
 # Upload su ESP
 sudo arduino-cli upload -p $usb --fqbn esp8266:esp8266:generic test
 
