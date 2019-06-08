@@ -24,3 +24,5 @@ https://www.raspberryitaly.com/backup-scheda-sd/
 https://github.com/Drewsif/PiShrink
 
 http://guide.debianizzati.org/index.php/Gestione_e_creazione_di_servizi_in_Debian
+
+https://docs.alfresco.com/3.4/tasks/swap-space-lin.html
