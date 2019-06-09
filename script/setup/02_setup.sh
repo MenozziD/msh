@@ -5,22 +5,22 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 
-sudo echo "{
-	\"actions\": [{
-			\"fulfillment\": {
-				\"conversationName\": \"automation\"
+sudo echo '{
+	"actions": [{
+			"fulfillment": {
+				"conversationName": "automation"
 			},
-			\"name\": \"actions.devices\"
+			"name": "actions.devices"
 		}
 	],
-	\"conversations\": {
-		\"automation\": {
-			\"name\": \"automation\",
-			\"url\": \"https://$5.serveo.net/api/home\"
+	"conversations": {
+		"automation": {
+			"name": "automation",
+			"url": "https://$5.serveo.net/api/home"
 		}
 	},
-	\"locale\": \"it\"
-}" > action.json
+	"locale": "it"
+}' > action.json
 # CREO GACTIONS
 OK=false
 while [ "$OK" == false ]
@@ -144,6 +144,46 @@ Client secret: $client_secret
 Authorization URL: https://$4.serveo.net/oauth
 Token URL: https://$4.serveo.net/token"
 cd ../..
+echo '#!/bin/bash
+
+case "$1" in
+start)  if [ $(pgrep python) ]
+		then
+			echo "Servizio MSH attivo"
+		else
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
+			echo "Avviato servizio MSH"
+		fi
+		;;
+stop)   if [ $(pgrep python) ]
+		then
+			pgrep python | sudo kill -9 1>/dev/null 2>/dev/null
+			echo \"Stoppato servizio MSH\"
+		else
+			echo "Servizio MSH non attivo"
+		fi
+        ;;
+restart) if [ $(pgrep python) ]
+		 then
+			pgrep python | sudo kill -9 1>/dev/null 2>/dev/null
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
+			echo "Restart servizio MSH"
+		else
+			echo "Servizio MSH non attivo"
+		fi
+        ;;
+status) if [ $(pgrep python) ]
+		then
+			echo "Servizio MSH attivo"
+		else
+			echo "Servizio MSH non attivo"
+		fi
+        ;;
+*)      echo "Usage: /etc/init.d/msh.sh {start|stop|restart|status}"
+        exit 2
+        ;;
+esac
+exit 0' > msh.sh
 sudo mv msh.sh /etc/init.d/
 sudo chmod +x /etc/init.d/msh.sh
 sudo systemctl enable msh.sh

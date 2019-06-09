@@ -84,7 +84,7 @@ sudo apt-get install sqlite3 libsqlite3-dev -y
 # SET CRON E SSH START ON REBOOT
 sudo update-rc.d cron enable
 sudo update-rc.d ssh enable
-#SCARICO E INSTALLO ARDUINO-CLI
+#SCARICO E CONFIGURO ARDUINO-CLI
 sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2
 sudo tar -xaf arduino-cli.tar.bz2
 sudo rm -f arduino-cli.tar.bz2
@@ -100,3 +100,8 @@ board_manager:
 sudo arduino-cli core update-index
 #INSTALLAZIONE CORE SCHEDE
 sudo arduino-cli core install esp8266:esp8266
+# AGGIUNGO 2 GB DI SWAP PER LA RAM
+sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048
+sudo chmod 600 /root/swapfile
+sudo mkswap /root/swapfile
+sudo swapon /root/swapfile

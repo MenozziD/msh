@@ -1,6 +1,12 @@
 # Execute webapp in background
 sudo python3 msh.py 1>/dev/null 2>/dev/null &
 
+# Memoria Libera
+free -k
+
+# partizioni di Swap 
+swapon -s
+
 # Kill della webapp
 pgrep python | awk '{print $0}' | xargs sudo kill -9
 
