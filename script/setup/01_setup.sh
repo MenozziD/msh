@@ -1,15 +1,23 @@
 #!/bin/bash
 
+WIFI=false
 if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 NOME_WIFI PASSWORD_WIFI" >&2
-  exit 1
+  echo "Non verra configurato il Wi-Fi"
+else
+  echo "Verra configurato il Wi-Fi"
+  WIFI=true
 fi
 
-# CONFIGURARE IL LAYOUT DELLA TASTIERA sudo dpkg-reconfigure keyboard-configuration
-# RESTART DEL SERVIZIO PER FARGLI LEGGERE LE NUOVE CONFIGURAZIONI service keyboard-setup restart
-# CONFIGURARE TIME ZONE sudo dpkg-reconfigure tzdata
+# CONFIGURARE IL LAYOUT DELLA TASTIERA ---> sudo dpkg-reconfigure keyboard-configuration
+# RESTART DEL SERVIZIO TASTIERA ----------> sudo service keyboard-setup restart
+# CONFIGURARE TIME ZONE ------------------> sudo dpkg-reconfigure tzdata
+# SCARICA SCRIPT -------------------------> sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/01_setup.sh --output 01_setup.sh
+# ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
+# ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
+
 # ABILITO WIFI
-sudo echo "auto lo
+if [ "$WIFI" == true ]; then
+	sudo echo "auto lo
 
 iface lo inet loopback
 iface eth0 inet dhcp
@@ -17,8 +25,8 @@ iface eth0 inet dhcp
 auto wlan0
 iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" > /etc/network/interfaces
-sudo mkdir /etc/wpa_supplicant/
-sudo echo "ctrl_interface=/var/run/wpa_supplicant
+	sudo mkdir /etc/wpa_supplicant/
+	sudo echo "ctrl_interface=/var/run/wpa_supplicant
 ctrl_interface_group=0
 update_config=1
 
@@ -31,6 +39,7 @@ network={
         group=TKIP
         id_str=\"$1\"
 }" > /etc/wpa_supplicant/wpa_supplicant.conf
+fi
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
 sudo /etc/init.d/networking restart
 # UPDATE
@@ -105,3 +114,12 @@ sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048
 sudo chmod 600 /root/swapfile
 sudo mkswap /root/swapfile
 sudo swapon /root/swapfile
+# SCARICO I SERVER E IL SECONDO SETUP
+sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh
+sudo chmod 744 02_setup.sh
+sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip
+sudo unzip msh.zip 1>/dev/null 2>/dev/null
+sudo mv msh-master/server .
+sudo rm -rf msh-master
+sudo rm -rf msh.zip
+exit 0

@@ -1,4 +1,4 @@
 - Utenti con USER possono esegurie tutti command?
-- Caricare codice su ESP da raspberry da webapp
 - spostare controlli server in altro file python
 - fare check su assegnazione dominio
+- dopo modifiche su datastore riavviare npm

@@ -5,22 +5,24 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 
-sudo echo '{
-	"actions": [{
-			"fulfillment": {
-				"conversationName": "automation"
+#RIMUOVO PRIMO SETUP
+sudo rm -rf 01_setup.sh
+sudo echo "{
+	\"actions\": [{
+			\"fulfillment\": {
+				\"conversationName\": \"automation\"
 			},
-			"name": "actions.devices"
+			\"name\": \"actions.devices\"
 		}
 	],
-	"conversations": {
-		"automation": {
-			"name": "automation",
-			"url": "https://$5.serveo.net/api/home"
+	\"conversations\": {
+		\"automation\": {
+			\"name\": \"automation\",
+			\"url\": \"https://$5.serveo.net/api/home\"
 		}
 	},
-	"locale": "it"
-}' > action.json
+	\"locale\": \"it\"
+}" > action.json
 # CREO GACTIONS
 OK=false
 while [ "$OK" == false ]
@@ -91,13 +93,13 @@ const Auth = {
   users: {
     '1': {
       uid: '1',
-      name: '$3',
-      password: '$4',
+      name: '$2',
+      password: '$3',
       tokens: ['$token']
     }
   },
   usernames: {
-    '$3': '1'
+    '$2': '1'
   },
   authcodes: {}
 };
@@ -145,6 +147,15 @@ Authorization URL: https://$4.serveo.net/oauth
 Token URL: https://$4.serveo.net/token"
 cd ../..
 echo '#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          msh
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog  
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servizio MSH
+# Description:       Servizio MSH
+### END INIT INFO
 
 case "$1" in
 start)  if [ $(pgrep python) ]
@@ -172,24 +183,15 @@ restart) if [ $(pgrep python) ]
 			echo "Servizio MSH non attivo"
 		fi
         ;;
-status) if [ $(pgrep python) ]
-		then
-			echo "Servizio MSH attivo"
-		else
-			echo "Servizio MSH non attivo"
-		fi
-        ;;
-*)      echo "Usage: /etc/init.d/msh.sh {start|stop|restart|status}"
+*)      echo "Usage: $0 {start|stop|restart}"
         exit 2
         ;;
 esac
 exit 0' > msh.sh
-sudo mv msh.sh /etc/init.d/
-sudo chmod +x /etc/init.d/msh.sh
-sudo systemctl enable msh.sh
-sudo update-rc.d msh.sh enable
-sudo service msh stop
+sudo mv msh.sh /etc/init.d/msh
+sudo chmod +x /etc/init.d/msh
 sudo service msh start
+sudo update-rc.d msh enable
 sleep 10
 if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
 then
@@ -197,3 +199,4 @@ then
 else
 	echo "INSTALLAZIONE KO!!"
 fi
+exit 0
