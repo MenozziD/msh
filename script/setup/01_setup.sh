@@ -42,6 +42,9 @@ network={
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
 	sudo /etc/init.d/networking restart
 fi
+# CAMBIO PASSWORD
+echo "Eseguo cambio password, vecchia password: raspberry"
+sudo passwd
 # UPDATE
 echo "Eseguo apt-get update"
 sudo apt-get update -y 1>/dev/null 
