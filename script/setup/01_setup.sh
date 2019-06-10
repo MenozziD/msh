@@ -1,13 +1,5 @@
 #!/bin/bash
 
-WIFI=false
-if [ "$#" -ne 2 ]; then
-  echo "Non verra configurato il Wi-Fi"
-else
-  echo "Verra configurato il Wi-Fi"
-  WIFI=true
-fi
-
 # CONFIGURARE IL LAYOUT DELLA TASTIERA ---> sudo dpkg-reconfigure keyboard-configuration
 # RESTART DEL SERVIZIO TASTIERA ----------> sudo service keyboard-setup restart
 # CONFIGURARE TIME ZONE ------------------> sudo dpkg-reconfigure tzdata
@@ -15,6 +7,14 @@ fi
 # ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
 
+#CHECK WIFI
+WIFI=false
+if [ "$#" -ne 2 ]; then
+  echo "Non verra configurato il Wi-Fi"
+else
+  echo "Verra configurato il Wi-Fi"
+  WIFI=true
+fi
 # ABILITO WIFI
 if [ "$WIFI" == true ]; then
 	sudo echo "auto lo
@@ -39,87 +39,132 @@ network={
         group=TKIP
         id_str=\"$1\"
 }" > /etc/wpa_supplicant/wpa_supplicant.conf
-fi
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
-sudo /etc/init.d/networking restart
+	sudo /etc/init.d/networking restart
+fi
 # UPDATE
-sudo apt-get update -y
+echo "Eseguo apt-get update"
+sudo apt-get update -y 1>/dev/null 
 # UPGRADE
-sudo apt-get upgrade -y
+echo "Eseguo apt-get upgrade"
+sudo apt-get upgrade -y 1>/dev/null 
 # APT-UTILS
-sudo apt-get install apt-utils -y
+echo "Eseguo apt-get install apt-utils"
+sudo apt-get install apt-utils -y 1>/dev/null 
 # PS, TOP, ecc..
-sudo apt-get install procps -y
+echo "Eseguo apt-get install procps"
+sudo apt-get install procps -y 1>/dev/null 
 # NETSTAT
-sudo apt-get install net-tools -y
+echo "Eseguo apt-get install net-tools"
+sudo apt-get install net-tools -y 1>/dev/null 
 # CURL
-sudo apt-get install curl -y
+echo "Eseguo apt-get install curl"
+sudo apt-get install curl -y 1>/dev/null 
 # NMAP
-sudo apt-get install nmap -y
+echo "Eseguo apt-get install nmap"
+sudo apt-get install nmap -y 1>/dev/null 
 # AUTOSSH
-sudo apt-get install autossh
+echo "Eseguo apt-get install autossh"
+sudo apt-get install autossh 1>/dev/null 
 # SSH CLIENT
-sudo apt-get install ssh -y
+echo "Eseguo apt-get install ssh"
+sudo apt-get install ssh -y 1>/dev/null 
 # SSH SERVER
-sudo apt-get install openssh-server -y
-sudo rm /etc/ssh/ssh_host_*
-sudo dpkg-reconfigure openssh-server
-sudo service ssh start
+echo "Eseguo apt-get install openssh-server"
+sudo apt-get install openssh-server -y 1>/dev/null 
+sudo rm /etc/ssh/ssh_host_* 1>/dev/null 
+echo "Eseguo dpkg-reconfigure openssh-server"
+sudo dpkg-reconfigure openssh-server 1>/dev/null
+echo "Eseguo service ssh start"
+sudo service ssh start 1>/dev/null 
 # WAKEONLAN
-sudo apt-get install wakeonlan -y
+echo "Eseguo apt-get install wakeonlan"
+sudo apt-get install wakeonlan -y 1>/dev/null 
 # SAMBA per comando NET
-sudo apt-get install samba-common-bin -y
+echo "Eseguo apt-get install samba-common-bin"
+sudo apt-get install samba-common-bin -y 1>/dev/null 
 # CRON
-sudo apt-get install cron -y
-sudo service cron start
+echo "Eseguo apt-get install cron"
+sudo apt-get install cron -y 1>/dev/null 
+echo "Eseguo service cron start"
+sudo service cron start 1>/dev/null 
 # GACTIONS
-sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions
-sudo chmod +x /usr/bin/gactions
+echo "Eseguo download di gactions in /usr/bin/gactions"
+sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions 1>/dev/null 
+echo "Assegno permessi di esecuzione a gactions"
+sudo chmod +x /usr/bin/gactions 
 # NPM
-sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
-sudo apt-get install npm -y
+echo "Aggiungo repository per apt-get"
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash - 1>/dev/null 
+echo "Eseguo apt-get install npm"
+sudo apt-get install npm -y 1>/dev/null 
 # UNZIP
-sudo apt-get install unzip -y
+echo "Eseguo apt-get install unzip"
+sudo apt-get install unzip -y 1>/dev/null 
 # PYTHON
-sudo apt-get install python3 -y
-sudo apt-get install python3-pip -y
-sudo pip3 install --trusted-host pypi.python.org webapp3
-sudo pip3 install --trusted-host pypi.python.org paste
-sudo pip3 install --trusted-host pypi.python.org pexpect
-sudo pip3 install --trusted-host pypi.python.org netifaces
-sudo pip3 install --trusted-host pypi.python.org python-crontab
+echo "Eseguo apt-get install python3"
+sudo apt-get install python3 -y 1>/dev/null 
+echo "Eseguo apt-get install python3-pip"
+sudo apt-get install python3-pip -y 1>/dev/null 
+echo "Eseguo pip3 install webapp3"
+sudo pip3 install --trusted-host pypi.python.org webapp3 1>/dev/null 
+echo "Eseguo pip3 install paste"
+sudo pip3 install --trusted-host pypi.python.org paste 1>/dev/null 
+echo "Eseguo pip3 install pexpect"
+sudo pip3 install --trusted-host pypi.python.org pexpect 1>/dev/null
+echo "Eseguo pip3 install netifaces" 
+sudo pip3 install --trusted-host pypi.python.org netifaces 1>/dev/null 
+echo "Eseguo pip3 install python-crontab" 
+sudo pip3 install --trusted-host pypi.python.org python-crontab 1>/dev/null 
 # SQLITE
-sudo apt-get install sqlite3 libsqlite3-dev -y
+echo "Eseguo apt-get install sqlite3 libsqlite3-dev"
+sudo apt-get install sqlite3 libsqlite3-dev -y 1>/dev/null 
 # SET CRON E SSH START ON REBOOT
-sudo update-rc.d cron enable
-sudo update-rc.d ssh enable
+echo "Imposto avvio servizio cron all'avvio"
+sudo update-rc.d cron enable 1>/dev/null
+echo "Imposto avvio servizio ssh all'avvio"
+sudo update-rc.d ssh enable 1>/dev/null
 #SCARICO E CONFIGURO ARDUINO-CLI
-sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2
-sudo tar -xaf arduino-cli.tar.bz2
-sudo rm -f arduino-cli.tar.bz2
-sudo mv arduino-cli-* /usr/bin/arduino-cli
-sudo arduino-cli config init
-sudo su
+echo "Eseguo download di arduino-cli.tar.bz2"
+sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2 1>/dev/null
+echo "Decomprimo arduino-cli.tar.bz2"
+sudo tar -xaf arduino-cli.tar.bz2 1>/dev/null
+sudo rm -f arduino-cli.tar.bz2 1>/dev/null
+echo "Sposto arduino-cli in /usr/bin/arduino-cli"
+sudo mv arduino-cli-* /usr/bin/arduino-cli 1>/dev/null
+echo "Creo configurazione per arduino-cli"
+sudo arduino-cli config init 1>/dev/null
+sudo su 1>/dev/null
 echo "proxy_type: auto
 sketchbook_path: /root/Arduino
 arduino_data: /root/.arduino15
 board_manager:
   additional_urls:
     - http://arduino.esp8266.com/stable/package_esp8266com_index.json" >  /root/.arduino15/arduino-cli.yaml
-sudo arduino-cli core update-index
+echo "Eseguo arduino-cli core update-index"
+sudo arduino-cli core update-index 1>/dev/null
 #INSTALLAZIONE CORE SCHEDE
-sudo arduino-cli core install esp8266:esp8266
+echo "Eseguo arduino-cli core install esp8266:esp8266"
+sudo arduino-cli core install esp8266:esp8266 1>/dev/null
 # AGGIUNGO 2 GB DI SWAP PER LA RAM
-sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048
-sudo chmod 600 /root/swapfile
-sudo mkswap /root/swapfile
-sudo swapon /root/swapfile
+echo "Creo file da 2GB per swap in /root/swapfile"
+sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048 1>/dev/null
+echo "Imposto permessi sul file /root/swapfile"
+sudo chmod 600 /root/swapfile 1>/dev/null
+echo "Eseguo mkswap /root/swapfile"
+sudo mkswap /root/swapfile 1>/dev/null
+echo "Eseguo swapon /root/swapfile"
+sudo swapon /root/swapfile 1>/dev/null
 # SCARICO I SERVER E IL SECONDO SETUP
-sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh
-sudo chmod 744 02_setup.sh
-sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip
-sudo unzip msh.zip 1>/dev/null 2>/dev/null
-sudo mv msh-master/server .
-sudo rm -rf msh-master
-sudo rm -rf msh.zip
+echo "Scarico il secondo setup"
+sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh 1>/dev/null
+echo "Assegno permessi di esecuzione al nuovo setup"
+sudo chmod 744 02_setup.sh 1>/dev/null
+echo "Scarico server da GIT"
+sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip 1>/dev/null
+sudo unzip msh.zip 1>/dev/null
+sudo mv msh-master/server . 1>/dev/null
+sudo rm -rf msh-master 1>/dev/null
+sudo rm -rf msh.zip 1>/dev/null
+echo "Eseguire il comando sudo ./02_setup.sh GOOGLE_PROJECT_ID USERNAME_WEBAPP PASSWORD_WEBAPP DOMINIO_OAUTH DOMINIO_WEBAPP"
 exit 0
