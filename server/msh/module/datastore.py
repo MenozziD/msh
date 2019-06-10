@@ -2,60 +2,70 @@ from string import ascii_letters, digits
 from random import choice
 from json import loads, dumps
 from os import system
+from logging import info, exception
 
 
 def add_user(username, password):
-    letters_and_digits = ascii_letters + digits
-    token_string = ''.join(choice(letters_and_digits) for i in range(36))
-    data_file = read_file()
-    data_json = data_file.split("const Auth = ")[1].split(";")[0]
-    data = loads(convert_to_json(data_json))
-    usernames = data['usernames']
-    max_uid = 0
-    for value in usernames.values():
-        if int(value) > max_uid:
-            max_uid = int(value)
-    uid = str(max_uid + 1)
-    user = {
-        "uid": uid,
-        "name": username,
-        "password": password,
-        "tokens": [token_string]
-    }
-    token = {
-        "uid": uid,
-        "accessToken": token_string,
-        "refreshToken": token_string,
-        "userId": uid
-    }
-    data['usernames'][username] = uid
-    data['users'][uid] = user
-    data['tokens'][token_string] = token
-    data_json_new = convert_to_file(data)
-    write_file(data_file.replace(data_json, data_json_new))
+    try:
+        letters_and_digits = ascii_letters + digits
+        token_string = ''.join(choice(letters_and_digits) for i in range(36))
+        data_file = read_file()
+        data_json = data_file.split("const Auth = ")[1].split(";")[0]
+        data = loads(convert_to_json(data_json))
+        usernames = data['usernames']
+        max_uid = 0
+        for value in usernames.values():
+            if int(value) > max_uid:
+                max_uid = int(value)
+        uid = str(max_uid + 1)
+        user = {
+            "uid": uid,
+            "name": username,
+            "password": password,
+            "tokens": [token_string]
+        }
+        token = {
+            "uid": uid,
+            "accessToken": token_string,
+            "refreshToken": token_string,
+            "userId": uid
+        }
+        data['usernames'][username] = uid
+        data['users'][uid] = user
+        data['tokens'][token_string] = token
+        data_json_new = convert_to_file(data)
+        write_file(data_file.replace(data_json, data_json_new))
+    except Exception:
+        exception("Exception")
 
 
 def delete_user(username):
-    data_file = read_file()
-    data_json = data_file.split("const Auth = ")[1].split(";")[0]
-    data = loads(convert_to_json(data_json))
-    uid = data['usernames'][username]
-    del data['usernames'][username]
-    token = data['users'][uid]['tokens'][0]
-    del data['users'][uid]
-    del data['tokens'][token]
-    data_json_new = convert_to_file(data)
-    write_file(data_file.replace(data_json, data_json_new))
+    try:
+        data_file = read_file()
+        data_json = data_file.split("const Auth = ")[1].split(";")[0]
+        data = loads(convert_to_json(data_json))
+        uid = data['usernames'][username]
+        del data['usernames'][username]
+        token = data['users'][uid]['tokens'][0]
+        del data['users'][uid]
+        del data['tokens'][token]
+        data_json_new = convert_to_file(data)
+        write_file(data_file.replace(data_json, data_json_new))
+    except Exception:
+        exception("Exception")
 
 
 def update_user(username, password):
-    data_file = read_file()
-    data_json = data_file.split("const Auth = ")[1].split(";")[0]
-    data = loads(convert_to_json(data_json))
-    uid = data['usernames'][username]
-    data['users'][uid]['password'] = password
-    data_json_new = convert_to_file(data)
-    write_file(data_file.replace(data_json, data_json_new))
+    try:
+        data_file = read_file()
+        data_json = data_file.split("const Auth = ")[1].split(";")[0]
+        data = loads(convert_to_json(data_json))
+        uid = data['usernames'][username]
+        data['users'][uid]['password'] = password
+        data_json_new = convert_to_file(data)
+        write_file(data_file.replace(data_json, data_json_new))
+    except Exception:
+        exception("Exception")
 
 
 def convert_to_json(data_json):
@@ -112,4 +122,6 @@ def write_file(data_file):
     f = open('../oauth/datastore.js', 'w')
     f.write(data_file)
     f.close()
-    system("cd /home/pi/server/oauth && npm restart 1>/dev/null 2>/dev/null &")
+    cmd = "cd /home/pi/server/oauth && npm restart 1>/dev/null 2>/dev/null &"
+    info("Eseguo comando: %s", cmd)
+    system(cmd)
