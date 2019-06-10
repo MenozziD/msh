@@ -238,61 +238,6 @@ echo "Eseguo service oauth start"
 sudo service oauth start 1>/dev/null
 echo "Imposto avvio servizio oauth all'avvio"
 sudo update-rc.d oauth enable 1>/dev/null
-# SERVIZIO MSH
-echo "Creo script msh.sh"
-echo $'#!/bin/bash
-### BEGIN INIT INFO
-# Provides:          msh
-# Required-Start:    $local_fs $network $named $time $syslog
-# Required-Stop:     $local_fs $network $named $time $syslog  
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Servizio MSH
-# Description:       Servizio MSH
-### END INIT INFO
-
-case "$1" in
-start)  if [ $(pgrep python) ]
-		then
-			echo "Servizio MSH attivo"
-		else
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Avviato servizio MSH"
-		fi
-		;;
-stop)   if [ $(pgrep python) ]
-		then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-			echo "Stoppato servizio MSH"
-		else
-			echo "Servizio MSH non attivo"
-		fi
-        ;;
-restart) if [ $(pgrep python) ]
-		 then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Restart servizio MSH"
-		else
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Avviato servizio MSH"
-		fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
-        exit 2
-        ;;
-esac
-exit 0' > msh.sh
-echo "Sposto script msh.sh in /etc/init.d/msh"
-sudo mv msh.sh /etc/init.d/msh
-echo "Assegno permessi di esecuzione a /etc/init.d/msh"
-sudo chmod +x /etc/init.d/msh 1>/dev/null
-echo "Eseguo systemctl enable msh"
-sudo systemctl enable msh 1>/dev/null 2>/dev/null
-echo "Eseguo service msh start"
-sudo service msh start 1>/dev/null
-echo "Imposto avvio servizio msh all'avvio"
-sudo update-rc.d msh enable 1>/dev/null
 # SERVIZIO SERVEO
 echo "Creo script serveo.sh"
 echo $'#!/bin/bash
@@ -354,6 +299,61 @@ echo "Eseguo service serveo start"
 sudo service serveo start 1>/dev/null
 echo "Imposto avvio servizio serveo all'avvio"
 sudo update-rc.d serveo enable 1>/dev/null
+# SERVIZIO MSH
+echo "Creo script msh.sh"
+echo $'#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          msh
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog  
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servizio MSH
+# Description:       Servizio MSH
+### END INIT INFO
+
+case "$1" in
+start)  if [ $(pgrep python) ]
+		then
+			echo "Servizio MSH attivo"
+		else
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
+			echo "Avviato servizio MSH"
+		fi
+		;;
+stop)   if [ $(pgrep python) ]
+		then
+			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			echo "Stoppato servizio MSH"
+		else
+			echo "Servizio MSH non attivo"
+		fi
+        ;;
+restart) if [ $(pgrep python) ]
+		 then
+			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
+			echo "Restart servizio MSH"
+		else
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
+			echo "Avviato servizio MSH"
+		fi
+        ;;
+*)      echo "Usage: $0 {start|stop|restart}"
+        exit 2
+        ;;
+esac
+exit 0' > msh.sh
+echo "Sposto script msh.sh in /etc/init.d/msh"
+sudo mv msh.sh /etc/init.d/msh
+echo "Assegno permessi di esecuzione a /etc/init.d/msh"
+sudo chmod +x /etc/init.d/msh 1>/dev/null
+echo "Eseguo systemctl enable msh"
+sudo systemctl enable msh 1>/dev/null 2>/dev/null
+echo "Eseguo service msh start"
+sudo service msh start 1>/dev/null
+echo "Imposto avvio servizio msh all'avvio"
+sudo update-rc.d msh enable 1>/dev/null
 # TEST
 sleep 5
 echo "Eseguo test per verificare esito installazione"
