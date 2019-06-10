@@ -25,6 +25,7 @@ class UploadArduino(BaseHandler):
                     response['output'] = 'OK'
                 if tipo_operazione == "core":
                     cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
+                    info("Eseguo il comando: %s", cmd)
                     cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
                     cores = []
                     for core in cmd_out.split("\n")[1:]:
@@ -34,7 +35,9 @@ class UploadArduino(BaseHandler):
                     response['output'] = 'OK'
                 if tipo_operazione == "tipo":
                     url = "https://api.github.com/repos/VanMenoz92/msh/contents/devices?ref=master"
+                    info("MAKE REQUEST: %s", url)
                     res = loads(request.urlopen(url).read().decode('utf-8'))
+                    info("RESPONSE: %s", res)
                     types = []
                     for device in res:
                         types.append(device['name'])
