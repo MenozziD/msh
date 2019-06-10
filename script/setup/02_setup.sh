@@ -238,65 +238,6 @@ echo "Eseguo service oauth start"
 sudo service oauth start 1>/dev/null
 echo "Imposto avvio servizio oauth all'avvio"
 sudo update-rc.d oauth enable 1>/dev/null
-# SERVIZIO SERVEO
-echo "Creo script serveo.sh"
-echo $'#!/bin/bash
-### BEGIN INIT INFO
-# Provides:          serveo
-# Required-Start:    $local_fs $network $named $time $syslog
-# Required-Stop:     $local_fs $network $named $time $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Servizio SERVEO
-# Description:       Servizio SERVEO
-### END INIT INFO
-
-case "$1" in
-start)  if [ $(pgrep autossh) ]
-                then
-						echo "Servizio SERVEO attivo"
-                else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio SERVEO"
-                fi
-                ;;
-stop)   if [ $(pgrep autossh) ]
-                then
-                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        echo "Stoppato servizio SERVEO"
-                else
-                        echo "Servizio SERVEO non attivo"
-                fi
-        ;;
-restart) if [ $(pgrep autossh) ]
-                 then
-                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Restart servizio SERVEO"
-                else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio SERVEO"
-                fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
-        exit 2
-        ;;
-esac
-exit 0' > serveo.sh
-echo "Sposto script serveo.sh in /etc/init.d/serveo"
-sudo mv serveo.sh /etc/init.d/serveo
-echo "Assegno permessi di esecuzione a /etc/init.d/serveo"
-sudo chmod +x /etc/init.d/serveo 1>/dev/null
-echo "Eseguo systemctl enable serveo"
-sudo systemctl enable serveo 1>/dev/null 2>/dev/null
-echo "Eseguo service serveo start"
-sudo service serveo start 1>/dev/null
-echo "Imposto avvio servizio serveo all'avvio"
-sudo update-rc.d serveo enable 1>/dev/null
 # SERVIZIO MSH
 echo "Creo script msh.sh"
 echo $'#!/bin/bash
@@ -352,6 +293,68 @@ echo "Eseguo service msh start"
 sudo service msh start 1>/dev/null
 echo "Imposto avvio servizio msh all'avvio"
 sudo update-rc.d msh enable 1>/dev/null
+# SERVIZIO SERVEO
+echo "Creo script serveo.sh"
+echo $'#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          serveo
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servizio SERVEO
+# Description:       Servizio SERVEO
+### END INIT INFO
+
+case "$1" in
+start)  if [ $(pgrep autossh) ]
+                then
+						echo "Servizio SERVEO attivo"
+                else
+                        oauth=`cat /home/pi/server/msh/settings.xml | grep oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
+                        echo "Avviato servizio SERVEO"
+                fi
+                ;;
+stop)   if [ $(pgrep autossh) ]
+                then
+                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+						ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+                        echo "Stoppato servizio SERVEO"
+                else
+                        echo "Servizio SERVEO non attivo"
+                fi
+        ;;
+restart) if [ $(pgrep autossh) ]
+                 then
+                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+                        ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+						autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
+                        echo "Restart servizio SERVEO"
+                else
+                        oauth=`cat /home/pi/server/msh/settings.xml | grep oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
+                        echo "Avviato servizio SERVEO"
+                fi
+        ;;
+*)      echo "Usage: $0 {start|stop|restart}"
+        exit 2
+        ;;
+esac
+exit 0' > serveo.sh
+echo "Sposto script serveo.sh in /etc/init.d/serveo"
+sudo mv serveo.sh /etc/init.d/serveo
+echo "Assegno permessi di esecuzione a /etc/init.d/serveo"
+sudo chmod +x /etc/init.d/serveo 1>/dev/null
+echo "Eseguo systemctl enable serveo"
+sudo systemctl enable serveo 1>/dev/null 2>/dev/null
+echo "Eseguo service serveo start"
+sudo service serveo start 1>/dev/null
+echo "Imposto avvio servizio serveo all'avvio"
+sudo update-rc.d serveo enable 1>/dev/null
+# TEST
 sleep 5
 echo "Eseguo test per verificare esito installazione"
 if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep "200 OK"
