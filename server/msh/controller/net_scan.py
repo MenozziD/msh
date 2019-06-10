@@ -30,7 +30,6 @@ class NetScan(BaseHandler):
                     ip = ip[0] + '.' + ip[1] + '.0.1'
                 if 8 <= count < 16:
                     ip = ip[0] + '.0.0.1'
-                info("PARTO DA %s/%s", ip, str(count))
                 result = cmd_netscan(ip, str(count))
                 for device in result['devices']:
                     trovato = False
