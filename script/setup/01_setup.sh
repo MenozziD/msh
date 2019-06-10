@@ -3,6 +3,7 @@
 # CONFIGURARE IL LAYOUT DELLA TASTIERA ---> sudo dpkg-reconfigure keyboard-configuration
 # RESTART DEL SERVIZIO TASTIERA ----------> sudo service keyboard-setup restart
 # CONFIGURARE TIME ZONE ------------------> sudo dpkg-reconfigure tzdata
+# ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config
 # SCARICA SCRIPT -------------------------> sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/01_setup.sh --output 01_setup.sh
 # ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
@@ -43,8 +44,11 @@ network={
 	sudo /etc/init.d/networking restart
 fi
 # CAMBIO PASSWORD
-echo "Eseguo cambio password, vecchia password: raspberry"
+echo "Eseguo cambio password dell'utente pi, vecchia password: raspberry"
 sudo passwd
+# CAMBIO PASSWORD ROOT
+echo "Eseguo cambio password dell'utente root"
+sudo passwd root
 # UPDATE
 echo "Eseguo apt-get update"
 sudo apt-get update -y 1>/dev/null 
