@@ -23,7 +23,7 @@ def main():
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1]
         if cmd_out == "":
-            cmd = "cd ../oauth && npm start 1>/dev/null 2>/dev/null &"
+            cmd = "sudo service oauth start"
             info("Eseguo comando: %s", cmd)
             system(cmd)
         else:
@@ -33,7 +33,7 @@ def main():
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1]
         if cmd_out == "":
-            cmd = "autossh -M 0 -o \"StrictHostKeyChecking no\" -R %s:80:localhost:65177 -R %s:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &" % (XmlReader.settings['subdomain_webapp'], XmlReader.settings['subdomain_oauth'])
+            cmd = "sudo service serveo start"
             info("Eseguo comando: %s", cmd)
             system(cmd)
         else:

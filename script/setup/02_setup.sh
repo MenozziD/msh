@@ -10,7 +10,7 @@ OAUTH_DOMAIN=$4
 while [ "$OAUTH" == false ]
 do
 	echo "Verifico la disponibilita del dominio $OAUTH_DOMAIN"
-	if curl -I -X GET https://$OAUTH_DOMAIN.serveo.net/ | grep 502
+	if curl -I -X GET https://$OAUTH_DOMAIN.serveo.net/ | grep "502 Bad Gateway"
 	then
 		echo "Dominio OAUTH disponibile"
 		OAUTH=true
@@ -24,7 +24,7 @@ WEBAPP_DOMAIN=$5
 while [ "$WEBAPP" == false ]
 do
 	echo "Verifico la disponibilita del dominio $WEBAPP_DOMAIN"
-	if curl -I -X GET https://$WEBAPP_DOMAIN.serveo.net/ | grep 502
+	if curl -I -X GET https://$WEBAPP_DOMAIN.serveo.net/ | grep "502 Bad Gateway"
 	then
 		echo "Dominio WEBAPP disponibile"
 		WEBAPP=true
@@ -165,7 +165,7 @@ exports.getUid = Data.getUid;
 exports.isValidAuth = Data.isValidAuth;
 exports.Auth = Auth;" > datastore.js
 echo "Eseguo npm install"
-sudo npm install 1>/dev/null
+sudo npm install 1>/dev/null 2>/dev/null
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 echo "Creo settings.xml"
 echo "<settings>
@@ -352,9 +352,9 @@ echo "Eseguo service msh start"
 sudo service msh start 1>/dev/null
 echo "Imposto avvio servizio msh all'avvio"
 sudo update-rc.d msh enable 1>/dev/null
-sleep 10
+sleep 5
 echo "Eseguo test per verificare esito installazione"
-if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep 200
+if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep "200 OK"
 then
 	echo "INSTALLAZIONE RIUSCITA!!"
 else

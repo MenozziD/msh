@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pgrep python | awk '{print $0}' | xargs sudo kill -9
+sudo service msh stop
 mkdir msh_tmp
 unzip msh.zip -d msh_tmp 1>/dev/null 2>/dev/null
 mv msh/db .
@@ -11,5 +11,5 @@ sudo rm -rf msh/script
 mv db msh/db
 mv settings.xml msh
 cd msh
-sudo python3 msh.py 1>/dev/null 2>/dev/null &
+sudo service msh start
 exit 0

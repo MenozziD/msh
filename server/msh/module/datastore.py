@@ -122,6 +122,6 @@ def write_file(data_file):
     f = open('../oauth/datastore.js', 'w')
     f.write(data_file)
     f.close()
-    cmd = "cd /home/pi/server/oauth && npm restart 1>/dev/null 2>/dev/null &"
+    cmd = "sudo service oauth restart"
     info("Eseguo comando: %s", cmd)
     system(cmd)
