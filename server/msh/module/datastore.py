@@ -1,6 +1,7 @@
 from string import ascii_letters, digits
 from random import choice
 from json import loads, dumps
+from os import system
 
 
 def add_user(username, password):
@@ -111,3 +112,4 @@ def write_file(data_file):
     f = open('../oauth/datastore.js', 'w')
     f.write(data_file)
     f.close()
+    system("cd /home/pi/server/oauth && npm restart 1>/dev/null 2>/dev/null &")
