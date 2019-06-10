@@ -30,14 +30,33 @@ class UploadArduino(BaseHandler):
                         fqbn = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
                         info("fqbn: %s usb: %s", fqbn, usb)
                         compile = run(["sudo", "arduino-cli", "compile", "--fqbn", fqbn, tipologia], stdout=PIPE, stderr=PIPE)
-                        response['compile_output'] = str(compile.stdout)[2:-1].replace("\\n", "\n")
+                        cmd_out_split = str(compile.stdout)[2:-1].replace("\\n", "\n").split('\n')
+                        program_info = cmd_out_split[1]
+                        memory_info = cmd_out_split[2]
+                        compile_output = {
+                            'program_bytes_used': program_info.split("uses ")[1].split(" bytes")[0],
+                            'program_percentual_used': program_info.split("(")[1].split(")")[0],
+                            'program_bytes_total': program_info.split("Maximum is ")[1].split(" bytes")[0],
+                            'memory_bytes_used': memory_info.split("use ")[1].split(" bytes")[0],
+                            'memory_percentual_used': memory_info.split("(")[1].split(")")[0],
+                            'memory_bytes_free': memory_info.split("leaving ")[1].split(" bytes")[0],
+                            'memory_bytes_total': memory_info.split("Maximum is ")[1].split(" bytes")[0]
+                        }
+                        response['compile_output'] = compile_output
                         upload = run(["sudo", "arduino-cli", "upload", "-p", usb, "--fqbn", fqbn, tipologia], stdout=PIPE, stderr=PIPE)
-                        upload_out = str(upload.stdout)[2:-1].replace("\\n", "\n")
                         upload_err = str(upload.stderr)[2:-1].replace("\\n", "\n")
                         run(["sudo", "rm", "-rf", tipologia])
                         if upload_err == "":
-                            # fare parsing sull output per creare la response con le info della compilazione
-                            response['cmd_output'] = upload_out
+                            cmd_out = str(upload.stdout)[2:-1].replace("\\n", "\n").replace("\\r", "")
+                            upload_output = {
+                                'porta_seriale': cmd_out.split("Serial port ")[1].split("\n")[0],
+                                'chip': cmd_out.split("Chip is ")[1].split("\n")[0],
+                                'mac_addres': cmd_out.split("MAC: ")[1].split("\n")[0],
+                                'byte_write': cmd_out.split("Wrote ")[1].split(" bytes")[0],
+                                'byte_write_compressed': cmd_out.split("Wrote ")[1].split(" compressed)")[0].split("(")[0],
+                                'time': cmd_out.split(" (effective")[0].split("compressed) at ")[1].split(" in ")[1]
+                            }
+                            response['upload_output'] = upload_output
                             response['output'] = 'OK'
                         else:
                             response['output'] = upload_err
