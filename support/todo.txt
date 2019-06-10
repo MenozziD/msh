@@ -1,4 +1,2 @@
 - Utenti con USER possono esegurie tutti command?
 - spostare controlli server in altro file python
-- fare check su assegnazione dominio
-- dopo modifiche su datastore riavviare npm
