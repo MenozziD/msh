@@ -18,6 +18,8 @@ else
 fi
 # ABILITO WIFI
 if [ "$WIFI" == true ]; then
+	echo "---------- CONFIGURAZIONE WIFI ----------"
+	echo "Scrivo file delle interfacce di rete al path /etc/network/interfaces"
 	sudo echo "auto lo
 
 iface lo inet loopback
@@ -27,6 +29,7 @@ auto wlan0
 iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" > /etc/network/interfaces
 	sudo mkdir /etc/wpa_supplicant/
+	echo "Scrivo file di configurazione per l'interfaccia wlan0 al path /etc/wpa_supplicant/wpa_supplicant.conf"
 	sudo echo "ctrl_interface=/var/run/wpa_supplicant
 ctrl_interface_group=0
 update_config=1
@@ -41,14 +44,17 @@ network={
         id_str=\"$1\"
 }" > /etc/wpa_supplicant/wpa_supplicant.conf
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
+	echo "Eseguo restart del servizio networking"
 	sudo /etc/init.d/networking restart
 fi
 # CAMBIO PASSWORD
+echo "---------- CAMBIO PASSWORD ----------"
 echo "Eseguo cambio password dell'utente pi, vecchia password: raspberry"
 sudo passwd
 # CAMBIO PASSWORD ROOT
 echo "Eseguo cambio password dell'utente root"
 sudo passwd root
+echo "---------- UPDATE/INSTALLAZIONE PACCHETTI ----------"
 # UPDATE
 echo "Eseguo apt-get update"
 sudo apt-get update -y 1>/dev/null 
@@ -154,6 +160,7 @@ sudo arduino-cli core update-index 1>/dev/null
 echo "Eseguo arduino-cli core install esp8266:esp8266"
 sudo arduino-cli core install esp8266:esp8266 1>/dev/null
 # AGGIUNGO 2 GB DI SWAP PER LA RAM
+echo "---------- AGGIUNTA MEMORIA SWAP ----------"
 echo "Creo file da 2GB per swap in /root/swapfile"
 sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048 1>/dev/null
 echo "Imposto permessi sul file /root/swapfile"
@@ -163,6 +170,7 @@ sudo mkswap /root/swapfile 1>/dev/null
 echo "Eseguo swapon /root/swapfile"
 sudo swapon /root/swapfile 1>/dev/null
 # SCARICO I SERVER E IL SECONDO SETUP
+echo "---------- PREPARAZIONE SECONDA INSTALLAZIONE ----------"
 echo "Scarico il secondo setup"
 sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh 1>/dev/null
 echo "Assegno permessi di esecuzione al nuovo setup"
