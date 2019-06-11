@@ -113,7 +113,9 @@ echo "Eseguo apt-get install npm"
 sudo apt-get install npm -y 1>/dev/null 
 # UNZIP
 echo "Eseguo apt-get install unzip"
-sudo apt-get install unzip -y 1>/dev/null 
+sudo apt-get install unzip -y 1>/dev/null
+echo "Eseguo apt-get install zip"
+sudo apt-get install zip -y 1>/dev/null
 # PYTHON
 echo "Eseguo apt-get install python3"
 sudo apt-get install python3 -y 1>/dev/null 

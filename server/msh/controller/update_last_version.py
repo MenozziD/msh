@@ -11,8 +11,8 @@ class UpdateLastVersion(BaseHandler):
         response = {}
         info("%s %s", self.request.method, self.request.url)
         if self.session.get('user') is not None and self.session.get('role') == 'ADMIN':
-            system("sudo python3 deploy.py 1>/dev/null 2>/dev/null &")
             response['output'] = 'OK'
+            system("cd .. && sudo ./deploy.sh &")
         else:
             response['output'] = 'Devi effettuare la login per utilizzare questa API'
             if self.session.get('role') == 'USER':
