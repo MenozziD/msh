@@ -181,5 +181,8 @@ sudo unzip msh.zip 1>/dev/null
 sudo mv msh-master/server . 1>/dev/null
 sudo rm -rf msh-master 1>/dev/null
 sudo rm -rf msh.zip 1>/dev/null
-echo "Eseguire il comando sudo ./02_setup.sh GOOGLE_PROJECT_ID USERNAME_WEBAPP PASSWORD_WEBAPP DOMINIO_OAUTH DOMINIO_WEBAPP"
+echo "---------- TO DO ----------"
+echo "1) Accedere all'URL https://console.actions.google.com/ e creare un nuovo progetto"
+echo "2) Accedere alla voce project settings e copiare il project ID"
+echo "3) Eseguire il comando sudo ./02_setup.sh GOOGLE_PROJECT_ID USERNAME_WEBAPP PASSWORD_WEBAPP DOMINIO_OAUTH DOMINIO_WEBAPP"
 exit 0
