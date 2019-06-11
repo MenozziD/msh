@@ -15,13 +15,18 @@ function carica(){
     });
     net_device('list');
     setTimeout(user_function, 250, 'list');
-}
-
-function sleep(ms) {
-  var start = new Date().getTime(), expire = start + ms;
-  while (new Date().getTime() < expire) { }
-  return;
-}
+    /*$.blockUI.defaults.css.width = '20%';
+    $.blockUI.defaults.css.left = '40%';
+    $.blockUI.defaults.css.height = '5em';
+    $.blockUI.defaults.css.borderRadius = '10px';
+    $.blockUI.defaults.overlayCSS.opacity = 0.5;*/
+    $.blockUI.defaults.css.width = '0%';
+    $.blockUI.defaults.css.left = '0%';
+    $.blockUI.defaults.css.height = '0em';
+    $.blockUI.defaults.css.top = ($(window).height() - 400) /2 + 'px';
+    $.blockUI.defaults.css.left = ($(window).width() - 400) /2 + 'px';
+    $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
+ }
 
 function net_cmd(){
 	var device = $('#device')[0].value;
@@ -476,8 +481,12 @@ function update(){
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
             if (json["output"].search("OK") == 0){
-                sleep(15000);
-                $(window.location).attr('href', '/');
+                $.blockUI();
+                setTimeout(function () {
+                    $.unblockUI();
+                    $(window.location).attr('href', '/');
+                    }, 15000);
+                }
             }
         },
         error: function(xhr){
