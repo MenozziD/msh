@@ -462,3 +462,19 @@ function upload_arduino(tipo_op){
         });
     }
 }
+
+function update(){
+    $.ajax({
+        url: "/api/update_last_version",
+        type: 'GET',
+        success: function(response){
+            var json = $.parseJSON(JSON.stringify(response));
+            if (json["output"].search("OK") == 0){
+                sleep(5000);
+                $(window.location).attr('href', '/');
+            }
+        },
+        error: function(xhr){
+        }
+    });
+}
