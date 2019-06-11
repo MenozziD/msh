@@ -234,10 +234,6 @@ echo "Assegno permessi di esecuzione a /etc/init.d/oauth"
 sudo chmod +x /etc/init.d/oauth 1>/dev/null
 echo "Eseguo systemctl enable oauth"
 sudo systemctl enable oauth 1>/dev/null 2>/dev/null
-echo "Eseguo service oauth start"
-sudo service oauth start 1>/dev/null
-echo "Imposto avvio servizio oauth all'avvio"
-sudo update-rc.d oauth enable 1>/dev/null
 # SERVIZIO SERVEO
 echo "Creo script serveo.sh"
 echo $'#!/bin/bash
@@ -295,10 +291,6 @@ echo "Assegno permessi di esecuzione a /etc/init.d/serveo"
 sudo chmod +x /etc/init.d/serveo 1>/dev/null
 echo "Eseguo systemctl enable serveo"
 sudo systemctl enable serveo 1>/dev/null 2>/dev/null
-echo "Eseguo service serveo start"
-sudo service serveo start 1>/dev/null
-echo "Imposto avvio servizio serveo all'avvio"
-sudo update-rc.d serveo enable 1>/dev/null
 # SERVIZIO MSH
 echo "Creo script msh.sh"
 echo $'#!/bin/bash
@@ -323,7 +315,7 @@ start)  if [ $(pgrep python) ]
 		;;
 stop)   if [ $(pgrep python) ]
 		then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			ps -aux | grep python | grep msh | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			echo "Stoppato servizio MSH"
 		else
 			echo "Servizio MSH non attivo"
@@ -331,7 +323,7 @@ stop)   if [ $(pgrep python) ]
         ;;
 restart) if [ $(pgrep python) ]
 		 then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			ps -aux | grep python | grep msh | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Restart servizio MSH"
 		else
