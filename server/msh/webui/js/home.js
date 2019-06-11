@@ -15,11 +15,6 @@ function carica(){
     });
     net_device('list');
     setTimeout(user_function, 250, 'list');
-    /*$.blockUI.defaults.css.width = '20%';
-    $.blockUI.defaults.css.left = '40%';
-    $.blockUI.defaults.css.height = '5em';
-    $.blockUI.defaults.css.borderRadius = '10px';
-    $.blockUI.defaults.overlayCSS.opacity = 0.5;*/
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.left = '0%';
     $.blockUI.defaults.css.height = '0em';
@@ -485,8 +480,7 @@ function update(){
                 setTimeout(function () {
                     $.unblockUI();
                     $(window.location).attr('href', '/');
-                    }, 15000);
-                }
+                }, 15000);
             }
         },
         error: function(xhr){
