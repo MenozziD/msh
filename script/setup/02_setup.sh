@@ -5,6 +5,7 @@ if [ "$#" -ne 5 ]; then
   exit 1
 fi
 # CHECK SUL DOMINIO_OAUTH E DOMINIO_WEBAPP
+echo "---------- CONTROLLO DOMINII ----------"
 OAUTH=false
 OAUTH_DOMAIN=$4
 while [ "$OAUTH" == false ]
@@ -37,6 +38,7 @@ done
 echo "Rimuovo vecchio setup"
 sudo rm -rf 01_setup.sh
 # CREO GACTIONS
+echo "---------- CONFIGURAZIONE GACTIONS ----------"
 echo "Creo file action.json"
 sudo echo "{
 	\"actions\": [{
@@ -66,6 +68,7 @@ done
 sudo rm -f action.json 
 sudo rm -f creds.data
 # DATABASE
+echo "---------- CREAZIONE DATABASE ----------"
 cd server
 echo "Creo cartella per il database"
 mkdir msh/db
@@ -78,6 +81,7 @@ sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 echo "Rimuovo cartella script"
 sudo rm -rf ./msh/script
 # SERVER OAUTH
+echo "---------- CONFIGURAZIONE E INSTALLAZIONE SERVER OAUTH ----------"
 cd oauth
 echo "Creo script python per generazione token"
 sudo echo "from string import ascii_letters, digits
@@ -167,6 +171,7 @@ exports.Auth = Auth;" > datastore.js
 echo "Eseguo npm install"
 sudo npm install 1>/dev/null 2>/dev/null
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
+echo "---------- CREAZIONE SETTINGS.XML ----------"
 echo "Creo settings.xml"
 echo "<settings>
 	<lingua>IT</lingua>
@@ -183,6 +188,7 @@ echo "<settings>
 	</log>
 </settings>" > ../msh/settings.xml
 cd ../..
+echo "---------- CREAZIONE SERVIZIO OAUTH ----------"
 # SERVIZIO OAUTH
 echo "Creo script oauth.sh"
 echo $'#!/bin/bash
@@ -235,6 +241,7 @@ sudo chmod +x /etc/init.d/oauth 1>/dev/null
 echo "Eseguo systemctl enable oauth"
 sudo systemctl enable oauth 1>/dev/null 2>/dev/null
 # SERVIZIO SERVEO
+echo "---------- CREAZIONE SERVIZIO SERVEO ----------"
 echo "Creo script serveo.sh"
 echo $'#!/bin/bash
 ### BEGIN INIT INFO
@@ -292,6 +299,7 @@ sudo chmod +x /etc/init.d/serveo 1>/dev/null
 echo "Eseguo systemctl enable serveo"
 sudo systemctl enable serveo 1>/dev/null 2>/dev/null
 # SERVIZIO MSH
+echo "---------- CREAZIONE SERVIZIO MSH ----------"
 echo "Creo script msh.sh"
 echo $'#!/bin/bash
 ### BEGIN INIT INFO
@@ -347,6 +355,7 @@ sudo service msh start 1>/dev/null
 echo "Imposto avvio servizio msh all'avvio"
 sudo update-rc.d msh enable 1>/dev/null
 # TEST
+echo "---------- TEST INSTALLAZIONE ----------"
 sleep 5
 echo "Eseguo test per verificare esito installazione"
 if curl -I -X GET http://127.0.0.1:65177/static/page/login.html | grep "200 OK"
@@ -355,7 +364,7 @@ then
 else
 	echo "INSTALLAZIONE KO!!"
 fi
-echo "---------------------------------------------------------------------"
+echo "---------- TO DO ----------"
 echo "Impostare credenziali Account Linking | OAuth | Authorization Code
 Client ID: $client_id
 Client secret: $client_secret
