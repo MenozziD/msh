@@ -17,6 +17,12 @@ function carica(){
     setTimeout(user_function, 250, 'list');
 }
 
+function sleep(ms) {
+  var start = new Date().getTime(), expire = start + ms;
+  while (new Date().getTime() < expire) { }
+  return;
+}
+
 function net_cmd(){
 	var device = $('#device')[0].value;
 	var command = $('#command')[0].value;
@@ -470,7 +476,7 @@ function update(){
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
             if (json["output"].search("OK") == 0){
-                sleep(5000);
+                sleep(15000);
                 $(window.location).attr('href', '/');
             }
         },

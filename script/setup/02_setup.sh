@@ -323,7 +323,7 @@ start)  if [ $(pgrep python) ]
 		;;
 stop)   if [ $(pgrep python) ]
 		then
-			ps -aux | grep python | grep msh | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			echo "Stoppato servizio MSH"
 		else
 			echo "Servizio MSH non attivo"
@@ -331,7 +331,7 @@ stop)   if [ $(pgrep python) ]
         ;;
 restart) if [ $(pgrep python) ]
 		 then
-			ps -aux | grep python | grep msh | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Restart servizio MSH"
 		else

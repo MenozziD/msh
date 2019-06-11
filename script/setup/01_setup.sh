@@ -181,6 +181,8 @@ echo "Scarico server da GIT"
 sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip 1>/dev/null
 sudo unzip msh.zip 1>/dev/null
 sudo mv msh-master/server . 1>/dev/null
+echo "Assegno permessi di esecuzione allo script deploy.sh"
+sudo chmod 744 server/deploy.sh
 sudo rm -rf msh-master 1>/dev/null
 sudo rm -rf msh.zip 1>/dev/null
 echo "---------- TO DO ----------"
