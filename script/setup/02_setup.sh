@@ -80,6 +80,27 @@ echo "Eseguo script di insert"
 sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
 echo "Rimuovo cartella script"
 sudo rm -rf ./msh/script
+# DEPLOY SH
+echo "---------- CONFIGURAZIONE DEPLOY DA REMOTO ----------"
+echo "Creo script deploy.sh"
+sudo echo '#!/bin/bash
+
+sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip
+sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/deploy/update_raspberry.sh --output update_raspberry.sh 1>/dev/null
+sudo chmod 744 update_raspberry.sh
+sudo unzip msh.zip 1>/dev/null
+sudo mv msh-master/server/msh msh_tmp 1>/dev/null
+sudo rm -rf msh-master 1>/dev/null
+sudo rm -rf msh.zip 1>/dev/null
+cd msh_tmp
+sudo zip -r  ../msh.zip * 1>/dev/null
+cd ..
+sudo rm -rf msh_tmp  1>/dev/null
+sudo ./update_raspberry.sh
+sudo rm -rf update_raspberry.sh msh.zip
+exit 0' > deploy.sh
+echo "Assegno permessi di esecuzione allo script deploy.sh"
+sudo chmod 744 deploy.sh
 # SERVER OAUTH
 echo "---------- CONFIGURAZIONE E INSTALLAZIONE SERVER OAUTH ----------"
 cd oauth
