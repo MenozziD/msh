@@ -72,14 +72,16 @@ echo "---------- CREAZIONE DATABASE ----------"
 cd server
 echo "Creo cartella per il database"
 mkdir msh/db
+echo "Scarico script di create"
+sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/create.sql --output create.sql 1>/dev/null 2>/dev/null
 echo "Eseguo script di create"
-sudo sqlite3 ./msh/db/system.db < ./msh/script/create.sql
+sudo sqlite3 ./msh/db/system.db < create.sql
 echo "Creo script di insert"
-sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'ADMIN');" > ./msh/script/user.sql
+sudo echo "INSERT INTO TB_USER (USERNAME, PASSWORD, ROLE) VALUES ('$2', '$3', 'ADMIN');" > user.sql
 echo "Eseguo script di insert"
-sudo sqlite3 ./msh/db/system.db < ./msh/script/user.sql
-echo "Rimuovo cartella script"
-sudo rm -rf ./msh/script
+sudo sqlite3 ./msh/db/system.db < user.sql
+echo "Rimuovo script"
+sudo rm -rf create.sql user.sql
 # DEPLOY SH
 echo "---------- CONFIGURAZIONE DEPLOY DA REMOTO ----------"
 echo "Creo script deploy.sh"
