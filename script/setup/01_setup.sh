@@ -4,7 +4,7 @@
 # RESTART DEL SERVIZIO TASTIERA ----------> sudo service keyboard-setup restart
 # CONFIGURARE TIME ZONE ------------------> sudo dpkg-reconfigure tzdata
 # ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config
-# SCARICA SCRIPT -------------------------> sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/01_setup.sh --output 01_setup.sh
+# SCARICA SCRIPT -------------------------> sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/01_setup.sh --output 01_setup.sh 1>/dev/null 2>/dev/null
 # ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
 
@@ -103,12 +103,12 @@ echo "Eseguo service cron start"
 sudo service cron start 1>/dev/null 
 # GACTIONS
 echo "Eseguo download di gactions in /usr/bin/gactions"
-sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions 1>/dev/null 
+sudo curl https://dl.google.com/gactions/updates/bin/linux/arm/gactions --output /usr/bin/gactions 1>/dev/null 2>/dev/null
 echo "Assegno permessi di esecuzione a gactions"
 sudo chmod +x /usr/bin/gactions 
 # NPM
 echo "Aggiungo repository per apt-get"
-sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash - 1>/dev/null 
+sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash - 1>/dev/null 2>/dev/null
 echo "Eseguo apt-get install npm"
 sudo apt-get install npm -y 1>/dev/null 
 # UNZIP
@@ -141,7 +141,7 @@ echo "Imposto avvio servizio ssh all'avvio"
 sudo update-rc.d ssh enable 1>/dev/null
 #SCARICO E CONFIGURO ARDUINO-CLI
 echo "Eseguo download di arduino-cli.tar.bz2"
-sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2 1>/dev/null
+sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2 1>/dev/null 2>/dev/null
 echo "Decomprimo arduino-cli.tar.bz2"
 sudo tar -xaf arduino-cli.tar.bz2 1>/dev/null
 sudo rm -f arduino-cli.tar.bz2 1>/dev/null
@@ -174,11 +174,11 @@ sudo swapon /root/swapfile 1>/dev/null
 # SCARICO I SERVER E IL SECONDO SETUP
 echo "---------- PREPARAZIONE SECONDA INSTALLAZIONE ----------"
 echo "Scarico il secondo setup"
-sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh 1>/dev/null
+sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/02_setup.sh --output 02_setup.sh 1>/dev/null 2>/dev/null
 echo "Assegno permessi di esecuzione al nuovo setup"
 sudo chmod 744 02_setup.sh 1>/dev/null
 echo "Scarico server da GIT"
-sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip 1>/dev/null
+sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip 1>/dev/null 2>/dev/null
 sudo unzip msh.zip 1>/dev/null
 sudo mv msh-master/server . 1>/dev/null
 sudo rm -rf msh-master 1>/dev/null
