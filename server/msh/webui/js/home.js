@@ -420,7 +420,7 @@ function upload_arduino(tipo_op){
         else
             check_tipologia.hide();
     }
-    if (tipo_op != "update" || (core != "" && tipologia != "")){
+    if (tipo_op != "upload" || (core != "" && tipologia != "")){
         var body = {
             "tipo_operazione": tipo_op,
             "core": core,
