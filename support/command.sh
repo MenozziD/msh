@@ -1,8 +1,8 @@
 # Execute webapp in background
 sudo python3 msh.py 1>/dev/null 2>/dev/null &
 
-# Memoria Libera
-free -k
+# Memoria Libera (available = free + buff/cache)
+free -h
 
 # Pulizia Cache
 sync; echo 3 > /proc/sys/vm/drop_caches
