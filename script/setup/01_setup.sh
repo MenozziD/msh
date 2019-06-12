@@ -163,14 +163,20 @@ echo "Eseguo arduino-cli core install esp8266:esp8266"
 sudo arduino-cli core install esp8266:esp8266 1>/dev/null
 # AGGIUNGO 2 GB DI SWAP PER LA RAM
 echo "---------- AGGIUNTA MEMORIA SWAP ----------"
-echo "Creo file da 2GB per swap in /root/swapfile"
-sudo dd if=/dev/zero of=/root/swapfile bs=1M count=2048 1>/dev/null
-echo "Imposto permessi sul file /root/swapfile"
-sudo chmod 600 /root/swapfile 1>/dev/null
-echo "Eseguo mkswap /root/swapfile"
-sudo mkswap /root/swapfile 1>/dev/null
-echo "Eseguo swapon /root/swapfile"
-sudo swapon /root/swapfile 1>/dev/null
+sudo su
+echo "Modifico il file /etc/dphys-swapfile impostando dimensione partizione"
+sudo echo "# where we want the swapfile to be, this is the default
+#CONF_SWAPFILE=/var/swap
+
+CONF_SWAPSIZE=2048
+
+# set size to computed value, this times RAM size, dynamically adapts,
+#   guarantees that there is enough swap without wasting disk space on excess
+#CONF_SWAPFACTOR=2
+
+#CONF_MAXSWAP=2048" > /etc/dphys-swapfile
+echo "Restart servzio dphys-swapfile"
+sudo /etc/init.d/dphys-swapfile restart 1>/dev/null
 # SCARICO I SERVER E IL SECONDO SETUP
 echo "---------- PREPARAZIONE SECONDA INSTALLAZIONE ----------"
 echo "Scarico il secondo setup"

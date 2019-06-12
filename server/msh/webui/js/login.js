@@ -37,3 +37,8 @@ function login(){
         });
     }
 }
+
+function handleEnter(e){
+    if(e.keyCode === 13)
+        login();
+}

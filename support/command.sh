@@ -4,8 +4,17 @@ sudo python3 msh.py 1>/dev/null 2>/dev/null &
 # Memoria Libera
 free -k
 
-# partizioni di Swap 
+# Pulizia Cache
+sync; echo 3 > /proc/sys/vm/drop_caches
+
+# Partizioni di Swap 
 swapon -s
+
+# Vedere partizioni disco
+sudo lsblk
+
+# Dimensioni directory
+du -h etc
 
 # Kill della webapp
 pgrep python | awk '{print $0}' | xargs sudo kill -9

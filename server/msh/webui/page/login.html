@@ -30,14 +30,14 @@
 							<h5 class="card-title text-center">Sign In to MSH</h5>
 							<form class="form-signin needs-validation" novalidate="" id="form">
 								<div class="form-label-group">
-									<input type="text" id="username" class="form-control" required autofocus>
+									<input type="text" id="username" class="form-control" required autofocus onkeydown="handleEnter(event)">
 									<label for="username">Username</label>
                                     <div class="invalid-feedback">
 									    Username &egrave un campo obbligatorio
 								    </div>
 								</div>
 								<div class="form-label-group">
-									<input type="password" id="password" class="form-control" required>
+									<input type="password" id="password" class="form-control" required onkeydown="handleEnter(event)">
 									<label for="password">Password</label>
                                     <div class="invalid-feedback">
 									    Password &egrave un campo obbligatorio
