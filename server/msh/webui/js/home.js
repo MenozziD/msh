@@ -465,7 +465,20 @@ function upload_arduino(tipo_op){
                 }
                 if (tipo_op == 'upload'){
                     $.unblockUI();
-                    $('#esito_upload')[0].value = json["output"];
+                    $('#esito_upload')[0].value = json["result_command"]["output"];
+                    $('#program_bytes_used')[0].value = json["result_command"]["compile_output"]["program_bytes_used"];
+                    $('#program_percentual_used')[0].value = json["result_command"]["compile_output"]["program_percentual_used"];
+                    $('#program_bytes_total')[0].value = json["result_command"]["compile_output"]["program_bytes_total"];
+                    $('#memory_bytes_used')[0].value = json["result_command"]["compile_output"]["memory_bytes_used"];
+                    $('#memory_percentual_used')[0].value = json["result_command"]["compile_output"]["memory_percentual_used"];
+                    $('#memory_bytes_free')[0].value = json["result_command"]["compile_output"]["memory_bytes_free"];
+                    $('#memory_bytes_total')[0].value = json["result_command"]["compile_output"]["memory_bytes_total"];
+                    $('#porta_seriale')[0].value = json["result_command"]["upload_output"]["porta_seriale"];
+                    $('#chip')[0].value = json["result_command"]["upload_output"]["chip"];
+                    $('#mac_addres')[0].value = json["result_command"]["upload_output"]["mac_addres"];
+                    $('#byte_write')[0].value = json["result_command"]["upload_output"]["byte_write"];
+                    $('#byte_write_compressed')[0].value = json["result_command"]["upload_output"]["byte_write_compressed"];
+                    $('#time')[0].value = json["result_command"]["upload_output"]["time"];
                 }
             },
             error: function(xhr){
