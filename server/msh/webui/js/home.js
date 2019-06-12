@@ -16,10 +16,9 @@ function carica(){
     net_device('list');
     setTimeout(user_function, 250, 'list');
     $.blockUI.defaults.css.width = '0%';
-    $.blockUI.defaults.css.left = '0%';
-    $.blockUI.defaults.css.height = '0em';
-    $.blockUI.defaults.css.top = ($(window).height() - 400) /2 + 'px';
-    $.blockUI.defaults.css.left = ($(window).width() - 400) /2 + 'px';
+    $.blockUI.defaults.css.height = '0%';
+    $.blockUI.defaults.css.left = '50%';
+    $.blockUI.defaults.css.border = '';
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
@@ -59,10 +58,12 @@ function net_cmd(){
 }
 
 function net_scan(){
+    $.blockUI();
     $.ajax({
         url: "/api/net_scan",
         type: 'GET',
         success: function(response){
+            $.unblockUI();
             var json = $.parseJSON(JSON.stringify(response));
             $('#esito')[0].value = json["output"];
             $('#found')[0].value = json["find_device"];
@@ -425,6 +426,8 @@ function upload_arduino(tipo_op){
             "core": core,
             "tipologia": tipologia
         };
+        if (tipo_op == "upload")
+            $.blockUI();
         $.ajax({
             url: "/api/upload_arduino",
             type: 'POST',
@@ -460,8 +463,10 @@ function upload_arduino(tipo_op){
                        });
                     }
                 }
-                if (tipo_op == 'upload')
+                if (tipo_op == 'upload'){
+                    $.unblockUI();
                     $('#esito_upload')[0].value = json["output"];
+                }
             },
             error: function(xhr){
             }
