@@ -27,3 +27,13 @@ http://guide.debianizzati.org/index.php/Gestione_e_creazione_di_servizi_in_Debia
 https://gist.github.com/naholyr/4275302
 
 https://docs.alfresco.com/3.4/tasks/swap-space-lin.html
+
+#!/bin/bash
+
+wget -q --spider http://google.com
+
+if [ $? -eq 0 ]; then
+    echo "Online"
+else
+    echo "Offline"
+fi
