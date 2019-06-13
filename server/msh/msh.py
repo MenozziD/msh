@@ -7,6 +7,7 @@ from subprocess import run, PIPE
 from os import system
 from string import ascii_letters, digits
 from random import choice
+from time import sleep
 
 
 def main():
@@ -33,9 +34,20 @@ def main():
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1]
         if cmd_out == "":
-            cmd = "sudo service serveo start"
-            info("Eseguo comando: %s", cmd)
-            system(cmd)
+            internet = False
+            while not internet:
+                cmd = "curl -I -X GET http://www.google.com"
+                info("Eseguo comando: %s", cmd)
+                cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
+                if cmd.returncode == 0 and str(cmd.stdout)[2:-1].find("200 OK") > 0:
+                    internet = True
+                    info("Connessione internet presente")
+                    cmd = "sudo service serveo start"
+                    info("Eseguo comando: %s", cmd)
+                    system(cmd)
+                else:
+                    info("Attendo 10 secondi...")
+                    sleep(10)
         else:
             info("Serveo is already running")
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
