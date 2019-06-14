@@ -44,13 +44,16 @@ class DbManager:
             raise
 
     @staticmethod
-    def select_tb_net_device(net_mac=''):
+    def select_tb_net_device(net_mac='', net_code=''):
         query = 'SELECT * ' \
                 'FROM TB_NET_DEVICE'
         if net_mac != '':
             query = query + ' WHERE NET_MAC = \'%s\';' % net_mac
         else:
-            query = query + ';'
+            if net_code != '':
+                query = query + ' WHERE NET_CODE = \'%s\';' % net_code
+            else:
+                query = query + ';'
         net_devices = DbManager.select(query)
         devices = []
         for net_device in net_devices:
@@ -225,8 +228,7 @@ class DbManager:
     @staticmethod
     def insert_tb_user(username, password, role):
         query = 'INSERT INTO TB_USER (USERNAME,PASSWORD,ROLE) ' \
-                'VALUES (\'%s\',\'%s\',\'%s\');' % (
-                username, password, role)
+                'VALUES (\'%s\',\'%s\',\'%s\');' % (username, password, role)
         DbManager.insert_or_update(query)
 
     @staticmethod

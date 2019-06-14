@@ -57,7 +57,7 @@
                             <div class="col-md-3 mb-3">
 							    <div class="dropdown">
                                     <label for="device">Comando</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="net_device('command')"></button>
+						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
                                     <ul class="dropdown-menu" id="drop_command">
                                     </ul>
                                 </div>
@@ -78,7 +78,7 @@
 								<label for="cmd_result">Esito Comando</label>
 								<input type="text" class="form-control" id="cmd_result" readonly>
 							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net_cmd()">Invia</button>
+							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net('cmd')">Invia</button>
 						</div>
 					</form>
 				</div>
@@ -103,7 +103,7 @@
 								<label for="update">Aggiornati</label>
 								<input type="text" class="form-control" id="update" readonly>
 							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net_device('scan')">Net Scan</button>
+							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net('scan')">Net Scan</button>
 						</div>
 				    </form>
 				</div>
@@ -111,7 +111,7 @@
 			<div class="mb-3 row">
 				<div class="col-md-12">
 					<div class="row">
-						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net_device('list')">List Device</button>
+						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net('list')">List Device</button>
 					</div>
                     <h5 id="errore" class="text-center d-none"></h5>
 					<div  id="table-device" class="table-responsive"></div>
@@ -145,7 +145,7 @@
                                         </td>
                                         <td>
                                             <div class="dropdown{{@index}}">
-                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net_device('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
                                                 <ul class="dropdown-menu" id="drop_type{{@index}}"></ul>
                                             </div>
                                         </td>
@@ -173,13 +173,13 @@
                                         <td>{{net_last_update}}</td>
                                         {{#if_eq ../user_role "ADMIN"}}
                                             <td>
-                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net_device('update{{@index}}')">Salva</button>
+                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">Salva</button>
                                             </td>
                                             <td>
                                                 <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net_device('delete{{@index}}')">Elimina</button>
+                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">Elimina</button>
                                             </td>
                                         {{/if_eq}}
                                     </tr>

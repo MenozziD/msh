@@ -59,8 +59,7 @@ def main():
             }
         }
         app = WSGIApplication([
-            ('/api/net_cmd', 'controller.NetCmd'),
-            ('/api/net_device', 'controller.NetDevice'),
+            ('/api/net', 'controller.Net'),
             ('/api/home', 'controller.Home'),
             ('/api/login', 'controller.Login'),
             ('/api/user', 'controller.User'),

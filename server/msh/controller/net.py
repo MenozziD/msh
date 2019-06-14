@@ -1,11 +1,11 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_netscan, get_ip_and_subnet, XmlReader, DbManager
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, get_ip_and_subnet, XmlReader, DbManager
 from json import dumps, loads
 from datetime import datetime
 
 
-class NetDevice(BaseHandler):
+class Net(BaseHandler):
     def post(self):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
@@ -14,7 +14,7 @@ class NetDevice(BaseHandler):
         try:
             data = loads(body)
             DbManager()
-            response = NetDevice.check(self.session.get('user'), self.session.get('role'), data)
+            response = Net.check(self.session.get('user'), self.session.get('role'), data)
             if response['output'] == 'OK':
                 type_op = data['tipo_operazione']
                 tipo = ''
@@ -22,6 +22,8 @@ class NetDevice(BaseHandler):
                 codice = ''
                 user = ''
                 password = ''
+                dispositivo = ''
+                comando = ''
                 if 'codice' in data:
                     codice = data['codice']
                 if 'tipo' in data:
@@ -32,14 +34,19 @@ class NetDevice(BaseHandler):
                     user = data['user']
                 if 'password' in data:
                     password = data['password']
+                if 'dispositivo' in data:
+                    dispositivo = data['dispositivo']
+                if 'comando' in data:
+                    comando = data['comando']
                 if response['output'] == 'OK':
                     funzioni = {
-                        'scan': NetDevice.device_scan,
-                        'list': NetDevice.device_list,
-                        'type': NetDevice.device_type,
-                        'command': NetDevice.device_command,
-                        'update': NetDevice.device_update,
-                        'delete': NetDevice.device_delete,
+                        'scan': Net.device_scan,
+                        'list': Net.device_list,
+                        'type': Net.device_type,
+                        'command': Net.device_command,
+                        'update': Net.device_update,
+                        'delete': Net.device_delete,
+                        'cmd': Net.device_cmd
                     }
                     parametri = {
                         'scan': [],
@@ -47,7 +54,8 @@ class NetDevice(BaseHandler):
                         'type': [],
                         'command': [tipo],
                         'update': [mac, codice, tipo, user, password],
-                        'delete': [mac]
+                        'delete': [mac],
+                        'cmd': [dispositivo, comando]
                     }
                     response = funzioni[type_op](*parametri[type_op])
             DbManager.close_db()
@@ -65,22 +73,26 @@ class NetDevice(BaseHandler):
     @staticmethod
     def check(user, role, data):
         response = {}
-        if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete'):
-            response = NetDevice.check_user(user, role, data['tipo_operazione'])
+        if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
+            response = Net.check_user(user, role, data['tipo_operazione'])
             if response['output'] == 'OK':
                 if data['tipo_operazione'] == 'command':
-                    response = NetDevice.check_tipo(data, required=True)
+                    response = Net.check_tipo(data, required=True)
                 if data['tipo_operazione'] == 'delete':
-                    response = NetDevice.check_mac(data)
+                    response = Net.check_mac(data)
                 if data['tipo_operazione'] == 'update':
-                    response = NetDevice.check_mac(data)
+                    response = Net.check_mac(data)
                     if response['output'] == 'OK':
-                        response = NetDevice.check_tipo(data)
+                        response = Net.check_tipo(data)
                         if response['output'] == 'OK':
-                            response = NetDevice.check_code(data)
+                            response = Net.check_code(data)
+                if data['tipo_operazione'] == 'cmd':
+                    response = Net.check_device(data)
+                    if response['output'] == 'OK':
+                        response = Net.check_command(data)
         else:
             if 'tipo_operazione' in data:
-                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete'
+                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd'
             else:
                 response['output'] = 'Il campo tipo_operazione è obbligatorio'
         return response
@@ -149,6 +161,33 @@ class NetDevice(BaseHandler):
         return response
 
     @staticmethod
+    def check_device(data):
+        response = {}
+        code_list = [d['net_code'] for d in DbManager.select_tb_net_device()]
+        if 'dispositivo' in data and data['dispositivo'] in code_list:
+            response['output'] = 'OK'
+        else:
+            if 'mac' in data:
+                response['output'] = "Il campo dispositivo deve assumere uno dei seguenti valori: " + ', '.join(code_list)
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo dispositivo"
+        return response
+
+    @staticmethod
+    def check_command(data):
+        response = {}
+        tipo = DbManager.select_tb_net_device(net_code=data['dispositivo'])[0]
+        command_list = [d['cmd_str'] for d in DbManager.select_tb_net_command_from_type(tipo['net_type'])]
+        if 'comando' in data and data['comando'] in command_list:
+            response['output'] = 'OK'
+        else:
+            if 'mac' in data:
+                response['output'] = "Il campo comando deve assumere uno dei seguenti valori: " + ', '.join(command_list)
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo comando"
+        return response
+
+    @staticmethod
     def device_list(role):
         devices = DbManager.select_tb_net_device()
         if role != 'ADMIN':
@@ -173,7 +212,7 @@ class NetDevice(BaseHandler):
     @staticmethod
     def device_command(tipo):
         response = {
-            'types': DbManager.select_tb_net_command_from_type(tipo),
+            'commands': DbManager.select_tb_net_command_from_type(tipo),
             'output': 'OK'
         }
         return response
@@ -246,4 +285,32 @@ class NetDevice(BaseHandler):
         response['find_device'] = str(len(result['devices']))
         response['new_device'] = str(inseriti)
         response['updated_device'] = str(aggiornati)
+        return response
+
+    @staticmethod
+    def device_cmd(dispositivo, comando):
+        response = {}
+        device_command = DbManager.select_tb_net_device_tb_net_diz_cmd_from_code_and_cmd(dispositivo, comando)
+        funzioni = {
+            '100': cmd_ping,
+            '102': cmd_wakeonlan,
+            '130': cmd_esp,
+            '201': cmd_pcwin_shutdown,
+            '300': cmd_radio,
+        }
+        parametri = {
+            '100': [device_command['net_ip']],
+            '102': [device_command['net_mac']],
+            '130': [device_command['net_ip'], device_command['cmd_str']],
+            '201': [device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
+            '300': [device_command['net_ip'], device_command['cmd_str'].replace("radio_", ""),
+                    device_command['net_usr'], device_command['net_psw']]
+        }
+        result = funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
+        res_decode = DbManager.select_tb_res_decode_from_type_command_lang_value("NET", device_command['cmd_result'], XmlReader.settings['lingua'], result['result'])
+        DbManager.update_tb_net_device(device_command['net_mac'], net_status=res_decode['res_state'])
+        DbManager.close_db()
+        response['output'] = 'OK'
+        response['result_command'] = result
+        response['res_decode'] = res_decode
         return response

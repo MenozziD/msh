@@ -13,7 +13,7 @@ function carica(){
             return opts.inverse(this);
         }
     });
-    net_device('list');
+    net('list');
     setTimeout(user_function, 250, 'list');
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.height = '0%';
@@ -22,48 +22,15 @@ function carica(){
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
-function net_cmd(){
-	var device = $('#device')[0].value;
-	var command = $('#command')[0].value;
-	var check_device = $('#chk_device');
-	var check_command = $('#chk_command');
-	if (device == "")
-	    check_device.show();
-	else
-	    check_device.hide();
-    if (command == "")
-	    check_command.show();
-	else
-	    check_command.hide();
-	if (device != "" && command != ""){
-        var body = {
-            "dispositivo": device,
-            "comando": command
-        };
-		$.ajax({
-		    url: "/api/net_cmd",
-		    type: 'POST',
-		    contentType: "application/json",
-            data : JSON.stringify(body),
-		    success: function(response){
-				var json = $.parseJSON(JSON.stringify(response));
-				$('#result')[0].value = json["output"];
-				$('#cmd_result')[0].value = json["res_decode"]["res_result"];
-				net_device('list');
-            },
-            error: function(xhr){
-            }
-        });
-	}
-}
-
-function net_device(type_op){
+function net(type_op){
     var code = '';
     var type = '';
     var mac = '';
     var user = '';
     var password = '';
     var id = '';
+    var dispositivo = '';
+    var comando = '';
     if (type_op.search('update') >=0){
         id = type_op.replace('update','');
         type_op = 'update';
@@ -88,92 +55,115 @@ function net_device(type_op){
         type_op = 'delete';
         mac = $("#mac" + id).text();
     }
+    if (type_op.search('cmd') >= 0){
+        dispositivo = $('#device')[0].value;
+        comando = $('#command')[0].value;
+        var check_device = $('#chk_device');
+        var check_command = $('#chk_command');
+        if (device == "")
+            check_device.show();
+        else
+            check_device.hide();
+        if (command == "")
+            check_command.show();
+        else
+            check_command.hide();
+    }
     if (type_op.search('scan') >= 0)
         $.blockUI();
-    var body = {
-        "tipo_operazione": type_op,
-        "codice": code,
-        "tipo": type,
-        "mac": mac,
-        "user": user,
-        "password": password
-    };
-    $('#errore').text("");
-    $('#errore')[0].classList.remove("d-block");
-    $('#errore')[0].classList.add("d-none");
-    $.ajax({
-        url: "/api/net_device",
-        type: 'POST',
-        contentType: "application/json",
-        data : JSON.stringify(body),
-        success: function(response){
-            var json = $.parseJSON(JSON.stringify(response));
-            if (type_op == 'scan')
-                $.unblockUI();
-            if (json["output"].search("OK") == 0){
-                if (type_op == 'scan'){
-                    $('#esito')[0].value = json["output"];
-                    $('#found')[0].value = json["find_device"];
-                    $('#new')[0].value = json["new_device"];
-                    $('#update')[0].value = json["updated_device"];
-                    net_device('list');
-                }
-                if (type_op == 'type'){
-                    var types = json["types"]
-                    var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
-                    $('#drop_type' + id).html(template(types));
-                    device_net_types = []
-                    for(var i = 0; i < types.length;i++) {
-                        device_net_types.push(types[i]);
-                        $('#drop_type' + id + ' li').click(function(){
-                          $('#type' + id).text($(this).text());
-                          $("#type" + id).val($(this).text());
-                          must_save(id);
-                       });
+    if (type_op != 'cmd' || (dispositivo != "" && comando != "")){
+        var body = {
+            "tipo_operazione": type_op,
+            "codice": code,
+            "tipo": type,
+            "mac": mac,
+            "user": user,
+            "password": password,
+            "dispositivo": dispositivo,
+            "comando": comando
+        };
+        $('#errore').text("");
+        $('#errore')[0].classList.remove("d-block");
+        $('#errore')[0].classList.add("d-none");
+        $.ajax({
+            url: "/api/net",
+            type: 'POST',
+            contentType: "application/json",
+            data : JSON.stringify(body),
+            success: function(response){
+                var json = $.parseJSON(JSON.stringify(response));
+                if (type_op == 'scan')
+                    $.unblockUI();
+                if (json["output"].search("OK") == 0){
+                    if (type_op == 'scan'){
+                        $('#esito')[0].value = json["output"];
+                        $('#found')[0].value = json["find_device"];
+                        $('#new')[0].value = json["new_device"];
+                        $('#update')[0].value = json["updated_device"];
+                        net('list');
                     }
-                }
-                if (type_op == 'list'){
-                    var devices = json["devices"];
-                    var template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-                    $('#table-device').html(template(json));
-                    device_net_list = [];
-                    for(var i = 0; i < devices.length;i++) {
-                        device_net_list.push(devices[i]);
-                        $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
-                        $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
-                        $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
-                        if (json['user_role'] != 'ADMIN'){
-                            $('#code' + i).prop('readonly', true);
-                            $('#type' + i).prop('disabled', true);
+                    if (type_op == 'type'){
+                        var types = json["types"]
+                        var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
+                        $('#drop_type' + id).html(template(types));
+                        device_net_types = []
+                        for(var i = 0; i < types.length;i++) {
+                            device_net_types.push(types[i]);
+                            $('#drop_type' + id + ' li').click(function(){
+                              $('#type' + id).text($(this).text());
+                              $("#type" + id).val($(this).text());
+                              must_save(id);
+                           });
                         }
                     }
-                }
-                if (type_op == 'command'){
-                    var commands = json["commands"]
-                    var template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
-                    $('#drop_command').html(template(commands));
-                    device_net_commands = [];
-                    for(var i = 0; i < commands.length;i++) {
-                        device_net_commands.push(commands[i]);
-                        $("#drop_command li").click(function(){
-                          $('#command').text($(this).text());
-                          $("#command").val($(this).text());
-                          $('#chk_command').hide();
-                       });
+                    if (type_op == 'list'){
+                        var devices = json["devices"];
+                        var template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+                        $('#table-device').html(template(json));
+                        device_net_list = [];
+                        for(var i = 0; i < devices.length;i++) {
+                            device_net_list.push(devices[i]);
+                            $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
+                            $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
+                            $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
+                            if (json['user_role'] != 'ADMIN'){
+                                $('#code' + i).prop('readonly', true);
+                                $('#type' + i).prop('disabled', true);
+                            }
+                        }
                     }
+                    if (type_op == 'command'){
+                        var commands = json["commands"]
+                        var template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
+                        $('#drop_command').html(template(commands));
+                        device_net_commands = [];
+                        for(var i = 0; i < commands.length;i++) {
+                            device_net_commands.push(commands[i]);
+                            $("#drop_command li").click(function(){
+                              $('#command').text($(this).text());
+                              $("#command").val($(this).text());
+                              $('#chk_command').hide();
+                           });
+                        }
+                    }
+                    if (type_op == 'update' || type_op == 'delete'){
+                        net('list');
+                    }
+                    if (type_op == 'cmd'){
+                        $('#result')[0].value = json["output"];
+                        $('#cmd_result')[0].value = json["res_decode"]["res_result"];
+                        net('list');
+                    }
+                } else {
+                    $('#errore').text(json["output"]);
+                    $('#errore')[0].classList.remove("d-none");
+                    $('#errore')[0].classList.add("d-block");
                 }
-                if (type_op == 'update' || type_op == 'delete'){
-                    net_device('list');
-                }
-            } else {
-                $('#errore').text(json["output"]);
-                $('#errore')[0].classList.remove("d-none");
-                $('#errore')[0].classList.add("d-block");
+            },
+            error: function(xhr){
             }
-        },
-        error: function(xhr){
-        }
-    });
+        });
+    }
 }
 
 function device_net_code(){
