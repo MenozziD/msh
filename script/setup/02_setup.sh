@@ -301,6 +301,8 @@ restart) if [ $(pgrep autossh) ]
                  then
                         pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
                         ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+						oauth=`cat /home/pi/server/msh/settings.xml | grep oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
 						autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
                         echo "Restart servizio SERVEO"
                 else
