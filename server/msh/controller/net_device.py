@@ -1,7 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import DbManager
-from module import XmlReader
+from module import cmd_netscan, get_ip_and_subnet, XmlReader, DbManager
 from json import dumps, loads
 from datetime import datetime
 
@@ -35,6 +34,7 @@ class NetDevice(BaseHandler):
                     password = data['password']
                 if response['output'] == 'OK':
                     funzioni = {
+                        'scan': NetDevice.device_scan,
                         'list': NetDevice.device_list,
                         'type': NetDevice.device_type,
                         'command': NetDevice.device_command,
@@ -42,6 +42,7 @@ class NetDevice(BaseHandler):
                         'delete': NetDevice.device_delete,
                     }
                     parametri = {
+                        'scan': [],
                         'list': [self.session.get('role')],
                         'type': [],
                         'command': [tipo],
@@ -64,7 +65,7 @@ class NetDevice(BaseHandler):
     @staticmethod
     def check(user, role, data):
         response = {}
-        if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'type', 'command', 'update', 'delete'):
+        if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete'):
             response = NetDevice.check_user(user, role, data['tipo_operazione'])
             if response['output'] == 'OK':
                 if data['tipo_operazione'] == 'command':
@@ -79,7 +80,7 @@ class NetDevice(BaseHandler):
                             response = NetDevice.check_code(data)
         else:
             if 'tipo_operazione' in data:
-                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, type, command, update, delete'
+                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete'
             else:
                 response['output'] = 'Il campo tipo_operazione è obbligatorio'
         return response
@@ -191,4 +192,58 @@ class NetDevice(BaseHandler):
         response = {
             'output': 'OK'
         }
+        return response
+
+    @staticmethod
+    def device_scan():
+        response = {}
+        inseriti = 0
+        aggiornati = 0
+        db_devices = DbManager.select_tb_net_device()
+        ip_subnet = get_ip_and_subnet()
+        ip = ip_subnet['ip'].split('.')
+        subnet = ip_subnet['subnet'].split('.')
+        stri = ''
+        for s in subnet:
+            stri = stri + '{0:08b}'.format(int(s))
+        count = stri.count('1')
+        if count >= 24:
+            ip = ip[0] + '.' + ip[1] + '.' + ip[2] + '.1'
+        if 16 <= count < 24:
+            ip = ip[0] + '.' + ip[1] + '.0.1'
+        if 8 <= count < 16:
+            ip = ip[0] + '.0.0.1'
+        result = cmd_netscan(ip, str(count))
+        for device in result['devices']:
+            trovato = False
+            for db_device in db_devices:
+                if device['net_mac'] == db_device['net_mac']:
+                    DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
+                    trovato = True
+                    aggiornati = aggiornati + 1
+                    break
+            if not trovato:
+                trovato = False
+                for db_device in db_devices:
+                    if db_device['net_code'] == device['net_code']:
+                        trovato = True
+                        break
+                if trovato:
+                    device['net_code'] = device['net_mac']
+                DbManager.insert_tb_net_device(device['net_code'], 'NET', 'ON', device['net_ip'], '', '',
+                                               device['net_mac'], device['net_mac_info'])
+                inseriti = inseriti + 1
+        for db_device in db_devices:
+            trovato = False
+            for device in result['devices']:
+                if device['net_mac'] == db_device['net_mac']:
+                    trovato = True
+                    break
+            if not trovato:
+                DbManager.update_tb_net_device(db_device['net_mac'], net_status='OFF')
+        response['output'] = 'OK'
+        response['result_command'] = result
+        response['find_device'] = str(len(result['devices']))
+        response['new_device'] = str(inseriti)
+        response['updated_device'] = str(aggiornati)
         return response

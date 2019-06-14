@@ -57,25 +57,6 @@ function net_cmd(){
 	}
 }
 
-function net_scan(){
-    $.blockUI();
-    $.ajax({
-        url: "/api/net_scan",
-        type: 'GET',
-        success: function(response){
-            $.unblockUI();
-            var json = $.parseJSON(JSON.stringify(response));
-            $('#esito')[0].value = json["output"];
-            $('#found')[0].value = json["find_device"];
-            $('#new')[0].value = json["new_device"];
-            $('#update')[0].value = json["updated_device"];
-            net_device('list');
-        },
-        error: function(xhr){
-        }
-    });
-}
-
 function net_device(type_op){
     var code = '';
     var type = '';
@@ -107,6 +88,8 @@ function net_device(type_op){
         type_op = 'delete';
         mac = $("#mac" + id).text();
     }
+    if (type_op.search('scan') >= 0)
+        $.blockUI();
     var body = {
         "tipo_operazione": type_op,
         "codice": code,
@@ -125,7 +108,16 @@ function net_device(type_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
+            if (type_op == 'scan')
+                $.unblockUI();
             if (json["output"].search("OK") == 0){
+                if (type_op == 'scan'){
+                    $('#esito')[0].value = json["output"];
+                    $('#found')[0].value = json["find_device"];
+                    $('#new')[0].value = json["new_device"];
+                    $('#update')[0].value = json["updated_device"];
+                    net_device('list');
+                }
                 if (type_op == 'type'){
                     var types = json["types"]
                     var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
