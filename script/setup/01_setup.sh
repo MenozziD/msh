@@ -149,7 +149,7 @@ echo "Sposto arduino-cli in /usr/bin/arduino-cli"
 sudo mv arduino-cli-* /usr/bin/arduino-cli 1>/dev/null
 echo "Creo configurazione per arduino-cli"
 sudo arduino-cli config init 1>/dev/null
-sudo su 1>/dev/null
+sudo su
 echo "proxy_type: auto
 sketchbook_path: /root/Arduino
 arduino_data: /root/.arduino15
@@ -163,7 +163,6 @@ echo "Eseguo arduino-cli core install esp8266:esp8266"
 sudo arduino-cli core install esp8266:esp8266 1>/dev/null
 # AGGIUNGO 2 GB DI SWAP PER LA RAM
 echo "---------- AGGIUNTA MEMORIA SWAP ----------"
-sudo su
 echo "Modifico il file /etc/dphys-swapfile impostando dimensione partizione"
 sudo echo "# where we want the swapfile to be, this is the default
 #CONF_SWAPFILE=/var/swap
