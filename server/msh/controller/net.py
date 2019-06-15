@@ -38,26 +38,25 @@ class Net(BaseHandler):
                     dispositivo = data['dispositivo']
                 if 'comando' in data:
                     comando = data['comando']
-                if response['output'] == 'OK':
-                    funzioni = {
-                        'scan': Net.device_scan,
-                        'list': Net.device_list,
-                        'type': Net.device_type,
-                        'command': Net.device_command,
-                        'update': Net.device_update,
-                        'delete': Net.device_delete,
-                        'cmd': Net.device_cmd
-                    }
-                    parametri = {
-                        'scan': [],
-                        'list': [self.session.get('role')],
-                        'type': [],
-                        'command': [tipo],
-                        'update': [mac, codice, tipo, user, password],
-                        'delete': [mac],
-                        'cmd': [dispositivo, comando]
-                    }
-                    response = funzioni[type_op](*parametri[type_op])
+                funzioni = {
+                    'scan': Net.device_scan,
+                    'list': Net.device_list,
+                    'type': Net.device_type,
+                    'command': Net.device_command,
+                    'update': Net.device_update,
+                    'delete': Net.device_delete,
+                    'cmd': Net.device_cmd
+                }
+                parametri = {
+                    'scan': [],
+                    'list': [self.session.get('role')],
+                    'type': [],
+                    'command': [tipo],
+                    'update': [mac, codice, tipo, user, password],
+                    'delete': [mac],
+                    'cmd': [dispositivo, comando]
+                }
+                response = funzioni[type_op](*parametri[type_op])
             DbManager.close_db()
         except Exception as e:
             exception("Exception")
@@ -83,7 +82,7 @@ class Net(BaseHandler):
                 if data['tipo_operazione'] == 'update':
                     response = Net.check_mac(data)
                     if response['output'] == 'OK':
-                        response = Net.check_tipo(data)
+                        response = Net.check_tipo(data, required=True)
                         if response['output'] == 'OK':
                             response = Net.check_code(data)
                 if data['tipo_operazione'] == 'cmd':
@@ -143,8 +142,9 @@ class Net(BaseHandler):
                     response['output'] = 'OK'
                 else:
                     response['output'] = 'Esiste già un dispositivo con questo codice'
+        else:
+            response['output'] = "Per questa operazione è obbligatorio il campo codice"
         return response
-
     @staticmethod
     def check_user(user, role, tipo_operazione):
         response = {}
@@ -167,7 +167,7 @@ class Net(BaseHandler):
         if 'dispositivo' in data and data['dispositivo'] in code_list:
             response['output'] = 'OK'
         else:
-            if 'mac' in data:
+            if 'dispositivo' in data:
                 response['output'] = "Il campo dispositivo deve assumere uno dei seguenti valori: " + ', '.join(code_list)
             else:
                 response['output'] = "Per l'operazione scelta è obbligatorio il campo dispositivo"
@@ -181,7 +181,7 @@ class Net(BaseHandler):
         if 'comando' in data and data['comando'] in command_list:
             response['output'] = 'OK'
         else:
-            if 'mac' in data:
+            if 'comando' in data:
                 response['output'] = "Il campo comando deve assumere uno dei seguenti valori: " + ', '.join(command_list)
             else:
                 response['output'] = "Per l'operazione scelta è obbligatorio il campo comando"

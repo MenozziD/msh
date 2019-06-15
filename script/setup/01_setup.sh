@@ -50,7 +50,7 @@ fi
 # CAMBIO PASSWORD
 echo "---------- CAMBIO PASSWORD ----------"
 echo "Eseguo cambio password dell'utente pi, vecchia password: raspberry"
-sudo passwd
+passwd
 # CAMBIO PASSWORD ROOT
 echo "Eseguo cambio password dell'utente root"
 sudo passwd root
@@ -149,7 +149,6 @@ echo "Sposto arduino-cli in /usr/bin/arduino-cli"
 sudo mv arduino-cli-* /usr/bin/arduino-cli 1>/dev/null
 echo "Creo configurazione per arduino-cli"
 sudo arduino-cli config init 1>/dev/null
-sudo su
 echo "proxy_type: auto
 sketchbook_path: /root/Arduino
 arduino_data: /root/.arduino15

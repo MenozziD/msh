@@ -12,16 +12,9 @@ def cmd_ping(ip, pacchetti=3):
     ping_err = -1
     ping_fail = 1
     ping_exception = 2
-    result = {
-        'ip': ip,
-        'pacchetti_tx': 0,
-        'pacchetti_rx': 0,
-        'pacchetti_lost': 0,
-        'tempo': 0,
-        'result': 0,
-        'cmd_output': ''
-    }
+    result = {}
     try:
+        result['ip'] = ip
         cmd = 'ping -c %s %s' % (str(pacchetti), ip)
         info("Eseguo comando: %s", cmd)
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
@@ -169,12 +162,9 @@ def cmd_wakeonlan(mac):
     wol_err = -1
     wol_fail = 1
     wol_exception = 2
-    result = {
-        'mac': mac,
-        'result': 0,
-        'cmd_output': ''
-    }
+    result = {}
     try:
+        result['mac'] = mac
         cmd = 'wakeonlan %s' % mac
         info("Eseguo comando: %s", cmd)
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
@@ -349,7 +339,7 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
         cmd_output = {
             'compile_output': compile_output
         }
-        if make_upload:
+        if make_upload and result['result'] == compile_ok:
             cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
             info("Eseguo comando: %s", cmd)
             usb = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
