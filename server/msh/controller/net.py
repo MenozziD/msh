@@ -289,7 +289,6 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_cmd(dispositivo, comando):
-        response = {}
         device_command = DbManager.select_tb_net_device_tb_net_diz_cmd_from_code_and_cmd(dispositivo, comando)
         funzioni = {
             '100': cmd_ping,
@@ -310,7 +309,6 @@ class Net(BaseHandler):
         res_decode = DbManager.select_tb_res_decode_from_type_command_lang_value("NET", device_command['cmd_result'], XmlReader.settings['lingua'], result['result'])
         DbManager.update_tb_net_device(device_command['net_mac'], net_status=res_decode['res_state'])
         DbManager.close_db()
-        response['output'] = 'OK'
-        response['result_command'] = result
+        response = result
         response['res_decode'] = res_decode
         return response
