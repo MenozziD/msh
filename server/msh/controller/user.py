@@ -12,14 +12,14 @@ class User(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            data = loads(body)
             DbManager()
-            response = User.check(self.session.get('user'), self.session.get('role'), data)
+            response = User.check(self.session.get('user'), self.session.get('role'), body)
             if response['output'] == 'OK':
+                data = loads(body)
                 tipo_operazione = data['tipo_operazione']
-                username = ''
-                password = ''
-                role = ''
+                username = None
+                password = None
+                role = None
                 if 'username' in data:
                     username = data['username']
                 if 'password' in data:
@@ -52,34 +52,39 @@ class User(BaseHandler):
             info("RESPONSE PAYLOAD: %s", response)
 
     @staticmethod
-    def check(user, role, data):
+    def check(user, role, body):
         response = {}
-        if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'update', 'delete', 'add'):
-            response = User.check_user(user, role, data['tipo_operazione'])
-            if response['output'] == 'OK':
-                if data['tipo_operazione'] == 'delete':
-                    response = User.check_username_exist(data)
-                    if response['output'] == 'OK':
-                        response = User.check_one_admin(data)
-                if data['tipo_operazione'] == 'add':
-                    response = User.check_username_not_exist(data)
-                    if response['output'] == 'OK':
-                        response = User.check_role(data)
+        if body != "" and User.validate_format(body):
+            data = loads(body)
+            if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'update', 'delete', 'add'):
+                response = User.check_user(user, role, data['tipo_operazione'])
+                if response['output'] == 'OK':
+                    if data['tipo_operazione'] == 'delete':
+                        response = User.check_username_exist(data)
                         if response['output'] == 'OK':
-                            response = User.check_password(data)
-                if data['tipo_operazione'] == 'update':
-                    response = User.check_username_exist(data)
-                    if response['output'] == 'OK':
-                        response = User.check_role(data, to_modify=True, session_role=role)
+                            response = User.check_one_admin(data)
+                    if data['tipo_operazione'] == 'add':
+                        response = User.check_username_not_exist(data)
                         if response['output'] == 'OK':
-                            response = User.check_one_admin(data, to_modify=True)
+                            response = User.check_role(data)
                             if response['output'] == 'OK':
-                                response = User.check_password(data, to_modify=True, session_user=user)
-        else:
-            if 'tipo_operazione' in data:
-                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add'
+                                response = User.check_password(data)
+                    if data['tipo_operazione'] == 'update':
+                        response = User.check_username_exist(data)
+                        if response['output'] == 'OK':
+                            response = User.check_role(data, required=False, to_modify=True, session_role=role)
+                            if response['output'] == 'OK':
+                                response = User.check_password(data, required=False, to_modify=True, session_user=user)
             else:
-                response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                if 'tipo_operazione' in data:
+                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add'
+                else:
+                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+        else:
+            if body != "":
+                response['output'] = "Il payload deve essere in formato JSON"
+            else:
+                response['output'] = "Questa API ha bisogno di un payload"
         return response
 
     @staticmethod
@@ -139,7 +144,7 @@ class User(BaseHandler):
         return response
 
     @staticmethod
-    def check_role(data, to_modify=False, session_role=''):
+    def check_role(data, required=True, to_modify=False, session_role=''):
         response = {}
         role_list = {'USER', 'ADMIN'}
         if 'role' in data and data['role'] in role_list:
@@ -147,7 +152,7 @@ class User(BaseHandler):
             if to_modify:
                 to_update = DbManager.select_tb_user(data['username'])[0]
                 if to_update['role'] != data['role'] and session_role == 'ADMIN':
-                    response['output'] = 'OK'
+                    User.check_one_admin(data, to_modify=True)
                 else:
                     if session_role != 'ADMIN':
                         response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
@@ -155,11 +160,14 @@ class User(BaseHandler):
             if 'role' in data:
                 response['output'] = "Il campo role deve assumere uno dei seguenti valori: " + ', '.join(role_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo role"
+                if required:
+                    response['output'] = "Per l'operazione scelta è obbligatorio il campo role"
+                else:
+                    response['output'] = 'OK'
         return response
 
     @staticmethod
-    def check_password(data, to_modify=False, session_user=''):
+    def check_password(data, required=True, to_modify=False, session_user=''):
         response = {}
         if 'password' in data and len(data['password']) >= 4:
             response['output'] = 'OK'
@@ -172,17 +180,28 @@ class User(BaseHandler):
                         response['output'] = 'Solo l\'utente propietario può modificare la sua password'
         else:
             if 'password' in data:
-                response['output'] = "Il campo password deve avere una luchezza di almeno 4 caratteri"
+                response['output'] = "Il campo password deve avere una lunghezza di almeno 4 caratteri"
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo password"
+                if required:
+                    response['output'] = "Per l'operazione scelta è obbligatorio il campo password"
+                else:
+                    response['output'] = 'OK'
         return response
+
+    @staticmethod
+    def validate_format(body):
+        try:
+            loads(body)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def user_list(session_user, session_role):
         if session_role == 'ADMIN':
             users = DbManager.select_tb_user()
             for user in users:
-                if user['username'] != user:
+                if user['username'] != session_user:
                     user['password'] = ''
         else:
             users = DbManager.select_tb_user(session_user)
@@ -211,6 +230,7 @@ class User(BaseHandler):
     @staticmethod
     def user_update(username, password, role):
         DbManager.update_tb_user(username, password, role)
-        update_user(username, password)
+        if password is not None:
+            update_user(username, password)
         response = {'output': 'OK'}
         return response

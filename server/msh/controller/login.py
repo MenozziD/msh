@@ -14,17 +14,15 @@ class Login(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            data = loads(body)
             DbManager()
-            response = Login.check_user(data)
+            response = Login.check(body)
             if response['output'] == 'OK':
-                response = Login.check_password(data)
-                if response['output'] == 'OK':
-                    username = data['user']
-                    user = DbManager.select_tb_user(username)[0]
-                    self.session['user'] = username
-                    self.session['role'] = user["role"]
-                    response['output'] = 'OK'
+                data = loads(body)
+                username = data['user']
+                user = DbManager.select_tb_user(username)[0]
+                self.session['user'] = username
+                self.session['role'] = user["role"]
+                response['output'] = 'OK'
             DbManager.close_db()
         except Exception as e:
             exception("Exception")
@@ -36,6 +34,21 @@ class Login(BaseHandler):
             self.response.write(dumps(response, indent=4, sort_keys=True))
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s", response)
+
+    @staticmethod
+    def check(body):
+        response = {}
+        if body != "" and Login.validate_format(body):
+            data = loads(body)
+            response = Login.check_user(data)
+            if response['output'] == 'OK':
+                response = Login.check_password(data)
+        else:
+            if body != "":
+                response['output'] = "Il payload deve essere in formato JSON"
+            else:
+                response['output'] = "Questa API ha bisogno di un payload"
+        return response
 
     @staticmethod
     def check_user(data):
@@ -62,6 +75,14 @@ class Login(BaseHandler):
             else:
                 response['output'] = "Il campo password è obbligatorio"
         return response
+
+    @staticmethod
+    def validate_format(body):
+        try:
+            loads(body)
+        except ValueError:
+            return False
+        return True
 
 
 class Logout(BaseHandler):

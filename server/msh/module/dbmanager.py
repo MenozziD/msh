@@ -201,7 +201,7 @@ class DbManager:
         return ret_users
 
     @staticmethod
-    def update_tb_user(username, password='', role=''):
+    def update_tb_user(username, password=None, role=None):
         query = 'UPDATE TB_USER SET '
         fields = {
             'password': 'PASSWORD = \'%s\',' % password,
@@ -212,7 +212,7 @@ class DbManager:
             'role': role
         }
         for key, value in device.items():
-            if value != '':
+            if value is not None:
                 query = query + fields[key]
         query = query[:-1]
         query = query + ' WHERE USERNAME = \'%s\';' % username
