@@ -69,8 +69,6 @@ function net(type_op){
         else
             check_command.hide();
     }
-    if (type_op.search('scan') >= 0)
-        $.blockUI();
     if (type_op != 'cmd' || (dispositivo != "" && comando != "")){
         var body = {
             "tipo_operazione": type_op,
@@ -85,6 +83,8 @@ function net(type_op){
         $('#errore').text("");
         $('#errore')[0].classList.remove("d-block");
         $('#errore')[0].classList.add("d-none");
+        if (type_op.search('scan') >= 0 || type_op.search('cmd') >= 0)
+            $.blockUI();
         $.ajax({
             url: "/api/net",
             type: 'POST',
@@ -92,7 +92,7 @@ function net(type_op){
             data : JSON.stringify(body),
             success: function(response){
                 var json = $.parseJSON(JSON.stringify(response));
-                if (type_op == 'scan')
+                if (type_op == 'scan' || type_op == 'cmd')
                     $.unblockUI();
                 if (json["output"].search("OK") == 0){
                     if (type_op == 'scan'){
