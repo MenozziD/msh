@@ -1,2 +1,26 @@
+- compilare nostri sketch (ESP_RELE, ESP_TEMP, ESP_IR)
+	- importare librerie in arudino-cli
+- test generali di funzionamento
+- implementare controlli in API esistenti (user e upload arudino) come in net
+- script per automatizzare i test (python3 + urllib)
+- gestire nuovi device (TEMP, IR) nella response di cmd_esp
+- gestire nuove tipologie di device (PS4, STAMPANTI, CELLULARI)
+- gestire device già smart ma di altri produttori (DLINK, XBULB)
+- creare uno schedulatore configurabile
+- script per configurazione wakeonlan
+- script per configurazione ssh access point
+- chiudere giro con google (conversione dispositivi)
+- api per cambio dominio (controllo su dominio, gactions per aggiornare URL, account linking a mano, redirecta nuova home)
+- aggiungere a lista dispositivi quelli arduino
+- creazione script INO dei device per arduino
+- FRONTEND (webapp, app android)
+- barra di ricerca per cercare il tipo di device 
+- pagina per modificare lo sketch prima di caricarlo (se usa librerie che non ho?)
+- filtro sulla tabella device per permettere di vedere solo dispositivi di un certo tipo
+----------------- EXTRA -----------------
+- gestire dispositivi NRF
+- gestire dispositivi ZIGBI
+- scarica musica da youtube
+- media server
+- comunicazione con alexa
 - Utenti con USER possono esegurie tutti command?
-- spostare controlli server in altro file python
