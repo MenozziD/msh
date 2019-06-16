@@ -1,7 +1,6 @@
 - compilare nostri sketch (ESP_RELE, ESP_TEMP, ESP_IR)
 	- importare librerie in arudino-cli
 - test generali di funzionamento
-- implementare controlli in API esistenti (user e upload arudino) come in net
 - script per automatizzare i test (python3 + urllib)
 - gestire nuovi device (TEMP, IR) nella response di cmd_esp
 - gestire nuove tipologie di device (PS4, STAMPANTI, CELLULARI)

@@ -411,6 +411,9 @@ function upload_arduino(tipo_op){
         };
         if (tipo_op == "upload")
             $.blockUI();
+        $('#errore_upload').text("");
+        $('#errore_upload')[0].classList.remove("d-block");
+        $('#errore_upload')[0].classList.add("d-none");
         $.ajax({
             url: "/api/upload_arduino",
             type: 'POST',
@@ -418,50 +421,57 @@ function upload_arduino(tipo_op){
             data : JSON.stringify(body),
             success: function(response){
                 var json = $.parseJSON(JSON.stringify(response));
-                if (tipo_op == 'core'){
-                    var cores = json["cores"]
-                    var template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
-                    $('#drop_device_arduino').html(template(cores));
-                    device_arduino_cores = [];
-                    for(var i = 0; i < cores.length;i++) {
-                        device_arduino_cores.push(cores[i]);
-                        $("#drop_device_arduino li").click(function(){
-                          $('#device_arduino').text($(this).text());
-                          $("#device_arduino").val($(this).text());
-                          $('#chk_device_arduino').hide();
-                       });
-                    }
-                }
-                if (tipo_op == 'tipo'){
-                    var types = json["types"]
-                    var template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
-                    $('#drop_tipo_arduino').html(template(types));
-                    device_arduino_types = [];
-                    for(var i = 0; i < types.length;i++) {
-                        device_arduino_types.push(types[i]);
-                        $("#drop_tipo_arduino li").click(function(){
-                          $('#tipo_arduino').text($(this).text());
-                          $("#tipo_arduino").val($(this).text());
-                          $('#chk_tipo_arduino').hide();
-                       });
-                    }
-                }
-                if (tipo_op == 'upload'){
+                if (tipo_op == "upload")
                     $.unblockUI();
-                    $('#esito_upload')[0].value = json["result_command"]["output"];
-                    $('#program_bytes_used')[0].value = json["result_command"]["compile_output"]["program_bytes_used"];
-                    $('#program_percentual_used')[0].value = json["result_command"]["compile_output"]["program_percentual_used"];
-                    $('#program_bytes_total')[0].value = json["result_command"]["compile_output"]["program_bytes_total"];
-                    $('#memory_bytes_used')[0].value = json["result_command"]["compile_output"]["memory_bytes_used"];
-                    $('#memory_percentual_used')[0].value = json["result_command"]["compile_output"]["memory_percentual_used"];
-                    $('#memory_bytes_free')[0].value = json["result_command"]["compile_output"]["memory_bytes_free"];
-                    $('#memory_bytes_total')[0].value = json["result_command"]["compile_output"]["memory_bytes_total"];
-                    $('#porta_seriale')[0].value = json["result_command"]["upload_output"]["porta_seriale"];
-                    $('#chip')[0].value = json["result_command"]["upload_output"]["chip"];
-                    $('#mac_addres')[0].value = json["result_command"]["upload_output"]["mac_addres"];
-                    $('#byte_write')[0].value = json["result_command"]["upload_output"]["byte_write"];
-                    $('#byte_write_compressed')[0].value = json["result_command"]["upload_output"]["byte_write_compressed"];
-                    $('#time')[0].value = json["result_command"]["upload_output"]["time"];
+                if (json["output"].search("OK") == 0){
+                    if (tipo_op == 'core'){
+                        var cores = json["cores"]
+                        var template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
+                        $('#drop_device_arduino').html(template(cores));
+                        device_arduino_cores = [];
+                        for(var i = 0; i < cores.length;i++) {
+                            device_arduino_cores.push(cores[i]);
+                            $("#drop_device_arduino li").click(function(){
+                              $('#device_arduino').text($(this).text());
+                              $("#device_arduino").val($(this).text());
+                              $('#chk_device_arduino').hide();
+                           });
+                        }
+                    }
+                    if (tipo_op == 'tipo'){
+                        var types = json["types"]
+                        var template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
+                        $('#drop_tipo_arduino').html(template(types));
+                        device_arduino_types = [];
+                        for(var i = 0; i < types.length;i++) {
+                            device_arduino_types.push(types[i]);
+                            $("#drop_tipo_arduino li").click(function(){
+                              $('#tipo_arduino').text($(this).text());
+                              $("#tipo_arduino").val($(this).text());
+                              $('#chk_tipo_arduino').hide();
+                           });
+                        }
+                    }
+                    if (tipo_op == 'upload'){
+                        $('#esito_upload')[0].value = json["result_command"]["output"];
+                        $('#program_bytes_used')[0].value = json["result_command"]["compile_output"]["program_bytes_used"];
+                        $('#program_percentual_used')[0].value = json["result_command"]["compile_output"]["program_percentual_used"];
+                        $('#program_bytes_total')[0].value = json["result_command"]["compile_output"]["program_bytes_total"];
+                        $('#memory_bytes_used')[0].value = json["result_command"]["compile_output"]["memory_bytes_used"];
+                        $('#memory_percentual_used')[0].value = json["result_command"]["compile_output"]["memory_percentual_used"];
+                        $('#memory_bytes_free')[0].value = json["result_command"]["compile_output"]["memory_bytes_free"];
+                        $('#memory_bytes_total')[0].value = json["result_command"]["compile_output"]["memory_bytes_total"];
+                        $('#porta_seriale')[0].value = json["result_command"]["upload_output"]["porta_seriale"];
+                        $('#chip')[0].value = json["result_command"]["upload_output"]["chip"];
+                        $('#mac_addres')[0].value = json["result_command"]["upload_output"]["mac_addres"];
+                        $('#byte_write')[0].value = json["result_command"]["upload_output"]["byte_write"];
+                        $('#byte_write_compressed')[0].value = json["result_command"]["upload_output"]["byte_write_compressed"];
+                        $('#time')[0].value = json["result_command"]["upload_output"]["time"];
+                    }
+                } else {
+                    $('#errore_upload').text(json["output"]);
+                    $('#errore_upload')[0].classList.remove("d-none");
+                    $('#errore_upload')[0].classList.add("d-block");
                 }
             },
             error: function(xhr){

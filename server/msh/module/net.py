@@ -20,7 +20,7 @@ def cmd_ping(ip, pacchetti=3):
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
-        if cmd_out != "":
+        if cmd_err == "":
             result['cmd_output'] = cmd_out
             cmd_out = cmd_out.split("\n")
             cmd_out = cmd_out[len(cmd_out) - 3].split(", ")
@@ -137,7 +137,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        if cmd_out != "":
+        if cmd_err == "":
             result['cmd_output'] = cmd_out
             cmd_out = cmd_out.replace("\t", "").replace("\n", "")
             cmd_out = cmd_out.strip()
@@ -170,7 +170,7 @@ def cmd_wakeonlan(mac):
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        if cmd_out != "":
+        if cmd_err == "":
             result['cmd_output'] = cmd_out
             cmd_out = cmd_out.replace("\t", "").replace("\n", "")
             cmd_out = cmd_out.strip()
@@ -202,7 +202,7 @@ def cmd_netscan(ip, subnet):
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
-        if cmd_out != "":
+        if cmd_err == "":
             result['cmd_output'] = cmd_out
             rows = cmd_out.split("\n")
             devices = []
