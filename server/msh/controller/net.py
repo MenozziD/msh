@@ -11,19 +11,20 @@ class Net(BaseHandler):
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
         response = {}
+        par=[]
         try:
             data = loads(body)
             DbManager()
             response = Net.check(self.session.get('user'), self.session.get('role'), data)
             if response['output'] == 'OK':
                 type_op = data['tipo_operazione']
-                tipo = ''
-                mac = ''
-                codice = ''
-                user = ''
-                password = ''
-                dispositivo = ''
-                comando = ''
+                tipo = None
+                mac = None
+                codice = None
+                user = None
+                password = None
+                dispositivo = None
+                comando = None
                 if 'codice' in data:
                     codice = data['codice']
                 if 'tipo' in data:
@@ -82,7 +83,7 @@ class Net(BaseHandler):
                 if data['tipo_operazione'] == 'update':
                     response = Net.check_mac(data)
                     if response['output'] == 'OK':
-                        response = Net.check_tipo(data)
+                        response = Net.check_tipo(data, required=False)
                         if response['output'] == 'OK':
                             response = Net.check_code(data)
                 if data['tipo_operazione'] == 'cmd':
@@ -97,7 +98,7 @@ class Net(BaseHandler):
         return response
 
     @staticmethod
-    def check_tipo(data):
+    def check_tipo(data, required=True):
         response = {}
         type_list = [d['type_code'] for d in DbManager.select_tb_net_device_type()]
         if 'tipo' in data and data['tipo'] in type_list:
@@ -106,7 +107,10 @@ class Net(BaseHandler):
             if 'tipo' in data:
                 response['output'] = "Il campo tipo deve assumere uno dei seguenti valori: " + ', '.join(type_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo tipo"
+                if required:
+                    response['output'] = "Per l'operazione scelta è obbligatorio il campo tipo"
+                else:
+                    response['output'] = 'OK'
         return response
 
     @staticmethod
@@ -139,8 +143,6 @@ class Net(BaseHandler):
                     response['output'] = 'OK'
                 else:
                     response['output'] = 'Esiste già un dispositivo con questo codice'
-        else:
-            response['output'] = "Per questa operazione è obbligatorio il campo codice"
         return response
 
     @staticmethod
@@ -216,7 +218,7 @@ class Net(BaseHandler):
         return response
 
     @staticmethod
-    def device_update(mac, codice, tipo, user, password):
+    def device_update(mac, codice=None, tipo=None, user=None, password=None):
         DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
         response = {
             'output': 'OK'

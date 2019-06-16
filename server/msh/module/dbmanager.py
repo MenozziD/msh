@@ -168,7 +168,7 @@ class DbManager:
             'net_mac_info': net_mac_info
         }
         for key, value in device.items():
-            if value != None:
+            if value is not None:
                 query = query + fields[key]
         query = query[:-1]
         query = query + ' WHERE NET_MAC = \'%s\';' % net_mac
