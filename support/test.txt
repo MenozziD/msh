@@ -43,7 +43,6 @@ body non in JSON
 {"tipo_operazione":"delete","username":"esistente"}
 {"tipo_operazione":"update","username":"non esistente"}
 {"tipo_operazione":"update","username":"esistente"}
-{"tipo_operazione":"update","username":"esistente"}
 {"tipo_operazione":"update","username":"not logged","password":"sbagliata"}
 {"tipo_operazione":"update","username":"logged","password":"123"}
 {"tipo_operazione":"update","username":"logged","password":"1234"}

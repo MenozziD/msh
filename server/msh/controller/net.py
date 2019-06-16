@@ -11,12 +11,11 @@ class Net(BaseHandler):
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
         response = {}
-        par=[]
         try:
-            data = loads(body)
             DbManager()
-            response = Net.check(self.session.get('user'), self.session.get('role'), data)
+            response = Net.check(self.session.get('user'), self.session.get('role'), body)
             if response['output'] == 'OK':
+                data = loads(body)
                 type_op = data['tipo_operazione']
                 tipo = None
                 mac = None
@@ -71,30 +70,39 @@ class Net(BaseHandler):
             info("RESPONSE PAYLOAD: %s", response)
 
     @staticmethod
-    def check(user, role, data):
+    def check(user, role, body):
         response = {}
-        if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
-            response = Net.check_user(user, role, data['tipo_operazione'])
-            if response['output'] == 'OK':
-                if data['tipo_operazione'] == 'command':
-                    response = Net.check_tipo(data)
-                if data['tipo_operazione'] == 'delete':
-                    response = Net.check_mac(data)
-                if data['tipo_operazione'] == 'update':
-                    response = Net.check_mac(data)
-                    if response['output'] == 'OK':
-                        response = Net.check_tipo(data, required=False)
+        if body != "" and Net.validate_format(body):
+            data = loads(body)
+            if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
+                response = Net.check_user(user, role, data['tipo_operazione'])
+                if response['output'] == 'OK':
+                    if data['tipo_operazione'] == 'command':
+                        response = Net.check_tipo(data)
+                    if data['tipo_operazione'] == 'delete':
+                        response = Net.check_mac(data)
+                    if data['tipo_operazione'] == 'update':
+                        response = Net.check_mac(data)
                         if response['output'] == 'OK':
-                            response = Net.check_code(data)
-                if data['tipo_operazione'] == 'cmd':
-                    response = Net.check_device(data)
-                    if response['output'] == 'OK':
-                        response = Net.check_command(data)
-        else:
-            if 'tipo_operazione' in data:
-                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd'
+                            response = Net.check_any_to_update(data)
+                            if response['output'] == 'OK':
+                                response = Net.check_tipo(data, required=False)
+                                if response['output'] == 'OK':
+                                    response = Net.check_code(data)
+                    if data['tipo_operazione'] == 'cmd':
+                        response = Net.check_device(data)
+                        if response['output'] == 'OK':
+                            response = Net.check_command(data)
             else:
-                response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                if 'tipo_operazione' in data:
+                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd'
+                else:
+                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+        else:
+            if body != "":
+                response['output'] = "Il payload deve essere in formato JSON"
+            else:
+                response['output'] = "Questa API ha bisogno di un payload"
         return response
 
     @staticmethod
@@ -186,6 +194,23 @@ class Net(BaseHandler):
             else:
                 response['output'] = "Per l'operazione scelta è obbligatorio il campo comando"
         return response
+
+    @staticmethod
+    def check_any_to_update(data):
+        response = {}
+        if 'codice' in data or 'tipo' in data or 'user' in data or 'password' in data:
+            response['output'] = 'OK'
+        else:
+            response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono codice, tipo, user, password"
+        return response
+
+    @staticmethod
+    def validate_format(body):
+        try:
+            loads(body)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def device_list(role):

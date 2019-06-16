@@ -72,9 +72,11 @@ class User(BaseHandler):
                     if data['tipo_operazione'] == 'update':
                         response = User.check_username_exist(data)
                         if response['output'] == 'OK':
-                            response = User.check_role(data, required=False, to_modify=True, session_role=role)
+                            response = User.check_any_to_update(data)
                             if response['output'] == 'OK':
-                                response = User.check_password(data, required=False, to_modify=True, session_user=user)
+                                response = User.check_role(data, required=False, to_modify=True, session_role=role)
+                                if response['output'] == 'OK':
+                                    response = User.check_password(data, required=False, to_modify=True,session_user=user)
             else:
                 if 'tipo_operazione' in data:
                     response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add'
@@ -186,6 +188,15 @@ class User(BaseHandler):
                     response['output'] = "Per l'operazione scelta è obbligatorio il campo password"
                 else:
                     response['output'] = 'OK'
+        return response
+
+    @staticmethod
+    def check_any_to_update(data):
+        response = {}
+        if 'role' in data or 'password' in data:
+            response['output'] = 'OK'
+        else:
+            response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono role e password"
         return response
 
     @staticmethod

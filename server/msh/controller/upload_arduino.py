@@ -14,9 +14,9 @@ class UploadArduino(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            data = loads(body)
-            response = UploadArduino.check(self.session.get('user'), self.session.get('role'), data)
+            response = UploadArduino.check(self.session.get('user'), self.session.get('role'), body)
             if response['output'] == 'OK':
+                data = loads(body)
                 tipo_operazione = data['tipo_operazione']
                 core = ''
                 tipologia = ''
@@ -47,21 +47,28 @@ class UploadArduino(BaseHandler):
             info("RESPONSE PAYLOAD: %s", response)
 
     @staticmethod
-    def check(user, role, data):
+    def check(user, role, body):
         response = {}
-        if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo'):
-            response = UploadArduino.check_user(user, role, data['tipo_operazione'])
-            if response['output'] == 'OK':
-                if data['tipo_operazione'] == 'upload':
-                    response = UploadArduino.check_core(data)
-                    if response['output'] == 'OK':
-                        response = UploadArduino.check_tipologia(data)
-        else:
-            if 'tipo_operazione' in data:
-                response[
-                    'output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, core, tipo'
+        if body != "" and UploadArduino.validate_format(body):
+            data = loads(body)
+            if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo'):
+                response = UploadArduino.check_user(user, role, data['tipo_operazione'])
+                if response['output'] == 'OK':
+                    if data['tipo_operazione'] == 'upload':
+                        response = UploadArduino.check_core(data)
+                        if response['output'] == 'OK':
+                            response = UploadArduino.check_tipologia(data)
             else:
-                response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                if 'tipo_operazione' in data:
+                    response[
+                        'output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, core, tipo'
+                else:
+                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+        else:
+            if body != "":
+                response['output'] = "Il payload deve essere in formato JSON"
+            else:
+                response['output'] = "Questa API ha bisogno di un payload"
         return response
 
     @staticmethod
@@ -116,6 +123,14 @@ class UploadArduino(BaseHandler):
             else:
                 response['output'] = "Per l'operazione scelta è obbligatorio il campo tipologia"
         return response
+
+    @staticmethod
+    def validate_format(body):
+        try:
+            loads(body)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def upload_code(core, tipologia):
