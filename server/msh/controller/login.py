@@ -40,7 +40,7 @@ class Login(BaseHandler):
     @staticmethod
     def check_user(data):
         response = {}
-        user_list = [d['user'] for d in DbManager.select_tb_user()]
+        user_list = [d['username'] for d in DbManager.select_tb_user()]
         if 'user' in data and data['user'] in user_list:
             response['output'] = 'OK'
         else:
@@ -53,7 +53,7 @@ class Login(BaseHandler):
     @staticmethod
     def check_password(data):
         response = {}
-        user = DbManager.select_tb_user(data['username'])[0]
+        user = DbManager.select_tb_user(data['user'])[0]
         if 'password' in data and data['password'] == user['password']:
             response['output'] = 'OK'
         else:
