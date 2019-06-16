@@ -142,15 +142,18 @@ class Net(BaseHandler):
         to_update = DbManager.select_tb_net_device(data['mac'])[0]
         response['output'] = "OK"
         if 'codice' in data:
-            if data['codice'] != to_update['net_code']:
-                for device in devices:
-                    if device['net_code'] == data['codice']:
-                        trovato = True
-                        break
-                if not trovato:
-                    response['output'] = 'OK'
-                else:
-                    response['output'] = 'Esiste già un dispositivo con questo codice'
+            if data['codice'] != "":
+                if data['codice'] != to_update['net_code']:
+                    for device in devices:
+                        if device['net_code'] == data['codice']:
+                            trovato = True
+                            break
+                    if not trovato:
+                        response['output'] = 'OK'
+                    else:
+                        response['output'] = 'Esiste già un dispositivo con questo codice'
+            else:
+                response['output'] = 'Il campo codice non può essere valorizzato con una stringa vuota'
         return response
 
     @staticmethod
