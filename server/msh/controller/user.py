@@ -12,92 +12,34 @@ class User(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            if self.session.get('user') is not None:
-                data = loads(body)
-                username = data['username']
-                password = data['password']
-                role = data['role']
+            data = loads(body)
+            DbManager()
+            response = User.check(self.session.get('user'), self.session.get('role'), data)
+            if response['output'] == 'OK':
                 tipo_operazione = data['tipo_operazione']
-                if self.session.get('role') == 'ADMIN' or tipo_operazione == 'update' or tipo_operazione == 'list':
-                    DbManager()
-                    if tipo_operazione == "list":
-                        if self.session.get('role') == 'ADMIN':
-                            users = DbManager.select_tb_user()
-                            for user in users:
-                                if user['username'] != self.session.get('user'):
-                                    user['password'] = ''
-                            response['users'] = users
-                        else:
-                            response['users'] = DbManager.select_tb_user(self.session.get('user'))
-                        response['user_role'] = self.session.get('role')
-                        response['user_username'] = self.session.get('user')
-                        response['output'] = 'OK'
-                    if tipo_operazione == "update":
-                        to_update = DbManager.select_tb_user(username)
-                        if len(to_update) == 1:
-                            to_update = to_update[0]
-                            if to_update['role'] != role:
-                                if self.session.get('role') == 'ADMIN':
-                                    users = DbManager.select_tb_user()
-                                    admin = 0
-                                    for user in users:
-                                        if user['role'] == 'ADMIN':
-                                            admin = admin + 1
-                                    if to_update['role'] == 'ADMIN' and admin == 1:
-                                        response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
-                                    else:
-                                        if to_update['password'] != password:
-                                            if self.session.get('user') == username:
-                                                DbManager.update_tb_user(username, password, role)
-                                                update_user(username, password)
-                                                response['output'] = 'OK'
-                                            else:
-                                                response['output'] = 'Solo l\'utente propietario può modificare la sua password'
-                                        else:
-                                            DbManager.update_tb_user(username, password, role)
-                                            update_user(username, password)
-                                            response['output'] = 'OK'
-                                else:
-                                    response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
-                            elif to_update['password'] != password:
-                                    if self.session.get('user') == username:
-                                        DbManager.update_tb_user(username, password, role)
-                                        update_user(username, password)
-                                        response['output'] = 'OK'
-                                    else:
-                                        response['output'] = 'Solo l\'utente propietario può modificare la sua password'
-                        else:
-                            response['output'] = 'Non esiste nessun utente con questo username'
-                    if tipo_operazione == "delete":
-                        users = DbManager.select_tb_user()
-                        to_delete = DbManager.select_tb_user(username)
-                        if len(to_delete) == 1:
-                            to_delete = to_delete[0]
-                            admin = 0
-                            for user in users:
-                                if user['role'] == 'ADMIN':
-                                    admin = admin + 1
-                            if to_delete['role'] == 'ADMIN' and admin == 1:
-                                response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
-                            else:
-                                DbManager.delete_tb_user(username)
-                                delete_user(username)
-                                response['output'] = 'OK'
-                        else:
-                            response['output'] = 'Non esiste nessun utente con questo username'
-                    if tipo_operazione == "add":
-                        users = DbManager.select_tb_user(username)
-                        if len(users) == 0:
-                            DbManager.insert_tb_user(username, password, role)
-                            add_user(username, password)
-                            response['output'] = 'OK'
-                        else:
-                            response['output'] = 'Username già utilizzato'
-                    DbManager.close_db()
-                else:
-                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
-            else:
-                response['output'] = 'Devi effettuare la login per utilizzare questa API'
+                username = ''
+                password = ''
+                role = ''
+                if 'username' in data:
+                    username = data['username']
+                if 'password' in data:
+                    password = data['password']
+                if 'role' in data:
+                    role = data['role']
+                funzioni = {
+                    'list': User.user_list,
+                    'update': User.user_update,
+                    'delete': User.user_delete,
+                    'add': User.user_add
+                }
+                parametri = {
+                    'list': [self.session.get('user'), self.session.get('role')],
+                    'update': [username, password, role],
+                    'delete': [username],
+                    'add': [username, password, role]
+                }
+                response = funzioni[tipo_operazione](*parametri[tipo_operazione])
+            DbManager.close_db()
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
@@ -108,3 +50,167 @@ class User(BaseHandler):
             self.response.write(dumps(response, indent=4, sort_keys=True))
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s", response)
+
+    @staticmethod
+    def check(user, role, data):
+        response = {}
+        if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'update', 'delete', 'add'):
+            response = User.check_user(user, role, data['tipo_operazione'])
+            if response['output'] == 'OK':
+                if data['tipo_operazione'] == 'delete':
+                    response = User.check_username_exist(data)
+                    if response['output'] == 'OK':
+                        response = User.check_one_admin(data)
+                if data['tipo_operazione'] == 'add':
+                    response = User.check_username_not_exist(data)
+                    if response['output'] == 'OK':
+                        response = User.check_role(data)
+                        if response['output'] == 'OK':
+                            response = User.check_password(data)
+                if data['tipo_operazione'] == 'update':
+                    response = User.check_username_exist(data)
+                    if response['output'] == 'OK':
+                        response = User.check_role(data, to_modify=True, session_role=role)
+                        if response['output'] == 'OK':
+                            response = User.check_one_admin(data, to_modify=True)
+                            if response['output'] == 'OK':
+                                response = User.check_password(data, to_modify=True, session_user=user)
+        else:
+            if 'tipo_operazione' in data:
+                response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add'
+            else:
+                response['output'] = 'Il campo tipo_operazione è obbligatorio'
+        return response
+
+    @staticmethod
+    def check_user(user, role, tipo_operazione):
+        response = {}
+        if user is not None:
+            if tipo_operazione in ('add', 'delete'):
+                if role != 'ADMIN':
+                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
+                else:
+                    response['output'] = 'OK'
+            else:
+                response['output'] = 'OK'
+        else:
+            response['output'] = 'Devi effettuare la login per utilizzare questa API'
+        return response
+
+    @staticmethod
+    def check_username_exist(data):
+        response = {}
+        username_list = [d['username'] for d in DbManager.select_tb_user()]
+        if 'username' in data and data['username'] in username_list:
+            response['output'] = 'OK'
+        else:
+            if 'username' in data:
+                response['output'] = "Il campo username deve assumere uno dei seguenti valori: " + ', '.join(username_list)
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo username"
+        return response
+
+    @staticmethod
+    def check_username_not_exist(data):
+        response = {}
+        username_list = [d['username'] for d in DbManager.select_tb_user()]
+        if 'username' in data and data['username'] not in username_list:
+            response['output'] = 'OK'
+        else:
+            if 'username' in data:
+                response['output'] = "Esiste già un utente con questo nome"
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo username"
+        return response
+
+    @staticmethod
+    def check_one_admin(data, to_modify=False):
+        response = {}
+        to_delete = DbManager.select_tb_user(data['username'])[0]
+        role_list = [d['role'] for d in DbManager.select_tb_user()]
+        admin = 0
+        for role in role_list:
+            if role == 'ADMIN':
+                admin = admin + 1
+        if to_delete['role'] == 'ADMIN' and admin == 1 and ((not to_modify) or (to_modify and to_delete['role'] != data['role'])):
+            response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
+        else:
+            response['output'] = 'OK'
+        return response
+
+    @staticmethod
+    def check_role(data, to_modify=False, session_role=''):
+        response = {}
+        role_list = {'USER', 'ADMIN'}
+        if 'role' in data and data['role'] in role_list:
+            response['output'] = 'OK'
+            if to_modify:
+                to_update = DbManager.select_tb_user(data['username'])[0]
+                if to_update['role'] != data['role'] and session_role == 'ADMIN':
+                    response['output'] = 'OK'
+                else:
+                    if session_role != 'ADMIN':
+                        response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
+        else:
+            if 'role' in data:
+                response['output'] = "Il campo role deve assumere uno dei seguenti valori: " + ', '.join(role_list)
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo role"
+        return response
+
+    @staticmethod
+    def check_password(data, to_modify=False, session_user=''):
+        response = {}
+        if 'password' in data and len(data['password']) >= 4:
+            response['output'] = 'OK'
+            if to_modify:
+                to_update = DbManager.select_tb_user(data['username'])[0]
+                if to_update['password'] != data['password']:
+                    if session_user == data['username']:
+                        response['output'] = 'OK'
+                    else:
+                        response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+        else:
+            if 'password' in data:
+                response['output'] = "Il campo password deve avere una luchezza di almeno 4 caratteri"
+            else:
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo password"
+        return response
+
+    @staticmethod
+    def user_list(session_user, session_role):
+        if session_role == 'ADMIN':
+            users = DbManager.select_tb_user()
+            for user in users:
+                if user['username'] != user:
+                    user['password'] = ''
+        else:
+            users = DbManager.select_tb_user(session_user)
+        response = {
+            'users': users,
+            'user_role': session_role,
+            'user_username': session_user,
+            'output': 'OK'
+        }
+        return response
+
+    @staticmethod
+    def user_delete(username):
+        DbManager.delete_tb_user(username)
+        delete_user(username)
+        response = {'output': 'OK'}
+        return response
+
+    @staticmethod
+    def user_add(username, password, role):
+        DbManager.insert_tb_user(username, password, role)
+        add_user(username, password)
+        response = {'output': 'OK'}
+        return response
+
+    @staticmethod
+    def user_update(username, password, role):
+        DbManager.update_tb_user(username, password, role)
+        update_user(username, password)
+        response = {'output': 'OK'}
+        return response

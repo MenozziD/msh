@@ -76,13 +76,13 @@ class Net(BaseHandler):
             response = Net.check_user(user, role, data['tipo_operazione'])
             if response['output'] == 'OK':
                 if data['tipo_operazione'] == 'command':
-                    response = Net.check_tipo(data, required=True)
+                    response = Net.check_tipo(data)
                 if data['tipo_operazione'] == 'delete':
                     response = Net.check_mac(data)
                 if data['tipo_operazione'] == 'update':
                     response = Net.check_mac(data)
                     if response['output'] == 'OK':
-                        response = Net.check_tipo(data, required=True)
+                        response = Net.check_tipo(data)
                         if response['output'] == 'OK':
                             response = Net.check_code(data)
                 if data['tipo_operazione'] == 'cmd':
@@ -97,7 +97,7 @@ class Net(BaseHandler):
         return response
 
     @staticmethod
-    def check_tipo(data, required=False):
+    def check_tipo(data):
         response = {}
         type_list = [d['type_code'] for d in DbManager.select_tb_net_device_type()]
         if 'tipo' in data and data['tipo'] in type_list:
@@ -106,10 +106,7 @@ class Net(BaseHandler):
             if 'tipo' in data:
                 response['output'] = "Il campo tipo deve assumere uno dei seguenti valori: " + ', '.join(type_list)
             else:
-                if required:
-                    response['output'] = "Per l'operazione scelta è obbligatorio il campo tipo"
-                else:
-                    response['output'] = 'OK'
+                response['output'] = "Per l'operazione scelta è obbligatorio il campo tipo"
         return response
 
     @staticmethod
@@ -145,6 +142,7 @@ class Net(BaseHandler):
         else:
             response['output'] = "Per questa operazione è obbligatorio il campo codice"
         return response
+
     @staticmethod
     def check_user(user, role, tipo_operazione):
         response = {}
