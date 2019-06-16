@@ -16,19 +16,17 @@ class Login(BaseHandler):
         response = {}
         try:
             data = loads(body)
-            username = data['user']
-            password = data['password']
             DbManager()
-            user = DbManager.select_tb_user(username)
-            if len(user) == 1:
-                if password == user[0]['password']:
+            response = Login.check_user(data)
+            if response['output'] == 'OK':
+                response = Login.check_password(data)
+                if response['output'] == 'OK':
+                    username = data['user']
+                    user = DbManager.select_tb_user(username)[0]
                     self.session['user'] = username
-                    self.session['role'] = user[0]["role"]
+                    self.session['role'] = user["role"]
                     response['output'] = 'OK'
-                else:
-                    response['output'] = 'Password errata'
-            else:
-                response['output'] = 'Username non trovato'
+            DbManager.close_db()
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
@@ -39,6 +37,32 @@ class Login(BaseHandler):
             self.response.write(dumps(response, indent=4, sort_keys=True))
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s", response)
+
+    @staticmethod
+    def check_user(data):
+        response = {}
+        user_list = [d['user'] for d in DbManager.select_tb_user()]
+        if 'user' in data and data['user'] in user_list:
+            response['output'] = 'OK'
+        else:
+            if 'user' in data:
+                response['output'] = "Username non trovato"
+            else:
+                response['output'] = "Il campo user è obbligatorio"
+        return response
+
+    @staticmethod
+    def check_password(data):
+        response = {}
+        user = DbManager.select_tb_user(data['username'])[0]
+        if 'password' in data and data['password'] == user['password']:
+            response['output'] = 'OK'
+        else:
+            if 'password' in data:
+                response['output'] = "Password errata"
+            else:
+                response['output'] = "Il campo password è obbligatorio"
+        return response
 
 
 class Logout(BaseHandler):
