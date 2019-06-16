@@ -1,8 +1,7 @@
 from logging import info, exception
 from datetime import datetime
 from json import dumps, loads
-from module import XmlReader
-from module import DbManager
+from module import XmlReader, DbManager
 from controller import BaseHandler
 
 
