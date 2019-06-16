@@ -147,7 +147,7 @@ class DbManager:
         return devices_diz_cmd[0]
 
     @staticmethod
-    def update_tb_net_device(net_mac, net_code='', net_type='', net_status='', net_ip='', net_user='', net_psw='', net_mac_info=''):
+    def update_tb_net_device(net_mac, net_code=None, net_type=None, net_status=None, net_ip=None, net_user=None, net_psw=None, net_mac_info=None):
         query = 'UPDATE TB_NET_DEVICE SET NET_LASTUPDATE = \'%s\',' % datetime.now().strftime(XmlReader.settings['timestamp'])
         fields = {
             'net_code': 'NET_CODE = \'%s\',' % net_code,
@@ -168,7 +168,7 @@ class DbManager:
             'net_mac_info': net_mac_info
         }
         for key, value in device.items():
-            if value != '':
+            if value != None:
                 query = query + fields[key]
         query = query[:-1]
         query = query + ' WHERE NET_MAC = \'%s\';' % net_mac
