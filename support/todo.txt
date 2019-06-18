@@ -2,7 +2,7 @@
 	- importare librerie in arudino-cli
 - test generali di funzionamento
 - script per automatizzare i test (python3 + urllib)
-- gestire nuovi device (TEMP, IR) nella response di cmd_esp
+- gestire nuovi device (TEMP, IR, PIR, IPCAMERA) nella response di cmd_esp
 - gestire nuove tipologie di device (PS4, STAMPANTI, CELLULARI)
 - gestire device già smart ma di altri produttori (DLINK, XBULB)
 - creare uno schedulatore configurabile
