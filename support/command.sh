@@ -126,3 +126,10 @@ gactions --verbose update --action_package ./msh/action.json --project smart-hom
 
 #Guardo lo stato della google action
 gactions --verbose get --project test-rasp-18a53 --version draft
+
+#Login con PS4
+sudo ps4-waker
+# generare codice su play 4
+# accedere all app
+# scegliere ps4-waker
+# inserire il pin nella shell

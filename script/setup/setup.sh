@@ -108,14 +108,29 @@ echo "Assegno permessi di esecuzione a gactions"
 sudo chmod +x /usr/bin/gactions 
 # NPM
 echo "Aggiungo repository per apt-get"
-sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo bash - 1>/dev/null 2>/dev/null
-echo "Eseguo apt-get install npm"
-sudo apt-get install npm -y 1>/dev/null 
+sudo curl -sL https://deb.nodesource.com/setup_9.x | sudo bash - 1>/dev/null 2>/dev/null
+echo "Eseguo apt-get install nodejs"
+sudo apt-get install nodejs -y 1>/dev/null
 # UNZIP
 echo "Eseguo apt-get install unzip"
 sudo apt-get install unzip -y 1>/dev/null
 echo "Eseguo apt-get install zip"
 sudo apt-get install zip -y 1>/dev/null
+# PS4-WAKER
+echo "Scarico ps4-waker.zip"
+sudo curl https://codeload.github.com/dhleong/ps4-waker/zip/master --output /usr/lib/ps4-waker.zip 1>/dev/null 2>/dev/null
+cd /usr/lib
+echo "Eseguo unzip ps4-waker.zip"
+sudo unzip ps4-waker.zip 1>/dev/null 2>/dev/null
+echo "Eseguo mv ps4-waker-master ps4-waker"
+sudo mv ps4-waker-master ps4-waker
+echo "Eseguo mv ps4-waker/lib ps4-waker/dist"
+sudo mv ps4-waker/lib ps4-waker/dist
+echo "Installo ps4-waker"
+sudo npm i ps4-waker -g
+echo "Rimuovo ps4-waker.zip"
+sudo rm -rf ps4waker.zip
+cd /home/pi
 # PYTHON
 echo "Eseguo apt-get install python3"
 sudo apt-get install python3 -y 1>/dev/null 
