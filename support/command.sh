@@ -115,6 +115,9 @@ docker version
 # Info sullo stato di Docker
 docker info
 
+# Ripristinare bashrc
+cp /etc/skel/.bashrc ~/
+
 # Download di una libreria GO
 go get github.com/docker/machine/libmachine/drivers/plugin
 
@@ -133,3 +136,30 @@ sudo ps4-waker
 # accedere all app
 # scegliere ps4-waker
 # inserire il pin nella shell
+
+# Rimozione pacchetti 
+sudo apt autoremove
+
+# SONAR ON ARM
+sudo apt-get install default-jdk
+curl https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.8.zip --output sonar.zip
+unzip sonar.zip
+rm -rf sonar.zip
+mv sonarqube-7.8 sonar
+sudo mv sonar /opt/
+java -jar sonar-application-7.8.jar
+curl https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.3.0.1492.zip --output sonar-scanner.zip
+unzip sonar-scanner.zip
+rm -rf sonar-scanner.zip
+java -jar sonar-scanner-3.3.0.1492/lib/sonar-scanner-cli-3.3.0.1492.jar
+
+# Esecuzione scan sonar
+# Test e coverage dentro alla cartella msh sul raspberry
+sudo pip3 install --trusted-host pypi.python.org pytest
+sudo pip3 install --trusted-host pypi.python.org coverage
+sudo python3 -m coverage erase
+sudo python3 -m coverage run -m pytest --junitxml=test-report.xml
+sudo python3 -m coverage xml -i
+# copiare i file coverage.xml e test-report.xml sul pc locale (windows) nella cartella msh
+# dentro alla cartella msh di windows eseguire
+sonar-scanner

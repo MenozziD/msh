@@ -1,14 +1,14 @@
 from string import ascii_letters, digits
 from random import choice
 from json import loads, dumps
-from os import system
-from logging import info, exception
+from logging import exception
+from module import execute_os_cmd
 
 
 def add_user(username, password):
     try:
         letters_and_digits = ascii_letters + digits
-        token_string = ''.join(choice(letters_and_digits) for i in range(36))
+        token_string = ''.join(choice(letters_and_digits) for _ in range(36))
         data_file = read_file()
         data_json = data_file.split("const Auth = ")[1].split(";")[0]
         data = loads(convert_to_json(data_json))
@@ -123,5 +123,4 @@ def write_file(data_file):
     f.write(data_file)
     f.close()
     cmd = "sudo service oauth restart"
-    info("Eseguo comando: %s", cmd)
-    system(cmd)
+    execute_os_cmd(cmd)

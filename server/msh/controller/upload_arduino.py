@@ -1,9 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
-from json import dumps, loads
-from module import XmlReader, compile_and_upload
-from datetime import datetime
-from subprocess import check_output
+from json import loads
+from module import compile_and_upload, execute_os_cmd, set_api_response
 from urllib import request
 
 
@@ -39,12 +37,7 @@ class UploadArduino(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-            self.response.headers.add('Access-Control-Allow-Origin', '*')
-            self.response.headers.add('Content-Type', 'application/json')
-            self.response.write(dumps(response, indent=4, sort_keys=True))
-            info("RESPONSE CODE: %s", self.response.status)
-            info("RESPONSE PAYLOAD: %s", response)
+            set_api_response(response, self.response)
 
     @staticmethod
     def check(user, role, body):
@@ -53,15 +46,10 @@ class UploadArduino(BaseHandler):
             data = loads(body)
             if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo'):
                 response = UploadArduino.check_user(user, role, data['tipo_operazione'])
-                if response['output'] == 'OK':
-                    if data['tipo_operazione'] == 'upload':
-                        response = UploadArduino.check_core(data)
-                        if response['output'] == 'OK':
-                            response = UploadArduino.check_tipologia(data)
+                response = UploadArduino.check_upload(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response[
-                        'output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, core, tipo'
+                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, core, tipo'
                 else:
                     response['output'] = 'Il campo tipo_operazione è obbligatorio'
         else:
@@ -69,6 +57,14 @@ class UploadArduino(BaseHandler):
                 response['output'] = "Il payload deve essere in formato JSON"
             else:
                 response['output'] = "Questa API ha bisogno di un payload"
+        return response
+
+    @staticmethod
+    def check_upload(response, data):
+        if response['output'] == 'OK' and data['tipo_operazione'] == 'upload':
+            response = UploadArduino.check_core(data)
+            if response['output'] == 'OK':
+                response = UploadArduino.check_tipologia(data)
         return response
 
     @staticmethod
@@ -88,12 +84,10 @@ class UploadArduino(BaseHandler):
 
     @staticmethod
     def check_core(data):
-        response = {}
         cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        info("Eseguo il comando: %s", cmd)
-        cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
+        response = execute_os_cmd(cmd, True)
         core_list = []
-        for core in cmd_out.split("\n")[1:]:
+        for core in response['cmd_out'].split("\n")[1:]:
             if core != '':
                 core_list.append(core[:-1])
         if 'core' in data and data['core'] in core_list:
@@ -143,10 +137,9 @@ class UploadArduino(BaseHandler):
     @staticmethod
     def core_list():
         cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        info("Eseguo il comando: %s", cmd)
-        cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
+        response = execute_os_cmd(cmd, True)
         cores = []
-        for core in cmd_out.split("\n")[1:]:
+        for core in response['cmd_out'].split("\n")[1:]:
             if core != '':
                 cores.append(core[:-1])
         response = {

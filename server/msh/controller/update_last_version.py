@@ -1,9 +1,9 @@
 from controller import BaseHandler
-from os import system
 from json import dumps
 from logging import info
 from datetime import datetime
 from module import XmlReader
+from module import execute_os_cmd
 
 
 class UpdateLastVersion(BaseHandler):
@@ -12,7 +12,8 @@ class UpdateLastVersion(BaseHandler):
         info("%s %s", self.request.method, self.request.url)
         if self.session.get('user') is not None and self.session.get('role') == 'ADMIN':
             response['output'] = 'OK'
-            system("cd .. && sudo ./deploy.sh &")
+            cmd = "cd .. && sudo ./deploy.sh &"
+            execute_os_cmd(cmd)
         else:
             response['output'] = 'Devi effettuare la login per utilizzare questa API'
             if self.session.get('role') == 'USER':

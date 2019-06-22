@@ -1,8 +1,4 @@
 var device_net_list = [];
-var device_net_commands = [];
-var device_net_types = [];
-var device_arduino_cores = [];
-var device_arduino_types = [];
 var user_list = [];
 
 function carica(){
@@ -21,6 +17,12 @@ function carica(){
     $.blockUI.defaults.css.border = '';
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
+
+ function drop_type(){
+    $('#type' + id).text($(this).text());
+    $("#type" + id).val($(this).text());
+    must_save(id);
+}
 
 function net(type_op){
     var code = '';
@@ -45,9 +47,9 @@ function net(type_op){
         type_op = 'type';
     }
     if (type_op == 'command'){
-        for(var i = 0; i < device_net_list.length;i++) {
-            if (device_net_list[i]['net_code'] == $('#device')[0].value)
-                type = device_net_list[i]['net_type'];
+        for(var l = 0; l < device_net_list.length; l++) {
+            if (device_net_list[l]['net_code'] == $('#device')[0].value)
+                type = device_net_list[l]['net_type'];
         }
     }
     if (type_op.search('delete') >= 0){
@@ -104,41 +106,33 @@ function net(type_op){
                     }
                     if (type_op == 'type'){
                         var types = json["types"]
-                        var template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
-                        $('#drop_type' + id).html(template(types));
-                        device_net_types = []
+                        var type_template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
+                        $('#drop_type' + id).html(type_template(types));
                         for(var i = 0; i < types.length;i++) {
-                            device_net_types.push(types[i]);
-                            $('#drop_type' + id + ' li').click(function(){
-                              $('#type' + id).text($(this).text());
-                              $("#type" + id).val($(this).text());
-                              must_save(id);
-                           });
+                            $('#drop_type' + id + ' li').click(drop_type);
                         }
                     }
                     if (type_op == 'list'){
                         var devices = json["devices"];
-                        var template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-                        $('#table-device').html(template(json));
+                        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+                        $('#table-device').html(device_template(json));
                         device_net_list = [];
-                        for(var i = 0; i < devices.length;i++) {
+                        for(var j = 0; j < devices.length; j++) {
                             device_net_list.push(devices[i]);
-                            $('#code' + i).on('input',function(e){must_save(this.id.replace("code", ""))});
-                            $('#usr' + i).on('input',function(e){must_save(this.id.replace("usr", ""))});
-                            $('#psw' + i).on('input',function(e){must_save(this.id.replace("psw", ""))});
+                            $('#code' + j).on('input',function(e){must_save(this.id.replace("code", ""))});
+                            $('#usr' + j).on('input',function(e){must_save(this.id.replace("usr", ""))});
+                            $('#psw' + j).on('input',function(e){must_save(this.id.replace("psw", ""))});
                             if (json['user_role'] != 'ADMIN'){
-                                $('#code' + i).prop('readonly', true);
-                                $('#type' + i).prop('disabled', true);
+                                $('#code' + j).prop('readonly', true);
+                                $('#type' + j).prop('disabled', true);
                             }
                         }
                     }
                     if (type_op == 'command'){
                         var commands = json["commands"]
-                        var template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
-                        $('#drop_command').html(template(commands));
-                        device_net_commands = [];
-                        for(var i = 0; i < commands.length;i++) {
-                            device_net_commands.push(commands[i]);
+                        var command_template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
+                        $('#drop_command').html(command_template(commands));
+                        for(var k = 0; k < commands.length; k++) {
                             $("#drop_command li").click(function(){
                               $('#command').text($(this).text());
                               $("#command").val($(this).text());
@@ -284,8 +278,8 @@ function user_function(type_op){
                 if (json["output"].search("OK") == 0){
                     if (type_op == 'list'){
                         var users = json["users"];
-                        var template = Handlebars.compile($("#table-user-template")[0].innerHTML);
-                        $('#table-user').html(template(json));
+                        var user_template = Handlebars.compile($("#table-user-template")[0].innerHTML);
+                        $('#table-user').html(user_template(json));
                         if (json['user_role'] == 'ADMIN'){
                             $('#add-user')[0].classList.remove("d-none");
                             $('#add-user')[0].classList.add("d-block");
@@ -426,11 +420,9 @@ function upload_arduino(tipo_op){
                 if (json["output"].search("OK") == 0){
                     if (tipo_op == 'core'){
                         var cores = json["cores"]
-                        var template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
-                        $('#drop_device_arduino').html(template(cores));
-                        device_arduino_cores = [];
-                        for(var i = 0; i < cores.length;i++) {
-                            device_arduino_cores.push(cores[i]);
+                        var device_template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
+                        $('#drop_device_arduino').html(device_template(cores));
+                        for(var i = 0; i < cores.length; i++) {
                             $("#drop_device_arduino li").click(function(){
                               $('#device_arduino').text($(this).text());
                               $("#device_arduino").val($(this).text());
@@ -440,11 +432,9 @@ function upload_arduino(tipo_op){
                     }
                     if (tipo_op == 'tipo'){
                         var types = json["types"]
-                        var template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
-                        $('#drop_tipo_arduino').html(template(types));
-                        device_arduino_types = [];
-                        for(var i = 0; i < types.length;i++) {
-                            device_arduino_types.push(types[i]);
+                        var tipo_template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
+                        $('#drop_tipo_arduino').html(tipo_template(types));
+                        for(var j = 0; j < types.length; j++) {
                             $("#drop_tipo_arduino li").click(function(){
                               $('#tipo_arduino').text($(this).text());
                               $("#tipo_arduino").val($(this).text());

@@ -100,10 +100,9 @@ class Home(BaseHandler):
         if command == 'action.devices.commands.OnOff':
             if device_id == '1':
                 info('device 1 %s', params['on'])
-                cmd_esp('192.168.1.9', 'toggle')
+                # cmd_esp('192.168.1.9', 'toggle')
             if device_id == '2':
                 info('ON/OFF device 2')
-        if command == 'action.devices.commands.ColorAbsolute':
-            if device_id == '2':
+        if command == 'action.devices.commands.ColorAbsolute' and device_id == '2':
                 info('colore device 2 %s', params['color']['spectrumRGB'])
         return response

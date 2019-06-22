@@ -1,8 +1,8 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, get_ip_and_subnet, XmlReader, DbManager
-from json import dumps, loads
-from datetime import datetime
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, XmlReader, DbManager, set_api_response
+from json import loads
+from netifaces import AF_INET, gateways, ifaddresses
 
 
 class Net(BaseHandler):
@@ -17,27 +17,7 @@ class Net(BaseHandler):
             if response['output'] == 'OK':
                 data = loads(body)
                 type_op = data['tipo_operazione']
-                tipo = None
-                mac = None
-                codice = None
-                user = None
-                password = None
-                dispositivo = None
-                comando = None
-                if 'codice' in data:
-                    codice = data['codice']
-                if 'tipo' in data:
-                    tipo = data['tipo']
-                if 'mac' in data:
-                    mac = data['mac']
-                if 'user' in data:
-                    user = data['user']
-                if 'password' in data:
-                    password = data['password']
-                if 'dispositivo' in data:
-                    dispositivo = data['dispositivo']
-                if 'comando' in data:
-                    comando = data['comando']
+                param = Net.read_param(data)
                 funzioni = {
                     'scan': Net.device_scan,
                     'list': Net.device_list,
@@ -51,10 +31,10 @@ class Net(BaseHandler):
                     'scan': [],
                     'list': [self.session.get('role')],
                     'type': [],
-                    'command': [tipo],
-                    'update': [mac, codice, tipo, user, password],
-                    'delete': [mac],
-                    'cmd': [dispositivo, comando]
+                    'command': [param['tipo']],
+                    'update': [param['mac'], param['codice'], param['tipo'], param['user'], param['password']],
+                    'delete': [param['mac']],
+                    'cmd': [param['dispositivo'], param['comando']]
                 }
                 response = funzioni[type_op](*parametri[type_op])
             DbManager.close_db()
@@ -62,12 +42,34 @@ class Net(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-            self.response.headers.add('Access-Control-Allow-Origin', '*')
-            self.response.headers.add('Content-Type', 'application/json')
-            self.response.write(dumps(response, indent=4, sort_keys=True))
-            info("RESPONSE CODE: %s", self.response.status)
-            info("RESPONSE PAYLOAD: %s", response)
+            set_api_response(response, self.response)
+
+    @staticmethod
+    def read_param(data):
+        param = {
+            'tipo': None,
+            'mac': None,
+            'codice': None,
+            'user': None,
+            'password': None,
+            'dispositivo': None,
+            'comando': None
+        }
+        if 'codice' in data:
+            param['codice'] = data['codice']
+        if 'tipo' in data:
+            param['tipo'] = data['tipo']
+        if 'mac' in data:
+            param['mac'] = data['mac']
+        if 'user' in data:
+            param['user'] = data['user']
+        if 'password' in data:
+            param['password'] = data['password']
+        if 'dispositivo' in data:
+            param['dispositivo'] = data['dispositivo']
+        if 'comando' in data:
+            param['comando'] = data['comando']
+        return param
 
     @staticmethod
     def check(user, role, body):
@@ -76,23 +78,7 @@ class Net(BaseHandler):
             data = loads(body)
             if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
                 response = Net.check_user(user, role, data['tipo_operazione'])
-                if response['output'] == 'OK':
-                    if data['tipo_operazione'] == 'command':
-                        response = Net.check_tipo(data)
-                    if data['tipo_operazione'] == 'delete':
-                        response = Net.check_mac(data)
-                    if data['tipo_operazione'] == 'update':
-                        response = Net.check_mac(data)
-                        if response['output'] == 'OK':
-                            response = Net.check_any_to_update(data)
-                            if response['output'] == 'OK':
-                                response = Net.check_tipo(data, required=False)
-                                if response['output'] == 'OK':
-                                    response = Net.check_code(data)
-                    if data['tipo_operazione'] == 'cmd':
-                        response = Net.check_device(data)
-                        if response['output'] == 'OK':
-                            response = Net.check_command(data)
+                response = Net.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
                     response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd'
@@ -103,6 +89,32 @@ class Net(BaseHandler):
                 response['output'] = "Il payload deve essere in formato JSON"
             else:
                 response['output'] = "Questa API ha bisogno di un payload"
+        return response
+
+    @staticmethod
+    def check_operation_param(response, data):
+        if response['output'] == 'OK':
+            if data['tipo_operazione'] == 'command':
+                response = Net.check_tipo(data)
+            if data['tipo_operazione'] == 'delete':
+                response = Net.check_mac(data)
+            if data['tipo_operazione'] == 'update':
+                response = Net.check_update(data)
+            if data['tipo_operazione'] == 'cmd':
+                response = Net.check_device(data)
+                if response['output'] == 'OK':
+                    response = Net.check_command(data)
+        return response
+
+    @staticmethod
+    def check_update(data):
+        response = Net.check_mac(data)
+        if response['output'] == 'OK':
+            response = Net.check_any_to_update(data)
+            if response['output'] == 'OK':
+                response = Net.check_tipo(data, required=False)
+                if response['output'] == 'OK':
+                    response = Net.check_code(data)
         return response
 
     @staticmethod
@@ -137,23 +149,29 @@ class Net(BaseHandler):
     @staticmethod
     def check_code(data):
         response = {}
-        trovato = False
         devices = DbManager.select_tb_net_device()
         to_update = DbManager.select_tb_net_device(data['mac'])[0]
         response['output'] = "OK"
         if 'codice' in data:
             if data['codice'] != "":
                 if data['codice'] != to_update['net_code']:
-                    for device in devices:
-                        if device['net_code'] == data['codice']:
-                            trovato = True
-                            break
-                    if not trovato:
-                        response['output'] = 'OK'
-                    else:
-                        response['output'] = 'Esiste già un dispositivo con questo codice'
+                    response = Net.check_code_exist(data, devices)
             else:
                 response['output'] = 'Il campo codice non può essere valorizzato con una stringa vuota'
+        return response
+
+    @staticmethod
+    def check_code_exist(data, devices):
+        trovato = False
+        response = {}
+        for device in devices:
+            if device['net_code'] == data['codice']:
+                trovato = True
+                break
+        if not trovato:
+            response['output'] = 'OK'
+        else:
+            response['output'] = 'Esiste già un dispositivo con questo codice'
         return response
 
     @staticmethod
@@ -267,9 +285,44 @@ class Net(BaseHandler):
         inseriti = 0
         aggiornati = 0
         db_devices = DbManager.select_tb_net_device()
-        ip_subnet = get_ip_and_subnet()
-        ip = ip_subnet['ip'].split('.')
-        subnet = ip_subnet['subnet'].split('.')
+        ip_subnet = Net.calculate_start()
+        result = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
+        for device in result['devices']:
+            trovato = False
+            for db_device in db_devices:
+                if device['net_mac'] == db_device['net_mac']:
+                    DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
+                    trovato = True
+                    aggiornati = aggiornati + 1
+                    break
+            if not trovato:
+                trovato = Net.found_duplicate_code(device)
+                if trovato:
+                    device['net_code'] = device['net_mac']
+                DbManager.insert_tb_net_device(device['net_code'], device['net_ip'], device['net_mac'], device['net_mac_info'])
+                inseriti = inseriti + 1
+        Net.update_status_if_not_find(db_devices, result)
+        response['output'] = 'OK'
+        response['result_command'] = result
+        response['find_device'] = str(len(result['devices']))
+        response['new_device'] = str(inseriti)
+        response['updated_device'] = str(aggiornati)
+        return response
+
+    @staticmethod
+    def found_duplicate_code(device):
+        trovato = False
+        db_devices = DbManager.select_tb_net_device()
+        for db_device in db_devices:
+            if db_device['net_code'] == device['net_code']:
+                trovato = True
+                break
+        return trovato
+
+    @staticmethod
+    def calculate_start():
+        ip = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'].split('.')
+        subnet = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask'].split('.')
         stri = ''
         for s in subnet:
             stri = stri + '{0:08b}'.format(int(s))
@@ -280,26 +333,14 @@ class Net(BaseHandler):
             ip = ip[0] + '.' + ip[1] + '.0.1'
         if 8 <= count < 16:
             ip = ip[0] + '.0.0.1'
-        result = cmd_netscan(ip, str(count))
-        for device in result['devices']:
-            trovato = False
-            for db_device in db_devices:
-                if device['net_mac'] == db_device['net_mac']:
-                    DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
-                    trovato = True
-                    aggiornati = aggiornati + 1
-                    break
-            if not trovato:
-                trovato = False
-                for db_device in db_devices:
-                    if db_device['net_code'] == device['net_code']:
-                        trovato = True
-                        break
-                if trovato:
-                    device['net_code'] = device['net_mac']
-                DbManager.insert_tb_net_device(device['net_code'], 'NET', 'ON', device['net_ip'], '', '',
-                                               device['net_mac'], device['net_mac_info'])
-                inseriti = inseriti + 1
+        ip_subnet = {
+            'ip': ip,
+            'count': str(count)
+        }
+        return ip_subnet
+
+    @staticmethod
+    def update_status_if_not_find(db_devices, result):
         for db_device in db_devices:
             trovato = False
             for device in result['devices']:
@@ -308,12 +349,6 @@ class Net(BaseHandler):
                     break
             if not trovato:
                 DbManager.update_tb_net_device(db_device['net_mac'], net_status='OFF')
-        response['output'] = 'OK'
-        response['result_command'] = result
-        response['find_device'] = str(len(result['devices']))
-        response['new_device'] = str(inseriti)
-        response['updated_device'] = str(aggiornati)
-        return response
 
     @staticmethod
     def device_cmd(dispositivo, comando):

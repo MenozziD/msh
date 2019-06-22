@@ -1,7 +1,6 @@
 from logging import info, exception
-from datetime import datetime
-from json import dumps, loads
-from module import XmlReader, DbManager
+from json import loads
+from module import DbManager, set_api_response
 from controller import BaseHandler
 
 
@@ -28,12 +27,7 @@ class Login(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            response['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
-            self.response.headers.add('Access-Control-Allow-Origin', '*')
-            self.response.headers.add('Content-Type', 'application/json')
-            self.response.write(dumps(response, indent=4, sort_keys=True))
-            info("RESPONSE CODE: %s", self.response.status)
-            info("RESPONSE PAYLOAD: %s", response)
+            set_api_response(response, self.response)
 
     @staticmethod
     def check(body):
@@ -89,12 +83,5 @@ class Logout(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
         self.session.clear()
-        response = {
-            'output': 'OK',
-            'timestamp': datetime.now().strftime(XmlReader.settings['timestamp'])
-        }
-        self.response.headers.add('Access-Control-Allow-Origin', '*')
-        self.response.headers.add('Content-Type', 'application/json')
-        self.response.write(dumps(response, indent=4, sort_keys=True))
-        info("RESPONSE CODE: %s", self.response.status)
-        info("RESPONSE PAYLOAD: %s", response)
+        response = {'output': 'OK'}
+        set_api_response(response, self.response)

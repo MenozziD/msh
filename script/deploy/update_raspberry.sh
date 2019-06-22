@@ -9,6 +9,7 @@ sudo rm -rf msh
 sudo mv msh_tmp msh
 sudo mv db msh/db
 sudo mv settings.xml msh
+sudo rm -rf msh/sonar-project.properties
 cd msh
 sudo service msh start
 exit 0

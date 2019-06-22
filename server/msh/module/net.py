@@ -1,10 +1,9 @@
 from pexpect import pxssh
 from logging import info, exception
-from netifaces import AF_INET, gateways, ifaddresses
 from json import loads
 from urllib import request
-from subprocess import run, PIPE, check_output
 from time import sleep
+from module import execute_os_cmd
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -16,13 +15,10 @@ def cmd_ping(ip, pacchetti=3):
     try:
         result['ip'] = ip
         cmd = 'ping -c %s %s' % (str(pacchetti), ip)
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
-        cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
-        if cmd_err == "":
-            result['cmd_output'] = cmd_out
-            cmd_out = cmd_out.split("\n")
+        response = execute_os_cmd(cmd)
+        if response['cmd_err'] == "":
+            result['cmd_output'] = response['cmd_out']
+            cmd_out = response['cmd_out'].split("\n")
             cmd_out = cmd_out[len(cmd_out) - 3].split(", ")
             result['pacchetti_lost'] = cmd_out[2].split(" ")[0]
             result['pacchetti_tx'] = cmd_out[0].split(" ")[0]
@@ -33,7 +29,7 @@ def cmd_ping(ip, pacchetti=3):
             else:
                 result['result'] = ping_fail
         else:
-            result['cmd_output'] = cmd_err
+            result['cmd_output'] = response['cmd_err']
             result['result'] = ping_err
         result['output'] = 'OK'
     except Exception as e:
@@ -71,8 +67,6 @@ def cmd_radio(ip, comando, usr, psw):
 
 
 def cmd_radio_stato(ip, comando, usr, psw):
-    radiostatus_off = 0
-    radiostatus_on = 1
     radiostatus_invalid_cred = 2
     radiostatus_exception = -1
     radiostatus_no_interface = -2
@@ -95,14 +89,8 @@ def cmd_radio_stato(ip, comando, usr, psw):
         result['cmd_output'] = cmd_out
         cmd_out = cmd_out.split("\r\n")
         for row in cmd_out:
-            if row.find("ESSID:") > 0 and row.find("ESSID:\"\"") == -1:
-                result['interface'] = row[:8].strip()
-                result['result'] = radiostatus_on
-            if row.find("Access Point:") > 0 and row.find("Access Point: Not-Associated") == -1:
-                result['mac'] = row.split("Access Point: ")[1].strip()
-                if not row[:8] == "        ":
-                    result['interface'] = row[:8].strip()
-                    result['result'] = radiostatus_off
+            result = read_essid(row, result)
+            result = read_mac(row, result)
         info("INTERFACE: %s MAC: %s", result['interface'], result['mac'])
         if result['interface'] == '' and result['mac'] == '':
             result['result'] = radiostatus_no_interface
@@ -120,6 +108,24 @@ def cmd_radio_stato(ip, comando, usr, psw):
         return result
 
 
+def read_essid(row, result):
+    radiostatus_on = 1
+    if row.find("ESSID:") > 0 and row.find("ESSID:\"\"") == -1:
+        result['interface'] = row[:8].strip()
+        result['result'] = radiostatus_on
+    return result
+
+
+def read_mac(row, result):
+    radiostatus_off = 0
+    if row.find("Access Point:") > 0 and row.find("Access Point: Not-Associated") == -1:
+        result['mac'] = row.split("Access Point: ")[1].strip()
+        if not row[:8] == "        ":
+            result['interface'] = row[:8].strip()
+            result['result'] = radiostatus_off
+    return result
+
+
 def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
     pcwin_off_err = -1
@@ -133,20 +139,16 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     try:
         # user%psw
         cmd = 'net rcp -I %s -U %s' % (ip, usr + '%' + psw)
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        if cmd_err == "":
-            result['cmd_output'] = cmd_out
-            cmd_out = cmd_out.replace("\t", "").replace("\n", "")
-            cmd_out = cmd_out.strip()
+        response = execute_os_cmd(cmd)
+        if response['cmd_err'] == "":
+            result['cmd_output'] = response['cmd_out']
+            cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('succeeded') > 0:
                 result['result'] = pcwin_off_ok
             else:
                 result['result'] = pcwin_off_fail
         else:
-            result['cmd_output'] = cmd_err
+            result['cmd_output'] = response['cmd_err']
             result['result'] = pcwin_off_err
         result['output'] = 'OK'
     except Exception as e:
@@ -166,20 +168,16 @@ def cmd_wakeonlan(mac):
     try:
         result['mac'] = mac
         cmd = 'wakeonlan %s' % mac
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-        if cmd_err == "":
-            result['cmd_output'] = cmd_out
-            cmd_out = cmd_out.replace("\t", "").replace("\n", "")
-            cmd_out = cmd_out.strip()
+        response = execute_os_cmd(cmd)
+        if response['cmd_err'] == "":
+            result['cmd_output'] = response['cmd_out']
+            cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('Sending magic packet') >= 0:
                 result['result'] = wol_ok
             else:
                 result['result'] = wol_fail
         else:
-            result['cmd_output'] = cmd_err
+            result['cmd_output'] = response['cmd_err']
             result['result'] = wol_err
         result['output'] = 'OK'
     except Exception as e:
@@ -198,13 +196,10 @@ def cmd_netscan(ip, subnet):
     result = {}
     try:
         cmd = "sudo nmap -sn %s/%s" % (ip, subnet)
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1].replace("\\n", "\n")
-        cmd_err = str(cmd.stderr)[2:-1].replace("\\n", "\n")
-        if cmd_err == "":
-            result['cmd_output'] = cmd_out
-            rows = cmd_out.split("\n")
+        response = execute_os_cmd(cmd)
+        if response['cmd_err'] == "":
+            result['cmd_output'] = response['cmd_out']
+            rows = response['cmd_out'].split("\n")
             devices = []
             device = {
                 'net_code': '',
@@ -213,34 +208,12 @@ def cmd_netscan(ip, subnet):
                 'net_mac_info': ''
             }
             for line in rows:
-                if "Nmap scan report for " in line:
-                    line = line.replace("Nmap scan report for ", "")
-                    if line.find("(") > 0:
-                        device['net_code'] = line.split(" (")[0]
-                        device['net_ip'] = line.split(" (")[1].replace(")", "")
-                    else:
-                        device['net_ip'] = line
-                        device['net_code'] = line
+                device = get_code_and_ip(line, device)
                 if "MAC Address" in line:
                     line = line.replace("MAC Address: ", "")
                     device['net_mac'] = line.split(" (")[0]
                     device['net_mac_info'] = line.split(" (")[1].replace(")", "")
-                    if device['net_mac_info'] == 'Unknown':
-                        url = 'https://api.macvendors.com/' + device['net_mac']
-                        finito = False
-                        while not finito:
-                            try:
-                                info("MAKE REQUEST: %s", url)
-                                response = str(request.urlopen(url).read())
-                                if response.find('b\'') == 0:
-                                    response = response[2:-1]
-                                info("RESPONSE: %s", response)
-                                device['net_mac_info'] = response
-                                finito = True
-                                sleep(2)
-                            except Exception:
-                                exception("Exception")
-                                sleep(2)
+                    device = get_mac_info(device)
                 if device['net_mac'] != '' and device['net_code'] != '' and device['net_mac_info'] != '' and device['net_ip'] != '':
                     devices.append(device)
                     device = {
@@ -255,7 +228,7 @@ def cmd_netscan(ip, subnet):
             else:
                 result['result'] = netscan_fail
         else:
-            result['cmd_output'] = cmd_err
+            result['cmd_output'] = response['cmd_err']
             result['result'] = netscan_err
         result['output'] = 'OK'
     except Exception as e:
@@ -264,6 +237,38 @@ def cmd_netscan(ip, subnet):
         result['output'] = str(e)
     finally:
         return result
+
+
+def get_code_and_ip(line, device):
+    if "Nmap scan report for " in line:
+        line = line.replace("Nmap scan report for ", "")
+        if line.find("(") > 0:
+            device['net_code'] = line.split(" (")[0]
+            device['net_ip'] = line.split(" (")[1].replace(")", "")
+        else:
+            device['net_ip'] = line
+            device['net_code'] = line
+    return device
+
+
+def get_mac_info(device):
+    if device['net_mac_info'] == 'Unknown':
+        url = 'https://api.macvendors.com/' + device['net_mac']
+        finito = False
+        while not finito:
+            try:
+                info("MAKE REQUEST: %s", url)
+                response = str(request.urlopen(url).read())
+                if response.find('b\'') == 0:
+                    response = response[2:-1]
+                info("RESPONSE: %s", response)
+                device['net_mac_info'] = response
+                finito = True
+                sleep(2)
+            except Exception:
+                exception("Exception")
+                sleep(2)
+    return device
 
 
 def cmd_esp(ip, command):
@@ -303,24 +308,19 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
     exception_error = 5
     try:
         cmd = 'mkdir %s' % tipologia
-        info("Eseguo comando: %s", cmd)
-        run(cmd.split(" "))
+        execute_os_cmd(cmd)
         url_repo_device = 'https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/%s' % tipologia
         cmd = 'curl %s/%s.ino --output %s/%s.ino' % (url_repo_device, tipologia, tipologia, tipologia)
-        info("Eseguo comando: %s", cmd)
-        run(cmd.split(" "))
+        execute_os_cmd(cmd)
         cmd = 'curl %s/index.h --output %s/index.h' % (url_repo_device, tipologia)
-        info("Eseguo comando: %s", cmd)
-        run(cmd.split(" "))
+        execute_os_cmd(cmd)
         cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
         info("Eseguo comando: %s", cmd)
-        fqbn = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
+        fqbn = execute_os_cmd(cmd, True)['cmd_out'].replace("\n", "").replace("\t", "")
         cmd_compile = 'sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia)
-        info("Eseguo comando: %s", cmd_compile)
-        cmd_compile = run(cmd_compile.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_compile_err = str(cmd_compile.stderr)[2:-1].replace("\\n", "\n")
-        if cmd_compile_err == '':
-            cmd_out_split = str(cmd_compile.stdout)[2:-1].replace("\\n", "\n").split('\n')
+        response = execute_os_cmd(cmd_compile)
+        if response['cmd_err'] == '':
+            cmd_out_split = response['cmd_out'].split('\n')
             program_info = cmd_out_split[1]
             memory_info = cmd_out_split[2]
             compile_output = {
@@ -334,23 +334,20 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
             }
             result['result'] = compile_ok
         else:
-            compile_output = cmd_compile_err
+            compile_output = response['cmd_err']
             result['result'] = compile_ko
         cmd_output = {
             'compile_output': compile_output
         }
         if make_upload and result['result'] == compile_ok:
             cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
-            info("Eseguo comando: %s", cmd)
-            usb = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "").replace("\\t", "")
+            usb = execute_os_cmd(cmd, True)['cmd_out'].replace("\n", "").replace("\t", "")
             info("USB: %s", usb)
             if usb != "":
                 cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)
-                info("Eseguo comando: %s", cmd_upload)
-                cmd_upload = run(cmd_upload.split(" "), stdout=PIPE, stderr=PIPE)
-                upload_err = str(cmd_upload.stderr)[2:-1].replace("\\n", "\n")
-                if upload_err == "":
-                    cmd_out = str(cmd_upload.stdout)[2:-1].replace("\\n", "\n").replace("\\r", "")
+                response = execute_os_cmd(cmd_upload)
+                if response['cmd_err'] == "":
+                    cmd_out = response['cmd_out'].replace("\\r", "")
                     upload_output = {
                         'porta_seriale': cmd_out.split("Serial port ")[1].split("\n")[0],
                         'chip': cmd_out.split("Chip is ")[1].split("\n")[0],
@@ -362,13 +359,14 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
                     cmd_output['upload_output'] = upload_output
                     result['result'] = compile_ok_upload_ok
                 else:
-                    cmd_output['upload_output'] = upload_err
+                    cmd_output['upload_output'] = response['cmd_err']
                     result['result'] = compile_ok_upload_ko
             else:
                 cmd_output['upload_output'] = 'Nessun dispositivo collegato'
                 result['result'] = compile_ok_upload_ko
         if remove_dir:
-            run(["sudo", "rm", "-rf", tipologia])
+            cmd = 'sudo rm -rf %s' % tipologia
+            execute_os_cmd(cmd)
         result['cmd_output'] = cmd_output
         result['output'] = 'OK'
     except Exception as e:
@@ -377,11 +375,3 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
         result['output'] = str(e)
     finally:
         return result
-
-
-def get_ip_and_subnet():
-    result = {
-        'ip': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'],
-        'subnet': ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask']
-    }
-    return result

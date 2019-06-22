@@ -176,9 +176,9 @@ class DbManager:
         return
 
     @staticmethod
-    def insert_tb_net_device(net_code, net_type, net_status, net_ip, net_user, net_psw, net_mac, net_mac_info):
+    def insert_tb_net_device(net_code, net_ip, net_mac, net_mac_info):
         query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) ' \
-                'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, net_type, net_status, datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, net_user, net_psw, net_mac, net_mac_info)
+                'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, 'NET', 'ON', datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, '', '', net_mac, net_mac_info)
         DbManager.insert_or_update(query)
 
     @staticmethod

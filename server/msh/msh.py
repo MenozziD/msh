@@ -1,10 +1,8 @@
 from webapp3 import WSGIApplication
 from logging import basicConfig, info, exception
 from paste import httpserver
-from module import XmlReader
+from module import XmlReader, execute_os_cmd
 from controller import handle_error
-from subprocess import run, PIPE
-from os import system
 from string import ascii_letters, digits
 from random import choice
 from time import sleep
@@ -20,31 +18,24 @@ def main():
         ip_address = 'localhost'
         port = '65177'
         cmd = 'pgrep node'
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1]
-        if cmd_out == "":
+        response = execute_os_cmd(cmd)
+        if response['cmd_out'] == "":
             cmd = "sudo service oauth start"
-            info("Eseguo comando: %s", cmd)
-            system(cmd)
+            execute_os_cmd(cmd)
         else:
             info("Oauth server is already running")
         cmd = 'pgrep autossh'
-        info("Eseguo comando: %s", cmd)
-        cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-        cmd_out = str(cmd.stdout)[2:-1]
-        if cmd_out == "":
+        response = execute_os_cmd(cmd)
+        if response['cmd_out'] == "":
             internet = False
             while not internet:
                 cmd = "curl -I -X GET http://www.google.com"
-                info("Eseguo comando: %s", cmd)
-                cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-                if cmd.returncode == 0 and str(cmd.stdout)[2:-1].find("200 OK") > 0:
+                response = execute_os_cmd(cmd)
+                if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
                     internet = True
                     info("Connessione internet presente")
                     cmd = "sudo service serveo start"
-                    info("Eseguo comando: %s", cmd)
-                    system(cmd)
+                    execute_os_cmd(cmd)
                 else:
                     info("Attendo 10 secondi...")
                     sleep(10)
@@ -55,7 +46,7 @@ def main():
         info("Server in ascolto su http://%s:%s", ip_address, port)
         config = {
             'webapp3_extras.sessions': {
-                'secret_key': ''.join(choice(ascii_letters + digits) for i in range(36))
+                'secret_key': ''.join(choice(ascii_letters + digits) for _ in range(36))
             }
         }
         app = WSGIApplication([
