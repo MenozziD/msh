@@ -8,9 +8,31 @@ from random import choice
 from time import sleep
 
 
+config = {
+    'webapp3_extras.sessions': {
+        'secret_key': ''.join(choice(ascii_letters + digits) for _ in range(36))
+    }
+}
+app = WSGIApplication([
+    ('/api/net', 'controller.Net'),
+    ('/api/home', 'controller.Home'),
+    ('/api/login', 'controller.Login'),
+    ('/api/user', 'controller.User'),
+    ('/api/upload_arduino', 'controller.UploadArduino'),
+    ('/api/update_last_version', 'controller.UpdateLastVersion'),
+    ('/logout', 'controller.Logout'),
+    ('/favicon.ico', 'controller.Icon'),
+    ('/', 'controller.Index'),
+    (r'/static/(\D+)', 'controller.Static'),
+], config=config, debug=True)
+app.error_handlers[404] = handle_error
+app.error_handlers[405] = handle_error
+app.error_handlers[500] = handle_error
+
+
 def main():
     try:
-        XmlReader()
+        XmlReader("settings.xml")
         basicConfig(
             filename=XmlReader.settings['log']['filename'],
             format=XmlReader.settings['log']['format'],
@@ -44,26 +66,6 @@ def main():
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
         info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")
         info("Server in ascolto su http://%s:%s", ip_address, port)
-        config = {
-            'webapp3_extras.sessions': {
-                'secret_key': ''.join(choice(ascii_letters + digits) for _ in range(36))
-            }
-        }
-        app = WSGIApplication([
-            ('/api/net', 'controller.Net'),
-            ('/api/home', 'controller.Home'),
-            ('/api/login', 'controller.Login'),
-            ('/api/user', 'controller.User'),
-            ('/api/upload_arduino', 'controller.UploadArduino'),
-            ('/api/update_last_version', 'controller.UpdateLastVersion'),
-            ('/logout', 'controller.Logout'),
-            ('/favicon.ico', 'controller.Icon'),
-            ('/', 'controller.Index'),
-            (r'/static/(\D+)', 'controller.Static'),
-        ], config=config, debug=True)
-        app.error_handlers[404] = handle_error
-        app.error_handlers[405] = handle_error
-        app.error_handlers[500] = handle_error
         httpserver.serve(app, host=ip_address, port=port)
     except Exception:
         exception("Exception")

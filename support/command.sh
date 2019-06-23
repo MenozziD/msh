@@ -153,13 +153,16 @@ unzip sonar-scanner.zip
 rm -rf sonar-scanner.zip
 java -jar sonar-scanner-3.3.0.1492/lib/sonar-scanner-cli-3.3.0.1492.jar
 
-# Esecuzione scan sonar
-# Test e coverage dentro alla cartella msh sul raspberry
+# TEST
 sudo pip3 install --trusted-host pypi.python.org pytest
 sudo pip3 install --trusted-host pypi.python.org coverage
-sudo python3 -m coverage erase
-sudo python3 -m coverage run -m pytest --junitxml=test-report.xml
-sudo python3 -m coverage xml -i
+# copiare execute_test.sh e generate_report.sh nella cartella server
+sudo chmod 744 execute_test.sh
+sudo chmod 744 generate_report.sh
+# ESECUZIONE
+sudo ./execute_test.sh
+# GENERARE REPORT
+sudo ./generate_report.sh
 # copiare i file coverage.xml e test-report.xml sul pc locale (windows) nella cartella msh
 # dentro alla cartella msh di windows eseguire
 sonar-scanner

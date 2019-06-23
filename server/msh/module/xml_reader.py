@@ -12,8 +12,8 @@ class XmlReader:
         'critical': CRITICAL
     }
 
-    def __init__(self):
-        xml = minidom.parse('settings.xml')
+    def __init__(self, filename):
+        xml = minidom.parse(filename)
         lingua = xml.getElementsByTagName('lingua')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data

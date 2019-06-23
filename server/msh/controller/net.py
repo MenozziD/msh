@@ -1,7 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, XmlReader, DbManager, set_api_response
-from json import loads
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, XmlReader, DbManager, set_api_response, validate_format
 from netifaces import AF_INET, gateways, ifaddresses
 
 
@@ -13,9 +12,9 @@ class Net(BaseHandler):
         response = {}
         try:
             DbManager()
-            response = Net.check(self.session.get('user'), self.session.get('role'), body)
+            response = Net.check(self.session.get('user'), self.session.get('role'), self.request, body)
             if response['output'] == 'OK':
-                data = loads(body)
+                data = self.request.json
                 type_op = data['tipo_operazione']
                 param = Net.read_param(data)
                 funzioni = {
@@ -37,11 +36,13 @@ class Net(BaseHandler):
                     'cmd': [param['dispositivo'], param['comando']]
                 }
                 response = funzioni[type_op](*parametri[type_op])
-            DbManager.close_db()
+            else:
+                raise Exception(response['output'])
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
         finally:
+            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
@@ -72,10 +73,10 @@ class Net(BaseHandler):
         return param
 
     @staticmethod
-    def check(user, role, body):
+    def check(user, role, request, body):
         response = {}
-        if body != "" and Net.validate_format(body):
-            data = loads(body)
+        if body != "" and validate_format(request):
+            data = request.json
             if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
                 response = Net.check_user(user, role, data['tipo_operazione'])
                 response = Net.check_operation_param(response, data)
@@ -224,14 +225,6 @@ class Net(BaseHandler):
         else:
             response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono codice, tipo, user, password"
         return response
-
-    @staticmethod
-    def validate_format(body):
-        try:
-            loads(body)
-        except ValueError:
-            return False
-        return True
 
     @staticmethod
     def device_list(role):

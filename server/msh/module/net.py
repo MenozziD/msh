@@ -316,7 +316,7 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
         execute_os_cmd(cmd)
         cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
         info("Eseguo comando: %s", cmd)
-        fqbn = execute_os_cmd(cmd, True)['cmd_out'].replace("\n", "").replace("\t", "")
+        fqbn = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
         cmd_compile = 'sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia)
         response = execute_os_cmd(cmd_compile)
         if response['cmd_err'] == '':
@@ -341,7 +341,7 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
         }
         if make_upload and result['result'] == compile_ok:
             cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
-            usb = execute_os_cmd(cmd, True)['cmd_out'].replace("\n", "").replace("\t", "")
+            usb = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
             info("USB: %s", usb)
             if usb != "":
                 cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)

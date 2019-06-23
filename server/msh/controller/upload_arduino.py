@@ -1,7 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
 from json import loads
-from module import compile_and_upload, execute_os_cmd, set_api_response
+from module import compile_and_upload, execute_os_cmd, set_api_response, validate_format
 from urllib import request
 
 
@@ -12,9 +12,9 @@ class UploadArduino(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            response = UploadArduino.check(self.session.get('user'), self.session.get('role'), body)
+            response = UploadArduino.check(self.session.get('user'), self.session.get('role'), self.request, body)
             if response['output'] == 'OK':
-                data = loads(body)
+                data = self.request.json
                 tipo_operazione = data['tipo_operazione']
                 core = ''
                 tipologia = ''
@@ -33,6 +33,8 @@ class UploadArduino(BaseHandler):
                     'tipo': []
                 }
                 response = funzioni[tipo_operazione](*parametri[tipo_operazione])
+            else:
+                raise Exception(response['output'])
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
@@ -40,10 +42,10 @@ class UploadArduino(BaseHandler):
             set_api_response(response, self.response)
 
     @staticmethod
-    def check(user, role, body):
+    def check(user, role, requestt, body):
         response = {}
-        if body != "" and UploadArduino.validate_format(body):
-            data = loads(body)
+        if body != "" and validate_format(requestt):
+            data = requestt.json
             if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo'):
                 response = UploadArduino.check_user(user, role, data['tipo_operazione'])
                 response = UploadArduino.check_upload(response, data)
@@ -85,7 +87,7 @@ class UploadArduino(BaseHandler):
     @staticmethod
     def check_core(data):
         cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        response = execute_os_cmd(cmd, True)
+        response = execute_os_cmd(cmd, check_out=True)
         core_list = []
         for core in response['cmd_out'].split("\n")[1:]:
             if core != '':
@@ -119,14 +121,6 @@ class UploadArduino(BaseHandler):
         return response
 
     @staticmethod
-    def validate_format(body):
-        try:
-            loads(body)
-        except ValueError:
-            return False
-        return True
-
-    @staticmethod
     def upload_code(core, tipologia):
         response = {
             'result_command': compile_and_upload(core, tipologia, make_upload=True, remove_dir=True),
@@ -137,7 +131,7 @@ class UploadArduino(BaseHandler):
     @staticmethod
     def core_list():
         cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        response = execute_os_cmd(cmd, True)
+        response = execute_os_cmd(cmd, check_out=True)
         cores = []
         for core in response['cmd_out'].split("\n")[1:]:
             if core != '':

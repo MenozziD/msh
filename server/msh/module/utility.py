@@ -3,11 +3,13 @@ from module import XmlReader
 from subprocess import run, PIPE, check_output
 from datetime import datetime
 from json import dumps
+from os import system
 
 
-def execute_os_cmd(cmd, check_out=False):
+def execute_os_cmd(cmd, check_out=False, sys=False):
     info("Eseguo comando: %s", cmd)
-    if not check_out:
+    response = {}
+    if not check_out and not sys:
         cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
         cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
         cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
@@ -17,8 +19,11 @@ def execute_os_cmd(cmd, check_out=False):
             'cmd_err': cmd_err
         }
     else:
-        cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
-        response = {'cmd_out': cmd_out}
+        if check_out:
+            cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
+            response = {'cmd_out': cmd_out}
+        else:
+            system(cmd)
     return response
 
 
@@ -29,3 +34,11 @@ def set_api_response(response_payload, response):
     response.write(dumps(response_payload, indent=4, sort_keys=True))
     info("RESPONSE CODE: %s", response.status)
     info("RESPONSE PAYLOAD: %s", response_payload)
+
+
+def validate_format(request):
+    try:
+        request.json
+    except ValueError:
+        return False
+    return True

@@ -1,7 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from json import loads
-from module import DbManager, add_user, delete_user, update_user, set_api_response
+from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format
 
 
 class User(BaseHandler):
@@ -12,9 +11,9 @@ class User(BaseHandler):
         response = {}
         try:
             DbManager()
-            response = User.check(self.session.get('user'), self.session.get('role'), body)
+            response = User.check(self.session.get('user'), self.session.get('role'), self.request, body)
             if response['output'] == 'OK':
-                data = loads(body)
+                data = self.request.json
                 tipo_operazione = data['tipo_operazione']
                 username = None
                 password = None
@@ -38,18 +37,20 @@ class User(BaseHandler):
                     'add': [username, password, role]
                 }
                 response = funzioni[tipo_operazione](*parametri[tipo_operazione])
-            DbManager.close_db()
+            else:
+                raise Exception(response['output'])
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
         finally:
+            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
-    def check(user, role, body):
+    def check(user, role, request, body):
         response = {}
-        if body != "" and User.validate_format(body):
-            data = loads(body)
+        if body != "" and validate_format(request):
+            data = request.json
             if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'update', 'delete', 'add'):
                 response = User.check_user(user, role, data['tipo_operazione'])
                 response = User.check_operation_param(response, data, user, role)
@@ -219,14 +220,6 @@ class User(BaseHandler):
         else:
             response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono role e password"
         return response
-
-    @staticmethod
-    def validate_format(body):
-        try:
-            loads(body)
-        except ValueError:
-            return False
-        return True
 
     @staticmethod
     def user_list(session_user, session_role):

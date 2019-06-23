@@ -1,6 +1,5 @@
 from logging import info, exception
-from json import loads
-from module import DbManager, set_api_response
+from module import DbManager, set_api_response, validate_format
 from controller import BaseHandler
 
 
@@ -14,26 +13,28 @@ class Login(BaseHandler):
         response = {}
         try:
             DbManager()
-            response = Login.check(body)
+            response = Login.check(self.request, body)
             if response['output'] == 'OK':
-                data = loads(body)
+                data = self.request.json
                 username = data['user']
                 user = DbManager.select_tb_user(username)[0]
                 self.session['user'] = username
                 self.session['role'] = user["role"]
                 response['output'] = 'OK'
-            DbManager.close_db()
+            else:
+                raise Exception(response['output'])
         except Exception as e:
             exception("Exception")
             response['output'] = str(e)
         finally:
+            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
-    def check(body):
+    def check(request, body):
         response = {}
-        if body != "" and Login.validate_format(body):
-            data = loads(body)
+        if body != "" and validate_format(request):
+            data = request.json
             response = Login.check_user(data)
             if response['output'] == 'OK':
                 response = Login.check_password(data)
@@ -69,14 +70,6 @@ class Login(BaseHandler):
             else:
                 response['output'] = "Il campo password è obbligatorio"
         return response
-
-    @staticmethod
-    def validate_format(body):
-        try:
-            loads(body)
-        except ValueError:
-            return False
-        return True
 
 
 class Logout(BaseHandler):
