@@ -1,0 +1,11 @@
+open "%1%" -timeout=360
+put %2%\execute_test.sh /home/pi/server/execute_test.sh
+chmod 744 /home/pi/server/execute_test.sh
+cd /home/pi/server
+call ./execute_test.sh
+rm execute_test.sh
+get /home/pi/server/.coverage %3%\.coverage
+get /home/pi/server/test-report.xml %3%\test-report.xml
+rm .coverage
+rm test-report.xml
+exit
