@@ -23,3 +23,24 @@
 - media server
 - comunicazione con alexa
 - Utenti con USER possono esegurie tutti command?
+
+
+Build options changed, rebuilding all
+Alternatives for ESP8266WiFi.h: [ESP8266WiFi@1.0]
+ResolveLibrary(ESP8266WiFi.h)
+  -> candidates: [ESP8266WiFi@1.0]
+Alternatives for ESP8266WebServer.h: [ESP8266WebServer@1.0]
+ResolveLibrary(ESP8266WebServer.h)
+  -> candidates: [ESP8266WebServer@1.0]
+Alternatives for ESP8266mDNS.h: [ESP8266mDNS@1.2]
+ResolveLibrary(ESP8266mDNS.h)
+  -> candidates: [ESP8266mDNS@1.2]
+Alternatives for ArduinoJson.h: [ArduinoJson@6.11.1]
+ResolveLibrary(ArduinoJson.h)
+  -> candidates: [ArduinoJson@6.11.1]
+Alternatives for SimpleDHT.h: [SimpleDHT@1.0.12]
+ResolveLibrary(SimpleDHT.h)
+  -> candidates: [SimpleDHT@1.0.12]
+Sketch uses 320552 bytes (64%) of program storage space. Maximum is 499696 bytes.
+Global variables use 31156 bytes (38%) of dynamic memory, leaving 50764 bytes for local variables. Maximum is 81920 bytes.
+\n

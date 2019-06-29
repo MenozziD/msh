@@ -321,8 +321,8 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
         response = execute_os_cmd(cmd_compile)
         if response['cmd_err'] == '':
             cmd_out_split = response['cmd_out'].split('\n')
-            program_info = cmd_out_split[1]
-            memory_info = cmd_out_split[2]
+            program_info = cmd_out_split[-3]
+            memory_info = cmd_out_split[-2]
             compile_output = {
                 'program_bytes_used': program_info.split("uses ")[1].split(" bytes")[0],
                 'program_percentual_used': program_info.split("(")[1].split(")")[0],
