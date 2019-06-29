@@ -398,6 +398,8 @@ echo "---------- CREAZIONE SETTINGS.XML ----------"
 echo "Creo settings.xml"
 echo "<settings>
 	<lingua>IT</lingua>
+	<path_db>db/system.db</path_db>
+	<path_datastore>../oauth/datastore.js</path_datastore>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
 	<project_id_google_actions>$1</project_id_google_actions>
 	<subdomain_oauth>$OAUTH_DOMAIN</subdomain_oauth>

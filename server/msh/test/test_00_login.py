@@ -43,7 +43,7 @@ class TestLogin(TestCase):
         request = Request.blank('/api/login')
         request.method = 'POST'
         request.body = b'{' \
-                       b'   "user":"test"' \
+                       b'   "user":"xyz"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -54,7 +54,7 @@ class TestLogin(TestCase):
         request = Request.blank('/api/login')
         request.method = 'POST'
         request.body = b'{' \
-                       b'   "user":"sga"' \
+                       b'   "user":"test"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -65,7 +65,7 @@ class TestLogin(TestCase):
         request = Request.blank('/api/login')
         request.method = 'POST'
         request.body = b'{' \
-                       b'   "user":"sga",' \
+                       b'   "user":"test",' \
                        b'   "password":"fdgdf"' \
                        b'}'
         response = request.get_response(app)
@@ -78,8 +78,8 @@ class TestLogin(TestCase):
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
         request.body = b'{' \
-                       b'   "user":"sga",' \
-                       b'   "password":"cr77"' \
+                       b'   "user":"test",' \
+                       b'   "password":"test"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)

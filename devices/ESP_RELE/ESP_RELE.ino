@@ -22,8 +22,8 @@ const char* password = STAPSK;
 
 ESP8266WebServer server(80);
 
-StaticJsonBuffer<200> jsonBuffer;
-JsonObject& root = jsonBuffer.createObject();
+DynamicJsonDocument jsonBuffer(1024);
+
 
 const int GPIO0 = 0;
 
@@ -38,23 +38,23 @@ void handle_CMD() {
   
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
-      root["cmd"] = server.arg(i);
-      if (root["cmd"] == "on" || root["cmd"] == "off" || root["cmd"] == "stato_rele" || root["cmd"] == "toggle")
+      jsonBuffer["cmd"] = server.arg(i);
+      if (jsonBuffer["cmd"] == "on" || jsonBuffer["cmd"] == "off" || jsonBuffer["cmd"] == "stato_rele" || jsonBuffer["cmd"] == "toggle")
         ok=true;
   }
   
   if (ok)
   {
-    if (root["cmd"] == "on")          digitalWrite(GPIO0,LOW);
-    else if (root["cmd"] == "off")    digitalWrite(GPIO0,HIGH);
-    else if (root["cmd"] == "toggle") digitalWrite(GPIO0,not(digitalRead(GPIO0)));
+    if (jsonBuffer["cmd"] == "on")          digitalWrite(GPIO0,LOW);
+    else if (jsonBuffer["cmd"] == "off")    digitalWrite(GPIO0,HIGH);
+    else if (jsonBuffer["cmd"] == "toggle") digitalWrite(GPIO0,not(digitalRead(GPIO0)));
     delay(10);
-    root["output"] = (digitalRead(GPIO0)) ? "OFF" : "ON";
+    jsonBuffer["output"] = (digitalRead(GPIO0)) ? "OFF" : "ON";
   }
   else
-    root["output"] = "ERR";    //Comando non valido
+    jsonBuffer["output"] = "ERR";    //Comando non valido
   
-  root.printTo(jsonOut);
+  serializeJson(jsonBuffer, jsonOut);
   server.send(200, " application/json", jsonOut);
 }
 

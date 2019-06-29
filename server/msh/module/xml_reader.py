@@ -15,6 +15,8 @@ class XmlReader:
     def __init__(self, filename):
         xml = minidom.parse(filename)
         lingua = xml.getElementsByTagName('lingua')[0].firstChild.data
+        path_db = xml.getElementsByTagName('path_db')[0].firstChild.data
+        path_datastore = xml.getElementsByTagName('path_datastore')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data
         subdomain_oauth = xml.getElementsByTagName('subdomain_oauth')[0].firstChild.data
@@ -28,6 +30,8 @@ class XmlReader:
             log['filename'] = None
         XmlReader.settings = {
             'lingua': lingua,
+            'path_db': path_db,
+            'path_datastore': path_datastore,
             'timestamp': timestamp,
             'project_id_google_actions': project_id_google_actions,
             'subdomain_oauth': subdomain_oauth,

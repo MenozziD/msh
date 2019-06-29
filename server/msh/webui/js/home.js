@@ -230,7 +230,12 @@ function user_function(type_op){
         id = type_op.replace('update','');
         type_op = 'update';
         user = $("#username" + id).text();
-        password = $("#psw_user" + id)[0].value;
+        for (var i = 0; i < user_list.length; i++){
+            if (user_list[i]['username'] == user){
+                if ($("#psw_user" + id)[0].value != user_list[i]['password'])
+                    password = $("#psw_user" + id)[0].value;
+            }
+        }
         role = $("#role_user" + id)[0].value;
     }
     if (type_op.search('delete') >= 0){
@@ -262,9 +267,10 @@ function user_function(type_op){
         var body = {
             "tipo_operazione": type_op,
             "username": user,
-            "password": password,
             "role": role
         };
+        if (password != '')
+            body['password'] = password
         $('#errore_user').text("");
         $('#errore_user')[0].classList.remove("d-block");
         $('#errore_user')[0].classList.add("d-none");

@@ -9,7 +9,7 @@ class DbManager:
     
     def __init__(self):
         try:
-            DbManager.db = connect('db/system.db')
+            DbManager.db = connect(XmlReader.settings['path_db'])
         except Error:
             raise
     

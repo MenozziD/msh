@@ -26,8 +26,8 @@ const char* password = STAPSK;
 
 ESP8266WebServer server(80);
 
-StaticJsonBuffer<200> jsonBuffer;
-JsonObject& root = jsonBuffer.createObject();
+DynamicJsonDocument jsonBuffer(1024);
+
 
 #define GPIO_DHT11 2
 #define DHTLIB_ERROR_CHECKSUM 6
@@ -53,8 +53,8 @@ void handle_CMD() {
   
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
-      root["cmd"] = server.arg(i);
-      if (root["cmd"] == "read_dht")
+      jsonBuffer["cmd"] = server.arg(i);
+      if (jsonBuffer["cmd"] == "read_dht")
         ok=true;
   }
   
@@ -65,26 +65,26 @@ void handle_CMD() {
     humi =float(humidity);
     switch (chk){
       case DHTLIB_OK:  
-                root["output"] = String(temp)+"°C;"+String(humi)+"%";
+                jsonBuffer["output"] = String(temp)+"°C;"+String(humi)+"%";
                 break;
       case DHTLIB_ERROR_CHECKSUM:
-                root["output"] ="ERR Checksum error";  
+                jsonBuffer["output"] ="ERR Checksum error";  
                 break;
       case DHTLIB_ERROR_TIMEOUT: 
-                root["output"] ="ERR Time out error"; 
+                jsonBuffer["output"] ="ERR Time out error"; 
                 break;
       case DHTLIB_ERROR_CONNECT: 
-                root["output"] ="ERR Connection error"; 
+                jsonBuffer["output"] ="ERR Connection error"; 
                 break;                
       default: 
-                root["output"] ="ERR Unknown error"; 
+                jsonBuffer["output"] ="ERR Unknown error"; 
                 break;
     }
   }  
   else
-    root["output"] = "ERR";    //Comando non valido
+    jsonBuffer["output"] = "ERR";    //Comando non valido
   
-  root.printTo(jsonOut);
+  serializeJson(jsonBuffer, jsonOut);
   server.send(200, " application/json", jsonOut);
 }
 

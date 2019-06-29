@@ -97,7 +97,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"sga"' \
+                       b'   "username":"test"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -110,7 +110,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"test"' \
+                       b'   "username":"to_delete"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -123,7 +123,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"test",' \
+                       b'   "username":"to_delete",' \
                        b'   "role":"dfsf"' \
                        b'}'
         response = request.get_response(app)
@@ -137,7 +137,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"test",' \
+                       b'   "username":"to_delete",' \
                        b'   "role":"USER"' \
                        b'}'
         response = request.get_response(app)
@@ -151,7 +151,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"test",' \
+                       b'   "username":"to_delete",' \
                        b'   "role":"USER",' \
                        b'   "password":"ss"' \
                        b'}'
@@ -166,9 +166,9 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"add",' \
-                       b'   "username":"test",' \
+                       b'   "username":"to_delete",' \
                        b'   "role":"USER",' \
-                       b'   "password":"test"' \
+                       b'   "password":"to_delete"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -206,7 +206,7 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"delete",' \
-                       b'   "username":"sga"' \
+                       b'   "username":"admin"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -219,8 +219,103 @@ class TestUser(TestCase):
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
         request.body = b'{' \
                        b'   "tipo_operazione":"delete",' \
-                       b'   "username":"test"' \
+                       b'   "username":"to_delete"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
+
+    def test_u_payload_with_operazione_update_with_username_exist_no_data_logged_admin(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"test"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'Nessun campo da aggiornare, i possibili campi da aggiornare sono role e password')
+
+    def test_v_payload_with_operazione_update_with_username_exist_with_data_logged_user(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"test",' \
+                       b'   "role":"ADMIN"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'Solo gli ADMIN possono modificare i ruoli')
+
+    def test_z_payload_with_operazione_update_with_username_exist_with_data_logged_admin(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"test",' \
+                       b'   "role":"ADMIN"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"test",' \
+                       b'   "role":"USER"' \
+                       b'}'
+        request.get_response(app)
+
+    def test_za_payload_with_operazione_update_password_ko_with_username_exist_with_data_logged_admin(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"test",' \
+                       b'   "password":"test1"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'Solo l\'utente propietario può modificare la sua password')
+
+    def test_zb_payload_with_operazione_update_password_ok_with_username_exist_with_data_logged_admin(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"admin",' \
+                       b'   "password":"admin1"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
+        request.body = b'{' \
+                       b'   "tipo_operazione":"update",' \
+                       b'   "username":"admin",' \
+                       b'   "password":"admin"' \
+                       b'}'
+        request.get_response(app)
+
+    def test_zc_payload_with_operazione_list_logged_user(self):
+        read_xml()
+        request = Request.blank('/api/user')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"list"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
+
+

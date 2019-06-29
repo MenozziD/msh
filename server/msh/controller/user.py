@@ -176,12 +176,10 @@ class User(BaseHandler):
     @staticmethod
     def check_user_for_role(data, session_role):
         response = {}
-        to_update = DbManager.select_tb_user(data['username'])[0]
-        if to_update['role'] != data['role'] and session_role == 'ADMIN':
+        if session_role == 'ADMIN':
             response = User.check_one_admin(data, to_modify=True)
         else:
-            if session_role != 'ADMIN':
-                response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
+            response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
         return response
 
     @staticmethod
@@ -204,12 +202,10 @@ class User(BaseHandler):
     @staticmethod
     def check_user_for_password(data, session_user):
         response = {}
-        to_update = DbManager.select_tb_user(data['username'])[0]
-        if to_update['password'] != data['password']:
-            if session_user == data['username']:
-                response['output'] = 'OK'
-            else:
-                response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+        if session_user == data['username']:
+            response['output'] = 'OK'
+        else:
+            response['output'] = 'Solo l\'utente propietario può modificare la sua password'
         return response
 
     @staticmethod

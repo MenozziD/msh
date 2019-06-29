@@ -7,6 +7,8 @@ def test_xml_reader_log_file():
     f = open("settings_log_file.xml", "w")
     f.write("<settings>"
             "   <lingua>IT</lingua>"
+            "   <path_db>path_db</path_db>"
+            "   <path_datastore>path_datastore</path_datastore>"
             "   <timestamp>%Y-%m-%d %H:%M:%S</timestamp>"
             "   <project_id_google_actions>fake_project</project_id_google_actions>"
             "   <subdomain_oauth>fake_oauth</subdomain_oauth>"
