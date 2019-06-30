@@ -274,31 +274,37 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_scan():
-        inseriti = 0
-        aggiornati = 0
-        db_devices = DbManager.select_tb_net_device()
         ip_subnet = Net.calculate_start()
         result = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
         response = result
         if response['output'] == 'OK':
-            for device in result['devices']:
-                trovato = False
-                for db_device in db_devices:
-                    if device['net_mac'] == db_device['net_mac']:
-                        DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
-                        trovato = True
-                        aggiornati = aggiornati + 1
-                        break
-                if not trovato:
-                    trovato = Net.found_duplicate_code(device)
-                    if trovato:
-                        device['net_code'] = device['net_mac']
-                    DbManager.insert_tb_net_device(device['net_code'], device['net_ip'], device['net_mac'], device['net_mac_info'])
-                    inseriti = inseriti + 1
-            Net.update_status_if_not_find(db_devices, result)
-            response['find_device'] = str(len(result['devices']))
-            response['new_device'] = str(inseriti)
-            response['updated_device'] = str(aggiornati)
+            response = Net.insert_update_device(result)
+        return response
+
+    @staticmethod
+    def insert_update_device(result):
+        response = result
+        inseriti = 0
+        aggiornati = 0
+        db_devices = DbManager.select_tb_net_device()
+        for device in result['devices']:
+            trovato = False
+            for db_device in db_devices:
+                if device['net_mac'] == db_device['net_mac']:
+                    DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
+                    trovato = True
+                    aggiornati = aggiornati + 1
+                    break
+            if not trovato:
+                trovato = Net.found_duplicate_code(device)
+                if trovato:
+                    device['net_code'] = device['net_mac']
+                DbManager.insert_tb_net_device(device['net_code'], device['net_ip'], device['net_mac'], device['net_mac_info'])
+                inseriti = inseriti + 1
+        Net.update_status_if_not_find(db_devices, result)
+        response['find_device'] = str(len(result['devices']))
+        response['new_device'] = str(inseriti)
+        response['updated_device'] = str(aggiornati)
         return response
 
     @staticmethod

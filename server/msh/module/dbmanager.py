@@ -8,17 +8,11 @@ class DbManager:
     db = None
     
     def __init__(self):
-        try:
-            DbManager.db = connect(XmlReader.settings['path_db'])
-        except Error:
-            raise
+        DbManager.db = connect(XmlReader.settings['path_db'])
     
     @staticmethod
     def close_db():
-        try:
-            DbManager.db.close()
-        except Error:
-            raise
+        DbManager.db.close()
 
     @staticmethod
     def select(query):

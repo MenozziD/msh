@@ -8,9 +8,8 @@ from module import execute_os_cmd
 
 def cmd_ping(ip, pacchetti=3):
     ping_ok = 0
-    ping_err = -1
+    ping_exception = -1
     ping_fail = 1
-    ping_exception = 2
     result = {}
     try:
         result['ip'] = ip
@@ -18,20 +17,18 @@ def cmd_ping(ip, pacchetti=3):
         response = execute_os_cmd(cmd)
         if response['cmd_err'] == "":
             result['cmd_output'] = response['cmd_out']
-            cmd_out = response['cmd_out'].split("\n")
-            cmd_out = cmd_out[len(cmd_out) - 3].split(", ")
-            result['pacchetti_lost'] = cmd_out[2].split(" ")[0]
-            result['pacchetti_tx'] = cmd_out[0].split(" ")[0]
-            result['pacchetti_rx'] = cmd_out[1].split(" ")[0]
-            result['tempo'] = cmd_out[3].split(" ")[1]
+            cmd_out = response['cmd_out'].split('ping statistics ---\n')[1]
+            result['pacchetti_lost'] = cmd_out.split(" packet loss,")[0].split("received, ")[1]
+            result['pacchetti_tx'] = cmd_out.split(" packets transmitted")[0]
+            result['pacchetti_rx'] = cmd_out.split(" received,")[0].split(", ")[1]
+            result['tempo'] = cmd_out.split(", time ")[1].split("\n")[0]
             if result['pacchetti_lost'] == '0%':
                 result['result'] = ping_ok
             else:
                 result['result'] = ping_fail
+            result['output'] = 'OK'
         else:
-            result['cmd_output'] = response['cmd_err']
-            result['result'] = ping_err
-        result['output'] = 'OK'
+            raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = ping_exception
@@ -128,9 +125,8 @@ def read_mac(row, result):
 
 def cmd_pcwin_shutdown(ip, usr, psw):
     pcwin_off_ok = 0
-    pcwin_off_err = -1
+    pcwin_off_exception = -1
     pcwin_off_fail = 1
-    pcwin_off_exception = 2
     result = {
         'ip': ip,
         'result': 0,
@@ -147,10 +143,9 @@ def cmd_pcwin_shutdown(ip, usr, psw):
                 result['result'] = pcwin_off_ok
             else:
                 result['result'] = pcwin_off_fail
+            result['output'] = 'OK'
         else:
-            result['cmd_output'] = response['cmd_err']
-            result['result'] = pcwin_off_err
-        result['output'] = 'OK'
+            raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = pcwin_off_exception
@@ -161,9 +156,8 @@ def cmd_pcwin_shutdown(ip, usr, psw):
 
 def cmd_wakeonlan(mac):
     wol_ok = 0
-    wol_err = -1
     wol_fail = 1
-    wol_exception = 2
+    wol_exception = -1
     result = {}
     try:
         result['mac'] = mac
@@ -176,10 +170,9 @@ def cmd_wakeonlan(mac):
                 result['result'] = wol_ok
             else:
                 result['result'] = wol_fail
+            result['output'] = 'OK'
         else:
-            result['cmd_output'] = response['cmd_err']
-            result['result'] = wol_err
-        result['output'] = 'OK'
+            raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = wol_exception
@@ -293,13 +286,10 @@ def cmd_esp(ip, command):
         return result
 
 
-def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
+def compile_arduino(core, tipologia):
     result = {}
     compile_ok = 1
     compile_ko = 2
-    compile_ok_upload_ko = 3
-    compile_ok_upload_ok = 4
-    exception_error = 5
     try:
         cmd = 'mkdir %s' % tipologia
         execute_os_cmd(cmd)
@@ -326,46 +316,53 @@ def compile_and_upload(core, tipologia, make_upload=False, remove_dir=False):
                 'memory_bytes_free': memory_info.split("leaving ")[1].split(" bytes")[0],
                 'memory_bytes_total': memory_info.split("Maximum is ")[1].split(" bytes")[0]
             }
+            result['compile_output'] = compile_output
             result['result'] = compile_ok
+            result['output'] = 'OK'
         else:
-            compile_output = response['cmd_err']
-            result['result'] = compile_ko
-        cmd_output = {
-            'compile_output': compile_output
-        }
-        if make_upload and result['result'] == compile_ok:
-            cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
-            usb = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
-            info("USB: %s", usb)
-            if usb != "":
-                cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)
-                response = execute_os_cmd(cmd_upload)
-                if response['cmd_err'] == "":
-                    cmd_out = response['cmd_out'].replace("\\r", "")
-                    upload_output = {
-                        'porta_seriale': cmd_out.split("Serial port ")[1].split("\n")[0],
-                        'chip': cmd_out.split("Chip is ")[1].split("\n")[0],
-                        'mac_addres': cmd_out.split("MAC: ")[1].split("\n")[0],
-                        'byte_write': cmd_out.split("Wrote ")[1].split(" bytes")[0],
-                        'byte_write_compressed': cmd_out.split("Wrote ")[1].split(" compressed)")[0].split("(")[0],
-                        'time': cmd_out.split(" (effective")[0].split("compressed) at ")[1].split(" in ")[1]
-                    }
-                    cmd_output['upload_output'] = upload_output
-                    result['result'] = compile_ok_upload_ok
-                else:
-                    cmd_output['upload_output'] = response['cmd_err']
-                    result['result'] = compile_ok_upload_ko
-            else:
-                cmd_output['upload_output'] = 'Nessun dispositivo collegato'
-                result['result'] = compile_ok_upload_ko
-        if remove_dir:
-            cmd = 'sudo rm -rf %s' % tipologia
-            execute_os_cmd(cmd)
-        result['cmd_output'] = cmd_output
-        result['output'] = 'OK'
+            raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
-        result['result'] = exception_error
+        result['result'] = compile_ko
+        result['output'] = str(e)
+    finally:
+        return result
+
+
+def upload_arduino(core, tipologia):
+    upload_ko = 1
+    upload_ok = 2
+    result = {}
+    try:
+        cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
+        info("Eseguo comando: %s", cmd)
+        fqbn = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
+        cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
+        usb = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
+        info("USB: %s", usb)
+        if usb != "":
+            cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)
+            response = execute_os_cmd(cmd_upload)
+            if response['cmd_err'] == "":
+                cmd_out = response['cmd_out'].replace("\\r", "")
+                upload_output = {
+                    'porta_seriale': cmd_out.split("Serial port ")[1].split("\n")[0],
+                    'chip': cmd_out.split("Chip is ")[1].split("\n")[0],
+                    'mac_addres': cmd_out.split("MAC: ")[1].split("\n")[0],
+                    'byte_write': cmd_out.split("Wrote ")[1].split(" bytes")[0],
+                    'byte_write_compressed': cmd_out.split("Wrote ")[1].split(" compressed)")[0].split("(")[0],
+                    'time': cmd_out.split(" (effective")[0].split("compressed) at ")[1].split(" in ")[1]
+                }
+                result['upload_output'] = upload_output
+                result['result'] = upload_ok
+                result['output'] = 'OK'
+            else:
+                raise Exception(response['cmd_err'])
+        else:
+            raise Exception('Nessun dispositivo collegato')
+    except Exception as e:
+        exception("Exception")
+        result['result'] = upload_ko
         result['output'] = str(e)
     finally:
         return result

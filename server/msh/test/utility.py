@@ -36,3 +36,8 @@ def simulate_os_command(command):
 
 def read_xml():
     XmlReader("settings_test.xml")
+
+
+def read_xml_prod():
+    XmlReader("settings_test.xml")
+    XmlReader.settings['ambiente'] = 'PROD'

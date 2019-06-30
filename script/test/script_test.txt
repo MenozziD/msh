@@ -15,5 +15,6 @@ rm test-report.xml
 rm ./msh/create.sql
 rm ./oauth/datastore_test.js
 rm ./msh/mock_so.json
-rm .msh/settings_test.xml
+rm ./msh/settings_test.xml
+rm ./msh/command_simulate.json
 exit

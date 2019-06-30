@@ -1,27 +1,82 @@
 {
+	"arduino-cli-board-listall": {
+		"return_code": "0",
+		"cmd_out": "Board Name \n4D Systems gen4 IoD Range \nAdafruit Feather HUZZAH ESP8266 \nAmperka WiFi Slot \nArduino \nDigistump Oak \nESPDuino (ESP-13 Module) \nESPectro Core \nESPino (ESP-12 Module) \nESPresso Lite 1.0 \nESPresso Lite 2.0 \nGeneric ESP8266 Module \nGeneric ESP8285 Module \nInvent One \nLOLIN(WEMOS) D1 R2 & mini \nLOLIN(WEMOS) D1 mini Lite \nLOLIN(WEMOS) D1 mini Pro \nNodeMCU 0.9 (ESP-12 Module) \nNodeMCU 1.0 (ESP-12E Module) \nOlimex MOD-WIFI-ESP8266(-DEV) \nPhoenix 1.0 \nPhoenix 2.0 \nSeeed Wio Link \nSparkFun ESP8266 Thing \nSparkFun ESP8266 Thing Dev \nSweetPea ESP-210 \nThaiEasyElec's ESPino \nWeMos D1 R1 \nWiFiduino \nWifInfo \nXinaBox CW01 \n",
+		"cmd_err": ""
+	},
 	"arduino-cli-compile-ok": {
 		"return_code": "0",
-		"cmd_out": "Build options changed, rebuilding all\nAlternatives for ESP8266WiFi.h: [ESP8266WiFi@1.0]\nResolveLibrary(ESP8266WiFi.h)\n-> candidates: [ESP8266WiFi@1.0]\nAlternatives for ESP8266WebServer.h: [ESP8266WebServer@1.0]\nResolveLibrary(ESP8266WebServer.h)\n-> candidates: [ESP8266WebServer@1.0]\nAlternatives for ESP8266mDNS.h: [ESP8266mDNS@1.2]\nResolveLibrary(ESP8266mDNS.h)\n-> candidates: [ESP8266mDNS@1.2]\nAlternatives for ArduinoJson.h: [ArduinoJson@6.11.1]\nResolveLibrary(ArduinoJson.h)\n-> candidates: [ArduinoJson@6.11.1]\nAlternatives for SimpleDHT.h: [SimpleDHT@1.0.12]\nResolveLibrary(SimpleDHT.h)\n-> candidates: [SimpleDHT@1.0.12]\nSketch uses 320552 bytes (64%) of program storage space. Maximum is 499696 bytes.\nGlobal variables use 31156 bytes (38%) of dynamic memory, leaving 50764 bytes for local variables. Maximum is 81920 bytes.\n",
+		"cmd_out": "Board Name \ncore_test \nBuild options changed, rebuilding all\nAlternatives for ESP8266WiFi.h: [ESP8266WiFi@1.0]\nResolveLibrary(ESP8266WiFi.h)\n-> candidates: [ESP8266WiFi@1.0]\nAlternatives for ESP8266WebServer.h: [ESP8266WebServer@1.0]\nResolveLibrary(ESP8266WebServer.h)\n-> candidates: [ESP8266WebServer@1.0]\nAlternatives for ESP8266mDNS.h: [ESP8266mDNS@1.2]\nResolveLibrary(ESP8266mDNS.h)\n-> candidates: [ESP8266mDNS@1.2]\nAlternatives for ArduinoJson.h: [ArduinoJson@6.11.1]\nResolveLibrary(ArduinoJson.h)\n-> candidates: [ArduinoJson@6.11.1]\nAlternatives for SimpleDHT.h: [SimpleDHT@1.0.12]\nResolveLibrary(SimpleDHT.h)\n-> candidates: [SimpleDHT@1.0.12]\nSketch uses 320552 bytes (64%) of program storage space. Maximum is 499696 bytes.\nGlobal variables use 31156 bytes (38%) of dynamic memory, leaving 50764 bytes for local variables. Maximum is 81920 bytes.\n",
 		"cmd_err": ""
 	},
 	"arduino-cli-compile-ko": {
 		"return_code": "0",
-		"cmd_out": "",
+		"cmd_out": "Board Name \ncore_test \n",
 		"cmd_err": "Errore compilazione"
 	},
-	"arduino-cli-board-listall": {
+	"arduino-cli-upload-ok": {
 		"return_code": "0",
-		"cmd_out": "Board Name\n4D Systems gen4 IoD Range\nAdafruit Feather HUZZAH ESP8266\nAmperka WiFi Slot\nArduino\nDigistump Oak\nESPDuino (ESP-13 Module)\nESPectro Core\nESPino (ESP-12 Module)\nESPresso Lite 1.0\nESPresso Lite 2.0\nGeneric ESP8266 Module\nGeneric ESP8285 Module\nInvent One\nLOLIN(WEMOS) D1 R2 & mini\nLOLIN(WEMOS) D1 mini Lite\nLOLIN(WEMOS) D1 mini Pro\nNodeMCU 0.9 (ESP-12 Module)\nNodeMCU 1.0 (ESP-12E Module)\nOlimex MOD-WIFI-ESP8266(-DEV)\nPhoenix 1.0\nPhoenix 2.0\nSeeed Wio Link\nSparkFun ESP8266 Thing\nSparkFun ESP8266 Thing Dev\nSweetPea ESP-210\nThaiEasyElec's ESPino\nWeMos D1 R1\nWiFiduino\nWifInfo\nXinaBox CW01\n",
+		"cmd_out": "Board Name \ncore_test \nNo new serial port detected.\nesptool.py v2.6\n2.6\nesptool.py v2.6\nSerial port /dev/ttyUSB0\nConnecting....\nChip is ESP8266EX\nFeatures: WiFi\nMAC: 68:c6:3a:e9:4a:67\nUploading stub...\nRunning stub...\nStub running...\nConfiguring flash size...\nAuto-detected Flash size: 1MB\nFlash params set to 0x0320\nCompressed 261840 bytes to 191241...\n\\rWriting at 0x00000000... (8 %)\\rWriting at 0x00004000... (16 %)\\rWriting at 0x00008000... (25 %)\\rWriting at 0x0000c000... (33 %)\\rWriting at 0x00010000... (41 %)\\rWriting at 0x00014000... (50 %)\\rWriting at 0x00018000... (58 %)\\rWriting at 0x0001c000... (66 %)\\rWriting at 0x00020000... (75 %)\\rWriting at 0x00024000... (83 %)\\rWriting at 0x00028000... (91 %)\\rWriting at 0x0002c000... (100 %)\\rWrote 261840 bytes (191241 compressed) at 0x00000000 in 20.9 seconds (effective 100.0 kbit/s)...\nHash of data verified.\n\nLeaving...\nHard resetting via RTS pin...\n",
 		"cmd_err": ""
+	},
+	"arduino-cli-upload-ko": {
+		"return_code": "0",
+		"cmd_out": "Board Name \ncore_test \n",
+		"cmd_err": "Errore upload"
 	},
 	"scan-ok": {
 		"return_code": "0",
-		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for 192.168.1.14\nHost is up (0.0016s latency).\nMAC Address: F0:79:59:2C:A9:8B (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: C0:EE:FB:FB:3C:C8 (OnePlus Tech (Shenzhen))\nNmap scan report for Google-Home-Mini.home (192.168.1.122)\nHost is up (0.098s latency).\nMAC Address: 44:07:0B:6F:C0:91 (Unknown)\nNmap scan report for raspberrypi.home (192.168.1.106)\nHost is up.\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
+		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for 192.168.1.14\nHost is up (0.0016s latency).\nMAC Address: F0:79:59:2C:A9:8B (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: A2:FF:AA:BB:00:33 (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nMAC Address: 99:FF:AA:BB:00:33 (device_test_duplicato)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: C0:EE:FB:FB:3C:C8 (OnePlus Tech (Shenzhen))\nNmap scan report for Google-Home-Mini.home (192.168.1.122)\nHost is up (0.098s latency).\nMAC Address: 44:07:0B:6F:C0:91 (Unknown)\nNmap scan report for raspberrypi.home (192.168.1.106)\nHost is up.\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
 		"cmd_err": ""
 	},
 	"scan-ko": {
 		"return_code": "0",
 		"cmd_out": "",
 		"cmd_err": "Errore netscan"
+	},
+	"ping-ok": {
+		"return_code": "0",
+		"cmd_out": "PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.\n64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.65 ms\n64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=5.32 ms\n64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=5.60 ms\n\n--- 192.168.1.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.656/4.195/5.603/1.798 ms",
+		"cmd_err": ""
+	},
+	"ping-fail": {
+		"return_code": "0",
+		"cmd_out": "PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.\n64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.65 ms\n64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=5.32 ms\n64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=5.60 ms\n\n--- 192.168.1.1 ping statistics ---\n3 packets transmitted, 3 received, 20% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.656/4.195/5.603/1.798 ms",
+		"cmd_err": ""
+	},
+	"ping-ko": {
+		"return_code": "0",
+		"cmd_out": "",
+		"cmd_err": "Errore ping"
+	},
+	"pcwin-on-ok": {
+		"return_code": "0",
+		"cmd_out": "Sending magic packet",
+		"cmd_err": ""
+	},
+	"pcwin-on-fail": {
+		"return_code": "0",
+		"cmd_out": "No sending magic packet",
+		"cmd_err": ""
+	},
+	"pcwin-on-ko": {
+		"return_code": "0",
+		"cmd_out": "",
+		"cmd_err": "Errore pcwin on"
+	},
+	"pcwin-off-ok": {
+		"return_code": "0",
+		"cmd_out": "esito succeeded",
+		"cmd_err": ""
+	},
+	"pcwin-off-fail": {
+		"return_code": "0",
+		"cmd_out": "esito failure",
+		"cmd_err": ""
+	},
+	"pcwin-off-ko": {
+		"return_code": "0",
+		"cmd_out": "",
+		"cmd_err": "Errore pcwin off"
 	}
 }

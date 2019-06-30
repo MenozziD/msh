@@ -1,7 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
 from json import loads
-from module import compile_and_upload, execute_os_cmd, set_api_response, validate_format
+from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format
 from urllib import request
 
 
@@ -24,11 +24,13 @@ class UploadArduino(BaseHandler):
                     tipologia = data['tipologia']
                 funzioni = {
                     'upload': UploadArduino.upload_code,
+                    'compile': UploadArduino.compile_code,
                     'core': UploadArduino.core_list,
                     'tipo': UploadArduino.tipo_list
                 }
                 parametri = {
                     'upload': [core, tipologia],
+                    'compile': [core, tipologia],
                     'core': [],
                     'tipo': []
                 }
@@ -46,12 +48,12 @@ class UploadArduino(BaseHandler):
         response = {}
         if body != "" and validate_format(requestt):
             data = requestt.json
-            if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo'):
+            if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo', 'compile'):
                 response = UploadArduino.check_user(user, role, data['tipo_operazione'])
-                response = UploadArduino.check_upload(response, data)
+                response = UploadArduino.check_upload_compile(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, core, tipo'
+                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, compile, core, tipo'
                 else:
                     response['output'] = 'Il campo tipo_operazione è obbligatorio'
         else:
@@ -62,8 +64,8 @@ class UploadArduino(BaseHandler):
         return response
 
     @staticmethod
-    def check_upload(response, data):
-        if response['output'] == 'OK' and data['tipo_operazione'] == 'upload':
+    def check_upload_compile(response, data):
+        if response['output'] == 'OK' and data['tipo_operazione'] in ('upload', 'compile'):
             response = UploadArduino.check_core(data)
             if response['output'] == 'OK':
                 response = UploadArduino.check_tipologia(data)
@@ -73,7 +75,7 @@ class UploadArduino(BaseHandler):
     def check_user(user, role, tipo_operazione):
         response = {}
         if user is not None:
-            if tipo_operazione in 'upload':
+            if tipo_operazione in ('upload', 'compile'):
                 if role != 'ADMIN':
                     response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
                 else:
@@ -122,11 +124,11 @@ class UploadArduino(BaseHandler):
 
     @staticmethod
     def upload_code(core, tipologia):
-        response = {
-            'result_command': compile_and_upload(core, tipologia, make_upload=True, remove_dir=True),
-            'output': 'OK'
-        }
-        return response
+        return upload_arduino(core, tipologia)
+
+    @staticmethod
+    def compile_code(core, tipologia):
+        return compile_arduino(core, tipologia)
 
     @staticmethod
     def core_list():

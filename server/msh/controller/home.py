@@ -1,6 +1,6 @@
 from controller import BaseHandler
-from logging import info
-from json import dumps, loads
+from logging import info, exception
+from module import set_api_response, validate_format
 from module import cmd_esp
 
 
@@ -9,19 +9,38 @@ class Home(BaseHandler):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
-        data = loads(body)
-        intent = data['inputs'][0]['intent']
-        funzioni = {
-            "action.devices.SYNC": Home.sync,
-            "action.devices.QUERY": Home.query,
-            "action.devices.EXECUTE": Home.execute
-        }
-        response = funzioni[intent](data)
-        self.response.headers.add('Access-Control-Allow-Origin', '*')
-        self.response.headers.add('Content-Type', 'application/json')
-        self.response.write(dumps(response, indent=4, sort_keys=True))
-        info("RESPONSE CODE: %s", self.response.status)
-        info("RESPONSE PAYLOAD: %s", response)
+        response = {}
+        try:
+            response = Home.check(self.request, body)
+            if response['output'] == 'OK':
+                data = self.request.json
+                intent = data['inputs'][0]['intent']
+                funzioni = {
+                    "action.devices.SYNC": Home.sync,
+                    "action.devices.QUERY": Home.query,
+                    "action.devices.EXECUTE": Home.execute
+                }
+                response = funzioni[intent](data)
+                response['output'] = 'OK'
+            else:
+                raise Exception(response['output'])
+        except Exception as e:
+            exception("Exception")
+            response['output'] = str(e)
+        finally:
+            set_api_response(response, self.response)
+
+    @staticmethod
+    def check(request, body):
+        response = {}
+        if body != "" and validate_format(request):
+            response['output'] = 'OK'
+        else:
+            if body != "":
+                response['output'] = "Il payload deve essere in formato JSON"
+            else:
+                response['output'] = "Questa API ha bisogno di un payload"
+        return response
 
     @staticmethod
     def sync(data):
