@@ -2,6 +2,7 @@ from msh import app
 from unittest import TestCase
 from webapp3 import Request
 from test import simulate_login_admin, simulate_login_user, read_xml, simulate_os_command
+from module import upload_arduino
 
 
 class TestUploadArduino(TestCase):
@@ -205,3 +206,9 @@ class TestUploadArduino(TestCase):
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Errore upload')
+
+    def test_upload_arduino_no_usb(self):
+        read_xml()
+        simulate_os_command("no-usb")
+        response = upload_arduino('core', 'tipologia')
+        self.assertEqual(response['output'], 'Nessun dispositivo collegato')

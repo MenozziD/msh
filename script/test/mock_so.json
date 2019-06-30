@@ -78,5 +78,10 @@
 		"return_code": "0",
 		"cmd_out": "",
 		"cmd_err": "Errore pcwin off"
+	},
+	"no-usb": {
+		"return_code": "0",
+		"cmd_out": "",
+		"cmd_err": ""
 	}
 }
