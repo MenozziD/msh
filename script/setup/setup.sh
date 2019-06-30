@@ -163,13 +163,13 @@ sudo rm -f arduino-cli.tar.bz2 1>/dev/null
 echo "Sposto arduino-cli in /usr/bin/arduino-cli"
 sudo mv arduino-cli-* /usr/bin/arduino-cli 1>/dev/null
 echo "Creo configurazione per arduino-cli"
-sudo arduino-cli config init 1>/dev/null
-echo "proxy_type: auto
+sudo su -c "arduino-cli config init 1>/dev/null"
+sudo su -c "echo \"proxy_type: auto
 sketchbook_path: /root/Arduino
 arduino_data: /root/.arduino15
 board_manager:
   additional_urls:
-    - http://arduino.esp8266.com/stable/package_esp8266com_index.json" >  /root/.arduino15/arduino-cli.yaml
+    - http://arduino.esp8266.com/stable/package_esp8266com_index.json\" >  /root/.arduino15/arduino-cli.yaml"
 echo "Eseguo arduino-cli core update-index"
 sudo arduino-cli core update-index 1>/dev/null
 echo "Installo librerie Arduino per compilare"

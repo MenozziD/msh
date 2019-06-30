@@ -274,7 +274,9 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_scan():
-        ip_subnet = Net.calculate_start()
+        ip = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'].split('.')
+        subnet = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask'].split('.')
+        ip_subnet = Net.calculate_start(ip, subnet)
         result = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
         response = result
         if response['output'] == 'OK':
@@ -318,9 +320,7 @@ class Net(BaseHandler):
         return trovato
 
     @staticmethod
-    def calculate_start():
-        ip = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'].split('.')
-        subnet = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask'].split('.')
+    def calculate_start(ip, subnet):
         stri = ''
         for s in subnet:
             stri = stri + '{0:08b}'.format(int(s))

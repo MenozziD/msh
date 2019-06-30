@@ -1,6 +1,7 @@
 from msh import app
 from unittest import TestCase
 from webapp3 import Request
+from controller import Net
 from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user
 
 
@@ -460,3 +461,15 @@ class TestNet(TestCase):
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore pcwin off")
+
+    def test_calculate_start_ip_one(self):
+        ip = ['192', '168', '1', '1']
+        subnet = ['255', '255', '0', '0']
+        response = Net.calculate_start(ip, subnet)
+        self.assertEqual(response['ip'].split('.'), ['192', '168', '0', '1'])
+
+    def test_calculate_start_ip_two(self):
+        ip = ['192', '168', '1', '1']
+        subnet = ['255', '0', '0', '0']
+        response = Net.calculate_start(ip, subnet)
+        self.assertEqual(response['ip'].split('.'), ['192', '0', '0', '1'])
