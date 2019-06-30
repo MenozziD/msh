@@ -18,29 +18,31 @@ function carica(){
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
- function drop_type(){
-    $('#type' + id).text($(this).text());
-    $("#type" + id).val($(this).text());
-    must_save(id);
-}
-
 function net(type_op){
-    var code = '';
-    var type = '';
-    var mac = '';
-    var user = '';
-    var password = '';
-    var id = '';
-    var dispositivo = '';
-    var comando = '';
+    var code = null;
+    var type = null;
+    var mac = null;
+    var user = null;
+    var password = null;
+    var id = null;
+    var dispositivo = null;
+    var comando = null;
     if (type_op.search('update') >=0){
         id = type_op.replace('update','');
-        type_op = 'update';
-        type = $("#type" + id)[0].value;
-        code = $("#code" + id)[0].value;
         mac = $("#mac" + id).text();
-        user = $("#usr" + id)[0].value;
-        password = $("#psw" + id)[0].value;
+        type_op = 'update';
+        for (var i = 0; i < device_net_list.length; i++){
+            if (device_net_list[i]['net_mac'] == mac){
+                if ($("#type" + id)[0].value != device_net_list[i]['net_type'])
+                    type = $("#type" + id)[0].value;
+                if ($("#code" + id)[0].value != device_net_list[i]['net_code'])
+                    code = $("#code" + id)[0].value;
+                if ($("#usr" + id)[0].value != device_net_list[i]['net_usr'])
+                    user = $("#usr" + id)[0].value;
+                if ($("#psw" + id)[0].value != device_net_list[i]['net_psw'])
+                    password = $("#psw" + id)[0].value;
+            }
+        }
     }
     if (type_op.search('type') >=0){
         id = type_op.replace('type','');
@@ -73,15 +75,22 @@ function net(type_op){
     }
     if (type_op != 'cmd' || (dispositivo != "" && comando != "")){
         var body = {
-            "tipo_operazione": type_op,
-            "codice": code,
-            "tipo": type,
-            "mac": mac,
-            "user": user,
-            "password": password,
-            "dispositivo": dispositivo,
-            "comando": comando
+            "tipo_operazione": type_op
         };
+        if (code != null)
+            body['codice'] = code
+        if (type != null)
+            body['tipo'] = type
+        if (mac != null)
+            body['mac'] = mac
+        if (password != null)
+            body['password'] = password
+        if (user != null)
+            body['user'] = user
+        if (dispositivo != null)
+            body['dispositivo'] = dispositivo
+        if (comando != null)
+            body['comando'] = comando
         $('#errore').text("");
         $('#errore')[0].classList.remove("d-block");
         $('#errore')[0].classList.add("d-none");
@@ -109,7 +118,11 @@ function net(type_op){
                         var type_template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
                         $('#drop_type' + id).html(type_template(types));
                         for(var i = 0; i < types.length;i++) {
-                            $('#drop_type' + id + ' li').click(drop_type);
+                            $('#drop_type' + id + ' li').click(function() {
+                                $('#type' + id).text($(this).text());
+                                $("#type" + id).val($(this).text());
+                                must_save(id);
+                            });
                         }
                     }
                     if (type_op == 'list'){
@@ -118,7 +131,7 @@ function net(type_op){
                         $('#table-device').html(device_template(json));
                         device_net_list = [];
                         for(var j = 0; j < devices.length; j++) {
-                            device_net_list.push(devices[i]);
+                            device_net_list.push(devices[j]);
                             $('#code' + j).on('input',function(e){must_save(this.id.replace("code", ""))});
                             $('#usr' + j).on('input',function(e){must_save(this.id.replace("usr", ""))});
                             $('#psw' + j).on('input',function(e){must_save(this.id.replace("psw", ""))});
@@ -222,10 +235,10 @@ function view_password(i){
 }
 
 function user_function(type_op){
-    var user = '';
-    var password = '';
-    var role = '';
-    var id = '';
+    var user = null;
+    var password = null;
+    var role = null;
+    var id = null;
     if (type_op.search('update') >= 0){
         id = type_op.replace('update','');
         type_op = 'update';
@@ -234,9 +247,10 @@ function user_function(type_op){
             if (user_list[i]['username'] == user){
                 if ($("#psw_user" + id)[0].value != user_list[i]['password'])
                     password = $("#psw_user" + id)[0].value;
+                if ($("#role_user" + id)[0].value != user_list[i]['role'])
+                    role = $("#role_user" + id)[0].value;
             }
         }
-        role = $("#role_user" + id)[0].value;
     }
     if (type_op.search('delete') >= 0){
         id = type_op.replace('delete','');
@@ -265,11 +279,13 @@ function user_function(type_op){
     }
     if (type_op != 'add' || (user != "" && password != "" && role != "")){
         var body = {
-            "tipo_operazione": type_op,
-            "username": user,
-            "role": role
+            "tipo_operazione": type_op
         };
-        if (password != '')
+        if (role != null)
+            body['role'] = role
+        if (user != null)
+            body['username'] = user
+        if (password != null)
             body['password'] = password
         $('#errore_user').text("");
         $('#errore_user')[0].classList.remove("d-block");
@@ -387,9 +403,9 @@ function logout(){
 }
 
 function upload_arduino(tipo_op){
-    var core = '';
-    var tipologia = '';
-    if (tipo_op == 'upload'){
+    var core = null;
+    var tipologia = null;
+    if (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) >= 0){
         core = $("#device_arduino")[0].value;
         tipologia = $("#tipo_arduino")[0].value;
         var check_core = $('#chk_device_arduino');
@@ -403,13 +419,20 @@ function upload_arduino(tipo_op){
         else
             check_tipologia.hide();
     }
-    if (tipo_op != "upload" || (core != "" && tipologia != "")){
+    if (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) < 0 || (core != "" && tipologia != "")){
+        var toUpload = false;
+        if (tipo_op == 'compile_upload'){
+            tipo_op = 'compile';
+            toUpload = true;
+        }
         var body = {
-            "tipo_operazione": tipo_op,
-            "core": core,
-            "tipologia": tipologia
+            "tipo_operazione": tipo_op
         };
-        if (tipo_op == "upload")
+        if (core != null)
+            body['core'] = core
+        if (tipologia != null)
+            body['tipologia'] = tipologia
+        if (['upload', 'compile'].indexOf(tipo_op) >= 0)
             $.blockUI();
         $('#errore_upload').text("");
         $('#errore_upload')[0].classList.remove("d-block");
@@ -421,7 +444,7 @@ function upload_arduino(tipo_op){
             data : JSON.stringify(body),
             success: function(response){
                 var json = $.parseJSON(JSON.stringify(response));
-                if (tipo_op == "upload")
+                if (['upload', 'compile'].indexOf(tipo_op) >= 0)
                     $.unblockUI();
                 if (json["output"].search("OK") == 0){
                     if (tipo_op == 'core'){
@@ -448,21 +471,26 @@ function upload_arduino(tipo_op){
                            });
                         }
                     }
+                    if (tipo_op == 'compile'){
+                        $('#esito_upload')[0].value = json["output"];
+                        $('#program_bytes_used')[0].value = json["compile_output"]["program_bytes_used"];
+                        $('#program_percentual_used')[0].value = json["compile_output"]["program_percentual_used"];
+                        $('#program_bytes_total')[0].value = json["compile_output"]["program_bytes_total"];
+                        $('#memory_bytes_used')[0].value = json["compile_output"]["memory_bytes_used"];
+                        $('#memory_percentual_used')[0].value = json["compile_output"]["memory_percentual_used"];
+                        $('#memory_bytes_free')[0].value = json["compile_output"]["memory_bytes_free"];
+                        $('#memory_bytes_total')[0].value = json["compile_output"]["memory_bytes_total"];
+                        if (toUpload)
+                            upload_arduino('upload');
+                    }
                     if (tipo_op == 'upload'){
-                        $('#esito_upload')[0].value = json["result_command"]["output"];
-                        $('#program_bytes_used')[0].value = json["result_command"]["compile_output"]["program_bytes_used"];
-                        $('#program_percentual_used')[0].value = json["result_command"]["compile_output"]["program_percentual_used"];
-                        $('#program_bytes_total')[0].value = json["result_command"]["compile_output"]["program_bytes_total"];
-                        $('#memory_bytes_used')[0].value = json["result_command"]["compile_output"]["memory_bytes_used"];
-                        $('#memory_percentual_used')[0].value = json["result_command"]["compile_output"]["memory_percentual_used"];
-                        $('#memory_bytes_free')[0].value = json["result_command"]["compile_output"]["memory_bytes_free"];
-                        $('#memory_bytes_total')[0].value = json["result_command"]["compile_output"]["memory_bytes_total"];
-                        $('#porta_seriale')[0].value = json["result_command"]["upload_output"]["porta_seriale"];
-                        $('#chip')[0].value = json["result_command"]["upload_output"]["chip"];
-                        $('#mac_addres')[0].value = json["result_command"]["upload_output"]["mac_addres"];
-                        $('#byte_write')[0].value = json["result_command"]["upload_output"]["byte_write"];
-                        $('#byte_write_compressed')[0].value = json["result_command"]["upload_output"]["byte_write_compressed"];
-                        $('#time')[0].value = json["result_command"]["upload_output"]["time"];
+                        $('#esito_upload')[0].value = json["output"];
+                        $('#porta_seriale')[0].value = json["upload_output"]["porta_seriale"];
+                        $('#chip')[0].value = json["upload_output"]["chip"];
+                        $('#mac_addres')[0].value = json["upload_output"]["mac_addres"];
+                        $('#byte_write')[0].value = json["upload_output"]["byte_write"];
+                        $('#byte_write_compressed')[0].value = json["upload_output"]["byte_write_compressed"];
+                        $('#time')[0].value = json["upload_output"]["time"];
                     }
                 } else {
                     $('#errore_upload').text(json["output"]);

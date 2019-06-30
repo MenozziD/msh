@@ -338,7 +338,15 @@
 								<label for="esito_upload">Esito</label>
 								<input type="text" class="form-control" id="esito_upload" readonly>
 							</div>
-                            <button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('upload')">Load</button>
+                            <div class="col-md-4 mb-3">
+								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('compile')">Compila</button>
+							</div>
+                            <div class="col-md-4 mb-3">
+								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('upload')">Upload</button>
+							</div>
+                            <div class="col-md-4 mb-3">
+								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('compile_upload')">Compila e Upload</button>
+							</div>
                             <h5 id="errore_upload" class="text-center d-none"></h5>
                             <div class="col-md-12 mb-3">
                                 <h3>Report Compilazione</h3>
