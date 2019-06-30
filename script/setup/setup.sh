@@ -172,6 +172,15 @@ board_manager:
     - http://arduino.esp8266.com/stable/package_esp8266com_index.json" >  /root/.arduino15/arduino-cli.yaml
 echo "Eseguo arduino-cli core update-index"
 sudo arduino-cli core update-index 1>/dev/null
+echo "Installo librerie Arduino per compilare"
+echo "Install WiFi"
+sudo arduino-cli lib install WiFi
+echo "Install esp8266_mdns"
+sudo arduino-cli lib install esp8266_mdns
+echo "Install SimpleDHT"
+sudo arduino-cli lib install SimpleDHT
+echo "Install ArduinoJson"
+sudo arduino-cli lib install ArduinoJson
 #INSTALLAZIONE CORE SCHEDE
 echo "Eseguo arduino-cli core install esp8266:esp8266"
 sudo arduino-cli core install esp8266:esp8266 1>/dev/null
@@ -398,6 +407,7 @@ echo "---------- CREAZIONE SETTINGS.XML ----------"
 echo "Creo settings.xml"
 echo "<settings>
 	<lingua>IT</lingua>
+	<ambiente>PROD</ambiente>
 	<path_db>db/system.db</path_db>
 	<path_datastore>../oauth/datastore.js</path_datastore>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>

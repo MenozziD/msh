@@ -7,6 +7,7 @@ def test_xml_reader_log_file():
     f = open("settings_log_file.xml", "w")
     f.write("<settings>"
             "   <lingua>IT</lingua>"
+            "   <ambiente>TEST</ambiente>"
             "   <path_db>path_db</path_db>"
             "   <path_datastore>path_datastore</path_datastore>"
             "   <timestamp>%Y-%m-%d %H:%M:%S</timestamp>"

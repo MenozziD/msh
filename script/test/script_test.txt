@@ -1,6 +1,9 @@
 open "%1%" -timeout=360
 put %2%\execute_test.sh /home/pi/server/execute_test.sh
 put %2%\create.sql /home/pi/server/msh/create.sql
+put %2%\mock_so.json /home/pi/server/msh/mock_so.json
+put %2%\settings_test.xml /home/pi/server/msh/settings_test.xml
+put %2%\datastore_test.js /home/pi/server/oauth/datastore_test.js
 chmod 744 /home/pi/server/execute_test.sh
 cd /home/pi/server
 call ./execute_test.sh
@@ -10,4 +13,7 @@ get /home/pi/server/test-report.xml %3%\test-report.xml
 rm .coverage
 rm test-report.xml
 rm ./msh/create.sql
+rm ./oauth/datastore_test.js
+rm ./msh/mock_so.json
+rm .msh/settings_test.xml
 exit

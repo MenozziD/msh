@@ -15,6 +15,7 @@ class XmlReader:
     def __init__(self, filename):
         xml = minidom.parse(filename)
         lingua = xml.getElementsByTagName('lingua')[0].firstChild.data
+        ambiente = xml.getElementsByTagName('ambiente')[0].firstChild.data
         path_db = xml.getElementsByTagName('path_db')[0].firstChild.data
         path_datastore = xml.getElementsByTagName('path_datastore')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
@@ -30,6 +31,7 @@ class XmlReader:
             log['filename'] = None
         XmlReader.settings = {
             'lingua': lingua,
+            'ambiente': ambiente,
             'path_db': path_db,
             'path_datastore': path_datastore,
             'timestamp': timestamp,

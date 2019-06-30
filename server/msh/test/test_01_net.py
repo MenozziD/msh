@@ -1,7 +1,7 @@
 from msh import app
 from unittest import TestCase
 from webapp3 import Request
-from test import simulate_login_admin, read_xml
+from test import simulate_login_admin, read_xml, simulate_os_command
 
 
 class TestNet(TestCase):
@@ -78,8 +78,22 @@ class TestNet(TestCase):
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
-    def test_payload_with_operazione_scan_logged(self):
+    def test_payload_with_operazione_scan_ok_logged(self):
         read_xml()
+        simulate_os_command("scan-ok")
+        request = Request.blank('/api/net')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"scan"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
+
+    def test_payload_with_operazione_scan_ko_logged(self):
+        read_xml()
+        simulate_os_command("scan-ko")
         request = Request.blank('/api/net')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']

@@ -1,7 +1,7 @@
 from webapp3 import Request
 from msh import app
 from module import XmlReader
-from os import remove
+from json import load, dump
 
 
 def simulate_login_admin():
@@ -24,24 +24,15 @@ def simulate_login_user():
     return request.get_response(app)
 
 
-def read_xml():
-    f = open("settings_log_console.xml", "w")
-    f.write("<settings>"
-            "   <lingua>IT</lingua>"
-            "   <path_db>db/test.db</path_db>"
-            "   <path_datastore>../oauth/datastore_test.js</path_datastore>"
-            "   <timestamp>%Y-%m-%d %H:%M:%S</timestamp>"
-            "   <project_id_google_actions>fake_project</project_id_google_actions>"
-            "   <subdomain_oauth>fake_oauth</subdomain_oauth>"
-            "   <subdomain_webapp>fake_webapp</subdomain_webapp>"
-            "   <log>"
-            "       <!-- Se valorizzato con None logga in console -->"
-            "       <filename>None</filename>"
-            "       <format>%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s|%(message)s</format>"
-            "       <!-- debug, info, warning, error, critical -->"
-            "       <level>info</level>"
-            "   </log>"
-            "</settings>")
+def simulate_os_command(command):
+    f = open('mock_so.json')
+    data = load(f)
     f.close()
-    XmlReader("settings_log_console.xml")
-    remove("settings_log_console.xml")
+    f = open('command_simulate.json', 'w')
+    dump(data[command], f)
+    f.close()
+    return
+
+
+def read_xml():
+    XmlReader("settings_test.xml")

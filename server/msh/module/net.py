@@ -190,8 +190,6 @@ def cmd_wakeonlan(mac):
 
 def cmd_netscan(ip, subnet):
     netscan_ok = 0
-    netscan_err = -1
-    netscan_fail = 1
     netscan_exception = 2
     result = {}
     try:
@@ -223,14 +221,10 @@ def cmd_netscan(ip, subnet):
                         'net_mac_info': ''
                     }
             result['devices'] = devices
-            if len(devices) > 0:
-                result['result'] = netscan_ok
-            else:
-                result['result'] = netscan_fail
+            result['result'] = netscan_ok
+            result['output'] = 'OK'
         else:
-            result['cmd_output'] = response['cmd_err']
-            result['result'] = netscan_err
-        result['output'] = 'OK'
+            raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = netscan_exception

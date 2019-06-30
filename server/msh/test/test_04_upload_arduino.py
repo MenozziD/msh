@@ -1,7 +1,7 @@
 from msh import app
 from unittest import TestCase
 from webapp3 import Request
-from test import simulate_login_admin, simulate_login_user, read_xml
+from test import simulate_login_admin, simulate_login_user, read_xml, simulate_os_command
 
 
 class TestUploadArduino(TestCase):
@@ -68,6 +68,7 @@ class TestUploadArduino(TestCase):
 
     def test_payload_with_operazione_core_logged(self):
         read_xml()
+        simulate_os_command("arduino-cli-board-listall")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
@@ -104,6 +105,7 @@ class TestUploadArduino(TestCase):
 
     def test_payload_with_operazione_upload_with_core_not_exist_logged_admin(self):
         read_xml()
+        simulate_os_command("arduino-cli-board-listall")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -141,3 +143,33 @@ class TestUploadArduino(TestCase):
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find("Il campo tipologia deve assumere uno dei seguenti valori:"), 0)
+
+    def test_payload_with_operazione_upload_with_core_exist_tipologia_exist_compile_ok_logged_admin(self):
+        read_xml()
+        simulate_os_command("arduino-cli-compile-ok")
+        request = Request.blank('/api/upload_arduino')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"upload",' \
+                       b'   "core":"Generic ESP8266 Module",' \
+                       b'   "tipologia":"ESP_RELE"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
+
+    def test_payload_with_operazione_upload_with_core_exist_tipologia_exist_compile_ko_logged_admin(self):
+        read_xml()
+        simulate_os_command("arduino-cli-compile-ko")
+        request = Request.blank('/api/upload_arduino')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"upload",' \
+                       b'   "core":"Generic ESP8266 Module",' \
+                       b'   "tipologia":"ESP_RELE"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'OK')
