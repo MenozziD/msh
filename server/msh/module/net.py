@@ -1,9 +1,8 @@
-from pexpect import pxssh
 from logging import info, exception
 from json import loads
 from urllib import request
 from time import sleep
-from module import execute_os_cmd
+from module import execute_os_cmd, execute_ssh_cmd
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -39,69 +38,52 @@ def cmd_ping(ip, pacchetti=3):
 
 def cmd_radio(ip, comando, usr, psw):
     radioctrl_exception = -1
-    ss = None
-    login = False
     result = {}
     try:
         result = cmd_radio_stato(ip, comando, usr, psw)
-        if comando != 'stato' and result['interface'] != '' and result['mac'] != '':
-            ss = pxssh.pxssh()
-            ss.login(ip, usr, psw)
-            login = True
+        if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
             cmd = "ifconfig %s %s" % (result['interface'], result['cmd'])
-            info("Eseguo comando in SSH: %s", cmd)
-            ss.sendline(cmd)
-            ss.prompt()
+            execute_ssh_cmd(ip, usr, psw, cmd)
             result = cmd_radio_stato(ip, comando, usr, psw)
+        else:
+            if result['output'] != 'OK':
+                raise Exception(result['output'])
     except Exception as e:
         exception("Exception")
         result['result'] = radioctrl_exception
         result['output'] = str(e)
     finally:
-        if login:
-            ss.logout()
         return result
 
 
 def cmd_radio_stato(ip, comando, usr, psw):
-    radiostatus_invalid_cred = 2
     radiostatus_exception = -1
     radiostatus_no_interface = -2
-    ss = None
-    login = False
     result = {}
     try:
         result = {
             'ip': ip,
             'cmd': comando,
         }
-        ss = pxssh.pxssh()
-        ss.login(ip, usr, psw)
-        login = True
-        cmd = "iwconfig"
-        info("Eseguo comando in SSH: %s", cmd)
-        ss.sendline(cmd)
-        ss.prompt()
-        cmd_out = str(ss.before)[2:-1].replace("\\r\\n", '\r\n')
-        result['cmd_output'] = cmd_out
-        cmd_out = cmd_out.split("\r\n")
-        for row in cmd_out:
-            result = read_essid(row, result)
-            result = read_mac(row, result)
-        info("INTERFACE: %s MAC: %s", result['interface'], result['mac'])
-        if result['interface'] == '' and result['mac'] == '':
-            result['result'] = radiostatus_no_interface
-        result['output'] = 'OK'
+        response = execute_ssh_cmd(ip, usr, psw, "iwconfig")
+        if response['output'] == 'OK':
+            result['cmd_output'] = response['cmd_output']
+            cmd_out = result['cmd_output'].split("\r\n")
+            for row in cmd_out:
+                result = read_essid(row, result)
+                result = read_mac(row, result)
+            if 'interface' not in result and 'mac' not in result:
+                result['result'] = radiostatus_no_interface
+            else:
+                info("INTERFACE: %s MAC: %s", result['interface'], result['mac'])
+            result['output'] = 'OK'
+        else:
+            raise Exception(response['output'])
     except Exception as e:
         exception("Exception")
-        if str(e) == "password refused":
-            result['result'] = radiostatus_invalid_cred
-        else:
-            result['result'] = radiostatus_exception
+        result['result'] = radiostatus_exception
         result['output'] = str(e)
     finally:
-        if login:
-            ss.logout()
         return result
 
 
