@@ -1,4 +1,5 @@
 - compialre ESP_IR
+- gestire invocazione api/home solo se si ha token oauth
 - portare coverage a 100% (mock ssh e server)
 - gestire nuovi device (TEMP, IR, PIR, IPCAMERA) nella response di cmd_esp
 - gestire nuove tipologie di device (PS4, STAMPANTI, CELLULARI)
