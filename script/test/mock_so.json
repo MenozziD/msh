@@ -26,7 +26,7 @@
 	},
 	"scan-ok": {
 		"return_code": "0",
-		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for 192.168.1.14\nHost is up (0.0016s latency).\nMAC Address: F0:79:59:2C:A9:8B (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: A2:FF:AA:BB:00:33 (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nMAC Address: 99:FF:AA:BB:00:33 (device_test_duplicato)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: C0:EE:FB:FB:3C:C8 (OnePlus Tech (Shenzhen))\nNmap scan report for Google-Home-Mini.home (192.168.1.122)\nHost is up (0.098s latency).\nMAC Address: 44:07:0B:6F:C0:91 (Unknown)\nNmap scan report for raspberrypi.home (192.168.1.106)\nHost is up.\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
+		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: A2:FF:AA:BB:00:33 (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nMAC Address: 99:FF:AA:BB:00:33 (device_test_duplicato)\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
 		"cmd_err": ""
 	},
 	"scan-ko": {
@@ -83,5 +83,21 @@
 		"return_code": "0",
 		"cmd_out": "",
 		"cmd_err": ""
+	},
+	"ap-error": {
+		"output": "Errore comando su AP",
+		"cmd_output": "payload"
+	},
+	"ap-no-interface": {
+		"output": "OK",
+		"cmd_output": "output corretto iwconfig senza interfaccia"
+	},
+	"ap-on": {
+		"output": "OK",
+		"cmd_output": "output corretto iwconfig interfaccia on"
+	},
+	"ap-off": {
+		"output": "OK",
+		"cmd_output": "output corretto iwconfig interfaccia off"
 	}
 }
