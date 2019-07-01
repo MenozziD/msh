@@ -462,6 +462,66 @@ class TestNet(TestCase):
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore pcwin off")
 
+    def test_payload_with_operazione_cmd_ap_on_ko_logged(self):
+        read_xml()
+        simulate_os_command("ap-error")
+        request = Request.blank('/api/net')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"cmd",' \
+                       b'   "dispositivo":"device_test_ap",' \
+                       b'   "comando":"radio_up"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], "Errore comando su AP")
+
+    def test_payload_with_operazione_cmd_ap_on_no_interface_logged(self):
+        read_xml()
+        simulate_os_command("ap-no-interface")
+        request = Request.blank('/api/net')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"cmd",' \
+                       b'   "dispositivo":"device_test_ap",' \
+                       b'   "comando":"radio_up"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], "OK")
+
+    def test_payload_with_operazione_cmd_ap_on_ok_logged(self):
+        read_xml()
+        simulate_os_command("ap-on")
+        request = Request.blank('/api/net')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"cmd",' \
+                       b'   "dispositivo":"device_test_ap",' \
+                       b'   "comando":"radio_up"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], "OK")
+
+    def test_payload_with_operazione_cmd_ap_off_ok_logged(self):
+        read_xml()
+        simulate_os_command("ap-off")
+        request = Request.blank('/api/net')
+        request.method = 'POST'
+        request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
+        request.body = b'{' \
+                       b'   "tipo_operazione":"cmd",' \
+                       b'   "dispositivo":"device_test_ap",' \
+                       b'   "comando":"radio_up"' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], "OK")
+
     def test_calculate_start_ip_one(self):
         ip = ['192', '168', '1', '1']
         subnet = ['255', '255', '0', '0']
