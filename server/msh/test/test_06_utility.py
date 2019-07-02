@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test import read_xml_prod
-from module import execute_os_cmd, execute_ssh_cmd
+from module import execute_os_cmd, execute_ssh_cmd, execute_request_http
 
 
 class TestUtility(TestCase):
@@ -35,3 +35,8 @@ class TestUtility(TestCase):
         read_xml_prod()
         response = execute_ssh_cmd('127.0.0.1', 'test_user', 'test_password', 'pwd')
         self.assertEqual(response['output'], "OK")
+
+    def test_execute_request_http(self):
+        read_xml_prod()
+        response = execute_request_http("https://api.macvendors.com/5C:6A:80:EB:31:17")
+        self.assertNotEqual(response, "")
