@@ -6,6 +6,7 @@ from datetime import datetime
 from json import dumps, load
 from os import system
 from urllib import request
+from time import sleep
 
 
 def execute_os_cmd(cmd, check_out=False, sys=False):
@@ -74,6 +75,24 @@ def execute_request_http(url):
         response = f.read()
         f.close()
     return response
+
+
+def check_internet_connection():
+    internet = False
+    while not internet:
+        cmd = "curl -I -X GET http://www.google.com"
+        response = execute_os_cmd(cmd)
+        if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
+            internet = True
+            info("Connessione internet presente")
+            cmd = "sudo service serveo start"
+            execute_os_cmd(cmd)
+        else:
+            info("Attendo 10 secondi...")
+            sleep(10)
+            if XmlReader.settings["ambiente"] == "TEST":
+                break
+    return internet
 
 
 def set_api_response(response_payload, response):
