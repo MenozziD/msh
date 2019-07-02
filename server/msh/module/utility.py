@@ -85,13 +85,11 @@ def check_internet_connection():
         if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
             internet = True
             info("Connessione internet presente")
-            cmd = "sudo service serveo start"
-            execute_os_cmd(cmd)
         else:
             info("Attendo 10 secondi...")
             sleep(10)
             if XmlReader.settings["ambiente"] == "TEST":
-                break
+                internet = True
     return internet
 
 
