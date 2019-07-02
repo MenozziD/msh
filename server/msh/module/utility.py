@@ -5,6 +5,7 @@ from subprocess import run, PIPE, check_output
 from datetime import datetime
 from json import dumps, load
 from os import system
+from urllib import request
 
 
 def execute_os_cmd(cmd, check_out=False, sys=False):
@@ -63,6 +64,18 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
     return response
 
 
+def execute_request_http(url):
+    if XmlReader.settings["ambiente"] == 'PROD':
+        info("MAKE REQUEST: %s", url)
+        response = request.urlopen(url).read().decode('utf-8')
+        info("RESPONSE: %s", response)
+    else:
+        f = open('request_simulate.json', 'r')
+        response = f.read()
+        f.close()
+    return response
+
+
 def set_api_response(response_payload, response):
     response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -72,9 +85,9 @@ def set_api_response(response_payload, response):
     info("RESPONSE PAYLOAD: %s", response_payload)
 
 
-def validate_format(request):
+def validate_format(request_validate):
     try:
-        request.json
+        request_validate.json
     except ValueError:
         return False
     return True
