@@ -34,6 +34,16 @@ def simulate_os_command(command):
     return
 
 
+def simulate_request_http(url):
+    f = open('mock_request.json')
+    data = load(f)
+    f.close()
+    f = open('request_simulate.json', 'w')
+    dump(data[url], f)
+    f.close()
+    return
+
+
 def read_xml():
     XmlReader("settings_test.xml")
 
