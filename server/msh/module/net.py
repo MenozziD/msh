@@ -1,8 +1,7 @@
 from logging import info, exception
 from json import loads
-from urllib import request
 from time import sleep
-from module import execute_os_cmd, execute_ssh_cmd
+from module import execute_os_cmd, execute_ssh_cmd, execute_request_http
 
 
 def cmd_ping(ip, pacchetti=3):
@@ -226,11 +225,9 @@ def get_mac_info(device):
         finito = False
         while not finito:
             try:
-                info("MAKE REQUEST: %s", url)
-                response = str(request.urlopen(url).read())
+                response = str(execute_request_http(url))
                 if response.find('b\'') == 0:
                     response = response[2:-1]
-                info("RESPONSE: %s", response)
                 device['net_mac_info'] = response
                 finito = True
                 sleep(2)
@@ -248,10 +245,8 @@ def cmd_esp(ip, command):
     result = {}
     try:
         url = "http://" + ip + "/cmd?n=" + command
-        info("MAKE REQUEST: %s", url)
         result['url_request'] = url
-        response = loads(request.urlopen(url).read().decode('utf-8'))
-        info("RESPONSE: %s", response)
+        response = loads(execute_request_http(url))
         esp_decode = {
             'ON': esp_on,
             'OFF': esp_off,
