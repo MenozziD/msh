@@ -2,7 +2,8 @@ from msh import app
 from unittest import TestCase
 from webapp3 import Request
 from controller import Net
-from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user
+from module import cmd_esp
+from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user, simulate_request_http
 
 
 class TestNet(TestCase):
@@ -94,6 +95,7 @@ class TestNet(TestCase):
     def test_payload_with_operazione_scan_ok_logged(self):
         read_xml()
         simulate_os_command("scan-ok")
+        simulate_request_http("mac_vendor")
         request = Request.blank('/api/net')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -533,3 +535,15 @@ class TestNet(TestCase):
         subnet = ['255', '0', '0', '0']
         response = Net.calculate_start(ip, subnet)
         self.assertEqual(response['ip'].split('.'), ['192', '0', '0', '1'])
+
+    def test_cmd_esp_ok(self):
+        read_xml()
+        simulate_request_http("esp_ok")
+        response = cmd_esp('127.0.0.1', 'test')
+        self.assertEqual(response['output'], 'OK')
+
+    def test_cmd_esp_ko(self):
+        read_xml()
+        simulate_request_http("esp_ko")
+        response = cmd_esp('127.0.0.1', 'test')
+        self.assertNotEqual(response['output'], 'OK')
