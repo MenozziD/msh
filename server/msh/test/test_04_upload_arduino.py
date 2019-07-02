@@ -1,7 +1,7 @@
 from msh import app
 from unittest import TestCase
 from webapp3 import Request
-from test import simulate_login_admin, simulate_login_user, read_xml, simulate_os_command
+from test import simulate_login_admin, simulate_login_user, read_xml, simulate_os_command, simulate_request_http
 from module import upload_arduino
 
 
@@ -57,6 +57,7 @@ class TestUploadArduino(TestCase):
 
     def test_payload_with_operazione_tipo_logged(self):
         read_xml()
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
@@ -135,6 +136,7 @@ class TestUploadArduino(TestCase):
     def test_payload_with_operazione_compile_with_core_exist_tipologia_not_exist_logged_admin(self):
         read_xml()
         simulate_os_command("arduino-cli-board-listall")
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -150,6 +152,7 @@ class TestUploadArduino(TestCase):
     def test_payload_with_operazione_compile_ok_with_core_exist_tipologia_exist_logged_admin(self):
         read_xml()
         simulate_os_command("arduino-cli-compile-ok")
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -165,6 +168,7 @@ class TestUploadArduino(TestCase):
     def test_payload_with_operazione_compile_ko_with_core_exist_tipologia_exist_logged_admin(self):
         read_xml()
         simulate_os_command("arduino-cli-compile-ko")
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -180,6 +184,7 @@ class TestUploadArduino(TestCase):
     def test_payload_with_operazione_upload_ok_with_core_exist_tipologia_exist_logged_admin(self):
         read_xml()
         simulate_os_command("arduino-cli-upload-ok")
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
@@ -195,6 +200,7 @@ class TestUploadArduino(TestCase):
     def test_payload_with_operazione_upload_ko_with_core_exist_tipologia_exist_logged_admin(self):
         read_xml()
         simulate_os_command("arduino-cli-upload-ko")
+        simulate_request_http("tipologia_script_arduino")
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
