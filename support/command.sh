@@ -1,3 +1,6 @@
+# Ricarica configurazione servizi
+sudo systemctl daemon-reload
+
 # Execute webapp in background
 sudo python3 msh.py 1>/dev/null 2>/dev/null &
 

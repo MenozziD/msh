@@ -28,7 +28,7 @@ class TestUtility(TestCase):
 
     def test_execute_ssh_cmd_ko_other(self):
         read_xml_prod()
-        response = execute_ssh_cmd('127.0.0.2', 'test_user', 'test1234', 'pwd')
+        response = execute_ssh_cmd('noip', 'test_user', 'test1234', 'pwd')
         self.assertNotEqual(response['output'], "OK")
 
     def test_execute_ssh_cmd_ok(self):

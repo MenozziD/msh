@@ -73,6 +73,8 @@ def execute_request_http(url):
     else:
         f = open('request_simulate.json', 'r')
         response = f.read()
+        if response == "\"b'MAC info'\"":
+            response = "b'MAC info'"
         f.close()
     return response
 

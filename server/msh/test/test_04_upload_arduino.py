@@ -159,7 +159,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"compile",' \
                        b'   "core":"core_test",' \
-                       b'   "tipologia":"ESP_RELE"' \
+                       b'   "tipologia":"DEV_1"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -175,7 +175,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"compile",' \
                        b'   "core":"core_test",' \
-                       b'   "tipologia":"ESP_RELE"' \
+                       b'   "tipologia":"DEV_1"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -191,7 +191,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"upload",' \
                        b'   "core":"core_test",' \
-                       b'   "tipologia":"ESP_RELE"' \
+                       b'   "tipologia":"DEV_1"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -207,7 +207,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"upload",' \
                        b'   "core":"core_test",' \
-                       b'   "tipologia":"ESP_RELE"' \
+                       b'   "tipologia":"DEV_1"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)

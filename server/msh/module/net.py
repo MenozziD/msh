@@ -222,18 +222,11 @@ def get_code_and_ip(line, device):
 def get_mac_info(device):
     if device['net_mac_info'] == 'Unknown':
         url = 'https://api.macvendors.com/' + device['net_mac']
-        finito = False
-        while not finito:
-            try:
-                response = str(execute_request_http(url))
-                if response.find('b\'') == 0:
-                    response = response[2:-1]
-                device['net_mac_info'] = response
-                finito = True
-                sleep(2)
-            except Exception:
-                exception("Exception")
-                sleep(2)
+        response = execute_request_http(url)
+        if response.find('b\'') == 0:
+            response = response[2:-1]
+        device['net_mac_info'] = response
+        sleep(2)
     return device
 
 

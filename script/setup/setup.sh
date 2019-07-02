@@ -554,7 +554,7 @@ start)  if [ $(pgrep python) ]
 		then
 			echo "Servizio MSH attivo"
 		else
-			cd /home/pi/server/msh && sudo python3 msh.py settings.xml 65177 1>/dev/null 2>/dev/null &
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Avviato servizio MSH"
 		fi
 		;;
@@ -569,10 +569,10 @@ stop)   if [ $(pgrep python) ]
 restart) if [ $(pgrep python) ]
 		 then
 			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-			cd /home/pi/server/msh && sudo python3 msh.py settings.xml 65177 1>/dev/null 2>/dev/null &
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Restart servizio MSH"
 		else
-			cd /home/pi/server/msh && sudo python3 msh.py settings.xml 65177 1>/dev/null 2>/dev/null &
+			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Avviato servizio MSH"
 		fi
         ;;

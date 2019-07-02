@@ -2,8 +2,8 @@ from msh import app
 from unittest import TestCase
 from webapp3 import Request
 from controller import Net
-from module import cmd_esp, get_mac_info
-from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user, simulate_request_http, read_xml_prod
+from module import cmd_esp
+from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user, simulate_request_http
 
 
 class TestNet(TestCase):
@@ -547,14 +547,3 @@ class TestNet(TestCase):
         simulate_request_http("esp_ko")
         response = cmd_esp('127.0.0.1', 'test')
         self.assertNotEqual(response['output'], 'OK')
-
-    def test_exception_mac_info(self):
-        read_xml_prod()
-        device = {
-            'net_mac_info': 'Unknown',
-            'net_mac': '5C:6A:80:EB:31:17'
-        }
-        for _ in range(12):
-            get_mac_info(device)
-        device = get_mac_info(device)
-        self.assertNotEqual(device['net_mac_info'], 'Unknown')

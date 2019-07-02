@@ -26,7 +26,7 @@
 	},
 	"scan-ok": {
 		"return_code": 0,
-		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: A2:FF:AA:BB:00:33 (Asustek Computer)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nMAC Address: 99:FF:AA:BB:00:33 (device_test_duplicato)\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
+		"cmd_out": "\nStarting Nmap 7.40 ( https://nmap.org ) at 2019-06-30 02:25 CEST\nNmap scan report for 192.168.1.1\nHost is up (-0.15s latency).\nMAC Address: 5C:6A:80:EB:31:17 (Unknown)\nNmap scan report for OnePlus3T.home (192.168.1.32)\nHost is up (0.047s latency).\nMAC Address: A2:FF:AA:BB:00:33 (Asustek Computer)\nNmap scan report for device_test_duplicato (192.168.1.32)\nMAC Address: 99:FF:AA:BB:00:33 (mac info)\nNmap done: 256 IP addresses (5 hosts up) scanned in 5.47 seconds\n",
 		"cmd_err": ""
 	},
 	"scan-ko": {
@@ -104,10 +104,10 @@
 	},
 	"ap-on": {
 		"output": "OK",
-		"cmd_output": "output corretto iwconfig interfaccia on"
+		"cmd_output": "wlan0     IEEE 802.11  ESSID:\"Infostrada-EB3118\"\n          Mode:Managed  Frequency:2.447 GHz  Access Point: 5C:6A:80:EB:31:18\n"
 	},
 	"ap-off": {
 		"output": "OK",
-		"cmd_output": "output corretto iwconfig interfaccia off"
+		"cmd_output": "wlan0   Access Point: \n"
 	}
 }

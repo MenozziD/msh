@@ -7,11 +7,11 @@
 			"name": "DEV_2"
 		}
 	],
-	"mac_vendor": "b'mac info'",
 	"esp_ok": {
 		"output": "ON"
 	},
 	"esp_ko": {
 		"outtttput": "ON"
 	},
+	"mac_vendor": "b'MAC info'"
 }
