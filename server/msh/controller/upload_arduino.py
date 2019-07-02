@@ -1,8 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
 from json import loads
-from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format
-from urllib import request
+from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format, execute_request_http
 
 
 class UploadArduino(BaseHandler):
@@ -107,9 +106,7 @@ class UploadArduino(BaseHandler):
     def check_tipologia(data):
         response = {}
         url = "https://api.github.com/repos/VanMenoz92/msh/contents/devices?ref=master"
-        info("MAKE REQUEST: %s", url)
-        res = loads(request.urlopen(url).read().decode('utf-8'))
-        info("RESPONSE: %s", res)
+        res = loads(execute_request_http(url))
         tipologia_list = []
         for device in res:
             tipologia_list.append(device['name'])
@@ -147,9 +144,7 @@ class UploadArduino(BaseHandler):
     @staticmethod
     def tipo_list():
         url = "https://api.github.com/repos/VanMenoz92/msh/contents/devices?ref=master"
-        info("MAKE REQUEST: %s", url)
-        res = loads(request.urlopen(url).read().decode('utf-8'))
-        info("RESPONSE: %s", res)
+        res = loads(execute_request_http(url))
         types = []
         for device in res:
             types.append(device['name'])
