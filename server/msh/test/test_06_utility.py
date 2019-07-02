@@ -1,6 +1,6 @@
 from unittest import TestCase
-from test import read_xml_prod
-from module import execute_os_cmd, execute_ssh_cmd, execute_request_http
+from test import read_xml_prod, read_xml, simulate_os_command
+from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, check_internet_connection
 
 
 class TestUtility(TestCase):
@@ -40,3 +40,8 @@ class TestUtility(TestCase):
         read_xml_prod()
         response = execute_request_http("https://api.macvendors.com/5C:6A:80:EB:31:17")
         self.assertNotEqual(response, "")
+
+    def test_check_internet_connection(self):
+        read_xml()
+        simulate_os_command('internet')
+        self.assertEqual(check_internet_connection(), True)
