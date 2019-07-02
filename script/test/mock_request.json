@@ -1,0 +1,17 @@
+{
+	"tipologia_script_arduino": [
+		{
+			"name": "DEV_1"
+		},
+		{
+			"name": "DEV_2"
+		}
+	],
+	"mac_vendor": "b'mac info'",
+	"esp_ok": {
+		"output": "ON"
+	},
+	"esp_ko": {
+		"outtttput": "ON"
+	},
+}
