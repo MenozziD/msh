@@ -48,7 +48,9 @@ def main(settings_path, porta):
         cmd = 'pgrep autossh'
         response = execute_os_cmd(cmd)
         if response['cmd_out'] == "":
-            check_internet_connection()
+            if check_internet_connection():
+                cmd = "sudo service serveo start"
+                execute_os_cmd(cmd)
         else:
             info("Serveo is already running")
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
