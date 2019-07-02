@@ -1,11 +1,11 @@
 from webapp3 import WSGIApplication
 from logging import basicConfig, info, exception
 from paste import httpserver
-from module import XmlReader, execute_os_cmd
+from module import XmlReader, execute_os_cmd, check_internet_connection
 from controller import handle_error
 from string import ascii_letters, digits
 from random import choice
-from time import sleep
+from sys import argv
 
 
 config = {
@@ -30,15 +30,14 @@ app.error_handlers[405] = handle_error
 app.error_handlers[500] = handle_error
 
 
-def main():
+def main(settings_path, porta):
     try:
-        XmlReader("settings.xml")
+        XmlReader(settings_path)
         basicConfig(
             filename=XmlReader.settings['log']['filename'],
             format=XmlReader.settings['log']['format'],
             level=XmlReader.settings['log']['level'])
         ip_address = 'localhost'
-        port = '65177'
         cmd = 'pgrep node'
         response = execute_os_cmd(cmd)
         if response['cmd_out'] == "":
@@ -49,27 +48,16 @@ def main():
         cmd = 'pgrep autossh'
         response = execute_os_cmd(cmd)
         if response['cmd_out'] == "":
-            internet = False
-            while not internet:
-                cmd = "curl -I -X GET http://www.google.com"
-                response = execute_os_cmd(cmd)
-                if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
-                    internet = True
-                    info("Connessione internet presente")
-                    cmd = "sudo service serveo start"
-                    execute_os_cmd(cmd)
-                else:
-                    info("Attendo 10 secondi...")
-                    sleep(10)
+            check_internet_connection()
         else:
             info("Serveo is already running")
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
         info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")
-        info("Server in ascolto su http://%s:%s", ip_address, port)
-        httpserver.serve(app, host=ip_address, port=port)
+        info("Server in ascolto su http://%s:%s", ip_address, porta)
+        httpserver.serve(app, host=ip_address, port=porta)
     except Exception:
         exception("Exception")
 
 
 if __name__ == '__main__':
-    main()
+    main(argv[1], argv[2])
