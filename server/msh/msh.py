@@ -56,10 +56,10 @@ def main(settings_path):
     info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")
     info("Server in ascolto su http://%s:%s", ip_address, porta)
     if XmlReader.settings["ambiente"] == 'PROD':
-        httpserver.serve(app, host=ip_address, port=porta)
+        httpserver.serve(app, host=ip_address, port=porta)  # pragma: no cover
     else:
         return True
 
 
 if __name__ == '__main__':
-    main("settings.xml")
+    main("settings.xml")  # pragma: no cover
