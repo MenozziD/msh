@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MSConsole</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+
+    <string-array name="sh_reserved_words">
+        <item>case</item>
+        <item>do</item>
+        <item>done</item>
+        <item>elif</item>
+        <item>else</item>
+        <item>esac</item>
+        <item>fi</item>
+        <item>for</item>
+        <item>function</item>
+        <item>if</item>
+        <item>in</item>
+        <item>select</item>
+        <item>then</item>
+        <item>time</item>
+        <item>until</item>
+        <item>while</item>
+    </string-array>
+
+</resources>
