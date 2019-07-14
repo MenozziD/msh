@@ -25,17 +25,40 @@
 
     <TextView
         android:id="@+id/infoip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/tvTYPE_MAGNETIC_FIELD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TYPE_MAGNETIC_FIELD: "
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/tvTYPE_LIGHT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TYPE_LIGHT: "
+        android:textAlignment="viewStart" />
+
+    <TextView
+        android:id="@+id/tvTYPE_PROXIMITY"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TYPE_PROXIMITY: "
+        android:textAlignment="viewStart" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CHECK SENSORI:" />
     </ScrollView>
 
 </LinearLayout>
