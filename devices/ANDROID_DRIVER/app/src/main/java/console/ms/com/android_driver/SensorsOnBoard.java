@@ -1,11 +1,8 @@
 package console.ms.com.android_driver;
 
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.widget.TextView;
-
-import static android.content.Context.SENSOR_SERVICE;
 
 public class SensorsOnBoard  {
 
@@ -14,21 +11,26 @@ public class SensorsOnBoard  {
     private AscoltatoreSensore[] sensoriListener;
     private TextView[] sensoriTextView;
     private SensorManager sensorManager;
+    private Boolean[] sensoriFlagInstall;
     public Integer maxNumberofSensor=3;
 
-    public SensorsOnBoard (SensorManager sm,TextView[] as )
+    public SensorsOnBoard (SensorManager pSensorManager,TextView[] pTextView )
     {
-        sensorManager=sm;
+        sensorManager=pSensorManager;
         sensoriTextView= new TextView[maxNumberofSensor];
-        sensoriTextView=as;
+        sensoriTextView=pTextView;
         sensoriKey= new Integer[maxNumberofSensor];
         sensori= new Sensor[maxNumberofSensor];
         sensoriListener = new AscoltatoreSensore[maxNumberofSensor];
+        sensoriFlagInstall = new Boolean[maxNumberofSensor];
+
         for (int i =0; i < maxNumberofSensor ;i++)
         {
             if (i==0)  sensoriKey[i] = new Integer(Sensor.TYPE_MAGNETIC_FIELD);
             if (i==1)  sensoriKey[i] = new Integer(Sensor.TYPE_LIGHT);
             if (i==2)  sensoriKey[i] = new Integer(Sensor.TYPE_PROXIMITY);
+
+            sensoriFlagInstall[i]=false;
         }
     }
 
@@ -37,11 +39,17 @@ public class SensorsOnBoard  {
         return sensori[position];
     }
 
-    public AscoltatoreSensore getListenerSensore (Integer position)
-    {
-        return sensoriListener[position];
-    }
+    public AscoltatoreSensore getListenerSensore (Integer position) { return sensoriListener[position]; }
 
+    public String getSensoreValue (Integer sensoreKey)
+    {
+        Integer position=0;
+        if (sensoreKey==Sensor.TYPE_MAGNETIC_FIELD) position= 0;
+        if (sensoreKey==Sensor.TYPE_LIGHT) position= 1;
+        if (sensoreKey==Sensor.TYPE_PROXIMITY) position= 2;
+
+        return sensoriTextView[position].getText().toString();
+    }
 
     public String castIntToStrSensorType(Integer type)
     {
@@ -69,6 +77,7 @@ public class SensorsOnBoard  {
             AscoltatoreSensore sensoreListener;
             Sensor sensore;
 
+            result+="CHECK SENSORI:"+"\n";
             result+=castIntToStrSensorType(sensoriKey[i])+"  ";
             sensore = sensorManager.getDefaultSensor(sensoriKey[i]);
             if (sensore != null)
@@ -76,20 +85,16 @@ public class SensorsOnBoard  {
                 sensori[i]=sensore;
                 sensoreListener = new AscoltatoreSensore(sensoriKey[i],sensoriTextView[i]);
                 sensoriListener[i]=sensoreListener;
+                sensoriFlagInstall[i]=true;
                 result+="OK";
             }
-            else
-                result+="NOT FOUND";
+            else {
+                sensoriFlagInstall[i]=false;
+                result += "NOT INSTALL";
+            }
             result+="\n";
-
         }
-
         return result;
-
-
-
-
-
     }
 
 

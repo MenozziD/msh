@@ -24,12 +24,6 @@
         android:text="Welcome from Android-er" />
 
     <TextView
-        android:id="@+id/infoip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="viewStart" />
-
-    <TextView
         android:id="@+id/tvTYPE_MAGNETIC_FIELD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,15 +44,21 @@
         android:text="TYPE_PROXIMITY: "
         android:textAlignment="viewStart" />
 
+    <TextView
+        android:id="@+id/msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/msg"
+            android:id="@+id/infoip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CHECK SENSORI:" />
+            android:textAlignment="viewStart" />
     </ScrollView>
 
 </LinearLayout>
