@@ -6,6 +6,12 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="content">content</string>
+    <string name="vwSensor_titolo">Sensori</string>
+    <string name="vwLog_titolo">Log</string>
+    <string name="vwInfo_titolo">Info</string>
+    <string name="vwServer_titolo">Server</string>
+    <string name="vwSet_titolo">Impostazioni Server</string>
 
 
     <string-array name="sh_reserved_words">
@@ -26,8 +32,101 @@
         <item>until</item>
         <item>while</item>
     </string-array>
+    <string name="html_index">
+               <![CDATA[
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <string name="index_html">
+                    <!-- Bootstrap CSS -->
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+                    <!-- Font CSS -->
+                    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+                    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+                    <title>Not Found</title>
+                </head>
+                <script type="text/javascript">
+                    var myVar = setInterval(scanTimer, 2000);
+                    $( document ).ready(read_all());
+                    function sensor_cmd(str_cmd){
+                        $.ajax({
+                            url: "sensor",
+                            type: "GET",
+                            data: {type:str_cmd},
+                            success: function(response,str_cmd){
+                                var json = jQuery.parseJSON(response);
+                                var res=json["response"];
+                                var req=json["request"].split("=");
+                                if (req[1]=="LIGHT")
+                                    $("#LIGHT").val(res);
+                                if (req[1]=="MAGNETIC_FIELD")
+                                    $("#MAGNETIC_FIELD").val(res);
+                                if (req[1]=="PROXIMITY")
+                                    $("#PROXIMITY").val(res);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+                    function read_all()
+                    {
+                        sensor_cmd("LIGHT");
+                        sensor_cmd("MAGNETIC_FIELD");
+                        sensor_cmd("PROXIMITY");
+                    }
+                    function scanTimer()
+                    {
+                        setInterval(read_all(), 3000);
+                    }
+                </script>
+                <body>
+                    <div class="container">
+                        <div class="row">
+                            <div class="py-5 col-md-12 text-center">
+                                <div class="error-template">
+                                    <h1>HOME</h1>
+                                    <div class="form-row justify-content-center">
+                                        <div class="py-3 input-group col-md-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text mb-2 " >Luminosita:</span>
+                                            </div>
+                                            <input id ="LIGHT" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row justify-content-center">
+                                        <div class="py-3 input-group col-md-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text mb-2 " >Prossimita:</span>
+                                            </div>
+                                            <input id ="PROXIMITY" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-row justify-content-center">
+                                        <div class="py-3 input-group col-md-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text mb-2 " >Campo Magnetico:</span>
+                                            </div>
+                                            <input id ="MAGNETIC_FIELD" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        ]]>
+
+</string>
+
+    <string name="html_index2">
         <![CDATA[
             <html>
                 <head>
@@ -71,4 +170,46 @@
         ]]>
     </string>
 
+    <string name="html_404">
+        <![CDATA[
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+                    <!-- Bootstrap CSS -->
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+                    <!-- Font CSS -->
+                    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+                    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+                    <title>Not Found</title>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="row">
+                            <div class="py-5 col-md-12 text-center">
+                                <div class="error-template">
+                                    <h1>404</h1>
+                                    <h2>NOT FOUND</h2>
+                                    <div class="error-actions py-4">
+                                        <a href="/" class="btn btn-primary btn-lg">
+                                            Home
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        ]]>
+    </string>
+
 </resources>
+

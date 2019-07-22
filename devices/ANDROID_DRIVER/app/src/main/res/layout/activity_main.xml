@@ -17,48 +17,305 @@
         android:text="MSHANDROIDDRV"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/welcomemsg"
+
+
+    <LinearLayout
+        android:id="@+id/vwServer"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="15dp"
+        android:weightSum="50">
+
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@drawable/fileserver"
+            android:contentDescription="@string/content"
+            android:orientation="horizontal"
+            android:layout_marginRight="16dp"
+            android:scaleType="fitXY" />
+
+        <Button
+            android:id="@+id/bServer"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_weight="3"
+            android:background="@drawable/stop"
+            android:orientation="horizontal"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:text="-"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvServer"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="38"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+    </LinearLayout> <!-- SERVER -->
+
+    <!-- SENSOR -->
+    <LinearLayout
+        android:id="@+id/vwSensorTitolo"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:weightSum="50">
+
+        <Button
+            android:id="@+id/bSensorDim"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:background="@drawable/left"
+            android:orientation="horizontal"
+            android:scaleType="fitXY"
+            android:layout_marginRight="2dp"/>
+
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/sensor"
+            android:contentDescription="@string/content"
+            android:orientation="horizontal"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="42"
+            android:text="@string/vwSensor_titolo"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+    </LinearLayout> <!-- TITOLO -->
+
+    <GridLayout
+        android:id="@+id/vwSensor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome from Android-er" />
+        android:columnCount="2"
+        android:rowCount="3"
+        android:layout_marginBottom="10dp">
 
-    <TextView
-        android:id="@+id/tvTYPE_MAGNETIC_FIELD"
+        <TextView
+            android:id="@+id/tvTYPE_LIGHT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:text="TYPE_LIGHT: "
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/tvTYPE_LIGHT_OUT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:text=""
+            android:textAlignment="viewEnd" />
+
+        <TextView
+            android:id="@+id/tvTYPE_MAGNETIC_FIELD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:text="TYPE_MAGNETIC_FIELD: "
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/tvTYPE_MAGNETIC_FIELD_OUT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:text=""
+            android:textAlignment="viewEnd" />
+
+        <TextView
+            android:id="@+id/tvTYPE_PROXIMITY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="2"
+            android:layout_column="0"
+            android:text="TYPE_PROXIMITY: "
+            android:textAlignment="viewStart" />
+
+        <TextView
+            android:id="@+id/tvTYPE_PROXIMITY_OUT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="2"
+            android:layout_column="1"
+            android:text=""
+            android:textAlignment="viewEnd" />
+
+    </GridLayout> <!-- BODY -->
+    <!-- SENSOR -->
+
+    <!-- SETTINGS -->
+    <LinearLayout
+        android:id="@+id/vwSetTitolo"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:weightSum="50">
+
+        <Button
+            android:id="@+id/bSetDim"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:background="@drawable/left"
+            android:orientation="horizontal"
+            android:scaleType="fitXY"
+            android:layout_marginRight="2dp"/>
+
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/settings"
+            android:contentDescription="@string/content"
+            android:orientation="horizontal"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="42"
+            android:text="@string/vwSet_titolo"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+    </LinearLayout> <!-- TITOLO -->
+
+    <GridLayout
+        android:id="@+id/vwSet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TYPE_MAGNETIC_FIELD: "
-        android:textAlignment="viewStart" />
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_marginBottom="10dp">
 
-    <TextView
-        android:id="@+id/tvTYPE_LIGHT"
+
+        <TextView
+            android:id="@+id/tvDeviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:text="Device Name: "
+            android:textAlignment="viewStart" />
+
+        <EditText
+            android:id="@+id/etDeviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:inputType="text"
+            android:text="Smartphone"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvTimeUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:text="Time Update (ms): "
+            android:textAlignment="viewStart" />
+
+        <EditText
+            android:id="@+id/etTimeUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:inputType="number"
+            android:text="5000"
+            android:textAlignment="viewEnd"
+            android:textSize="14sp" />
+
+    </GridLayout> <!-- BODY -->
+    <!-- SETTINGS -->
+
+    <!-- LOG -->
+    <LinearLayout
+        android:id="@+id/vwLogTitolo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TYPE_LIGHT: "
-        android:textAlignment="viewStart" />
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:weightSum="50">
 
-    <TextView
-        android:id="@+id/tvTYPE_PROXIMITY"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TYPE_PROXIMITY: "
-        android:textAlignment="viewStart" />
+        <Button
+            android:id="@+id/bLogDim"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:background="@drawable/left"
+            android:orientation="horizontal"
+            android:scaleType="fitXY"
+            android:layout_marginRight="2dp"/>
 
-    <TextView
-        android:id="@+id/msg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/note"
+            android:contentDescription="@string/content"
+            android:orientation="horizontal"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitXY" />
 
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="42"
+            android:text="@string/vwLog_titolo"
+            android:textColor="@color/colorBlack"
+            android:textStyle="bold" />
+
+    </LinearLayout> <!-- TITOLO -->
 
     <ScrollView
+        android:id="@+id/vwLog"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:id="@+id/infoip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart" />
-    </ScrollView>
+    </ScrollView> <!-- BODY -->
+    <!-- LOG -->
+
+
+
 
 </LinearLayout>

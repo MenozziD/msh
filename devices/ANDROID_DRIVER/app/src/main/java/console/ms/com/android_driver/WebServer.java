@@ -1,7 +1,13 @@
 package console.ms.com.android_driver;
 
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -16,26 +22,27 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
-public class WebServer {
+public class WebServer   {
 
-    private String htmlHomepage;
     private HttpServerThread webHttpServerThread;
-    //private HttpResponseThread webHttpResponseThread;
-    MainActivity activity;
+    ServizioWebServer servizioWebServer;
     ServerSocket httpServerSocket;
     static final int HttpServerPORT = 8888;
-    static String msgLog="";
+    static String msgLog = "";
 
-    public WebServer (String phtmlHomepage, MainActivity plogMainActivity)
-    {
-        activity=plogMainActivity;
+
+    public WebServer(ServizioWebServer pService) {
+        servizioWebServer = pService;
         webHttpServerThread = new HttpServerThread();
-        htmlHomepage=phtmlHomepage;
     }
 
-    public HttpServerThread getHttpServerThread ()  { return webHttpServerThread; }
+    public HttpServerThread getHttpServerThread() {
+        return webHttpServerThread;
+    }
 
 
     public void close() {
@@ -62,8 +69,7 @@ public class WebServer {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "IP Server : "
-                                + inetAddress.getHostAddress() ; //+ "\n"
+                        ip += inetAddress.getHostAddress();
                     }
                 }
 
@@ -79,11 +85,10 @@ public class WebServer {
     }
 
 
-
     public class HttpServerThread extends Thread {
 
-        public HttpServerThread()
-        {}
+        public HttpServerThread() {
+        }
 
         @Override
         public void run() {
@@ -92,12 +97,11 @@ public class WebServer {
             try {
                 httpServerSocket = new ServerSocket(HttpServerPORT);
 
-                while(true){
+                while (true) {
                     socket = httpServerSocket.accept();
                     HttpResponseThread httpResponseThread =
                             new HttpResponseThread(
-                                    socket,
-                                    htmlHomepage);
+                                    socket);
                     httpResponseThread.start();
                 }
             } catch (IOException e) {
@@ -110,11 +114,67 @@ public class WebServer {
     private class HttpResponseThread extends Thread {
 
         Socket socket;
-        String response;
 
-        HttpResponseThread(Socket socket, String msg){
+
+        HttpResponseThread(Socket socket) {
             this.socket = socket;
-            response = msg;
+        }
+
+        public String route(String request) {
+            String result = "";
+            String content = "";
+            String response = "";
+            JSONObject jsonObject;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            try {
+
+                jsonObject = new JSONObject();
+                jsonObject.put("request", request);
+                jsonObject.put("response", "");
+                jsonObject.put("timestamp", "");
+
+                if (request.indexOf("/sensor")>-1) {
+                    String[] arr=request.split("\\?");
+                    arr=arr[1].split("=");
+                    if (arr[0].equals("type"))
+                    {
+                        if (arr[1].equals("LIGHT"))
+                            jsonObject.put("response",servizioWebServer.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_LIGHT).getActualValue());
+                        if (arr[1].equals("MAGNETIC_FIELD"))
+                            jsonObject.put("response",servizioWebServer.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_MAGNETIC_FIELD).getActualValue());
+                        if (arr[1].equals("PROXIMITY"))
+                            jsonObject.put("response",servizioWebServer.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_PROXIMITY).getActualValue());
+                    }
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+
+                    response=jsonObject.toString();
+                    content = "application/json";
+                }
+                else {
+                    if (request.trim().equals("/"))
+                        response = servizioWebServer.getString(R.string.html_index);
+                    else
+                        response = servizioWebServer.getString(R.string.html_404);
+                    response+= "\r\n";
+                    content = "text/html";
+                }
+
+            } catch (JSONException e) {
+                response = e.toString();
+                e.printStackTrace();
+            } catch (Exception e) {
+                response = e.toString();
+                e.printStackTrace();
+            } finally {
+
+                result = "HTTP/1.0 200" + "\r\n";
+                result += "Content type: " + content + "\r\n";
+                result += "Content length: " + response.length() + "\r\n";
+                result += "\r\n";
+                result += response;
+
+                return result;
+            }
         }
 
         @Override
@@ -122,65 +182,37 @@ public class WebServer {
             BufferedReader is;
             PrintWriter os;
             String request;
-            String arequest[];
-            JSONObject jsonObject;
+            String[] arequest;
+
 
             try {
-                jsonObject= new JSONObject();
                 is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 request = is.readLine();
 
                 os = new PrintWriter(socket.getOutputStream(), true);
-
+                arequest = new String [3];
                 arequest=request.split(" ");
                 msgLog +="Method:".concat(arequest[0]+"\n");
                 msgLog +="Resource:".concat(arequest[1]+"\n");
                 msgLog +="HTTP Version:".concat(arequest[2]+"\n");
 
-
-                if (arequest[1].trim().equals("/actual_lx"))
-                    jsonObject.put("response",activity.getSensorValue(Sensor.TYPE_LIGHT));
-                else
-                    jsonObject.put("response","NULL");
-
-                response=jsonObject.toString();
-                os.print("HTTP/1.0 200" + "\r\n");
-                os.print("Content type: text/html" + "\r\n");
-                os.print("Content length: " + response.length() + "\r\n");
-                os.print("\r\n");
-                os.print(response + "\r\n");
+                os.print(route(arequest[1]));
                 os.flush();
                 socket.close();
 
-                activity.runOnUiThread(new Runnable() {
+                servizioWebServer.getServiceActivity().runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        activity.infoLog.append(msgLog);
+                        servizioWebServer.getServiceActivity().infoLog.setText(msgLog);
                     }
                 });
-
-                //msgLog += "Request of " + request
-                //+ " from " + socket.getInetAddress().toString() + "\n";
-                //msgLog += "Request of " + request;
-                /*
-                MainActivity.this.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        infoMsg.setText(msgLog);
-                    }
-                });
-                */
-
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            catch (JSONException e) {
-            e.printStackTrace();}
+
 
             return;
         }
