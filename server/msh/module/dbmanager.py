@@ -67,6 +67,28 @@ class DbManager:
         return devices
 
     @staticmethod
+    def select_tb_net_device_and_google_info(net_mac=''):
+        query = 'SELECT NET_CODE, NET_MAC, NET_STATUS, GOOGLE_TYPE, GOOGLE_TRAITS ' \
+                'FROM TB_NET_DEVICE, TB_NET_DEVICE_TYPE ' \
+                'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE'
+        if net_mac != '':
+            query = query + ' AND NET_MAC = \'%s\';' % net_mac
+        else:
+            query = query + ';'
+        net_devices = DbManager.select(query)
+        devices = []
+        for net_device in net_devices:
+            tb_net_device = {
+                'net_code': str(net_device[0]),
+                'net_mac': str(net_device[1]),
+                'net_status': str(net_device[2]),
+                'google_type': str(net_device[3]),
+                'google_traits': str(net_device[4])
+            }
+            devices.append(tb_net_device)
+        return devices
+
+    @staticmethod
     def select_tb_net_device_type():
         query = 'SELECT * ' \
                 'FROM TB_NET_DEVICE_TYPE;'
@@ -75,7 +97,9 @@ class DbManager:
         for net_device_type in net_devices_type:
             tb_net_device_type = {
                 'type_code': str(net_device_type[0]),
-                'type_description': str(net_device_type[1])
+                'type_description': str(net_device_type[1]),
+                'google_type': str(net_device_type[2]),
+                'google_traits': str(net_device_type[3])
             }
             devices_types.append(tb_net_device_type)
         return devices_types

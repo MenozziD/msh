@@ -95,8 +95,9 @@ def check_internet_connection():
     return internet
 
 
-def set_api_response(response_payload, response):
-    response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
+def set_api_response(response_payload, response, timmestamp=True):
+    if timmestamp:
+        response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Content-Type', 'application/json')
     response.write(dumps(response_payload, indent=4, sort_keys=True))

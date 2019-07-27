@@ -1,7 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
 from module import set_api_response, validate_format
-from module import cmd_esp
+from module import DbManager
 
 
 class Home(BaseHandler):
@@ -11,8 +11,8 @@ class Home(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            response = Home.check(self.request, body)
-            if response['output'] == 'OK':
+            DbManager()
+            if Home.check(self.request, body)['output'] == 'OK':
                 data = self.request.json
                 intent = data['inputs'][0]['intent']
                 funzioni = {
@@ -21,14 +21,13 @@ class Home(BaseHandler):
                     "action.devices.EXECUTE": Home.execute
                 }
                 response = funzioni[intent](data)
-                response['output'] = 'OK'
             else:
                 raise Exception(response['output'])
-        except Exception as e:
+        except Exception:
             exception("Exception")
-            response['output'] = str(e)
         finally:
-            set_api_response(response, self.response)
+            DbManager.close_db()
+            set_api_response(response, self.response, False)
 
     @staticmethod
     def check(request, body):
@@ -45,63 +44,36 @@ class Home(BaseHandler):
     @staticmethod
     def sync(data):
         devices = []
-        device = {
-            'id': '1',
-            'type': 'action.devices.types.SWITCH',
-            'traits': ['action.devices.traits.OnOff'],
-            'name': {'name': 'fan'},
-            'willReportState': True
-        }
-        devices.append(device)
-        device = {
-            'id': '2',
-            'type': 'action.devices.types.LIGHT',
-            'traits': ['action.devices.traits.OnOff', 'action.devices.traits.ColorSpectrum'],
-            'name': {'name': 'lights'},
-            'willReportState': True
-        }
-        devices.append(device)
-        device = {
-            'id': '3',
-            "type": "action.devices.types.THERMOSTAT",
-            'traits': ['action.devices.traits.TemperatureSetting'],
-            'name': {
-                'name': 'temperature'
-            },
-            'willReportState': True,
-            "attributes": {
-                "thermostatTemperatureUnit": "C"
-            },
-        }
-        devices.append(device)
+        device_type = DbManager.select_tb_net_device_and_google_info()
+        for dev in device_type:
+            device = {
+                'id': dev["net_mac"],
+                'type': dev["google_type"],
+                'traits': [dev["google_traits"].split(",")[:-1]],
+                'name': {'name': dev["net_code"]},
+                'willReportState': True
+            }
+            devices.append(device)
         response = {
             'requestId': data['requestId'],
-            'payload': {'devices': devices}
+            'payload': {
+                "agentUserId": "01011980",
+                'devices': devices}
         }
         return response
 
     @staticmethod
     def query(data):
-        first = {
-            'on': True,
-            'online': True
+        device = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
+        google_device = {
+            'on': True
         }
-        second = {
-            'on': False,
-            'online': True,
-            'color': {
-                'spectrumRGB': 16510692
-            }
-        }
-        third = {
-            "online": True,
-            "thermostatTemperatureAmbient": 25.1,
-            "thermostatHumidityAmbient": 45.3
-        }
+        if device['net_status'] == 'OFF':
+            google_device['online'] = False
+        else:
+            google_device['online'] = True
         devices = {
-            '1': first,
-            '2': second,
-            '3': third
+            data["inputs"][0]["payload"]["devices"][0]["id"]: google_device,
         }
         response = {
             'requestId': data['requestId'],
@@ -117,8 +89,8 @@ class Home(BaseHandler):
         params = req_command['execution'][0]['params']
         device_id = req_command['devices'][0]['id']
         if command == 'action.devices.commands.OnOff':
-            if device_id == '1':
-                info('device 1 %s', params['on'])
+            if device_id == 'A0:4F:D4:B4:3A:53':
+                info('device A0:4F:D4:B4:3A:53 %s', params['on'])
                 # cmd_esp('192.168.1.9', 'toggle')
             if device_id == '2':
                 info('ON/OFF device 2')
