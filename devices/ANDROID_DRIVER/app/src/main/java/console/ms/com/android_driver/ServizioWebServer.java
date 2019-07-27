@@ -15,32 +15,29 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 
-public class ServizioWebServer  extends Service {
+public class ServizioWebServer extends Service {
 
     private static final int NOTIF_ID = 1;
     private static final String NOTIF_CHANNEL_ID = "Channel_Id";
-    private MainActivity activity;
+
 
     private SensorManager sensorManager;
     private SensorsOnBoard sensorsOnBoard;
     private WebServer webServer;
 
-
     @Nullable
     @Override
-
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+
     @Override
     public void onDestroy() {
 
-        webServer.close();
+        if (webServer != null ) webServer.close();
         webServer=null;
-        activity.gettvStatus().setText("OFF");
-        activity.gettvStatus().setTextColor(Color.RED);
-        activity.getbServer().setBackgroundResource(R.drawable.play);
+
         for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
         {
             sensorManager.unregisterListener(sensorsOnBoard.getListenerSensore(i));
@@ -53,70 +50,39 @@ public class ServizioWebServer  extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
 
+        int result=0;
+
         // do your jobs here
         try {
-            activity=this.getActivity();
+
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            sensorsOnBoard= new SensorsOnBoard(sensorManager,activity.gettvSensori());
-            //startService(new Intent(this, ServizioWebServer.class));
+            sensorsOnBoard= new SensorsOnBoard(sensorManager,MainActivity.getActivity().gettvSensori());
             sensorsOnBoard.scanSensors();
+            webServer=new WebServer(this);
+
             for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
             {
                 sensorManager.registerListener(sensorsOnBoard.getListenerSensore(i), sensorsOnBoard.getSensore(i), SensorManager.SENSOR_DELAY_FASTEST);
                 //sensorManager.registerListener(lightEventListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
             }
-            webServer=new WebServer(this);
-            activity.gettvServer().setText("Server :"+webServer.getIpAddress()+":" + Integer.toString(webServer.HttpServerPORT ));
-            webServer.getHttpServerThread().start();
-            activity.gettvStatus().setText("ON");
-            activity.gettvStatus().setTextColor(Color.GREEN);
-            activity.getbServer().setBackgroundResource(R.drawable.stop);
+            if (!WebServer.getIpAddress().equals(""))
+            {
+                webServer.getHttpServerThread().start();
+                startForeground();
+                result=super.onStartCommand(intent, flags, startId);
+            }
 
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //webServer.close();
-        // do your jobs here
-        startForeground();
+        finally {
+            return result;
+        }
 
-        return super.onStartCommand(intent, flags, startId);
     }
 
-    public MainActivity getServiceActivity(){return activity;}
     public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
 
-    public static MainActivity getActivity() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException {
-        Class activityThreadClass = Class.forName("android.app.ActivityThread");
-        Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-        Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-        activitiesField.setAccessible(true);
-
-        Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
-        if (activities == null)
-            return null;
-
-        for (Object activityRecord : activities.values()) {
-            Class activityRecordClass = activityRecord.getClass();
-            Field pausedField = activityRecordClass.getDeclaredField("paused");
-            pausedField.setAccessible(true);
-            if (!pausedField.getBoolean(activityRecord)) {
-                Field activityField = activityRecordClass.getDeclaredField("activity");
-                activityField.setAccessible(true);
-                MainActivity activity = (MainActivity) activityField.get(activityRecord);
-                return activity;
-            }
-        }
-
-        return null;
-    }
 
 
     private void startForeground() {

@@ -44,7 +44,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
             android:layout_weight="3"
-            android:background="@drawable/stop"
+            android:background="@drawable/play"
             android:orientation="horizontal"
             android:scaleType="fitXY" />
 
@@ -53,9 +53,9 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="5"
-            android:text="-"
-            android:textAlignment="center"
-            android:textColor="@color/colorBlack"
+            android:text="OFF"
+            android:textAlignment="viewEnd"
+            android:textColor="@color/colorRed"
             android:textStyle="bold" />
 
         <TextView
@@ -63,8 +63,10 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="38"
+            android:textAlignment="viewStart"
             android:textColor="@color/colorBlack"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text=" Server :" />
 
     </LinearLayout> <!-- SERVER -->
 

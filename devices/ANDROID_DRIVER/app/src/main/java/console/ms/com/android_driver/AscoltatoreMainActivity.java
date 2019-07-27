@@ -3,6 +3,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -63,12 +64,16 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
             case R.id.bServer:
                 if (app.getbServer().getTag().equals(app.getTAG_Server())) {
                     this_app.stopServerService();
+                    app.gettvStatus().setText("OFF");
+                    app.gettvStatus().setTextColor(Color.RED);
                     app.getbServer().setTag("");
                     app.getbServer().setBackgroundResource(R.drawable.play);
                 }
                 else {
                     this_app.startServerService();
                     app.getbServer().setTag(app.getTAG_Server());
+                    app.gettvStatus().setText("ON");
+                    app.gettvStatus().setTextColor(Color.GREEN);
                     app.getbServer().setBackgroundResource(R.drawable.stop);
                 }
                 break;
@@ -91,7 +96,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                 }
                 break;
 
-            /* SENSOR */
+            /* SET */
             case R.id.bSetDim:
                 if (app.getbSetDim().getTag().equals(app.getTAG_Visible())) {
                     app.getVwSet().setLayoutParams(par_close);

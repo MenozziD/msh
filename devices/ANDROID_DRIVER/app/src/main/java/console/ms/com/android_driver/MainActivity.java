@@ -5,15 +5,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import android.app.Application;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -52,7 +56,6 @@ public class MainActivity extends AppCompatActivity  {
     private TextView tvServer;
     private TextView tvStatus;
     public Button getbServer() {return bServer; }
-    public TextView gettvServer() {return tvServer; }
     public TextView gettvStatus() {return tvStatus; }
 
     /* SENSOR */
@@ -81,6 +84,16 @@ public class MainActivity extends AppCompatActivity  {
     public TextView getinfoLog() {return infoLog; }
 
 
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -101,17 +114,17 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AscoltatoreMainActivity Ascoltatore = new AscoltatoreMainActivity(this);
+        App this_app = App.getInstance();
+
 
 
         /* SERVER */
         tvServer = (TextView) findViewById(R.id.tvServer);
+        tvServer.setText(" Server: "+WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         bServer=findViewById(R.id.bServer);
         bServer.setOnClickListener(Ascoltatore);
         bServer.setTag("");
-        bServer.callOnClick();
-
-
 
         infoLog = (TextView) findViewById(R.id.infoip);
 
@@ -143,6 +156,19 @@ public class MainActivity extends AppCompatActivity  {
         bLogDim.setTag(TAG_Visible);
         bLogDim.callOnClick();
 
+        if(this_app.isServerServiceRunning(ServizioWebServer.class))
+        {
+            getbServer().setTag(getTAG_Server());
+            gettvStatus().setText("ON");
+            gettvStatus().setTextColor(Color.GREEN);
+            getbServer().setBackgroundResource(R.drawable.stop);
+        }else{
+            gettvStatus().setText("OFF");
+            gettvStatus().setTextColor(Color.RED);
+            getbServer().setTag("");
+            getbServer().setBackgroundResource(R.drawable.play);
+        }
+
 
     }
 
@@ -150,6 +176,32 @@ public class MainActivity extends AppCompatActivity  {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    public static MainActivity getActivity() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException {
+        Class activityThreadClass = Class.forName("android.app.ActivityThread");
+        Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+        Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+        activitiesField.setAccessible(true);
+
+        Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+        if (activities == null)
+            return null;
+
+        for (Object activityRecord : activities.values()) {
+            Class activityRecordClass = activityRecord.getClass();
+            Field pausedField = activityRecordClass.getDeclaredField("paused");
+            pausedField.setAccessible(true);
+            if (!pausedField.getBoolean(activityRecord)) {
+                Field activityField = activityRecordClass.getDeclaredField("activity");
+                activityField.setAccessible(true);
+                MainActivity activity = (MainActivity) activityField.get(activityRecord);
+                return activity;
+            }
+        }
+
+        return null;
+    }
+
 
 
 }

@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -55,7 +56,7 @@ public class WebServer   {
         }
     }
 
-    public String getIpAddress() {
+    static String getIpAddress() {
         String ip = "";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
@@ -183,9 +184,11 @@ public class WebServer   {
             PrintWriter os;
             String request;
             String[] arequest;
-
+            final MainActivity app;
 
             try {
+
+                app = MainActivity.getActivity();
                 is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 request = is.readLine();
 
@@ -200,19 +203,30 @@ public class WebServer   {
                 os.flush();
                 socket.close();
 
-                servizioWebServer.getServiceActivity().runOnUiThread(new Runnable() {
+                app.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        servizioWebServer.getServiceActivity().infoLog.setText(msgLog);
+                        app.infoLog.setText(msgLog);
                     }
                 });
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
 
             return;
         }
