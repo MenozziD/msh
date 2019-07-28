@@ -53,7 +53,10 @@
                     <title>Not Found</title>
                 </head>
                 <script type="text/javascript">
-                    var myVar = setInterval(scanTimer, 2000);
+                    var time_update=2000;
+                    read_set("time_update");
+                    read_set("device_name");
+                    var myVar = setInterval(scanTimer, time_update);
                     $( document ).ready(read_all());
                     function sensor_cmd(str_cmd){
                         $.ajax({
@@ -75,6 +78,24 @@
                             }
                         });
                     }
+                    function read_set(str_s){
+                        $.ajax({
+                            url: "settings",
+                            type: "GET",
+                            data: {str_set:str_s},
+                            success: function(response){
+                                var json = jQuery.parseJSON(response);
+                                var res=json["response"];
+                                var req=json["request"].split("=");
+                                if (req[1]=="device_name")
+                                    $("#device_name").text(res);
+                                if (req[1]=="time_update")
+                                    time_update=parseInt(res);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
                     function read_all()
                     {
                         sensor_cmd("LIGHT");
@@ -83,7 +104,7 @@
                     }
                     function scanTimer()
                     {
-                        setInterval(read_all(), 3000);
+                        read_all();
                     }
                 </script>
                 <body>
@@ -91,7 +112,7 @@
                         <div class="row">
                             <div class="py-5 col-md-12 text-center">
                                 <div class="error-template">
-                                    <h1>HOME</h1>
+                                    <h1><p id="device_name"> </p></h1>
                                     <div class="form-row justify-content-center">
                                         <div class="py-3 input-group col-md-3">
                                             <div class="input-group-prepend">

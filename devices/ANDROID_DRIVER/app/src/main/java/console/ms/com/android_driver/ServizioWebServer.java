@@ -37,7 +37,7 @@ public class ServizioWebServer extends Service {
 
         if (webServer != null ) webServer.close();
         webServer=null;
-
+        /*
         for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
         {
             sensorManager.unregisterListener(sensorsOnBoard.getListenerSensore(i));
@@ -45,8 +45,11 @@ public class ServizioWebServer extends Service {
 
         // Tell the user we stopped.
         //Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
+        */
     }
 
+
+    
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
 

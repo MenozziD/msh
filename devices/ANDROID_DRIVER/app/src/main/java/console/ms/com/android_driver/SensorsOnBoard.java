@@ -14,7 +14,7 @@ public class SensorsOnBoard  {
 
     private SensorManager sensorManager;
 
-    static final Integer maxNumberofSensor =3;
+    static final Integer maxNumberofSensor = 3;
 
     public SensorsOnBoard (SensorManager pSensorManager,TextView[] pTextView )
     {

@@ -134,6 +134,12 @@ public class WebServer   {
                 jsonObject.put("response", "");
                 jsonObject.put("timestamp", "");
 
+                if (request.trim().equals("/")) {
+                    response = servizioWebServer.getString(R.string.html_index);
+                    response+= "\r\n";
+                    content = "text/html";
+                }
+
                 if (request.indexOf("/sensor")>-1) {
                     String[] arr=request.split("\\?");
                     arr=arr[1].split("=");
@@ -151,11 +157,23 @@ public class WebServer   {
                     response=jsonObject.toString();
                     content = "application/json";
                 }
-                else {
-                    if (request.trim().equals("/"))
-                        response = servizioWebServer.getString(R.string.html_index);
-                    else
-                        response = servizioWebServer.getString(R.string.html_404);
+                if (request.indexOf("/settings")>-1) {
+                    String[] arr=request.split("\\?");
+                    arr=arr[1].split("=");
+                    if (arr[0].equals("str_set")) {
+                        if (arr[1].equals("time_update"))
+                            jsonObject.put("response", MainActivity.getActivity().getetTimeUpdate().getText());
+                        if (arr[1].equals("device_name"))
+                            jsonObject.put("response", MainActivity.getActivity().getetDeviceName().getText());
+                    }
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+
+                    response=jsonObject.toString();
+                    content = "application/json";
+                }
+                if (content.equals(""))
+                {
+                    response = servizioWebServer.getString(R.string.html_404);
                     response+= "\r\n";
                     content = "text/html";
                 }
