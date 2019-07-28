@@ -1,10 +1,16 @@
 package console.ms.com.android_driver;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
@@ -49,7 +55,7 @@ public class ServizioWebServer extends Service {
     }
 
 
-    
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
 
@@ -71,7 +77,11 @@ public class ServizioWebServer extends Service {
             if (!WebServer.getIpAddress().equals(""))
             {
                 webServer.getHttpServerThread().start();
-                startForeground();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    startMyOwnForeground();
+                else
+                    startForeground(1, new Notification());
+                //startForeground();
                 result=super.onStartCommand(intent, flags, startId);
             }
 
@@ -87,20 +97,24 @@ public class ServizioWebServer extends Service {
     public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
 
 
+    @TargetApi(26)
+    private void startMyOwnForeground(){
+        String NOTIFICATION_CHANNEL_ID = "com.example.simpleapp";
+        String channelName = "My Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
 
-    private void startForeground() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
-
-        startForeground(NOTIF_ID, new NotificationCompat.Builder(this,
-                NOTIF_CHANNEL_ID) // don't forget create a notification channel first
-                .setOngoing(true)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        Notification notification = notificationBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.sensor)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("Service is running background")
-                .setContentIntent(pendingIntent)
-                .build());
+                .setContentTitle("App is running in background")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+        startForeground(2, notification);
     }
 }
