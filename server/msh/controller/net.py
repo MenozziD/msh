@@ -293,7 +293,7 @@ class Net(BaseHandler):
             trovato = False
             for db_device in db_devices:
                 if device['net_mac'] == db_device['net_mac']:
-                    DbManager.update_tb_net_device(device['net_mac'], net_status='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
+                    DbManager.update_tb_net_device(device['net_mac'], net_online='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
                     trovato = True
                     aggiornati = aggiornati + 1
                     break
@@ -346,7 +346,7 @@ class Net(BaseHandler):
                     trovato = True
                     break
             if not trovato:
-                DbManager.update_tb_net_device(db_device['net_mac'], net_status='OFF')
+                DbManager.update_tb_net_device(db_device['net_mac'], net_online='OFF')
 
     @staticmethod
     def device_cmd(dispositivo, comando):

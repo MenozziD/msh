@@ -68,7 +68,8 @@ class Home(BaseHandler):
         google_device = {
             'on': True
         }
-        if device['net_status'] == 'OFF':
+        google_device['on'] = device['net_status']
+        if device['net_online'] == 'OFF':
             google_device['online'] = False
         else:
             google_device['online'] = True
