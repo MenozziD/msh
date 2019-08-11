@@ -70,6 +70,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                     activity.gettvStatus().setTextColor(Color.RED);
                     activity.getbServer().setTag("");
                     activity.getbServer().setBackgroundResource(R.drawable.play);
+                    activity.gettvServer().setText("");
                 }
                 else {
                     app.startServerService();
@@ -77,6 +78,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                     activity.gettvStatus().setText("ON");
                     activity.gettvStatus().setTextColor(Color.GREEN);
                     activity.getbServer().setBackgroundResource(R.drawable.stop);
+                    activity.gettvServer().setText(WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
                 }
                 break;
             case R.id.tvServer:
@@ -128,16 +130,18 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                     activity.getbLogDim().setBackgroundResource(R.drawable.left);
                 }
                 else {
-
                     activity.getVwLog().setVisibility(View.VISIBLE);
                     activity.getVwLog().setLayoutParams(par_open);
                     activity.getbLogDim().setTag(activity.getTAG_Visible());
                     activity.getbLogDim().setBackgroundResource(R.drawable.down);
-                    activity.getPermissionManager().checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,false);
-                    if(activity.getPermissionManager().getWRITE_EXTERNAL_STORAGE())
-                        activity.getinfoLog().setText(activity.getResources().getString(R.string.mex_LOG_OK));
-                    else
-                        activity.getinfoLog().setText(activity.getResources().getString(R.string.mex_LOG_ERR));
+                    if(activity.getPermissionManager().getWRITE_EXTERNAL_STORAGE()) {
+                        activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_OK));
+                        activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorGreen));
+                    }
+                    else {
+                        activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_ERR));
+                        activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorRed));
+                    }
                     //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
                 }

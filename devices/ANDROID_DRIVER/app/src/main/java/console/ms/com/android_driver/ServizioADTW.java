@@ -1,5 +1,6 @@
 package console.ms.com.android_driver;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -23,18 +25,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 
-public class ServizioWebServer extends Service {
+public class ServizioADTW extends Service {
 
     private static final int NOTIF_ID = 1;
     private static final String NOTIF_CHANNEL_ID = "Channel_Id";
 
 
-    private SensorManager sensorManager;
     private SensorsOnBoard sensorsOnBoard;
     public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
     private WebServer webServer;
     private ManageXml manageXml;
     public ManageXml getManageXml(){return manageXml;}
+    private API api;
+    public API getAPI(){return api;}
+    private File configFile;
+    public File getConfigFile(){return configFile;}
+    private PermissionManager permissionManager;
+    public PermissionManager getPermissionManager(){return permissionManager;}
+
 
     @Nullable
     @Override
@@ -46,18 +54,25 @@ public class ServizioWebServer extends Service {
     @Override
     public void onDestroy() {
 
-        if (webServer != null ) webServer.close();
-        webServer=null;
-        FileManager.Log("Web Server OFF!","Info");
-
-        for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
+        try
         {
-            sensorManager.unregisterListener(sensorsOnBoard.getListenerSensore(i));
+            if (webServer != null ) webServer.close();
+            webServer=null;
+            FileManager.Log(getResources().getString(R.string.mex_WebServer_OFF),getResources().getString(R.string.mex_Log_Type_Info));
+            if (sensorsOnBoard != null ) sensorsOnBoard.Close();
+            sensorsOnBoard=null;
+            FileManager.Log(getResources().getString(R.string.mex_SensorOnBoard_OFF),getResources().getString(R.string.mex_Log_Type_Info));
+            super.onDestroy();
+        }catch (Exception e) {
+            e.printStackTrace();
+            FileManager.Log(e.toString(),getResources().getString(R.string.mex_Log_Type_Error));
         }
-        FileManager.Log("Ascoltatori Sensori UNREGISTER!","Info");
+        finally {
+            FileManager.Log(getResources().getString(R.string.mex_Service_OFF),getResources().getString(R.string.mex_Log_Type_Info));
+            super.onDestroy();
+        }
         // Tell the user we stopped.
         //Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
-
     }
 
 
@@ -67,38 +82,31 @@ public class ServizioWebServer extends Service {
 
         int result=0;
 
-        // do your jobs here
         try {
+            configFile = new File(this.getFilesDir(), "config.xml");
+            manageXml=new ManageXml(configFile);
+            permissionManager= new PermissionManager(configFile);
+            permissionManager.ReadPermissionManagerInXml();
+            if(permissionManager.getWRITE_EXTERNAL_STORAGE())
+                FileManager.makeAppDirectory();
+            FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
 
-            File f = new File(this.getFilesDir(), "config.xml");
-            manageXml = new ManageXml(f);
-
-            FileManager.Log("File config.xml letto!","Info");
-
-            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            sensorsOnBoard= new SensorsOnBoard(sensorManager);
-            sensorsOnBoard.scanSensors();
+            sensorsOnBoard= new SensorsOnBoard(this);
+            FileManager.Log(sensorsOnBoard.toString(),getResources().getString(R.string.mex_Log_Type_Info));
 
             webServer=new WebServer(this);
-
-            for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++) {
-                if (sensorsOnBoard.getsensori()[i] != null)
-                    sensorManager.registerListener(sensorsOnBoard.getListenerSensore(i), sensorsOnBoard.getSensore(i), SensorManager.SENSOR_DELAY_FASTEST);
-            }
-            FileManager.Log(sensorsOnBoard.toString(),"Info");
-            FileManager.Log("Ascoltatori Sensori REGISTER!","Info");
-
-
             webServer.getHttpServerThread().start();
-            FileManager.Log("Web Server ON!","Info");
+            FileManager.Log(getResources().getString(R.string.mex_WebServer_ON),getResources().getString(R.string.mex_Log_Type_Info));
+
+            api= new API(this);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startMyOwnForeground();
             else
                 startForeground(1, new Notification());
 
+            FileManager.Log(getResources().getString(R.string.mex_Service_ON),getResources().getString(R.string.mex_Log_Type_Info));
             result=super.onStartCommand(intent, flags, startId);
-            FileManager.Log("Servizio avviato in Background!","Info");
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,23 +8,25 @@ public class SensorsOnBoard  {
 
     private Sensor[] sensori;
     public Sensor[] getsensori(){return sensori;}
+
     private Integer[] sensoriKey;
     public Integer[] getsensoriKey(){return sensoriKey;}
+
     private AscoltatoreSensore[] sensoriListener;
     public AscoltatoreSensore[] getsensoriListener(){return sensoriListener;}
 
+    private ServizioADTW servizio;
     private SensorManager sensorManager;
 
     static final Integer maxNumberofSensor = 8;
 
-    public SensorsOnBoard (SensorManager pSensorManager)
+    public SensorsOnBoard (ServizioADTW servizio)
     {
-        sensorManager=pSensorManager;
+        this.servizio= servizio;
+        sensorManager = (SensorManager) servizio.getSystemService(servizio.SENSOR_SERVICE);
         sensoriKey= new Integer[maxNumberofSensor];
         sensori= new Sensor[maxNumberofSensor];
         sensoriListener = new AscoltatoreSensore[maxNumberofSensor];
-
-
         for (int i =0; i < maxNumberofSensor ;i++)
         {
             if (i==0)  sensoriKey[i] = Sensor.TYPE_MAGNETIC_FIELD;
@@ -36,6 +38,14 @@ public class SensorsOnBoard  {
             if (i==6)  sensoriKey[i] = Sensor.TYPE_GYROSCOPE;
             if (i==7)  sensoriKey[i] = Sensor.TYPE_GRAVITY;
         }
+
+        scanSensors();
+
+        for (int i=0; i<maxNumberofSensor;i++) {
+            if (getsensori()[i] != null)
+                sensorManager.registerListener(getListenerSensore(i), getSensore(i), SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
     }
 
     public Sensor getSensore (Integer position)
@@ -100,6 +110,19 @@ public class SensorsOnBoard  {
             result+="\n";
         }
         return result;
+    }
+
+    public void Close()
+    {
+        for (int i=0; i<maxNumberofSensor;i++)
+        {
+            sensorManager.unregisterListener(getListenerSensore(i));
+            sensoriListener[i]=null;
+            sensori[i]=null;
+            sensoriKey[i]=0;
+        }
+        sensorManager=null;
+        servizio=null;
     }
 
 }

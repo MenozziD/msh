@@ -15,7 +15,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
-        server_intent= new Intent(this, ServizioWebServer.class);
+        server_intent= new Intent(this, ServizioADTW.class);
 
     }
 
@@ -23,7 +23,7 @@ public class App extends Application {
 
     public void startServerService() {
         try {
-            if (!isServerServiceRunning(ServizioWebServer.class)) {
+            if (!isServerServiceRunning(ServizioADTW.class)) {
                 startService(server_intent);
             }
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class App extends Application {
 
     public void stopServerService() {
         try {
-            if (isServerServiceRunning(ServizioWebServer.class)) {
+            if (isServerServiceRunning(ServizioADTW.class)) {
                 stopService(server_intent);
             }
         } catch (Exception e) {

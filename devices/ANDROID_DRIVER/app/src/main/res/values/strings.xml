@@ -15,10 +15,17 @@
     <string name="vwInfo_titolo">Info</string>
     <string name="vwServer_titolo">Server</string>
     <string name="vwSet_titolo">Impostazioni Server</string>
-    <string name="mex_LOG_ERR">LOG ERR: NO WRITE PERMISSION</string>
-    <string name="mex_LOG_OK">LOG OK: WRITE PERMISSION OK</string>
-
-
+    <string name="mex_LOG_ERR">ERR: NO WRITE PERMISSION !</string>
+    <string name="mex_LOG_OK">OK</string>
+    <string name="mex_Log_Type_Info">Info</string>
+    <string name="mex_Log_Type_Error">Error</string>
+    <string name="mex_SensorOnBoard_OFF">"SensorOnBoard OFF</string>
+    <string name="mex_PermissionManager">"PermissionManager OK</string>
+    <string name="mex_WebServer_OFF">"WebServer OFF</string>
+    <string name="mex_SensorOnBoard_ON">"SensorOnBoard ON</string>
+    <string name="mex_WebServer_ON">"WebServer ON</string>
+    <string name="mex_Service_ON">"Servizio Background ON</string>
+    v<string name="mex_Service_OFF">"Servizio Background OFF</string>
 
     <string-array name="sh_reserved_words">
         <item>case</item>

@@ -4,9 +4,6 @@
         <h1 value="Smartphone TEST" />
         <timeupdate value ="30000" />
     </frontend_info>
-    <backend_info>
-        <log value="True" />
-    </backend_info>
     <app_info>
         <write_ext_permission value="False" />
         <read_ext_permission value="False" />

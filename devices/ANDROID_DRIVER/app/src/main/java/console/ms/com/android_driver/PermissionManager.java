@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Permission;
 
 import console.ms.com.android_driver.MainActivity;
 import console.ms.com.android_driver.ManageXml;
@@ -26,50 +27,40 @@ public class PermissionManager {
     private MainActivity activity;
     private boolean WRITE_EXTERNAL_STORAGE=false;
     public boolean getWRITE_EXTERNAL_STORAGE (){return WRITE_EXTERNAL_STORAGE;}
+    public void setWRITE_EXTERNAL_STORAGE (Boolean value){this.WRITE_EXTERNAL_STORAGE=value;}
     private boolean READ_EXTERNAL_STORAGE=false;
     public boolean getREAD_EXTERNAL_STORAGE (){return READ_EXTERNAL_STORAGE;}
+    public void setREAD_EXTERNAL_STORAGE (Boolean value){this.READ_EXTERNAL_STORAGE=value;}
 
 
-
-    public PermissionManager (MainActivity pMainActivity){
-        activity=pMainActivity;
-        manageXml=activity.getManageXml();
+    public PermissionManager (File configFile){
+        manageXml=new ManageXml(configFile);
     }
 
-    public void requestPermission(String permission, int requestCode)
+    static void requestPermission(MainActivity activity , String permission, int requestCode)
     {
         ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
     }
 
-    public void checkAllPermission() {
-
-        try {
-            // Leggo facendo richiesta se non autorizzato e salvo variabili XML
-            manageXml.set_app_permission_write(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, true));
-            manageXml.set_app_permission_read(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, true));
-            manageXml.writeXml();
-            // Assegno proprieta classe e Log
-            WRITE_EXTERNAL_STORAGE=manageXml.get_app_permission_write();
-            READ_EXTERNAL_STORAGE=manageXml.get_app_permission_read();
-            FileManager.Log("WRITE_EXTERNAL_STORAGE "+Boolean.toString(WRITE_EXTERNAL_STORAGE),FileManager.Log_Info);
-            FileManager.Log("READ_EXTERNAL_STORAGE "+Boolean.toString(READ_EXTERNAL_STORAGE),FileManager.Log_Info);
-        } catch (Exception e) {
-            e.printStackTrace();
-            FileManager.Log(e.toString(),FileManager.Log_Error);
-        }
-
+    public void WritePermissionManagerInXml(){
+        manageXml.set_app_permission_write(WRITE_EXTERNAL_STORAGE);
+        manageXml.set_app_permission_read(READ_EXTERNAL_STORAGE);
     }
 
+    public void ReadPermissionManagerInXml(){
+        WRITE_EXTERNAL_STORAGE=manageXml.get_app_permission_write();
+        READ_EXTERNAL_STORAGE=manageXml.get_app_permission_read();
+    }
 
     // Function to check and request permission
-    public boolean checkPermission(String permission, boolean doRequest)
+    static boolean checkPermission(String permission, MainActivity activity)
     {
         boolean result=false;
         // Checking if permission is not granted
         if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED)
             result=true;
         else
-            if (doRequest) requestPermission(permission,1);
+            if (activity != null) requestPermission(activity,permission,1);
         return result;
     }
 

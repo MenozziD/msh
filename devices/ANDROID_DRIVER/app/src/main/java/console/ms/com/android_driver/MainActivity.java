@@ -1,38 +1,21 @@
 package console.ms.com.android_driver;
 
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.Map;
 
 import android.Manifest;
-import android.app.Application;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -53,10 +36,10 @@ public class MainActivity extends AppCompatActivity  {
         return TAG_Server;
     }
 
-    private ManageXml manageXml;
-    public ManageXml getManageXml(){return manageXml;}
     private PermissionManager permissionManager;
     public PermissionManager getPermissionManager(){return permissionManager;}
+    private ManageXml manageXml;
+    public ManageXml getManageXml(){return manageXml;}
 
     /* SERVER */
     private Button bServer;
@@ -90,11 +73,11 @@ public class MainActivity extends AppCompatActivity  {
     private Button bLogDim;
     private Button bDeleteLog;
     private GridLayout vwLog;
-    private TextView infoLog;
+    private TextView tvStatusLogMex;
     public Button getbLogDim() {return bLogDim; }
     public Button getbDeleteLog() {return bDeleteLog; }
     public GridLayout getVwLog() {return vwLog; }
-    public TextView getinfoLog() {return infoLog; }
+    public TextView gettvStatusLogMex() {return tvStatusLogMex; }
 
 
     @Override
@@ -117,18 +100,24 @@ public class MainActivity extends AppCompatActivity  {
         AscoltatoreMainActivity Ascoltatore = new AscoltatoreMainActivity(this);
         App this_app = App.getInstance();
 
+        /* Permission
+            Questo per impostare all'avvio le permission e richiderle se mancano.
+            Per chiederle serve un activity quindi lo faccio qui
+            Scrivo su Xml Tag delle permission
+         */
         File f = new File(getFilesDir(), "config.xml");
-        manageXml = new ManageXml(f);
-        permissionManager= new PermissionManager(this);
-        permissionManager.checkAllPermission();
-        if (permissionManager.getWRITE_EXTERNAL_STORAGE())
-        {
+        permissionManager=new PermissionManager(f);
+        permissionManager.setWRITE_EXTERNAL_STORAGE(PermissionManager.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this));
+        permissionManager.setREAD_EXTERNAL_STORAGE(PermissionManager.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,this));
+        permissionManager.WritePermissionManagerInXml();
+
+        /* Creazione Directory App su memoria esterna*/
+        if (PermissionManager.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this))
             FileManager.makeAppDirectory();
-        }
+        FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
 
         /* SERVER */
         tvServer = (TextView) findViewById(R.id.tvServer);
-        tvServer.setText(WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
         tvServer.setOnClickListener(Ascoltatore);
         tvStatus = (TextView) findViewById(R.id.tvStatus);
         bServer=findViewById(R.id.bServer);
@@ -152,9 +141,9 @@ public class MainActivity extends AppCompatActivity  {
         /* SET */
         vwSet=findViewById(R.id.vwSet);
         etDeviceName = (EditText) findViewById(R.id.etDeviceName);
-        etDeviceName.setText(manageXml.get_h1());
+        //etDeviceName.setText(manageXml.get_h1());
         etTimeUpdate = (EditText) findViewById(R.id.etTimeUpdate);
-        etTimeUpdate.setText(manageXml.get_timeupdate());
+        //etTimeUpdate.setText(manageXml.get_timeupdate());
         bSetDim=findViewById(R.id.bSetDim);
         bSetDim.setOnClickListener(Ascoltatore);
         bSetDim.setTag(TAG_Visible);
@@ -162,7 +151,7 @@ public class MainActivity extends AppCompatActivity  {
 
         /* LOG */
         vwLog=findViewById(R.id.vwLog);
-        infoLog=findViewById(R.id.tvStatusLogMex);
+        tvStatusLogMex=findViewById(R.id.tvStatusLogMex);
 
         bLogDim=findViewById(R.id.bLogDim);
         bLogDim.setOnClickListener(Ascoltatore);
@@ -171,7 +160,7 @@ public class MainActivity extends AppCompatActivity  {
         bLogDim.setTag(TAG_Visible);
         bLogDim.callOnClick();
 
-        if(this_app.isServerServiceRunning(ServizioWebServer.class))
+        if(this_app.isServerServiceRunning(ServizioADTW.class))
         {
             getbServer().setTag(getTAG_Server());
             gettvStatus().setText("ON");
@@ -194,32 +183,68 @@ public class MainActivity extends AppCompatActivity  {
         super.onDestroy();
     }
 
-    public static MainActivity getActivity() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException {
-        Class activityThreadClass = Class.forName("android.app.ActivityThread");
-        Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-        Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-        activitiesField.setAccessible(true);
+    public static MainActivity getActivity()  {
+       MainActivity result=null;
+       try {
+           Class activityThreadClass = Class.forName("android.app.ActivityThread");
+           Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+           Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+           activitiesField.setAccessible(true);
 
-        Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
-        if (activities == null)
-            return null;
+           Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+           if (activities == null)
+               result= null;
 
-        for (Object activityRecord : activities.values()) {
-            Class activityRecordClass = activityRecord.getClass();
-            Field pausedField = activityRecordClass.getDeclaredField("paused");
-            pausedField.setAccessible(true);
-            if (!pausedField.getBoolean(activityRecord)) {
-                Field activityField = activityRecordClass.getDeclaredField("activity");
-                activityField.setAccessible(true);
-                MainActivity activity = (MainActivity) activityField.get(activityRecord);
-                return activity;
-            }
-        }
-
-        return null;
+           for (Object activityRecord : activities.values()) {
+               Class activityRecordClass = activityRecord.getClass();
+               Field pausedField = activityRecordClass.getDeclaredField("paused");
+               pausedField.setAccessible(true);
+               if (!pausedField.getBoolean(activityRecord)) {
+                   Field activityField = activityRecordClass.getDeclaredField("activity");
+                   activityField.setAccessible(true);
+                   MainActivity activity = (MainActivity) activityField.get(activityRecord);
+                   result= activity;
+               }
+           }
+       } catch (NoSuchMethodException e) {
+           e.printStackTrace();
+       } catch (InvocationTargetException e) {
+           e.printStackTrace();
+       } catch (NoSuchFieldException e) {
+           e.printStackTrace();
+       } catch (IllegalAccessException e) {
+           e.printStackTrace();
+       } catch (ClassNotFoundException e) {
+           e.printStackTrace();
+       }
+       finally {
+           return result;
+       }
     }
 
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        int PERMISSION_REQUEST_CODE=1;
+        boolean result=false;
+        // If this is our permission request result.
+        if(requestCode==PERMISSION_REQUEST_CODE)
+        {
+            if(grantResults.length > 0)
+            {
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
+                    result=true;
+                if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                    permissionManager.setWRITE_EXTERNAL_STORAGE(result);
+                if (permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE))
+                    permissionManager.setREAD_EXTERNAL_STORAGE(result);
+                permissionManager.WritePermissionManagerInXml();
+                FileManager.Log(permissions[0],Integer.toString(grantResults[0]));
+            }
+        }
+    }
 
 }
 

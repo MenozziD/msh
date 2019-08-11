@@ -33,6 +33,7 @@ public class ManageXml {
 
     // backend_info
     private String log_record;
+
     // app_info
     private String app_permission_write;
     private String app_permission_read;
@@ -66,11 +67,11 @@ public class ManageXml {
     }
 
     public ManageXml(File file){
-        h1="Device X";
-        timeupdate="5017";
-        log_record="true";
-        app_permission_write="false";
-        app_permission_read="false";
+        h1="";
+        timeupdate="";
+        log_record="";
+        app_permission_write="";
+        app_permission_read="";
         if (file.exists())
         {
             try {
@@ -91,6 +92,8 @@ public class ManageXml {
         }
         try {
             setOst(new FileOutputStream(file));
+            setIst(new FileInputStream(file));
+            readXml();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

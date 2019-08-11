@@ -25,22 +25,20 @@ public class FileManager {
     final static String log_dir_name="log";
 
 
-
     public static void Log (String mex, String type){
         String result;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         SimpleDateFormat sdf_file = new SimpleDateFormat("_dd_MM_yyyy");
 
-        File file = new File(path+File.separator+main_dir_name+File.separator+log_dir_name+File.separator+fileName.replace("_data",sdf_file.format(new Date())));
-        if (!file.exists()) {
-            try {
+        try{
+            File file = new File(path+File.separator+main_dir_name+File.separator+log_dir_name+File.separator+fileName.replace("_data",sdf_file.format(new Date())));
+            if (!file.exists())
                 file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            result=sdf.format(new Date())+" "+type+"\n"+mex;
+            saveToFile(file,result);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        result=sdf.format(new Date())+" "+type+"\n"+mex;
-        saveToFile(file,result);
     }
 
     public static  String ReadFile( Context context){

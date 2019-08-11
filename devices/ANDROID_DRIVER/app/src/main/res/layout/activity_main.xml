@@ -30,7 +30,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:background="@drawable/sensor"
             android:contentDescription="@string/content"
             android:orientation="horizontal"
@@ -226,20 +226,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:rowCount="2"
-        android:layout_marginBottom="10dp">
+        android:rowCount="2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center|right"
+            android:orientation="horizontal"
+            android:textStyle="bold"
+            android:text="WRITE Permission per Log:" />
 
         <TextView
             android:id="@+id/tvStatusLogMex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
-            android:layout_column="0"
-            android:layout_columnSpan="2"
+            android:layout_column="1"
             android:layout_marginRight="5dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center|right"
             android:orientation="horizontal"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="OK" />
 
         <TextView
             android:id="@+id/bDeleteLogMex"
@@ -247,10 +259,11 @@
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="0"
-            android:gravity="center|right"
+            android:layout_marginRight="5dp"
+            android:gravity="center|end"
             android:orientation="horizontal"
             android:text="Elimina Log"
-            android:layout_marginRight="5dp"
+            android:textAlignment="viewStart"
             android:textStyle="bold" />
 
         <Button
@@ -266,10 +279,15 @@
             android:scaleType="fitXY" />
 
     </GridLayout> <!-- TITOLO -->
+    
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp" />
 
     <!-- LOG -->
 
     <!-- SETTINGS -->
+    
     <LinearLayout
         android:id="@+id/vwSetTitolo"
         android:layout_width="match_parent"
@@ -313,9 +331,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:rowCount="2"
-        android:layout_marginBottom="10dp">
-
+        android:rowCount="2">
 
         <TextView
             android:id="@+id/tvDeviceName"
@@ -357,6 +373,7 @@
             android:textSize="14sp" />
 
     </GridLayout> <!-- BODY -->
+    
     <!-- SETTINGS -->
 
 
