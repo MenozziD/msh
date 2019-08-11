@@ -16,6 +16,8 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -29,7 +31,10 @@ public class ServizioWebServer extends Service {
 
     private SensorManager sensorManager;
     private SensorsOnBoard sensorsOnBoard;
+    public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
     private WebServer webServer;
+    private ManageXml manageXml;
+    public ManageXml getManageXml(){return manageXml;}
 
     @Nullable
     @Override
@@ -43,15 +48,16 @@ public class ServizioWebServer extends Service {
 
         if (webServer != null ) webServer.close();
         webServer=null;
-        /*
+        FileManager.Log("Web Server OFF!","Info");
+
         for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
         {
             sensorManager.unregisterListener(sensorsOnBoard.getListenerSensore(i));
         }
-
+        FileManager.Log("Ascoltatori Sensori UNREGISTER!","Info");
         // Tell the user we stopped.
         //Toast.makeText(this, R.string.remote_service_stopped, Toast.LENGTH_SHORT).show();
-        */
+
     }
 
 
@@ -64,38 +70,45 @@ public class ServizioWebServer extends Service {
         // do your jobs here
         try {
 
+            File f = new File(this.getFilesDir(), "config.xml");
+            manageXml = new ManageXml(f);
+
+            FileManager.Log("File config.xml letto!","Info");
+
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-            sensorsOnBoard= new SensorsOnBoard(sensorManager,MainActivity.getActivity().gettvSensori());
+            sensorsOnBoard= new SensorsOnBoard(sensorManager);
             sensorsOnBoard.scanSensors();
+
             webServer=new WebServer(this);
 
-            for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++)
-            {
-                sensorManager.registerListener(sensorsOnBoard.getListenerSensore(i), sensorsOnBoard.getSensore(i), SensorManager.SENSOR_DELAY_FASTEST);
-                //sensorManager.registerListener(lightEventListener, lightSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            for (int i=0; i<sensorsOnBoard.maxNumberofSensor;i++) {
+                if (sensorsOnBoard.getsensori()[i] != null)
+                    sensorManager.registerListener(sensorsOnBoard.getListenerSensore(i), sensorsOnBoard.getSensore(i), SensorManager.SENSOR_DELAY_FASTEST);
             }
-            if (!WebServer.getIpAddress().equals(""))
-            {
-                webServer.getHttpServerThread().start();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    startMyOwnForeground();
-                else
-                    startForeground(1, new Notification());
-                //startForeground();
-                result=super.onStartCommand(intent, flags, startId);
-            }
+            FileManager.Log(sensorsOnBoard.toString(),"Info");
+            FileManager.Log("Ascoltatori Sensori REGISTER!","Info");
+
+
+            webServer.getHttpServerThread().start();
+            FileManager.Log("Web Server ON!","Info");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                startMyOwnForeground();
+            else
+                startForeground(1, new Notification());
+
+            result=super.onStartCommand(intent, flags, startId);
+            FileManager.Log("Servizio avviato in Background!","Info");
 
         } catch (Exception e) {
             e.printStackTrace();
+            FileManager.Log(e.toString(),FileManager.Log_Error);
         }
         finally {
             return result;
         }
 
     }
-
-    public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
-
 
     @TargetApi(26)
     private void startMyOwnForeground(){
@@ -117,4 +130,5 @@ public class ServizioWebServer extends Service {
                 .build();
         startForeground(2, notification);
     }
+
 }

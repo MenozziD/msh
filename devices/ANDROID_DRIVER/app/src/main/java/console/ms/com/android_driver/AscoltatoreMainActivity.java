@@ -1,4 +1,5 @@
 package console.ms.com.android_driver;
+import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -38,19 +39,20 @@ import java.util.concurrent.ExecutionException;
 
 public class AscoltatoreMainActivity  implements View.OnClickListener{
 
-    private MainActivity app;
+    private MainActivity activity;
+    private App app;
 
     private LinearLayout.LayoutParams par_close;
     private LinearLayout.LayoutParams par_open;
 
 
 
-    AscoltatoreMainActivity(MainActivity app){
-        this.app=app;
-        Display display = app.getWindowManager().getDefaultDisplay();
+    AscoltatoreMainActivity(MainActivity activity){
+        app = App.getInstance();
+        this.activity=activity;
+        Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-
         par_close = new LinearLayout.LayoutParams(size.x,0,0);
         //par_open = new LinearLayout.LayoutParams(size.x,(size.y*20)/100,0);
         par_open = new LinearLayout.LayoutParams(size.x,LinearLayout.LayoutParams.WRAP_CONTENT,0);
@@ -59,38 +61,41 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
-        App this_app = App.getInstance();
+
         switch (v.getId()) {
             case R.id.bServer:
-                if (app.getbServer().getTag().equals(app.getTAG_Server())) {
-                    this_app.stopServerService();
-                    app.gettvStatus().setText("OFF");
-                    app.gettvStatus().setTextColor(Color.RED);
-                    app.getbServer().setTag("");
-                    app.getbServer().setBackgroundResource(R.drawable.play);
+                if (activity.getbServer().getTag().equals(activity.getTAG_Server())) {
+                    app.stopServerService();
+                    activity.gettvStatus().setText("OFF");
+                    activity.gettvStatus().setTextColor(Color.RED);
+                    activity.getbServer().setTag("");
+                    activity.getbServer().setBackgroundResource(R.drawable.play);
                 }
                 else {
-                    this_app.startServerService();
-                    app.getbServer().setTag(app.getTAG_Server());
-                    app.gettvStatus().setText("ON");
-                    app.gettvStatus().setTextColor(Color.GREEN);
-                    app.getbServer().setBackgroundResource(R.drawable.stop);
+                    app.startServerService();
+                    activity.getbServer().setTag(activity.getTAG_Server());
+                    activity.gettvStatus().setText("ON");
+                    activity.gettvStatus().setTextColor(Color.GREEN);
+                    activity.getbServer().setBackgroundResource(R.drawable.stop);
                 }
                 break;
-
+            case R.id.tvServer:
+                if (!activity.gettvServer().getText().toString().equals(""))
+                    openWebPage(activity.gettvServer().getText().toString());
+                break;
             /* SENSOR */
             case R.id.bSensorDim:
-                if (app.getbSensorDim().getTag().equals(app.getTAG_Visible())) {
-                    app.getVwSensor().setLayoutParams(par_close);
-                    app.getVwSensor().setVisibility(View.INVISIBLE);
-                    app.getbSensorDim().setTag("");
-                    app.getbSensorDim().setBackgroundResource(R.drawable.left);
+                if (activity.getbSensorDim().getTag().equals(activity.getTAG_Visible())) {
+                    activity.getVwSensor().setLayoutParams(par_close);
+                    activity.getVwSensor().setVisibility(View.INVISIBLE);
+                    activity.getbSensorDim().setTag("");
+                    activity.getbSensorDim().setBackgroundResource(R.drawable.left);
                 }
                 else {
-                    app.getVwSensor().setVisibility(View.VISIBLE);
-                    app.getVwSensor().setLayoutParams(par_open);
-                    app.getbSensorDim().setTag(app.getTAG_Visible());
-                    app.getbSensorDim().setBackgroundResource(R.drawable.down);
+                    activity.getVwSensor().setVisibility(View.VISIBLE);
+                    activity.getVwSensor().setLayoutParams(par_open);
+                    activity.getbSensorDim().setTag(activity.getTAG_Visible());
+                    activity.getbSensorDim().setBackgroundResource(R.drawable.down);
                     //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
                 }
@@ -98,17 +103,17 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
 
             /* SET */
             case R.id.bSetDim:
-                if (app.getbSetDim().getTag().equals(app.getTAG_Visible())) {
-                    app.getVwSet().setLayoutParams(par_close);
-                    app.getVwSet().setVisibility(View.INVISIBLE);
-                    app.getbSetDim().setTag("");
-                    app.getbSetDim().setBackgroundResource(R.drawable.left);
+                if (activity.getbSetDim().getTag().equals(activity.getTAG_Visible())) {
+                    activity.getVwSet().setLayoutParams(par_close);
+                    activity.getVwSet().setVisibility(View.INVISIBLE);
+                    activity.getbSetDim().setTag("");
+                    activity.getbSetDim().setBackgroundResource(R.drawable.left);
                 }
                 else {
-                    app.getVwSet().setVisibility(View.VISIBLE);
-                    app.getVwSet().setLayoutParams(par_open);
-                    app.getbSetDim().setTag(app.getTAG_Visible());
-                    app.getbSetDim().setBackgroundResource(R.drawable.down);
+                    activity.getVwSet().setVisibility(View.VISIBLE);
+                    activity.getVwSet().setLayoutParams(par_open);
+                    activity.getbSetDim().setTag(activity.getTAG_Visible());
+                    activity.getbSetDim().setBackgroundResource(R.drawable.down);
                     //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
                 }
@@ -116,22 +121,38 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
 
             /* LOG */
             case R.id.bLogDim:
-                if (app.getbLogDim().getTag().equals(app.getTAG_Visible())) {
-                    app.getVwLog().setLayoutParams(par_close);
-                    app.getVwLog().setVisibility(View.INVISIBLE);
-                    app.getbLogDim().setTag("");
-                    app.getbLogDim().setBackgroundResource(R.drawable.left);
+                if (activity.getbLogDim().getTag().equals(activity.getTAG_Visible())) {
+                    activity.getVwLog().setLayoutParams(par_close);
+                    activity.getVwLog().setVisibility(View.INVISIBLE);
+                    activity.getbLogDim().setTag("");
+                    activity.getbLogDim().setBackgroundResource(R.drawable.left);
                 }
                 else {
 
-                    app.getVwLog().setVisibility(View.VISIBLE);
-                    app.getVwLog().setLayoutParams(par_open);
-                    app.getbLogDim().setTag(app.getTAG_Visible());
-                    app.getbLogDim().setBackgroundResource(R.drawable.down);
+                    activity.getVwLog().setVisibility(View.VISIBLE);
+                    activity.getVwLog().setLayoutParams(par_open);
+                    activity.getbLogDim().setTag(activity.getTAG_Visible());
+                    activity.getbLogDim().setBackgroundResource(R.drawable.down);
+                    activity.getPermissionManager().checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,false);
+                    if(activity.getPermissionManager().getWRITE_EXTERNAL_STORAGE())
+                        activity.getinfoLog().setText(activity.getResources().getString(R.string.mex_LOG_OK));
+                    else
+                        activity.getinfoLog().setText(activity.getResources().getString(R.string.mex_LOG_ERR));
                     //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.bDeleteLog:
+
+                break;
         }
     }
+
+    private void openWebPage(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        activity.startActivity(intent);
+    }
+
 }

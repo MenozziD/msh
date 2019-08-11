@@ -16,6 +16,7 @@ public class App extends Application {
         super.onCreate();
         sInstance = this;
         server_intent= new Intent(this, ServizioWebServer.class);
+
     }
 
     public static App getInstance() { return App.sInstance; }

@@ -7,24 +7,22 @@ import android.widget.TextView;
 public class SensorsOnBoard  {
 
     private Sensor[] sensori;
+    public Sensor[] getsensori(){return sensori;}
     private Integer[] sensoriKey;
+    public Integer[] getsensoriKey(){return sensoriKey;}
     private AscoltatoreSensore[] sensoriListener;
-    private TextView[] sensoriTextView;
-    private Boolean[] sensoriFlagInstall;
+    public AscoltatoreSensore[] getsensoriListener(){return sensoriListener;}
 
     private SensorManager sensorManager;
 
-    static final Integer maxNumberofSensor = 3;
+    static final Integer maxNumberofSensor = 8;
 
-    public SensorsOnBoard (SensorManager pSensorManager,TextView[] pTextView )
+    public SensorsOnBoard (SensorManager pSensorManager)
     {
         sensorManager=pSensorManager;
-        sensoriTextView= new TextView[maxNumberofSensor];
-        sensoriTextView=pTextView;
         sensoriKey= new Integer[maxNumberofSensor];
         sensori= new Sensor[maxNumberofSensor];
         sensoriListener = new AscoltatoreSensore[maxNumberofSensor];
-        sensoriFlagInstall = new Boolean[maxNumberofSensor];
 
 
         for (int i =0; i < maxNumberofSensor ;i++)
@@ -32,8 +30,11 @@ public class SensorsOnBoard  {
             if (i==0)  sensoriKey[i] = Sensor.TYPE_MAGNETIC_FIELD;
             if (i==1)  sensoriKey[i] = Sensor.TYPE_LIGHT;
             if (i==2)  sensoriKey[i] = Sensor.TYPE_PROXIMITY;
-
-            sensoriFlagInstall[i]=false;
+            if (i==3)  sensoriKey[i] = Sensor.TYPE_PRESSURE;
+            if (i==4)  sensoriKey[i] = Sensor.TYPE_ACCELEROMETER;
+            if (i==5)  sensoriKey[i] = Sensor.TYPE_AMBIENT_TEMPERATURE;
+            if (i==6)  sensoriKey[i] = Sensor.TYPE_GYROSCOPE;
+            if (i==7)  sensoriKey[i] = Sensor.TYPE_GRAVITY;
         }
     }
 
@@ -45,24 +46,19 @@ public class SensorsOnBoard  {
     public AscoltatoreSensore getListenerSensore (Integer position) { return sensoriListener[position];}
 
     public AscoltatoreSensore getListenerSensoreByType (Integer type) {
-
         Integer position=-1;
-
-        if (type==Sensor.TYPE_MAGNETIC_FIELD) position= 0;
-        if (type==Sensor.TYPE_LIGHT) position= 1;
-        if (type==Sensor.TYPE_PROXIMITY) position= 2;
-
+        for (int i =0; i < maxNumberofSensor ;i++)
+            if (type==sensoriKey[i]) position= i;
         return getListenerSensore(position);
     }
 
-    /*
+
     public String castIntToStrSensorType(Integer type)
     {
         String result="";
         if(type==Sensor.TYPE_MAGNETIC_FIELD) result="TYPE_MAGNETIC_FIELD";
         if(type==Sensor.TYPE_LIGHT) result="TYPE_LIGHT";
         if(type==Sensor.TYPE_PROXIMITY) result="TYPE_PROXIMITY";
-
         if(type==Sensor.TYPE_PRESSURE) result="TYPE_PRESSURE";
         if(type==Sensor.TYPE_ACCELEROMETER) result="TYPE_ACCELEROMETER";
         if(type==Sensor.TYPE_AMBIENT_TEMPERATURE) result="TYPE_AMBIENT_TEMPERATURE";
@@ -71,7 +67,7 @@ public class SensorsOnBoard  {
 
         return result;
     }
-*/
+
 
     public void scanSensors()
     {
@@ -83,19 +79,27 @@ public class SensorsOnBoard  {
             AscoltatoreSensore sensoreListener;
             Sensor sensore;
             sensore = sensorManager.getDefaultSensor(sensoriKey[i]);
-            if (sensore != null)
-            {
-                sensori[i]=sensore;
-                sensoreListener = new AscoltatoreSensore(sensoriKey[i],sensoriTextView[i]);
-                sensoriListener[i]=sensoreListener;
-                sensoriFlagInstall[i]=true;
-            }
-            else {
-                sensoriFlagInstall[i]=false;
-                sensoriTextView[i].setText("NOT INSTALL");
+            if (sensore != null) {
+                sensori[i] = sensore;
+                sensoriListener[i] = new AscoltatoreSensore(sensoriKey[i]);
             }
         }
     }
 
+    public String toString(){
+
+
+        String result="";
+        result="Sensori: \n";
+        for (int i = 0; i < sensoriKey.length; ++i) {
+            if (sensori[i] != null)
+                result+="   OK  ";
+            else
+                result+="    X  ";
+            result+=castIntToStrSensorType(sensoriKey[i]);
+            result+="\n";
+        }
+        return result;
+    }
 
 }

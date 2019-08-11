@@ -36,9 +36,11 @@ public class WebServer   {
     static String msgLog = "";
 
 
+
     public WebServer(ServizioWebServer pService) {
         servizioWebServer = pService;
         webHttpServerThread = new HttpServerThread();
+
     }
 
     public HttpServerThread getHttpServerThread() {
@@ -52,12 +54,13 @@ public class WebServer   {
                 httpServerSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                FileManager.Log(e.toString(),FileManager.Log_Error);
             }
         }
     }
 
     static String getIpAddress() {
-        String ip = "";
+        String ip = "127.0.0.1";
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
                     .getNetworkInterfaces();
@@ -70,7 +73,7 @@ public class WebServer   {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += inetAddress.getHostAddress();
+                        ip = inetAddress.getHostAddress();
                     }
                 }
 
@@ -80,6 +83,7 @@ public class WebServer   {
             // TODO Auto-generated catch block
             e.printStackTrace();
             ip += "Something Wrong! " + e.toString() + "\n";
+            FileManager.Log(e.toString(),FileManager.Log_Error);
         }
 
         return ip;
@@ -108,6 +112,7 @@ public class WebServer   {
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+                FileManager.Log(e.toString(),FileManager.Log_Error);
             }
         }
     }
@@ -127,6 +132,7 @@ public class WebServer   {
             String response = "";
             JSONObject jsonObject;
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
             try {
 
                 jsonObject = new JSONObject();
@@ -153,7 +159,6 @@ public class WebServer   {
                             jsonObject.put("response",servizioWebServer.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_PROXIMITY).getActualValue());
                     }
                     jsonObject.put("timestamp", sdf.format(new Date()));
-
                     response=jsonObject.toString();
                     content = "application/json";
                 }
@@ -162,12 +167,11 @@ public class WebServer   {
                     arr=arr[1].split("=");
                     if (arr[0].equals("str_set")) {
                         if (arr[1].equals("time_update"))
-                            jsonObject.put("response", MainActivity.getActivity().getetTimeUpdate().getText());
+                            jsonObject.put("response",servizioWebServer.getManageXml().get_timeupdate());
                         if (arr[1].equals("device_name"))
-                            jsonObject.put("response", MainActivity.getActivity().getetDeviceName().getText());
+                            jsonObject.put("response", servizioWebServer.getManageXml().get_h1());
                     }
                     jsonObject.put("timestamp", sdf.format(new Date()));
-
                     response=jsonObject.toString();
                     content = "application/json";
                 }
@@ -181,9 +185,11 @@ public class WebServer   {
             } catch (JSONException e) {
                 response = e.toString();
                 e.printStackTrace();
+                FileManager.Log(e.toString(),FileManager.Log_Error);
             } catch (Exception e) {
                 response = e.toString();
                 e.printStackTrace();
+                FileManager.Log(e.toString(),FileManager.Log_Error);
             } finally {
 
                 result = "HTTP/1.0 200" + "\r\n";
@@ -202,11 +208,8 @@ public class WebServer   {
             PrintWriter os;
             String request;
             String[] arequest;
-            final MainActivity app;
 
             try {
-
-                app = MainActivity.getActivity();
                 is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 request = is.readLine();
 
@@ -220,30 +223,11 @@ public class WebServer   {
                 os.print(route(arequest[1]));
                 os.flush();
                 socket.close();
+                FileManager.Log(msgLog,FileManager.Log_Info);
 
-                app.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        app.infoLog.setText(msgLog);
-                    }
-                });
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
+                FileManager.Log(e.toString(),FileManager.Log_Error);
             }
 
             return;

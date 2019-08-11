@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">MSH ADrv</string>
+    <string name="app_name">ADTW</string>
+    <string name="app_dir_main_name">ADTW</string>
+    <string name="app_dir_log_name">log</string>
+    <string name="app_title">Android Device To Web Server (API)</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -12,6 +15,9 @@
     <string name="vwInfo_titolo">Info</string>
     <string name="vwServer_titolo">Server</string>
     <string name="vwSet_titolo">Impostazioni Server</string>
+    <string name="mex_LOG_ERR">LOG ERR: NO WRITE PERMISSION</string>
+    <string name="mex_LOG_OK">LOG OK: WRITE PERMISSION OK</string>
+
 
 
     <string-array name="sh_reserved_words">
@@ -32,6 +38,8 @@
         <item>until</item>
         <item>while</item>
     </string-array>
+
+
     <string name="html_index">
                <![CDATA[
             <html>

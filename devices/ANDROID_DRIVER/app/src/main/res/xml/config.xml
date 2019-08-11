@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+    <frontend_info>
+        <h1 value="Smartphone TEST" />
+        <timeupdate value ="30000" />
+    </frontend_info>
+    <backend_info>
+        <log value="True" />
+    </backend_info>
+    <app_info>
+        <write_ext_permission value="False" />
+        <read_ext_permission value="False" />
+    </app_info>
+</settings>

@@ -10,10 +10,9 @@ public class AscoltatoreSensore  implements SensorEventListener {
 
     private Integer sensorType;
     private String sensorUM;
-    private TextView sensorTextViewOut;
     private String sensorActualValue;
 
-    public AscoltatoreSensore(Integer type, TextView tv)
+    public AscoltatoreSensore(Integer type)
     {
         sensorActualValue="";
         sensorType=type;
@@ -22,7 +21,7 @@ public class AscoltatoreSensore  implements SensorEventListener {
         if (sensorType==Sensor.TYPE_PRESSURE) sensorUM=" bar";
         if (sensorType==Sensor.TYPE_PROXIMITY) sensorUM="";
         if (sensorType==Sensor.TYPE_MAGNETIC_FIELD) sensorUM="";
-        sensorTextViewOut=tv;
+
     }
 
     public String getActualValue()
@@ -32,9 +31,7 @@ public class AscoltatoreSensore  implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         sensorActualValue = Float.toString(event.values[0])+sensorUM;
-        sensorTextViewOut.setText(sensorActualValue);
     }
 
     @Override
