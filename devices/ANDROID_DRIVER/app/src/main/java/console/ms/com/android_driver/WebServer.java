@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -21,16 +22,24 @@ import java.util.Enumeration;
 public class WebServer   {
 
     private HttpServerThread webHttpServerThread;
-    ServizioADTW servizioADTW;
-    ServerSocket httpServerSocket;
-    static final int HttpServerPORT = 8888;
-    static String msgLog = "";
     private API api;
+    private ServizioADTW servizioADTW;
+    private ServerSocket httpServerSocket;
+    static final int HttpServerPORT = 8888;
+
+
 
 
     public WebServer(ServizioADTW pService) {
         servizioADTW = pService;
+        api= new API(   servizioADTW.getSensorsOnBoard(),
+                        servizioADTW.getResources().getString(R.string.html_index),
+                        servizioADTW.getResources().getString(R.string.html_404),
+                        servizioADTW.getManageXml()
+                    );
+
         webHttpServerThread = new HttpServerThread();
+
     }
 
     public HttpServerThread getHttpServerThread() {
@@ -40,15 +49,19 @@ public class WebServer   {
 
     public void close() {
 
-        webHttpServerThread=null;
-        if (httpServerSocket != null) {
             try {
+                if(webHttpServerThread!=null)
+                    webHttpServerThread.cancel();
+
                 httpServerSocket.close();
-            } catch (IOException e) {
+                webHttpServerThread=null;
+                httpServerSocket=null;
+
+            } catch (Exception e) {
                 e.printStackTrace();
                 FileManager.Log(e.toString(),FileManager.Log_Error);
             }
-        }
+
     }
 
     static String getIpAddress() {
@@ -85,42 +98,41 @@ public class WebServer   {
     public class HttpServerThread extends Thread {
 
 
+        private HttpResponseThread httpResponseThread=null;
+
         public HttpServerThread() {
         }
 
         @Override
         public void run() {
-            Socket socket = null;
-            HttpResponseThread httpResponseThread=null;
-
             try {
-                httpServerSocket = new ServerSocket(HttpServerPORT);
-
-                while (true) {
-
-                    socket = httpServerSocket.accept();
-                    httpResponseThread =
-                            new HttpResponseThread(
-                                    socket);
-                    httpResponseThread.start();
+                Socket socket = null;
+                    httpServerSocket = new ServerSocket(HttpServerPORT);
+                    while (!Thread.currentThread().isInterrupted()) {
+                        socket = httpServerSocket.accept();
+                        httpResponseThread = new HttpResponseThread(socket, api);
+                        httpResponseThread.start();
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                FileManager.Log(e.toString(),FileManager.Log_Error);
-            }
         }
+
+        public void cancel() { interrupt(); }
+
+
+
     }
 
     private class HttpResponseThread extends Thread {
 
         Socket socket;
+        API api;
 
 
-        HttpResponseThread(Socket socket) {
-
+        HttpResponseThread(Socket socket,API api) {
             this.socket = socket;
+            this.api=api;
         }
 
 
@@ -131,6 +143,7 @@ public class WebServer   {
             String request;
             String[] arequest;
             API api;
+            String msgLog = "";
 
             try {
                 is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -142,7 +155,7 @@ public class WebServer   {
                 msgLog +="Method:".concat(arequest[0]+"\n");
                 msgLog +="Resource:".concat(arequest[1]+"\n");
                 msgLog +="HTTP Version:".concat(arequest[2]+"\n");
-                os.print(servizioADTW.getAPI().route(arequest[1]));
+                os.print(this.api.route(arequest[1]));
                 os.flush();
                 socket.close();
                 FileManager.Log(msgLog,FileManager.Log_Info);

@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity  {
             gettvStatus().setText("ON");
             gettvStatus().setTextColor(Color.GREEN);
             getbServer().setBackgroundResource(R.drawable.stop);
+            gettvServer().setText(WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
         }else{
             gettvStatus().setText("OFF");
             gettvStatus().setTextColor(Color.RED);

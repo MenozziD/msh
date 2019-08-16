@@ -1,19 +1,54 @@
 package console.ms.com.android_driver;
 
 import android.hardware.Sensor;
+import android.net.Uri;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 public class API {
 
-    private ServizioADTW servizioADTW;
+    //private ServizioADTW servizioADTW;
+    private SensorsOnBoard sensorsOnBoard;
+    private ManageXml manageXml;
+    private String html_index;
+    private String html_404;
 
-    public API(ServizioADTW servizioADTW) {
-        this.servizioADTW = servizioADTW;
+
+
+
+    public API(SensorsOnBoard sensorsOnBoard,String html_index,String html_404,ManageXml manageXml){
+        //this.servizioADTW = servizioADTW;
+        String html_file=FileManager.ReadFile(FileManager.path+FileManager.getFileSeparator()+ FileManager.main_dir_name+FileManager.getFileSeparator()+ FileManager.webui_dir_name+FileManager.getFileSeparator(),FileManager.webui_file_name);
+        this.sensorsOnBoard=sensorsOnBoard;
+        if (html_file!=null)
+            this.html_index=html_file;
+        else
+            this.html_index=html_index;
+
+        this.manageXml=manageXml;
+        this.html_404=html_404;
+
+    }
+
+
+
+
+    private String Sensor(Uri uri){
+        String result="";
+        Set<String> args = uri.getQueryParameterNames();
+        String limit = uri.getQueryParameter("limit");
+        if(uri.getQueryParameter("type")!=null)
+            result=sensorsOnBoard.getSensorActualValueByString(uri.getQueryParameter("type"));
+        return result;
     }
 
     public String route(String request) {
@@ -21,56 +56,62 @@ public class API {
         String content = "";
         String response = "";
         JSONObject jsonObject;
+        Uri uri = Uri.parse(request);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         try {
-
             jsonObject = new JSONObject();
-            jsonObject.put("request", request);
+
+            jsonObject.put("request", uri.toString());
             jsonObject.put("response", "");
             jsonObject.put("timestamp", "");
 
-            if (request.trim().equals("/")) {
-                response = servizioADTW.getString(R.string.html_index);
-                response += "\r\n";
-                content = "text/html";
-            }
+            if(uri.getPath()!=null) {
+                if (uri.getPath().equals("/sensor"))
+                {
+                    if(uri.getQueryParameter("type")!=null) {
+                        if (sensorsOnBoard.getSensorByString(uri.getQueryParameter("type"))!=null)
+                            result = sensorsOnBoard.SensorToJSON(sensorsOnBoard.getSensorByString(uri.getQueryParameter("type"))).toString();
+                        else
+                            result="NOT INSTALL";
+                    }
+                    if(uri.getQueryParameter("list")!=null)
+                        result = sensorsOnBoard.SensorList(uri.getQueryParameter("list")).toString();
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
 
-            if (request.indexOf("/sensor") > -1) {
-                String[] arr = request.split("\\?");
-                arr = arr[1].split("=");
-                if (arr[0].equals("type")) {
-                    if (arr[1].equals("LIGHT"))
-                        jsonObject.put("response", servizioADTW.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_LIGHT).getActualValue());
-                    if (arr[1].equals("MAGNETIC_FIELD"))
-                        jsonObject.put("response", servizioADTW.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_MAGNETIC_FIELD).getActualValue());
-                    if (arr[1].equals("PROXIMITY"))
-                        jsonObject.put("response", servizioADTW.getSensorsOnBoard().getListenerSensoreByType(Sensor.TYPE_PROXIMITY).getActualValue());
                 }
-                jsonObject.put("timestamp", sdf.format(new Date()));
-                response = jsonObject.toString();
-                content = "application/json";
-            }
-
-            if (request.indexOf("/settings") > -1) {
-                String[] arr = request.split("\\?");
-                arr = arr[1].split("=");
-                if (arr[0].equals("str_set")) {
-                    if (arr[1].equals("time_update"))
-                        jsonObject.put("response", servizioADTW.getManageXml().get_timeupdate());
-                    if (arr[1].equals("device_name"))
-                        jsonObject.put("response", servizioADTW.getManageXml().get_h1());
+                if (uri.getPath().equals("/sensor_act"))
+                {
+                    result = sensorsOnBoard.SensorActiveList().toString();
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
                 }
-                jsonObject.put("timestamp", sdf.format(new Date()));
-                response = jsonObject.toString();
-                content = "application/json";
+                if (uri.getPath().equals("/sensor_active"))
+                {
+                    result = sensorsOnBoard.SensorActiveList().toString();
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
+                }
+                if (content.equals(""))
+                {
+                    if (uri.getPath().equals("/")) {
+                        response = html_index;
+                        response += "\r\n";
+                        content = "text/html";
+                    }else{
+                        response = html_404;
+                        response += "\r\n";
+                        content = "text/html";
+                    }
+                }
             }
-            if (content.equals("")) {
-                response = servizioADTW.getString(R.string.html_404);
-                response += "\r\n";
-                content = "text/html";
-            }
-
         } catch (JSONException e) {
             response = e.toString();
             e.printStackTrace();
@@ -92,6 +133,7 @@ public class API {
 
     }
 }
+
 
 
 

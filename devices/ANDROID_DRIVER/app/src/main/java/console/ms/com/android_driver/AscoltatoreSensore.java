@@ -16,6 +16,7 @@ public class AscoltatoreSensore  implements SensorEventListener {
     {
         sensorActualValue="";
         sensorType=type;
+        sensorUM="u";
         if (sensorType==Sensor.TYPE_LIGHT) sensorUM=" lx";
         if (sensorType==Sensor.TYPE_AMBIENT_TEMPERATURE) sensorUM=" °C";
         if (sensorType==Sensor.TYPE_PRESSURE) sensorUM=" bar";

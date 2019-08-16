@@ -36,8 +36,6 @@ public class ServizioADTW extends Service {
     private WebServer webServer;
     private ManageXml manageXml;
     public ManageXml getManageXml(){return manageXml;}
-    private API api;
-    public API getAPI(){return api;}
     private File configFile;
     public File getConfigFile(){return configFile;}
     private PermissionManager permissionManager;
@@ -90,15 +88,13 @@ public class ServizioADTW extends Service {
             if(permissionManager.getWRITE_EXTERNAL_STORAGE())
                 FileManager.makeAppDirectory();
             FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
-
-            sensorsOnBoard= new SensorsOnBoard(this);
+            sensorsOnBoard= new SensorsOnBoard((SensorManager) getSystemService(SENSOR_SERVICE));
             FileManager.Log(sensorsOnBoard.toString(),getResources().getString(R.string.mex_Log_Type_Info));
 
             webServer=new WebServer(this);
             webServer.getHttpServerThread().start();
             FileManager.Log(getResources().getString(R.string.mex_WebServer_ON),getResources().getString(R.string.mex_Log_Type_Info));
 
-            api= new API(this);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startMyOwnForeground();

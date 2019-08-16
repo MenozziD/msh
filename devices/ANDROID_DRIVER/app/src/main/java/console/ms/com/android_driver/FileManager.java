@@ -23,6 +23,11 @@ public class FileManager {
     final static String Log_Error="Error";
     final static String main_dir_name="ADTW";
     final static String log_dir_name="log";
+    final static String webui_dir_name="webui";
+    final static String webui_file_name="index.html";
+
+
+
 
 
     public static void Log (String mex, String type){
@@ -31,7 +36,12 @@ public class FileManager {
         SimpleDateFormat sdf_file = new SimpleDateFormat("_dd_MM_yyyy");
 
         try{
-            File file = new File(path+File.separator+main_dir_name+File.separator+log_dir_name+File.separator+fileName.replace("_data",sdf_file.format(new Date())));
+            File file = new File(path+
+                    File.separator+main_dir_name+
+                    File.separator+
+                    log_dir_name+File.separator+
+                    fileName.replace("_data",
+                            sdf_file.format(new Date())));
             if (!file.exists())
                 file.createNewFile();
             result=sdf.format(new Date())+" "+type+"\n"+mex;
@@ -41,8 +51,8 @@ public class FileManager {
         }
     }
 
-    public static  String ReadFile( Context context){
-        String line = null;
+    public static  String ReadFile(String path,String fileName ){
+        String result = null;
 
         try {
             FileInputStream fileInputStream = new FileInputStream (new File(path + fileName));
@@ -50,12 +60,12 @@ public class FileManager {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuilder stringBuilder = new StringBuilder();
 
-            while ( (line = bufferedReader.readLine()) != null )
+            while ( (result = bufferedReader.readLine()) != null )
             {
-                stringBuilder.append(line + System.getProperty("line.separator"));
+                stringBuilder.append(result + System.getProperty("line.separator"));
             }
             fileInputStream.close();
-            line = stringBuilder.toString();
+            result = stringBuilder.toString();
 
             bufferedReader.close();
         }
@@ -65,7 +75,7 @@ public class FileManager {
         catch(IOException ex) {
             Log.d(TAG, ex.getMessage());
         }
-        return line;
+        return result;
     }
 
 
@@ -91,6 +101,7 @@ public class FileManager {
         try {
             makeDirectory(path + File.separator, main_dir_name);
             makeDirectory(path + File.separator+main_dir_name,log_dir_name);
+            makeDirectory(path + File.separator+main_dir_name,webui_dir_name);
         }catch (Exception e)
         {
             e.printStackTrace();
