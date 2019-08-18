@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class ManageXml {
 
     private InputStream ist;
@@ -24,12 +22,18 @@ public class ManageXml {
     private XmlPullParser xrp;
 
     // frontend_info
-    private String h1;
-    public String get_h1() { return h1; }
-    public void set_h1(String p_h1) { this.h1 = p_h1; }
+    private String devicename;
+    public String get_devicename() { return devicename; }
+    public void set_devicename(String p_devicename) { this.devicename = p_devicename; }
+    private String autoupdate;
+    public String get_autoupdate() { return this.autoupdate; }
+    public void set_autoupdate(String p_autoupdate) { this.autoupdate = p_autoupdate; }
+
     private String timeupdate;
     public String get_timeupdate() { return this.timeupdate; }
     public void set_timeupdate(String p_timeupdate) { this.timeupdate = p_timeupdate; }
+
+
 
     // backend_info
     private String log_record;
@@ -67,36 +71,36 @@ public class ManageXml {
     }
 
     public ManageXml(File file){
-        h1="";
-        timeupdate="";
+        devicename ="ADTW";
+        timeupdate="false";
+        autoupdate="5000";
         log_record="";
-        app_permission_write="";
-        app_permission_read="";
-        if (file.exists())
-        {
-            try {
+        app_permission_write="false";
+        app_permission_read="false";
+        boolean newFile=false;
+        try {
+            if (file.exists()){
                 InputStream  is = new FileInputStream(file);
                 setXrp(XmlPullParserFromInputStream(is));
-                readXml();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
-        }
-        else
-        {
-            try {
+            else{
                 file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+                newFile=true;
             }
-        }
-        try {
+
             setOst(new FileOutputStream(file));
             setIst(new FileInputStream(file));
+            if (newFile)
+                writeXml();
             readXml();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
     }
 
     public void writeXml() {
@@ -110,23 +114,20 @@ public class ManageXml {
 
             xmlSerializer.startTag("", "frontend_info");
 
-            xmlSerializer.startTag("", "h1");
-            xmlSerializer.attribute("","value", h1);
-            xmlSerializer.endTag("", "h1");
+            xmlSerializer.startTag("", "devicename");
+            xmlSerializer.attribute("","value", devicename);
+            xmlSerializer.endTag("", "devicename");
+
+            xmlSerializer.startTag("", "autoupdate");
+            xmlSerializer.attribute("","value", autoupdate);
+            xmlSerializer.endTag("", "autoupdate");
+
 
             xmlSerializer.startTag("", "timeupdate");
             xmlSerializer.attribute("","value", timeupdate);
             xmlSerializer.endTag("", "timeupdate");
 
             xmlSerializer.endTag("", "frontend_info");
-
-            xmlSerializer.startTag("", "backend_info");
-
-            xmlSerializer.startTag("", "log");
-            xmlSerializer.attribute("","value", log_record);
-            xmlSerializer.endTag("", "log");
-
-            xmlSerializer.endTag("", "backend_info");
 
             xmlSerializer.startTag("", "app_info");
 
@@ -166,8 +167,10 @@ public class ManageXml {
                             frontend_info = true;
                         if(name.equals("app_info"))
                             app_info = true;
-                        if (name.equals("h1")&& frontend_info)
-                            h1=xrp.getAttributeValue(0);
+                        if (name.equals("devicename")&& frontend_info)
+                            devicename =xrp.getAttributeValue(0);
+                        if (name.equals("autoupdate")&& frontend_info)
+                            autoupdate=xrp.getAttributeValue(0);
                         if (name.equals("timeupdate")&& frontend_info)
                             timeupdate=xrp.getAttributeValue(0);
                         if (name.equals("app_permission_write")&& app_info)

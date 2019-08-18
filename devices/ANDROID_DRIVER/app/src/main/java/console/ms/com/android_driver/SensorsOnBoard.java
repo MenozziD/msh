@@ -1,13 +1,17 @@
 package console.ms.com.android_driver;
 
 import android.annotation.TargetApi;
+import android.graphics.Camera;
+import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -116,6 +120,7 @@ public class SensorsOnBoard  {
             return jsonObject;
         }
     }
+
     //public  String SensorActiveList()
     public JSONObject SensorActiveList(){
         JSONObject jsonObject=null;

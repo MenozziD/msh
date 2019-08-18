@@ -1,6 +1,7 @@
 package console.ms.com.android_driver;
 
 import android.hardware.Sensor;
+import android.net.Uri;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,8 +96,75 @@ public class WebServer   {
     }
 
 
-    public class HttpServerThread extends Thread {
+    public String route(String request) {
+        String result = "";
+        String content = "";
+        String response = "";
+        JSONObject jsonObject;
+        Uri uri = Uri.parse(request);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
+        try {
+            jsonObject = new JSONObject();
+
+            jsonObject.put("request", uri.toString());
+            jsonObject.put("response", "");
+            jsonObject.put("timestamp", "");
+
+            if(uri.getPath()!=null) {
+                if (uri.getPath().equals("/sensor"))
+                {
+                    result=api.Sensor(uri);
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
+
+                }
+                if (uri.getPath().equals("/settings"))
+                {
+                    result=api.Settings(uri);
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
+                }
+                if (content.equals(""))
+                {
+                    if (uri.getPath().equals("/")) {
+                        response = servizioADTW.getResources().getString(R.string.html_index);
+                        response += "\r\n";
+                        content = "text/html";
+                    }else{
+                        response = servizioADTW.getResources().getString(R.string.html_404);
+                        response += "\r\n";
+                        content = "text/html";
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            response = e.toString();
+            e.printStackTrace();
+            FileManager.Log(e.toString(), FileManager.Log_Error);
+        } catch (Exception e) {
+            response = e.toString();
+            e.printStackTrace();
+            FileManager.Log(e.toString(), FileManager.Log_Error);
+        } finally {
+
+            result = "HTTP/1.0 200" + "\r\n";
+            result += "Content type: " + content + "\r\n";
+            result += "Content length: " + response.length() + "\r\n";
+            result += "\r\n";
+            result += response;
+
+            return result;
+        }
+
+    }
+
+
+    public class HttpServerThread extends Thread {
 
         private HttpResponseThread httpResponseThread=null;
 
@@ -119,8 +187,6 @@ public class WebServer   {
         }
 
         public void cancel() { interrupt(); }
-
-
 
     }
 
@@ -155,7 +221,7 @@ public class WebServer   {
                 msgLog +="Method:".concat(arequest[0]+"\n");
                 msgLog +="Resource:".concat(arequest[1]+"\n");
                 msgLog +="HTTP Version:".concat(arequest[2]+"\n");
-                os.print(this.api.route(arequest[1]));
+                os.print(route(arequest[1]));
                 os.flush();
                 socket.close();
                 FileManager.Log(msgLog,FileManager.Log_Info);

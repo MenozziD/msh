@@ -45,9 +45,11 @@ public class PermissionManager {
     public void WritePermissionManagerInXml(){
         manageXml.set_app_permission_write(WRITE_EXTERNAL_STORAGE);
         manageXml.set_app_permission_read(READ_EXTERNAL_STORAGE);
+        manageXml.writeXml();
     }
 
     public void ReadPermissionManagerInXml(){
+        manageXml.readXml();
         WRITE_EXTERNAL_STORAGE=manageXml.get_app_permission_write();
         READ_EXTERNAL_STORAGE=manageXml.get_app_permission_read();
     }

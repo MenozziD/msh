@@ -65,15 +65,43 @@
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
-                    <title>Not Found</title>
+                    <title>ADTW-Home</title>
                 </head>
                 <script type="text/javascript">
                     var array_sensors=[];
-                    var time_update=2000;
-                    //read_set("time_update");
-                    //read_set("device_name");
-                    var myVar = setInterval(scanTimer, time_update);
-                    $( document ).ready(read_sensor_active());
+                    var firstTime=1;
+                    var array_settings=[];
+                    var autoupdate="false";
+                    var timeupdate=2000;
+                    var myVar = setInterval(scanTimer, timeupdate);
+
+                    $( document ).ready(init());
+
+                    function init(){
+                        read_settings();
+                        read_sensor_active();
+                    }
+
+                    function save_settings(){
+                        for (var i = 0; i < array_settings.length; i++) {
+                            var id="#"+array_settings[i];
+                            save_setting(array_settings[i],$(id).val());
+                        }
+                    }
+
+
+                    function save_setting(str_set,str_val){
+                        $.ajax({
+                            url: "setting",
+                            type: "GET",
+                            data: {setting:str_set,cmd:"set",value:str_val},
+                            success: function(response,str_set){
+                                read_set(str_set);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
 
                     function sensor_cmd(str_cmd){
                         $.ajax({
@@ -114,7 +142,7 @@
                                     result[0]["SensorsList"][i]=context;
                                 }
                                 var html = templateScript(result);
-                                $("#container").html(html);
+                                $("#container_sensor").html(html);
                             },
                             error: function(xhr){
                             }
@@ -125,24 +153,76 @@
                         $.ajax({
                             url: "settings",
                             type: "GET",
-                            data: {str_set:str_s},
+                            data: {setting:str_s,cmd:"get"},
                             success: function(response){
                                 var json = jQuery.parseJSON(response);
                                 var res=json["response"];
-                                var req=json["request"].split("=");
-                                if (req[1]=="device_name")
-                                    $("#device_name").text(res);
-                                if (req[1]=="time_update")
-                                    time_update=parseInt(res);
+                                var jsonSetting = jQuery.parseJSON(res);
+                                var element ="#"+str_s;
+                                if (jsonSetting[str_s]!=null)
+                                    $(element).val(jsonSetting[str_s]);
+                                if (jsonSetting["devicename"]!=null)
+                                {
+                                    $("#devicename").val(jsonSetting["devicename"]);
+                                    $("#h1").text(jsonSetting["devicename"]);
+                                }
+                                if (jsonSetting["autoupdate"]!=null)
+                                {
+                                    $("#autoupdate").val(jsonSetting["autoupdate"]);
+                                    autoupdate=jsonSetting["autoupdate"];
+                                }
+                                if (jsonSetting["timeupdate"]!=null)
+                                {
+                                    $("#timeupdate").val(jsonSetting["timeupdate"]);
+                                    timeupdate=parseInt(jsonSetting["timeupdate"]);
+                                }
                             },
                             error: function(xhr){
                             }
                         });
                     }
+
+                    function read_settings(){
+                        $.ajax({
+                            url: "settings",
+                            type: "GET",
+                            data: {list:"all"},
+                            success: function(response)
+                            {
+                                var json = jQuery.parseJSON(response);
+                                var res=json["response"];
+                                var jsonSettings = jQuery.parseJSON(res);
+                                var listSettings=jsonSettings["settings"].substr(1, jsonSettings["settings"].length-2);
+                                array_settings=listSettings.split(", ");
+                                var template=$("#settings-template").html();
+                                var templateScript=Handlebars.compile(template);
+                                var result=[{SettingsList:[]}];
+                                for (var i = 0; i < array_settings.length; i++) {
+                                    var context = { "setting_name" : array_settings[i]};
+                                    result[0]["SettingsList"][i]=context;
+                                }
+                                var html = templateScript(result);
+                                $("#container_settings").html(html);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
                     function read_all()
                     {
-                        for (var i = 0; i < array_sensors.length; i++) {
-                            sensor_cmd(array_sensors[i]);
+                        if (autoupdate=="true")
+                        {
+                            for (var i = 0; i < array_sensors.length; i++) {
+                                sensor_cmd(array_sensors[i]);
+                            }
+                        }
+                        if (firstTime==1 && array_settings.length > 0)
+                        {
+                            for (var i = 0; i < array_settings.length; i++) {
+                                read_set(array_settings[i]);
+                            }
+                            firstTime=0
                         }
                     }
                     function scanTimer()
@@ -155,8 +235,9 @@
                         <div class="row">
                             <div class="py-5 col-md-12 text-center">
                                 <div class="error-template">
-                                    <h1><p id="device_name"> </p></h1>
-                                    <div id ="container">
+                                    <h1><p id="h1"> </p></h1>
+                                    <h2><p> Sensori </p></h2>
+                                    <div id ="container_sensor">
                                         <script id="sensor-template" type="text/x-handlebars-template">
                                             {{#each this}}
                                             {{#SensorsList}}
@@ -171,6 +252,29 @@
                                             {{/SensorsList}}
                                             {{/each}}
                                         </script>
+                                    </div>
+
+                                    <h2><p> Impostazioni </p></h2>
+                                    <div id ="container_settings">
+                                        <script id="settings-template" type="text/x-handlebars-template">
+                                            {{#each this}}
+                                            {{#SettingsList}}
+                                            <div class="form-row justify-content-center">
+                                                <div class="py-3 input-group col-md-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text mb-2">{{setting_name}}</span>
+                                                    </div>
+                                                    <input id ="{{setting_name}}" type="text" class="form-control"  aria-describedby="inputGroup-sizing-sm" >
+                                                </div>
+                                            </div>
+                                            {{/SettingsList}}
+                                            {{/each}}
+                                        </script>
+                                    </div>
+                                    <div class="error-actions py-4">
+                                        <button id="btnSet"  class="btn btn-primary btn-lg" onclick="save_settings()">
+                                            <span class="ui-button-text">Save</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
