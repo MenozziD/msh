@@ -4,7 +4,7 @@ from time import sleep
 from module import execute_os_cmd, execute_ssh_cmd, execute_request_http
 
 
-def cmd_ping(ip, pacchetti=3):
+def cmd_ping(ip, pacchetti=1):
     ping_ok = 0
     ping_exception = -1
     ping_fail = 1
