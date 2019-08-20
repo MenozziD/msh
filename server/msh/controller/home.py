@@ -65,10 +65,7 @@ class Home(BaseHandler):
     @staticmethod
     def query(data):
         device = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
-        google_device = {
-            'on': True
-        }
-        google_device['on'] = device['net_status']
+        google_device = {'on': device['net_status']}
         if device['net_online'] == 'OFF':
             google_device['online'] = False
         else:
