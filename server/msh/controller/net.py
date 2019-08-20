@@ -368,7 +368,13 @@ class Net(BaseHandler):
         }
         result = funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
         res_decode = DbManager.select_tb_res_decode_from_type_command_lang_value("NET", device_command['cmd_result'], XmlReader.settings['lingua'], result['result'])
-        DbManager.update_tb_net_device(device_command['net_mac'], net_status=res_decode['res_state'])
+        if device_command['cmd_result'] == '100':
+            if res_decode['res_state'] == 'ERR':
+                DbManager.update_tb_net_device(device_command['net_mac'], net_online='OFF')
+            else:
+                DbManager.update_tb_net_device(device_command['net_mac'], net_online=res_decode['res_state'])
+        else:
+            DbManager.update_tb_net_device(device_command['net_mac'], net_status=res_decode['res_state'])
         DbManager.close_db()
         response = result
         response['res_decode'] = res_decode
