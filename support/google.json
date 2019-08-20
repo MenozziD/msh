@@ -1,3 +1,11 @@
+SYNC REQUEST
+{
+    "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+    "inputs": [{
+      "intent": "action.devices.SYNC"
+    }]
+}
+
 SYNC RESPONSE
 {
   "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
@@ -34,6 +42,58 @@ SYNC RESPONSE
   }
 }
 
+SYNC MY RESPONSE
+{
+  "requestId": data['requestId'],
+  "payload": {
+    "agentUserId": "01011980",
+    "devices": [
+      {
+        "id": dev["net_mac"],
+        "type": "action.devices.types.SWITCH",
+        "traits": [
+          "action.devices.traits.OnOff"
+        ],
+        "name": {
+          "defaultNames": [
+            "Smart Switch"
+          ],
+          "name": dev["net_code"],
+          "nicknames": []
+        },
+        "willReportState": true,
+        "deviceInfo": {
+          "manufacturer": "MSH",
+          "model": "1",
+          "hwVersion": "1.0",
+          "swVersion": "1.0"
+        },
+        "customData": {
+          "mshType": dev["net_type"]
+        }
+      }
+    ]
+  }
+}
+
+QUERY REQUEST
+{
+  "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
+  "inputs": [{
+    "intent": 'action.devices.QUERY',
+    "payload": {
+      "devices": [{
+        "id": "123",
+        "customData": {
+          "fooValue": 74,
+          "barValue": true,
+          "bazValue": "foo"
+        }
+      }]
+    }
+  }]
+}
+
 QUERY RESPONSE
 {
   "requestId": "ff36a3cc-ec34-11e6-b1a0-64510650abcf",
@@ -42,9 +102,18 @@ QUERY RESPONSE
       "123": {
         "on": true,
         "online": true
-      },
-      "456": {
-        "on": false,
+      }
+    }
+  }
+}
+
+QUERY MY RESPONSE
+{
+  "requestId": data['requestId'],
+  "payload": {
+    "devices": {
+      "123": {
+        "on": true,
         "online": true
       }
     }
