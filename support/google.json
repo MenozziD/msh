@@ -113,8 +113,8 @@ QUERY MY RESPONSE
   "payload": {
     "devices": {
       "123": {
-        "on": true,
-        "online": true
+        "on": device_cmd(dev["net_code"], "stato"),
+        "online": device_cmd(dev["net_code"], "online")
       }
     }
   }
@@ -134,13 +134,6 @@ EXECUTE REQUEST
             "barValue": true,
             "bazValue": "sheepdip"
           }
-        }, {
-          "id": "456",
-          "customData": {
-            "fooValue": 36,
-            "barValue": false,
-            "bazValue": "moarsheep"
-          }
         }],
         "execution": [{
           "command": "action.devices.commands.OnOff",
@@ -151,6 +144,14 @@ EXECUTE REQUEST
       }]
     }
   }]
+}
+
+EXECUTE MY REQUEST
+{
+  "command": "action.devices.commands.OnOff",
+  "params": {
+    "on": boolean
+  }
 }
 
 EXECUTE RESPONSE
@@ -174,6 +175,41 @@ EXECUTE RESPONSE
         ],
         "status": "ERROR",
         "errorCode": "deviceTurnedOff"
+      }
+    ]
+  }
+}
+
+EXECUTE MY RESPONSE SUCCESS -- SI POTREBBE LEGGERE DA DB LO STATO E ONLINE
+{
+  "requestId": data['requestId'],
+  "payload": {
+    "commands": [
+      {
+        "ids": [
+          "123"
+        ],
+        "status": SUCCESS,
+        "states": {
+          "on": device_cmd(dev["net_code"], "stato"),
+          "online": device_cmd(dev["net_code"], "online")
+        }
+      }
+    ]
+  }
+}
+
+EXECUTE MY RESPONSE ERROR
+{
+  "requestId": data['requestId'],
+  "payload": {
+    "commands": [
+      {
+        "ids": [
+          "123"
+        ],
+        "status": ERROR,
+        "errorCode": result['output']
       }
     ]
   }
