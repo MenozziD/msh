@@ -47,11 +47,5 @@ INSERT INTO TB_RES_DECODE (RES_DEVICE_TYPE,RES_COMMAND,RES_LANG,RES_VALUE,RES_RE
 INSERT INTO TB_RES_DECODE (RES_DEVICE_TYPE,RES_COMMAND,RES_LANG,RES_VALUE,RES_RESULT,RES_STATE) VALUES ("NET","130","IT","-1","Comando Esp Rele ERR","ERR");
 COMMIT;
 
-
-
-
-
-
-
-
-
+--CREATE TABLE "TB_NET_DEVICE_TYPE" ( `TYPE_CODE` TEXT NOT NULL UNIQUE, `TYPE_DESCRIPTION` TEXT DEFAULT '-', `SYNC_RESPONSE` TEXT DEFAULT '' NOT NULL, `QUERY_RESPONSE` TEXT DEFAULT '' NOT NULL, `EXECUTE_REQUEST` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_OK` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_KO` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`TYPE_CODE`) );
+--INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION) VALUES ("NET","Generic Device", "action.devices.types.SWITCH", "{\"requestId\": \"data['requestId']\",\"payload\": {\"agentUserId\": \"01011980\",\"devices\": [{\"id\": \"dev['net_mac']\",\"type\": \"action.devices.types.SWITCH\",\"traits\": [\"action.devices.traits.OnOff\"],\"name\": {\"defaultNames\": [\"Smart Switch\"],\"name\": \"dev['net_code']\",\"nicknames\": []},\"willReportState\": true,\"deviceInfo\": {\"manufacturer\": \"MSH\",\"model\": \"1\",\"hwVersion\": \"1.0\",\"swVersion\": \"1.0\"},\"customData\": {\"mshType\": \"dev['net_type']\"}}]}}", "{\"requestId\": \"data['requestId']\",\"payload\": {\"devices\": {\"data['inputs'][0]['payload']['devices'][0]['id']\": {\"on\": \"device_cmd(dev['net_code'], 'stato')\",\"online\": \"device_cmd(dev['net_code'], 'online')\"}}}}", "{\"command\": \"action.devices.commands.OnOff\",\"params\": {\"on\": \"boolean\"}}", "{\"requestId\": \"data['requestId']\",\"payload\": {\"commands\": [{\"ids\": [\"data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']\"],\"status\": \"SUCCESS\",\"states\": {\"on\": \"device_cmd(dev['net_code'], 'stato')\",\"online\": \"device_cmd(dev['net_code'], 'online')\"}}]}}", "{\"requestId\": \"data['requestId']\",\"payload\": {\"commands\": [{\"ids\": [\"data['inputs'][0]['payload']['commands'][0]['devices'][0]['id'\"],\"status\": \"ERROR\",\"errorCode\": \"result['output']\"}]}}");
