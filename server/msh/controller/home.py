@@ -67,6 +67,14 @@ class Home(BaseHandler):
                     yield k1, v1
 
     @staticmethod
+    def iter_json(json_data, path, index, size):
+        if index < size:
+            json_data[path[index]] = Home.iter_json(json_data[path[index]], path, index + 1, size)
+            return json_data
+        else:
+            return True if json_data == "ON" else False
+
+    @staticmethod
     def create_response(template, dev, data=None):
         funzione = ""
         for path, node in Home.traverse(template):
@@ -96,8 +104,8 @@ class Home(BaseHandler):
                                     funzione = funzione.replace(parametri, "'" + eval(parametri) + "'")
                         value = eval(funzione)
                         template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
-                        new_value = True if value == "ON" else False
-                        template[path[0]][path[1]][path[2]][path[3]] = new_value
+                        if value in ("ON", "OFF"):
+                            template = Home.iter_json(template, path, 0, len(path))
         return template
 
     @staticmethod
