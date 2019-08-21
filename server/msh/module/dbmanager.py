@@ -2,6 +2,7 @@ from sqlite3 import Error, connect
 from logging import info
 from module import XmlReader
 from datetime import datetime
+from json import loads
 
 
 class DbManager:
@@ -69,7 +70,7 @@ class DbManager:
 
     @staticmethod
     def select_tb_net_device_and_google_info(net_mac=''):
-        query = 'SELECT NET_CODE, NET_MAC, NET_ONLINE, NET_STATUS, GOOGLE_TYPE, GOOGLE_TRAITS ' \
+        query = 'SELECT NET_CODE, NET_TYPE, NET_MAC, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
                 'FROM TB_NET_DEVICE, TB_NET_DEVICE_TYPE ' \
                 'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE'
         if net_mac != '':
@@ -81,11 +82,13 @@ class DbManager:
         for net_device in net_devices:
             tb_net_device = {
                 'net_code': str(net_device[0]),
-                'net_mac': str(net_device[1]),
-                'net_online': str(net_device[2]),
-                'net_status': str(net_device[3]),
-                'google_type': str(net_device[4]),
-                'google_traits': str(net_device[5])
+                'net_type': str(net_device[1]),
+                'net_mac': str(net_device[2]),
+                'sync_response': loads(str(net_device[3])),
+                'query_response': loads(str(net_device[4])),
+                'execute_request': loads(str(net_device[5])),
+                'execute_response_ok': loads(str(net_device[6])),
+                'execute_response_ko': loads(str(net_device[7]))
             }
             devices.append(tb_net_device)
         return devices
@@ -99,9 +102,7 @@ class DbManager:
         for net_device_type in net_devices_type:
             tb_net_device_type = {
                 'type_code': str(net_device_type[0]),
-                'type_description': str(net_device_type[1]),
-                'google_type': str(net_device_type[2]),
-                'google_traits': str(net_device_type[3])
+                'type_description': str(net_device_type[1])
             }
             devices_types.append(tb_net_device_type)
         return devices_types
