@@ -44,36 +44,28 @@ SYNC RESPONSE
 
 SYNC MY RESPONSE
 {
-  "requestId": "data['requestId']",
-  "payload": {
-    "agentUserId": "01011980",
-    "devices": [
-      {
-        "id": "dev['net_mac']",
-        "type": "action.devices.types.SWITCH",
-        "traits": [
-          "action.devices.traits.OnOff"
-        ],
-        "name": {
-          "defaultNames": [
-            "Smart Switch"
-          ],
-          "name": "dev['net_code']",
-          "nicknames": []
-        },
-        "willReportState": true,
-        "deviceInfo": {
-          "manufacturer": "MSH",
-          "model": "1",
-          "hwVersion": "1.0",
-          "swVersion": "1.0"
-        },
-        "customData": {
-          "mshType": "dev['net_type']"
-        }
-      }
-    ]
-  }
+    "id": "dev['net_mac']",
+    "type": "action.devices.types.SWITCH",
+    "traits": [
+      "action.devices.traits.OnOff"
+    ],
+    "name": {
+      "defaultNames": [
+        "Smart Switch"
+      ],
+      "name": "dev['net_code']",
+      "nicknames": []
+    },
+    "willReportState": true,
+    "deviceInfo": {
+      "manufacturer": "MSH",
+      "model": "1",
+      "hwVersion": "1.0",
+      "swVersion": "1.0"
+    },
+    "customData": {
+      "mshType": "dev['net_type']"
+    }
 }
 
 QUERY REQUEST
