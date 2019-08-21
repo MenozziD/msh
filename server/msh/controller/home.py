@@ -2,6 +2,16 @@ from controller import BaseHandler
 from logging import info, exception
 from module import set_api_response, validate_format
 from module import DbManager
+from json import loads, dumps
+
+
+def prova(uno, due, tre):
+    info("%s %s %s", uno, due, tre)
+    if due == "online":
+        to_return = "ON"
+    else:
+        to_return = "OFF"
+    return to_return
 
 
 class Home(BaseHandler):
@@ -12,7 +22,8 @@ class Home(BaseHandler):
         response = {}
         try:
             DbManager()
-            if Home.check(self.request, body)['output'] == 'OK':
+            response = Home.check(self.request, body)
+            if response['output'] == 'OK':
                 data = self.request.json
                 intent = data['inputs'][0]['intent']
                 funzioni = {
@@ -42,18 +53,65 @@ class Home(BaseHandler):
         return response
 
     @staticmethod
+    def traverse(dict_or_list, path=None):
+        if path is None:
+            path = []
+        if isinstance(dict_or_list, dict):
+            iterator = dict_or_list.items()
+        else:
+            iterator = enumerate(dict_or_list)
+        for k, v in iterator:
+            yield path + [k], v
+            if isinstance(v, (dict, list)):
+                for k1, v1 in Home.traverse(v, path + [k]):
+                    yield k1, v1
+
+    @staticmethod
+    def create_response(template, dev, data=None):
+        funzione = ""
+        for path, node in Home.traverse(template):
+            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
+                for i in path:
+                    if str(i).find("[") > 0:
+                        # CHIAVE DA LEGGERE
+                        template = loads(dumps(template, indent=4, sort_keys=True).replace(i, eval(i)))
+        for path, node in Home.traverse(template):
+            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
+                if str(node).find("[") > 0 and str(node).find("(") == -1:
+                    # VALORE DA LEGGERE
+                    template = loads(dumps(template, indent=4, sort_keys=True).replace(node, eval(node)))
+                else:
+                    if str(node).find("(") > 0:
+                        # FUNZIONE DA INVOCARE
+                        funzione = node
+                        if node.find("[") > 0:
+                            # FUNZIONE CON PARAMETRI NON STATICI
+                            parametri = node.split("(")[1].split(")")[0]
+                            if parametri.find(", ") > 0:
+                                for parametro in parametri.split(", "):
+                                    if parametro.find("[") > 0:
+                                        funzione = funzione.replace(parametro, "'" + eval(parametro) + "'")
+                            else:
+                                if parametri.find("[") > 0:
+                                    funzione = funzione.replace(parametri, "'" + eval(parametri) + "'")
+                        value = eval(funzione)
+                        template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
+                        new_value = True if value == "ON" else False
+                        template[path[0]][path[1]][path[2]][path[3]] = new_value
+        return template
+
+    @staticmethod
+    def read_request(template):
+        for path, node in Home.traverse(template):
+            if len(path) >= 2 and str(node)[0:1] != "{":
+                info("PARAMETRO: %s TIPOLOGIA: %s", path[-1], node)
+
+    @staticmethod
     def sync(data):
         devices = []
         device_type = DbManager.select_tb_net_device_and_google_info()
         for dev in device_type:
-            device = {
-                'id': dev["net_mac"],
-                'type': dev["google_type"],
-                'traits': [dev["google_traits"].split(",")[:-1]],
-                'name': {'name': dev["net_code"]},
-                'willReportState': True
-            }
-            devices.append(device)
+            devices.append(Home.create_response(dev['sync_response'], dev))
         response = {
             'requestId': data['requestId'],
             'payload': {
@@ -64,24 +122,13 @@ class Home(BaseHandler):
 
     @staticmethod
     def query(data):
-        device = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
-        google_device = {'on': device['net_status']}
-        if device['net_online'] == 'OFF':
-            google_device['online'] = False
-        else:
-            google_device['online'] = True
-        devices = {
-            data["inputs"][0]["payload"]["devices"][0]["id"]: google_device,
-        }
-        response = {
-            'requestId': data['requestId'],
-            'payload': {'devices': devices}
-        }
-        return response
+        device = \
+        DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
+        return Home.create_response(device['query_response'], device, data)
 
     @staticmethod
     def execute(data):
-        response = {}
+        '''
         req_command = data['inputs'][0]['payload']['commands'][0]
         command = req_command['execution'][0]['command']
         params = req_command['execution'][0]['params']
@@ -94,4 +141,25 @@ class Home(BaseHandler):
                 info('ON/OFF device 2')
         if command == 'action.devices.commands.ColorAbsolute' and device_id == '2':
                 info('colore device 2 %s', params['color']['spectrumRGB'])
-        return response
+        '''
+        device = DbManager.select_tb_net_device_and_google_info(
+            net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
+        data1 = {
+            "command": "action.devices.commands.OnOff",
+            "params": {
+                "color": {
+                    "name": "magenta",
+                    "spectrumRGB": 16711935
+                },
+                "color1": {
+                    "spectrumHSV": {
+                        "hue": 240.0,
+                        "saturation": 1.0,
+                        "value": 1.0
+                    }
+                },
+                "on": True
+            }
+        }
+        Home.read_request(data1)
+        return Home.create_response(device['execute_response_ok'], device, data)
