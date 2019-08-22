@@ -1,16 +1,20 @@
 from controller import BaseHandler
 from logging import info, exception
 from json import loads
-from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format, execute_request_http
+from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format, execute_request_http, DbManager, XmlReader
 
 
 class UploadArduino(BaseHandler):
+
+    tipo_operazione = ['upload', 'compile']
+
     def post(self):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
         info("BODY %s", body)
         response = {}
         try:
+            DbManager()
             response = UploadArduino.check(self.session.get('user'), self.session.get('role'), self.request, body)
             if response['output'] == 'OK':
                 data = self.request.json
@@ -47,19 +51,19 @@ class UploadArduino(BaseHandler):
         response = {}
         if body != "" and validate_format(requestt):
             data = requestt.json
-            if 'tipo_operazione' in data and data['tipo_operazione'] in ('upload', 'core', 'tipo', 'compile'):
+            if 'tipo_operazione' in data and data['tipo_operazione'] in UploadArduino.tipo_operazione:
                 response = UploadArduino.check_user(user, role, data['tipo_operazione'])
                 response = UploadArduino.check_upload_compile(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, compile, core, tipo'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(UploadArduino.tipo_operazione)
                 else:
-                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
         else:
             if body != "":
-                response['output'] = "Il payload deve essere in formato JSON"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
             else:
-                response['output'] = "Questa API ha bisogno di un payload"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
         return response
 
     @staticmethod
@@ -76,13 +80,13 @@ class UploadArduino(BaseHandler):
         if user is not None:
             if tipo_operazione in ('upload', 'compile'):
                 if role != 'ADMIN':
-                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = 'Devi effettuare la login per utilizzare questa API'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
         return response
 
     @staticmethod
@@ -97,9 +101,9 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'core' in data:
-                response['output'] = "Il campo core deve assumere uno dei seguenti valori: " + ', '.join(core_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "core") + ', '.join(core_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo core"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "core"
         return response
 
     @staticmethod
@@ -114,9 +118,9 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'tipologia' in data:
-                response['output'] = "Il campo tipologia deve assumere uno dei seguenti valori: " + ', '.join(tipologia_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipologia") + ', '.join(tipologia_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo tipologia"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "tipologia"
         return response
 
     @staticmethod
