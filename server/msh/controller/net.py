@@ -294,7 +294,7 @@ class Net(BaseHandler):
             trovato = False
             for db_device in db_devices:
                 if device['net_mac'] == db_device['net_mac']:
-                    DbManager.update_tb_net_device(device['net_mac'], net_online='ON', net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
+                    DbManager.update_tb_net_device(device['net_mac'], net_ip=device['net_ip'], net_mac_info=device['net_mac_info'])
                     trovato = True
                     aggiornati = aggiornati + 1
                     break
@@ -304,7 +304,6 @@ class Net(BaseHandler):
                     device['net_code'] = device['net_mac']
                 DbManager.insert_tb_net_device(device['net_code'], device['net_ip'], device['net_mac'], device['net_mac_info'])
                 inseriti = inseriti + 1
-        Net.update_status_if_not_find(db_devices, response)
         response['find_device'] = str(len(response['devices']))
         response['new_device'] = str(inseriti)
         response['updated_device'] = str(aggiornati)
@@ -337,17 +336,6 @@ class Net(BaseHandler):
             'count': str(count)
         }
         return ip_subnet
-
-    @staticmethod
-    def update_status_if_not_find(db_devices, result):
-        for db_device in db_devices:
-            trovato = False
-            for device in result['devices']:
-                if device['net_mac'] == db_device['net_mac']:
-                    trovato = True
-                    break
-            if not trovato:
-                DbManager.update_tb_net_device(db_device['net_mac'], net_online='OFF')
 
     @staticmethod
     def device_cmd(dispositivo, comando):
