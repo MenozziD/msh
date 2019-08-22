@@ -355,7 +355,4 @@ class Net(BaseHandler):
             '300': [device_command['net_ip'], device_command['cmd_str'].replace("radio_", ""),
                     device_command['net_usr'], device_command['net_psw']]
         }
-        result = funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
-        response = result
-        response['res_decode'] = result['result']
-        return response
+        return funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
