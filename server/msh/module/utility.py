@@ -1,6 +1,6 @@
 from logging import info, exception
 from pexpect import pxssh
-from module import XmlReader
+from module import XmlReader, DbManager
 from subprocess import run, PIPE, check_output
 from datetime import datetime
 from json import dumps, load
@@ -52,7 +52,7 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
         except Exception as e:
             exception("Exception")
             if str(e) == "password refused":
-                response['output'] = "Credenzilai non valide"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 13)
             else:
                 response['output'] = str(e)
         finally:
@@ -96,6 +96,7 @@ def check_internet_connection():
 
 
 def set_api_response(response_payload, response, timmestamp=True):
+    DbManager.close_db()
     if timmestamp:
         response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
     response.headers.add('Access-Control-Allow-Origin', '*')
