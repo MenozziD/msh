@@ -37,7 +37,6 @@ class Home(BaseHandler):
         except Exception:
             exception("Exception")
         finally:
-            DbManager.close_db()
             set_api_response(response, self.response, False)
 
     @staticmethod
@@ -130,8 +129,7 @@ class Home(BaseHandler):
 
     @staticmethod
     def query(data):
-        device = \
-        DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
+        device = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["devices"][0]["id"])[0]
         return Home.create_response(device['query_response'], device, data)
 
     @staticmethod
