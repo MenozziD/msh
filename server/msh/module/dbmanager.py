@@ -56,14 +56,12 @@ class DbManager:
                 'net_code': str(net_device[0]),
                 'net_desc': str(net_device[1]),
                 'net_type': str(net_device[2]),
-                'net_online': str(net_device[3]),
-                'net_status': str(net_device[4]),
-                'net_last_update': str(net_device[5]),
-                'net_ip': str(net_device[6]),
-                'net_mac': str(net_device[7]),
-                'net_usr': str(net_device[8]),
-                'net_psw': str(net_device[9]),
-                'net_mac_info': str(net_device[10])
+                'net_last_update': str(net_device[3]),
+                'net_ip': str(net_device[4]),
+                'net_mac': str(net_device[5]),
+                'net_usr': str(net_device[6]),
+                'net_psw': str(net_device[7]),
+                'net_mac_info': str(net_device[8])
             }
             devices.append(tb_net_device)
         return devices
@@ -151,17 +149,15 @@ class DbManager:
                 'net_code': str(net_device[0]),
                 'net_desc': str(net_device[1]),
                 'net_type': str(net_device[2]),
-                'net_online': str(net_device[3]),
-                'net_status': str(net_device[4]),
-                'net_last_update': str(net_device[5]),
-                'net_ip': str(net_device[6]),
-                'net_mac': str(net_device[7]),
-                'net_usr': str(net_device[8]),
-                'net_psw': str(net_device[9]),
-                'net_mac_info': str(net_device[10]),
-                'cmd_str': str(net_device[11]),
-                'cmd_net_type': str(net_device[12]),
-                'cmd_result': str(net_device[13])}
+                'net_last_update': str(net_device[3]),
+                'net_ip': str(net_device[4]),
+                'net_mac': str(net_device[5]),
+                'net_usr': str(net_device[6]),
+                'net_psw': str(net_device[7]),
+                'net_mac_info': str(net_device[8]),
+                'cmd_str': str(net_device[9]),
+                'cmd_net_type': str(net_device[10]),
+                'cmd_result': str(net_device[11])}
             devices_diz_cmd.append(tb_net_device)
         return devices_diz_cmd[0]
 
