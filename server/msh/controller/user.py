@@ -1,9 +1,13 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format
+from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format, XmlReader
 
 
 class User(BaseHandler):
+
+    tipo_operazione = ['list', 'update', 'delete', 'add']
+    campi_aggiornabili = ['role', 'password']
+
     def post(self):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
@@ -43,7 +47,6 @@ class User(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
@@ -51,19 +54,19 @@ class User(BaseHandler):
         response = {}
         if body != "" and validate_format(request):
             data = request.json
-            if 'tipo_operazione' in data and data['tipo_operazione'] in ('list', 'update', 'delete', 'add'):
+            if 'tipo_operazione' in data and data['tipo_operazione'] in User.tipo_operazione:
                 response = User.check_user(user, role, data['tipo_operazione'])
                 response = User.check_operation_param(response, data, user, role)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(User.tipo_operazione)
                 else:
-                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
         else:
             if body != "":
-                response['output'] = "Il payload deve essere in formato JSON"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
             else:
-                response['output'] = "Questa API ha bisogno di un payload"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
         return response
 
     @staticmethod
@@ -105,13 +108,13 @@ class User(BaseHandler):
         if user is not None:
             if tipo_operazione in ('add', 'delete'):
                 if role != 'ADMIN':
-                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = 'Devi effettuare la login per utilizzare questa API'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
         return response
 
     @staticmethod
@@ -122,9 +125,9 @@ class User(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'username' in data:
-                response['output'] = "Il campo username deve assumere uno dei seguenti valori: " + ', '.join(username_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "username") + ', '.join(username_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo username"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "username"
         return response
 
     @staticmethod
@@ -135,9 +138,9 @@ class User(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'username' in data:
-                response['output'] = "Esiste già un utente con questo nome"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 28)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo username"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "username"
         return response
 
     @staticmethod
@@ -150,7 +153,7 @@ class User(BaseHandler):
             if role == 'ADMIN':
                 admin = admin + 1
         if to_delete['role'] == 'ADMIN' and admin == 1 and ((not to_modify) or (to_modify and to_delete['role'] != data['role'])):
-            response['output'] = 'Deve essere sempre presente almeno un utente ADMIN'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 29)
         else:
             response['output'] = 'OK'
         return response
@@ -165,10 +168,10 @@ class User(BaseHandler):
                 response = User.check_user_for_role(data, session_role)
         else:
             if 'role' in data:
-                response['output'] = "Il campo role deve assumere uno dei seguenti valori: " + ', '.join(role_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "role") + ', '.join(role_list)
             else:
                 if required:
-                    response['output'] = "Per l'operazione scelta è obbligatorio il campo role"
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "role"
                 else:
                     response['output'] = 'OK'
         return response
@@ -179,7 +182,7 @@ class User(BaseHandler):
         if session_role == 'ADMIN':
             response = User.check_one_admin(data, to_modify=True)
         else:
-            response['output'] = 'Solo gli ADMIN possono modificare i ruoli'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 30)
         return response
 
     @staticmethod
@@ -191,10 +194,10 @@ class User(BaseHandler):
                 response = User.check_user_for_password(data, session_user)
         else:
             if 'password' in data:
-                response['output'] = "Il campo password deve avere una lunghezza di almeno 4 caratteri"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 31)
             else:
                 if required:
-                    response['output'] = "Per l'operazione scelta è obbligatorio il campo password"
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "password"
                 else:
                     response['output'] = 'OK'
         return response
@@ -205,7 +208,7 @@ class User(BaseHandler):
         if session_user == data['username']:
             response['output'] = 'OK'
         else:
-            response['output'] = 'Solo l\'utente propietario può modificare la sua password'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 32)
         return response
 
     @staticmethod
@@ -214,7 +217,7 @@ class User(BaseHandler):
         if 'role' in data or 'password' in data:
             response['output'] = 'OK'
         else:
-            response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono role e password"
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 33) + ', '.join(User.campi_aggiornabili)
         return response
 
     @staticmethod
