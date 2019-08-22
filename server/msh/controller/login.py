@@ -1,5 +1,5 @@
 from logging import info, exception
-from module import DbManager, set_api_response, validate_format
+from module import DbManager, set_api_response, validate_format, XmlReader
 from controller import BaseHandler
 
 
@@ -27,7 +27,6 @@ class Login(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
@@ -40,9 +39,9 @@ class Login(BaseHandler):
                 response = Login.check_password(data)
         else:
             if body != "":
-                response['output'] = "Il payload deve essere in formato JSON"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
             else:
-                response['output'] = "Questa API ha bisogno di un payload"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
         return response
 
     @staticmethod
@@ -53,9 +52,9 @@ class Login(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'user' in data:
-                response['output'] = "Username non trovato"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 36)
             else:
-                response['output'] = "Il campo user è obbligatorio"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "user")
         return response
 
     @staticmethod
@@ -66,9 +65,9 @@ class Login(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'password' in data:
-                response['output'] = "Password errata"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 37)
             else:
-                response['output'] = "Il campo password è obbligatorio"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "password")
         return response
 
 
