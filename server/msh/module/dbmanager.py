@@ -166,13 +166,11 @@ class DbManager:
         return devices_diz_cmd[0]
 
     @staticmethod
-    def update_tb_net_device(net_mac, net_code=None, net_type=None, net_online=None, net_status=None, net_ip=None, net_user=None, net_psw=None, net_mac_info=None):
+    def update_tb_net_device(net_mac, net_code=None, net_type=None, net_ip=None, net_user=None, net_psw=None, net_mac_info=None):
         query = 'UPDATE TB_NET_DEVICE SET NET_LASTUPDATE = \'%s\',' % datetime.now().strftime(XmlReader.settings['timestamp'])
         fields = {
             'net_code': 'NET_CODE = \'%s\',' % net_code,
             'net_type': 'NET_TYPE = \'%s\',' % net_type,
-            'net_online': 'NET_ONLINE = \'%s\',' % net_online,
-            'net_status': 'NET_STATUS = \'%s\',' % net_status,
             'net_ip': 'NET_IP = \'%s\',' % net_ip,
             'net_user': 'NET_USER = \'%s\',' % net_user,
             'net_psw': 'NET_PSW = \'%s\',' % net_psw,
@@ -181,8 +179,6 @@ class DbManager:
         device = {
             'net_code': net_code,
             'net_type': net_type,
-            'net_online': net_online,
-            'net_status': net_status,
             'net_ip': net_ip,
             'net_user': net_user,
             'net_psw': net_psw,
@@ -198,8 +194,8 @@ class DbManager:
 
     @staticmethod
     def insert_tb_net_device(net_code, net_ip, net_mac, net_mac_info):
-        query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_ONLINE,NET_STATUS,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) ' \
-                'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, 'NET', 'ON', '', datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, '', '', net_mac, net_mac_info)
+        query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) ' \
+                'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, 'NET', datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, '', '', net_mac, net_mac_info)
         DbManager.insert_or_update(query)
 
     @staticmethod
