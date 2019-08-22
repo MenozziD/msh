@@ -124,22 +124,19 @@ class DbManager:
         return diz_cmd
 
     @staticmethod
-    def select_tb_res_decode_from_type_command_lang_value(device_type, command, lang, value):
-        query = 'SELECT * ' \
-                'FROM TB_RES_DECODE ' \
-                'WHERE RES_DEVICE_TYPE = \'%s\' ' \
-                'AND RES_COMMAND = \'%s\' ' \
-                'AND RES_LANG = \'%s\' ' \
-                'AND RES_VALUE = \'%s\';' % (device_type, command, lang, value)
-        res_decodes = DbManager.select(query)
-        list_res_decode = []
-        for res_decode in res_decodes:
-            tb_res_decode = {
-                'res_result': str(res_decode[4]),
-                'res_state': str(res_decode[5])
+    def select_tb_string_from_lang_value(language, value):
+        query = 'SELECT TB_STRING.RESULT ' \
+                'FROM TB_STRING ' \
+                'WHERE LANGUAGE = \'%s\' ' \
+                'AND VALUE = \'%s\';' % (language, value)
+        stringhe = DbManager.select(query)
+        list_stringhe = []
+        for stringa in stringhe:
+            tb_stringhe = {
+                'result': str(stringa[0])
             }
-            list_res_decode.append(tb_res_decode)
-        return list_res_decode[0]
+            list_stringhe.append(tb_stringhe)
+        return list_stringhe[0]
 
     @staticmethod
     def select_tb_net_device_tb_net_diz_cmd_from_code_and_cmd(net_code, cmd_str):
