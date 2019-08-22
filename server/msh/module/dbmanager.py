@@ -130,10 +130,7 @@ class DbManager:
         stringhe = DbManager.select(query)
         list_stringhe = []
         for stringa in stringhe:
-            tb_stringhe = {
-                'result': str(stringa[0])
-            }
-            list_stringhe.append(tb_stringhe)
+            list_stringhe.append(str(stringa[0]))
         return list_stringhe[0]
 
     @staticmethod
