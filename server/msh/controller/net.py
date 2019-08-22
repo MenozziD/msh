@@ -1,10 +1,14 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, XmlReader, DbManager, set_api_response, validate_format
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, XmlReader
 from netifaces import AF_INET, gateways, ifaddresses
 
 
 class Net(BaseHandler):
+
+    tipo_operazione = ['scan', 'list', 'type', 'command', 'update', 'delete', 'cmd']
+    campi_aggiornabili = ['codice', 'tipo', 'user', 'password']
+
     def post(self):
         body = str(self.request.body)[2:-1]
         info("%s %s", self.request.method, self.request.url)
@@ -42,7 +46,6 @@ class Net(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            DbManager.close_db()
             set_api_response(response, self.response)
 
     @staticmethod
@@ -82,14 +85,14 @@ class Net(BaseHandler):
                 response = Net.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(Net.tipo_operazione)
                 else:
-                    response['output'] = 'Il campo tipo_operazione è obbligatorio'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
         else:
             if body != "":
-                response['output'] = "Il payload deve essere in formato JSON"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
             else:
-                response['output'] = "Questa API ha bisogno di un payload"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
         return response
 
     @staticmethod
@@ -126,10 +129,10 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'tipo' in data:
-                response['output'] = "Il campo tipo deve assumere uno dei seguenti valori: " + ', '.join(type_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo") + ', '.join(type_list)
             else:
                 if required:
-                    response['output'] = "Per l'operazione scelta è obbligatorio il campo tipo"
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "tipo"
                 else:
                     response['output'] = 'OK'
         return response
@@ -142,9 +145,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'mac' in data:
-                response['output'] = "Il campo mac deve assumere uno dei seguenti valori: " + ', '.join(mac_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "mac") + ', '.join(mac_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo mac"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "mac"
         return response
 
     @staticmethod
@@ -158,7 +161,7 @@ class Net(BaseHandler):
                 if data['codice'] != to_update['net_code']:
                     response = Net.check_code_exist(data, devices)
             else:
-                response['output'] = 'Il campo codice non può essere valorizzato con una stringa vuota'
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 34)
         return response
 
     @staticmethod
@@ -172,7 +175,7 @@ class Net(BaseHandler):
         if not trovato:
             response['output'] = 'OK'
         else:
-            response['output'] = 'Esiste già un dispositivo con questo codice'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 35)
         return response
 
     @staticmethod
@@ -181,13 +184,13 @@ class Net(BaseHandler):
         if user is not None:
             if tipo_operazione in ('update', 'delete'):
                 if role != 'ADMIN':
-                    response['output'] = 'La funzione richiesta può essere eseguita solo da un ADMIN'
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = 'Devi effettuare la login per utilizzare questa API'
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
         return response
 
     @staticmethod
@@ -198,9 +201,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'dispositivo' in data:
-                response['output'] = "Il campo dispositivo deve assumere uno dei seguenti valori: " + ', '.join(code_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "dispositivo") + ', '.join(code_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo dispositivo"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "dispositivo"
         return response
 
     @staticmethod
@@ -212,9 +215,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'comando' in data:
-                response['output'] = "Il campo comando deve assumere uno dei seguenti valori: " + ', '.join(command_list)
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "comando") + ', '.join(command_list)
             else:
-                response['output'] = "Per l'operazione scelta è obbligatorio il campo comando"
+                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "comando"
         return response
 
     @staticmethod
@@ -223,7 +226,7 @@ class Net(BaseHandler):
         if 'codice' in data or 'tipo' in data or 'user' in data or 'password' in data:
             response['output'] = 'OK'
         else:
-            response['output'] = "Nessun campo da aggiornare, i possibili campi da aggiornare sono codice, tipo, user, password"
+            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 33) + ', '.join(Net.campi_aggiornabili)
         return response
 
     @staticmethod
@@ -277,19 +280,17 @@ class Net(BaseHandler):
         ip = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'].split('.')
         subnet = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask'].split('.')
         ip_subnet = Net.calculate_start(ip, subnet)
-        result = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
-        response = result
+        response = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
         if response['output'] == 'OK':
-            response = Net.insert_update_device(result)
+            response = Net.insert_update_device(response)
         return response
 
     @staticmethod
-    def insert_update_device(result):
-        response = result
+    def insert_update_device(response):
         inseriti = 0
         aggiornati = 0
         db_devices = DbManager.select_tb_net_device()
-        for device in result['devices']:
+        for device in response['devices']:
             trovato = False
             for db_device in db_devices:
                 if device['net_mac'] == db_device['net_mac']:
@@ -303,8 +304,8 @@ class Net(BaseHandler):
                     device['net_code'] = device['net_mac']
                 DbManager.insert_tb_net_device(device['net_code'], device['net_ip'], device['net_mac'], device['net_mac_info'])
                 inseriti = inseriti + 1
-        Net.update_status_if_not_find(db_devices, result)
-        response['find_device'] = str(len(result['devices']))
+        Net.update_status_if_not_find(db_devices, response)
+        response['find_device'] = str(len(response['devices']))
         response['new_device'] = str(inseriti)
         response['updated_device'] = str(aggiornati)
         return response
@@ -367,15 +368,6 @@ class Net(BaseHandler):
                     device_command['net_usr'], device_command['net_psw']]
         }
         result = funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
-        res_decode = DbManager.select_tb_res_decode_from_type_command_lang_value("NET", device_command['cmd_result'], XmlReader.settings['lingua'], result['result'])
-        if device_command['cmd_result'] == '100':
-            if res_decode['res_state'] == 'ERR':
-                DbManager.update_tb_net_device(device_command['net_mac'], net_online='OFF')
-            else:
-                DbManager.update_tb_net_device(device_command['net_mac'], net_online=res_decode['res_state'])
-        else:
-            DbManager.update_tb_net_device(device_command['net_mac'], net_status=res_decode['res_state'])
-        DbManager.close_db()
         response = result
-        response['res_decode'] = res_decode
+        response['res_decode'] = result['result']
         return response
