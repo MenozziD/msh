@@ -158,8 +158,7 @@ function net(type_op){
                     }
                     if (type_op == 'cmd'){
                         $('#result')[0].value = json["output"];
-                        $('#cmd_result')[0].value = json["res_decode"]["res_result"];
-                        $('#stato')[0].value = json["res_decode"]["res_state"];
+                        $('#cmd_result')[0].value = json["result"];
                         net('list');
                     }
                 } else {
