@@ -121,6 +121,10 @@ def validate_format(request_validate):
     return True
 
 
+def evaluate(command, data=None, dev=None, result=None, parametri=None):
+    return eval(command)
+
+
 def prova(uno, due="", tre=""):
     if due == "online":
         to_return = "ON"

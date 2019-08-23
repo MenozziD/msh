@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format, DbManager, prova
+from module import set_api_response, validate_format, DbManager, evaluate
 from json import loads, dumps
 
 
@@ -66,42 +66,55 @@ class Home(BaseHandler):
 
     @staticmethod
     def create_response(template, dev, data=None, result=None):
-        for path, node in Home.traverse(template):
-            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
-                for i in path:
-                    if str(i).find("[") > 0:
-                        # CHIAVE DA LEGGERE
-                        template = loads(dumps(template, indent=4, sort_keys=True).replace(i, eval(i)))
+        template = Home.read_key(template, data)
         for path, node in Home.traverse(template):
             if str(node)[0:1] != "{" and str(node)[0:1] != "[":
                 if str(node).find("[") > 0 and str(node).find("(") == -1:
                     # VALORE DA LEGGERE
-                    template = loads(dumps(template, indent=4, sort_keys=True).replace(node, eval(node)))
+                    template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
                 else:
-                    if str(node).find("(") > 0:
-                        # FUNZIONE DA INVOCARE
-                        funzione = node
-                        if node.find("[") > 0:
-                            # FUNZIONE CON PARAMETRI NON STATICI
-                            parametri = node.split("(")[1].split(")")[0]
-                            if parametri.find(", ") > 0:
-                                for parametro in parametri.split(", "):
-                                    if parametro.find("[") > 0:
-                                        funzione = funzione.replace(parametro, "'" + eval(parametro) + "'")
-                            else:
-                                if parametri.find("[") > 0:
-                                    funzione = funzione.replace(parametri, "'" + eval(parametri) + "'")
-                        value = eval(funzione)
-                        template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
-                        if value in ("ON", "OFF"):
-                            template = Home.iter_json(template, path, 0, len(path), True, "ON", False)
+                    template = Home.invoke_function(template, path, node, dev)
         return template
+
+    @staticmethod
+    def read_key(template, data):
+        for path, node in Home.traverse(template):
+            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
+                for i in path:
+                    if str(i).find("[") > 0:
+                        template = loads(dumps(template, indent=4, sort_keys=True).replace(i, evaluate(i, data=data)))
+        return template
+
+    @staticmethod
+    def invoke_function(template, path, node, dev):
+        if str(node).find("(") > 0:
+            # FUNZIONE DA INVOCARE
+            funzione = node
+            if node.find("[") > 0:
+                # FUNZIONE CON PARAMETRI NON STATICI
+                parametri = node.split("(")[1].split(")")[0]
+                funzione = Home.read_param_not_static(funzione, parametri, dev)
+            value = evaluate(funzione)
+            template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
+            if value in ("ON", "OFF"):
+                template = Home.iter_json(template, path, 0, len(path), True, "ON", False)
+        return template
+
+    @staticmethod
+    def read_param_not_static(funzione, parametri, dev):
+        if parametri.find(", ") > 0:
+            for parametro in parametri.split(", "):
+                if parametro.find("[") > 0:
+                    funzione = funzione.replace(parametro, "'" + evaluate(parametro, dev=dev) + "'")
+        else:
+            if parametri.find("[") > 0:
+                funzione = funzione.replace(parametri, "'" + evaluate(parametri, dev=dev) + "'")
+        return funzione
 
     @staticmethod
     def read_request(template):
         for path, node in Home.traverse(template):
-            if str(node)[0:1] != "{":
-                if type(node).__name__ == 'bool':
+            if str(node)[0:1] != "{" and type(node).__name__ == 'bool':
                     template = Home.iter_json(template, path, 0, len(path), "ON", True, "OFF")
         return template
 
@@ -144,7 +157,7 @@ class Home(BaseHandler):
         parametri = Home.read_request(data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"])
         result = {}
         for key in parametri.keys():
-            result = eval(dev['execute_request'][key])
+            result = evaluate(dev['execute_request'][key], dev=dev, parametri=parametri)
         if result['output'] == 'OK':
             response = Home.create_response(dev['execute_response_ok'], dev, data)
         else:
