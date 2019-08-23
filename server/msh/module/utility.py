@@ -20,6 +20,8 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
             info("Return Code: %s", cmd.returncode)
             info("Output: %s", cmd_out)
             info("Error: %s", cmd_err)
+            if cmd_err == "" and cmd.returncode != 0:
+                cmd_err = cmd_out
             response = {
                 'return_code': cmd.returncode,
                 'cmd_out': cmd_out,
