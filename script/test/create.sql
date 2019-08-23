@@ -6,12 +6,438 @@ CREATE TABLE "TB_NET_DIZ_CMD" ( `CMD_STR` TEXT NOT NULL, `CMD_NET_TYPE` TEXT NOT
 CREATE TABLE "TB_STRING" ( `LANGUAGE` TEXT NOT NULL, `VALUE` TEXT NOT NULL, `RESULT` TEXT NOT NULL, PRIMARY KEY(`LANGUAGE`,`VALUE`) );
 CREATE TABLE "TB_USER" ( `USERNAME` TEXT NOT NULL, `PASSWORD` TEXT, `ROLE` TEXT, PRIMARY KEY(`USERNAME`));
 -- POPOLO TB_NET_DEVICE_TYPE
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("NET","Generic Device","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""Generic Device""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato')"",""online"": ""prova(dev['net_code'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCWIN","PC Windows","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""PC Windows""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""Access Point UNIX based SSH Compatible""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PS4","Sony Playstation 4","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""Sony Playstation 4""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("XBULB","Xiaomi Yeelight Bulb","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""Xiaomi Yeelight Bulb""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_RELE","ESP8266 con software per rele","{""id"": ""dev['net_mac']"",""type"": ""action.devices.types.SWITCH"",""traits"": [""action.devices.traits.OnOff""],""name"": {""defaultNames"": [""ESP8266 con software per rele""],""name"": ""dev['net_code']"",""nicknames"": []},""willReportState"": true,""deviceInfo"": {""manufacturer"": ""MSH"",""model"": ""1"",""hwVersion"": ""1.0"",""swVersion"": ""1.0""},""customData"": {""mshType"": ""dev['net_type']""}}", "{""requestId"": ""data['requestId']"",""payload"": {""devices"": {""data['inputs'][0]['payload']['devices'][0]['id']"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}}}", "{""on"": ""prova(dev['net_code'], parametri['on'], dev['net_mac'])""}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""SUCCESS"",""states"": {""on"": ""prova(dev['net_code'], 'stato', dev['net_mac'])"",""online"": ""prova(dev['net_code'], 'online', dev['net_mac'])""}}]}}", "{""requestId"": ""data['requestId']"",""payload"": {""commands"": [{""ids"": [""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""],""status"": ""ERROR"",""errorCode"": ""result['output']""}]}}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("NET","Generic Device",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Generic Device""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCWIN","PC Windows",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""PC Windows""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Access Point UNIX based SSH Compatible""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PS4","Sony Playstation 4",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Sony Playstation 4""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("XBULB","Xiaomi Yeelight Bulb",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Xiaomi Yeelight Bulb""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_RELE","ESP8266 con software per rele",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""ESP8266 con software per rele""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
 -- POPOLO TB_NET_DIZ_CMD
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("stato","NET","100");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("stato","PCWIN","100");
