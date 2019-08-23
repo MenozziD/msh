@@ -22,6 +22,25 @@
 		<title>Home</title>
 	</head>
 	<body onload="carica()">
+        <div class="modal" id="error_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-12 modal-title text-center">
+                        Attenzione!!!
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="errore"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-3"></div>
+                      <button type="button" class="btn btn-danger btn-lg btn-block col-md-6" data-dismiss="modal">Close</button>
+                      <div class="col-md-3"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
 		<div class="container">
             <div class="mb-3 mt-3 text-center">
                 <h1><img src="/static/image/hub.png" class="img-fluid" style="width: 200px; height: 200px" alt="Icona di google home">Home</h1>
@@ -113,7 +132,6 @@
 					<div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net('list')">List Device</button>
 					</div>
-                    <h5 id="errore" class="text-center d-none"></h5>
 					<div  id="table-device" class="table-responsive"></div>
                     <script id="table-device-template" type="text/x-handlebars-template">
                         <table class="table">
@@ -197,7 +215,6 @@
                     <div class="row">
 						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="user_function('list')">List User</button>
                     </div>
-                    <h5 id="errore_user" class="text-center d-none"></h5>
 					<div  id="table-user" class="table-responsive"></div>
                     <script id="table-user-template" type="text/x-handlebars-template">
                         <table class="table">
@@ -341,7 +358,6 @@
                             <div class="col-md-4 mb-3">
 								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('compile_upload')">Compila e Upload</button>
 							</div>
-                            <h5 id="errore_upload" class="text-center d-none"></h5>
                             <div class="col-md-12 mb-3">
                                 <h3>Report Compilazione</h3>
                             </div>
