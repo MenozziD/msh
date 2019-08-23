@@ -1,23 +1,8 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format
-from module import DbManager
+from module import set_api_response, validate_format, DbManager
 from json import loads, dumps
-
-
-def prova(uno, due, tre):
-    info("%s %s %s", uno, due, tre)
-    if due == "online":
-        to_return = "ON"
-    else:
-        if due == "ON":
-            to_return = {"output": "OK"}
-        else:
-            if due == "OFF":
-                to_return = {"output": "errore"}
-            else:
-                to_return = "OFF"
-    return to_return
+from test import prova
 
 
 class Home(BaseHandler):
@@ -40,8 +25,9 @@ class Home(BaseHandler):
                 response = funzioni[intent](data)
             else:
                 raise Exception(response['output'])
-        except Exception:
+        except Exception as e:
             exception("Exception")
+            response['output'] = str(e)
         finally:
             set_api_response(response, self.response, False)
 
