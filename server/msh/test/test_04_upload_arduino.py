@@ -42,7 +42,7 @@ class TestUploadArduino(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Il campo tipo_operazione deve assumere uno dei seguenti valori: upload, compile, core, tipo')
+        self.assertEqual(response.json['output'].find('Il campo tipo_operazione deve assumere uno dei seguenti valori:'), 0)
 
     def test_payload_with_operazione_exist_not_logged(self):
         read_xml()
@@ -179,7 +179,7 @@ class TestUploadArduino(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Errore compilazione')
+        self.assertEqual(response.json['output'], 'Errore nella compilazione!')
 
     def test_payload_with_operazione_upload_ok_with_core_exist_tipologia_exist_logged_admin(self):
         read_xml()
@@ -211,7 +211,7 @@ class TestUploadArduino(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Errore upload')
+        self.assertEqual(response.json['output'], 'Errore in upload!')
 
     def test_upload_arduino_no_usb(self):
         read_xml()
