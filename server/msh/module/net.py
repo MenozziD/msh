@@ -10,8 +10,7 @@ def cmd_ping(ip, pacchetti=1):
         result['ip'] = ip
         cmd = 'ping -c %s %s' % (str(pacchetti), ip)
         response = execute_os_cmd(cmd)
-        if response['cmd_err'] == "":
-            result['cmd_output'] = response['cmd_out']
+        if response['cmd_err'] == "" and response['return_code'] == 0:
             cmd_out = response['cmd_out'].split('ping statistics ---\n')[1]
             result['pacchetti_lost'] = cmd_out.split(" packet loss,")[0].split("received, ")[1]
             result['pacchetti_tx'] = cmd_out.split(" packets transmitted")[0]
@@ -23,7 +22,10 @@ def cmd_ping(ip, pacchetti=1):
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 1)
             result['output'] = 'OK'
         else:
-            raise Exception(response['cmd_err'])
+            if response['cmd_err'] == "":
+                raise Exception(response['cmd_out'])
+            else:
+                raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 2)
@@ -35,7 +37,7 @@ def cmd_ping(ip, pacchetti=1):
 def cmd_radio(ip, comando, usr, psw):
     result = {}
     try:
-        result = cmd_radio_stato(ip, comando, usr, psw)
+        result = cmd_radio_stato(ip, usr, psw)
         if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
             cmd = "ifconfig %s %s" % (result['interface'], result['cmd'])
             response = execute_ssh_cmd(ip, usr, psw, cmd)
@@ -55,17 +57,12 @@ def cmd_radio(ip, comando, usr, psw):
         return result
 
 
-def cmd_radio_stato(ip, comando, usr, psw):
+def cmd_radio_stato(ip, usr, psw):
     result = {}
     try:
-        result = {
-            'ip': ip,
-            'cmd': comando,
-        }
         response = execute_ssh_cmd(ip, usr, psw, "iwconfig")
         if response['output'] == 'OK':
-            result['cmd_output'] = response['cmd_output']
-            cmd_out = result['cmd_output'].split("\r\n")
+            cmd_out = response['cmd_out'].split("\r\n")
             for row in cmd_out:
                 result = read_essid(row, result)
                 result = read_mac(row, result)
@@ -101,17 +98,12 @@ def read_mac(row, result):
 
 
 def cmd_pcwin_shutdown(ip, usr, psw):
-    result = {
-        'ip': ip,
-        'result': 0,
-        'cmd_output': ''
-    }
+    result = {}
     try:
         # user%psw
         cmd = 'net rcp -I %s -U %s' % (ip, usr + '%' + psw)
         response = execute_os_cmd(cmd)
-        if response['cmd_err'] == "":
-            result['cmd_output'] = response['cmd_out']
+        if response['cmd_err'] == "" and response['return_code'] == 0:
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('succeeded') > 0:
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 6)
@@ -119,7 +111,10 @@ def cmd_pcwin_shutdown(ip, usr, psw):
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 7)
             result['output'] = 'OK'
         else:
-            raise Exception(response['cmd_err'])
+            if response['cmd_err'] == "":
+                raise Exception(response['cmd_out'])
+            else:
+                raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 8)
@@ -134,8 +129,7 @@ def cmd_wakeonlan(mac):
         result['mac'] = mac
         cmd = 'wakeonlan %s' % mac
         response = execute_os_cmd(cmd)
-        if response['cmd_err'] == "":
-            result['cmd_output'] = response['cmd_out']
+        if response['cmd_err'] == "" and response['return_code'] == 0:
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('Sending magic packet') >= 0:
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 3)
@@ -143,7 +137,10 @@ def cmd_wakeonlan(mac):
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 4)
             result['output'] = 'OK'
         else:
-            raise Exception(response['cmd_err'])
+            if response['cmd_err'] == "":
+                raise Exception(response['cmd_out'])
+            else:
+                raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 5)
@@ -157,8 +154,7 @@ def cmd_netscan(ip, subnet):
     try:
         cmd = "sudo nmap -sn %s/%s" % (ip, subnet)
         response = execute_os_cmd(cmd)
-        if response['cmd_err'] == "":
-            result['cmd_output'] = response['cmd_out']
+        if response['cmd_err'] == "" and response['return_code'] == 0:
             rows = response['cmd_out'].split("\n")
             devices = []
             device = {
@@ -185,7 +181,10 @@ def cmd_netscan(ip, subnet):
             result['devices'] = devices
             result['output'] = 'OK'
         else:
-            raise Exception(response['cmd_err'])
+            if response['cmd_err'] == "":
+                raise Exception(response['cmd_out'])
+            else:
+                raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['output'] = str(e)
@@ -229,7 +228,6 @@ def cmd_esp(ip, command):
         }
         result['output'] = 'OK'
         result['result'] = esp_decode[response['output']]
-        result['cmd_output'] = response
     except Exception as e:
         exception("Exception")
         result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 16)
@@ -253,7 +251,7 @@ def compile_arduino(core, tipologia):
         fqbn = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
         cmd_compile = 'sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia)
         response = execute_os_cmd(cmd_compile)
-        if response['cmd_err'] == '':
+        if response['cmd_err'] == '' and response['return_code'] == 0:
             cmd_out_split = response['cmd_out'].split('\n')
             program_info = cmd_out_split[-3]
             memory_info = cmd_out_split[-2]
@@ -270,7 +268,10 @@ def compile_arduino(core, tipologia):
             result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 17)
             result['output'] = 'OK'
         else:
-            raise Exception(response['cmd_err'])
+            if response['cmd_err'] == "":
+                raise Exception(response['cmd_out'])
+            else:
+                raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
         result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 18)
@@ -291,7 +292,7 @@ def upload_arduino(core, tipologia):
         if usb != "":
             cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)
             response = execute_os_cmd(cmd_upload)
-            if response['cmd_err'] == "":
+            if response['cmd_err'] == "" and response['return_code'] == 0:
                 cmd_out = response['cmd_out'].replace("\\r", "")
                 upload_output = {
                     'porta_seriale': cmd_out.split("Serial port ")[1].split("\n")[0],
@@ -305,7 +306,10 @@ def upload_arduino(core, tipologia):
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 19)
                 result['output'] = 'OK'
             else:
-                raise Exception(response['cmd_err'])
+                if response['cmd_err'] == "":
+                    raise Exception(response['cmd_out'])
+                else:
+                    raise Exception(response['cmd_err'])
         else:
             raise Exception(DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 38))
     except Exception as e:
