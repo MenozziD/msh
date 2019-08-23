@@ -104,7 +104,6 @@ function net(type_op){
                     $.unblockUI();
                 if (json["output"].search("OK") == 0){
                     if (type_op == 'scan'){
-                        $('#esito')[0].value = json["output"];
                         $('#found')[0].value = json["find_device"];
                         $('#new')[0].value = json["new_device"];
                         $('#update')[0].value = json["updated_device"];
@@ -154,13 +153,16 @@ function net(type_op){
                         net('list');
                     }
                     if (type_op == 'cmd'){
-                        $('#result')[0].value = json["output"];
                         $('#cmd_result')[0].value = json["result"];
                         net('list');
                     }
                 } else {
                     $("#error_modal").modal();
                     $('#errore').text(json["output"]);
+                    if (type_op == 'cmd'){
+                        $('#errore_title').text(json["result"]);
+                        $('#cmd_result')[0].value = json["result"];
+                    }
                 }
             },
             error: function(xhr){
@@ -255,7 +257,7 @@ function user_function(type_op){
     if (type_op == 'add'){
         user = $("#username_add")[0].value;
         password = $("#password_add")[0].value;
-        role = $("#role_user_add" + id)[0].value;
+        role = $("#role_user_add")[0].value;
         var check_username = $('#chk_username');
 	    var check_password = $('#chk_password');
 	    var check_role = $('#chk_role');
@@ -460,7 +462,7 @@ function upload_arduino(tipo_op){
                         }
                     }
                     if (tipo_op == 'compile'){
-                        $('#esito_upload')[0].value = json["output"];
+                        $('#esito_upload')[0].value = json["result"];
                         $('#program_bytes_used')[0].value = json["compile_output"]["program_bytes_used"];
                         $('#program_percentual_used')[0].value = json["compile_output"]["program_percentual_used"];
                         $('#program_bytes_total')[0].value = json["compile_output"]["program_bytes_total"];
@@ -472,7 +474,7 @@ function upload_arduino(tipo_op){
                             upload_arduino('upload');
                     }
                     if (tipo_op == 'upload'){
-                        $('#esito_upload')[0].value = json["output"];
+                        $('#esito_upload')[0].value = json["result"];
                         $('#porta_seriale')[0].value = json["upload_output"]["porta_seriale"];
                         $('#chip')[0].value = json["upload_output"]["chip"];
                         $('#mac_addres')[0].value = json["upload_output"]["mac_addres"];
@@ -483,6 +485,10 @@ function upload_arduino(tipo_op){
                 } else {
                     $("#error_modal").modal();
                     $('#errore').text(json["output"]);
+                    if (tipo_op == 'upload' || tipo_op == 'compile') {
+                        $('#errore_title').text(json["result"]);
+                        $('#esito_upload')[0].value = json["result"];
+                    }
                 }
             },
             error: function(xhr){
