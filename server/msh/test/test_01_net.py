@@ -43,7 +43,7 @@ class TestNet(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Il campo tipo_operazione deve assumere uno dei seguenti valori: scan, list, type, command, update, delete, cmd')
+        self.assertEqual(response.json['output'].find('Il campo tipo_operazione deve assumere uno dei seguenti valori:'), 0)
 
     def test_payload_with_operazione_exist_not_logged(self):
         read_xml()
@@ -218,7 +218,7 @@ class TestNet(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Nessun campo da aggiornare, i possibili campi da aggiornare sono codice, tipo, user, password')
+        self.assertEqual(response.json['output'].find('Nessun campo da aggiornare, i possibili campi da aggiornare sono'), 0)
 
     def test_payload_with_operazione_update_user_logged(self):
         read_xml()
