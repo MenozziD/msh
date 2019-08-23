@@ -2,7 +2,7 @@ from msh import app
 from unittest import TestCase
 from webapp3 import Request
 from controller import Net
-from module import cmd_esp
+from module import cmd_esp, DbManager
 from test import simulate_login_admin, read_xml, simulate_os_command, simulate_login_user, simulate_request_http
 
 
@@ -492,7 +492,7 @@ class TestNet(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], "OK")
+        self.assertEqual(response.json['output'], "Nessuna interfaccia WiFi rilevata")
 
     def test_payload_with_operazione_cmd_ap_on_ok_logged(self):
         read_xml()
@@ -538,12 +538,16 @@ class TestNet(TestCase):
 
     def test_cmd_esp_ok(self):
         read_xml()
+        DbManager()
         simulate_request_http("esp_ok")
         response = cmd_esp('127.0.0.1', 'test')
         self.assertEqual(response['output'], 'OK')
+        DbManager.close_db()
 
     def test_cmd_esp_ko(self):
         read_xml()
+        DbManager()
         simulate_request_http("esp_ko")
         response = cmd_esp('127.0.0.1', 'test')
         self.assertNotEqual(response['output'], 'OK')
+        DbManager.close_db()

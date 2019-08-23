@@ -74,6 +74,7 @@ class Login(BaseHandler):
 class Logout(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
+        DbManager()
         self.session.clear()
         response = {'output': 'OK'}
         set_api_response(response, self.response)

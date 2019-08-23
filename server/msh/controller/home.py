@@ -1,8 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format, DbManager
+from module import set_api_response, validate_format, DbManager, prova
 from json import loads, dumps
-from test import prova
 
 
 class Home(BaseHandler):

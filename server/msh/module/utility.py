@@ -119,3 +119,17 @@ def validate_format(request_validate):
     except ValueError:
         return False
     return True
+
+
+def prova(uno, due="", tre=""):
+    if due == "online":
+        to_return = "ON"
+    else:
+        if due == "ON":
+            to_return = {"output": "OK", "primo": uno}
+        else:
+            if due == "OFF":
+                to_return = {"output": "errore", "terzo": tre}
+            else:
+                to_return = "OFF"
+    return to_return

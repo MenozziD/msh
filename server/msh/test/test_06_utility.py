@@ -1,6 +1,6 @@
 from unittest import TestCase
 from test import read_xml_prod, read_xml, simulate_os_command
-from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, check_internet_connection
+from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, check_internet_connection, DbManager
 
 
 class TestUtility(TestCase):
@@ -14,7 +14,7 @@ class TestUtility(TestCase):
     def test_execute_os_cmd_run_ko(self):
         read_xml_prod()
         response = execute_os_cmd("ping")
-        self.assertEqual(response['return_code'], 1)
+        self.assertNotEqual(response['return_code'], 0)
         self.assertNotEqual(response['cmd_err'], "")
 
     def test_execute_os_cmd_check_output(self):
@@ -29,8 +29,10 @@ class TestUtility(TestCase):
 
     def test_execute_ssh_cmd_ko_login(self):
         read_xml_prod()
+        DbManager()
         response = execute_ssh_cmd('127.0.0.1', 'test_user', 'test1234', 'pwd')
         self.assertEqual(response['output'], 'Credenzilai non valide')
+        DbManager.close_db()
 
     def test_execute_ssh_cmd_ko_other(self):
         read_xml_prod()

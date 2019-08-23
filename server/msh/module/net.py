@@ -36,7 +36,7 @@ def cmd_radio(ip, comando, usr, psw):
     try:
         result = cmd_radio_stato(ip, usr, psw)
         if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
-            cmd = "ifconfig %s %s" % (result['interface'], result['cmd'])
+            cmd = "ifconfig %s %s" % (result['interface'], comando)
             response = execute_ssh_cmd(ip, usr, psw, cmd)
             if response['output'] == 'OK':
                 result['result'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 9)

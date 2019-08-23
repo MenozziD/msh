@@ -1,9 +1,9 @@
 @ECHO OFF
-rem SET PATH_DIR="C:\\Users\\Simone.simone\\Documents\\Repository\\msh\\server\\msh\\"
-SET PATH_DIR="C:\\Progetti\\msh\\server\\msh\\"
+SET PATH_DIR="C:\\Users\\Simone.simone\\Documents\\Repository\\msh\\server\\msh\\"
+rem SET PATH_DIR="C:\\Progetti\\msh\\server\\msh\\"
 SET WINSCPCMD="C:\\Program Files (x86)\\WinSCP\\WinSCP.com"
-rem SET RASPBERRY_SERVER="Raspberry Pi0"
-SET RASPBERRY_SERVER="RASP_LOCAL"
+SET RASPBERRY_SERVER="Raspberry Pi0"
+rem SET RASPBERRY_SERVER="RASP_LOCAL"
 %WINSCPCMD% /script=script_test.txt /parameter %RASPBERRY_SERVER% %CD% %PATH_DIR%
 python convert.py %PATH_DIR%
 cd %PATH_DIR%

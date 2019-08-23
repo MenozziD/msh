@@ -50,7 +50,7 @@ class TestHome(TestCase):
                        b'           "intent":"action.devices.QUERY",' \
                        b'           "payload": {' \
                        b'               "devices": [{' \
-                       b'                   "id": "EE:FF:AA:BB:00:33"' \
+                       b'                   "id": "A1:FF:AA:BB:00:33"' \
                        b'               }]' \
                        b'           }' \
                        b'       }' \
@@ -58,7 +58,7 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['payload']['devices']['EE:FF:AA:BB:00:33']['on'], False)
+        self.assertEqual(response.json['payload']['devices']['A1:FF:AA:BB:00:33']['on'], False)
 
     def test_payload_execute_ok(self):
         read_xml()
@@ -82,7 +82,7 @@ class TestHome(TestCase):
                        b'                       ],' \
                        b'                       "devices": [' \
                        b'                           {' \
-                       b'                               "id":"EE:FF:AA:BB:00:33"' \
+                       b'                               "id":"A1:FF:AA:BB:00:33"' \
                        b'                           }' \
                        b'                       ]' \
                        b'                   }' \
@@ -93,9 +93,9 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['payload'][0]['status'], 'SUCCESS')
+        self.assertEqual(response.json['payload']['commands'][0]['status'], 'SUCCESS')
 
-    def test_payload_execute_on_off_device_2(self):
+    def test_payload_execute_ko(self):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
@@ -117,7 +117,7 @@ class TestHome(TestCase):
                        b'                       ],' \
                        b'                       "devices": [' \
                        b'                           {' \
-                       b'                               "id":"EE:FF:AA:BB:00:33"' \
+                       b'                               "id":"A1:FF:AA:BB:00:33"' \
                        b'                           }' \
                        b'                       ]' \
                        b'                   }' \
@@ -128,4 +128,4 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['payload'][0]['status'], 'ERROR')
+        self.assertEqual(response.json['payload']['commands'][0]['status'], 'ERROR')
