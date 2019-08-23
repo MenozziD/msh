@@ -11,6 +11,12 @@ class TestUtility(TestCase):
         self.assertEqual(response['return_code'], 0)
         self.assertNotEqual(response['cmd_out'], "")
 
+    def test_execute_os_cmd_run_ko(self):
+        read_xml_prod()
+        response = execute_os_cmd("ping")
+        self.assertEqual(response['return_code'], 1)
+        self.assertNotEqual(response['cmd_err'], "")
+
     def test_execute_os_cmd_check_output(self):
         read_xml_prod()
         response = execute_os_cmd("pwd", check_out=True)
