@@ -37,7 +37,7 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'OK')
+        self.assertEqual(response.json['payload']['devices'][0]['willReportState'], True)
 
     def test_payload_query(self):
         read_xml()
@@ -47,15 +47,20 @@ class TestHome(TestCase):
                        b'   "requestId":"test",' \
                        b'   "inputs": [' \
                        b'       {' \
-                       b'           "intent":"action.devices.QUERY"' \
+                       b'           "intent":"action.devices.QUERY",' \
+                       b'           "payload": {' \
+                       b'               "devices": [{' \
+                       b'                   "id": "EE:FF:AA:BB:00:33"' \
+                       b'               }]' \
+                       b'           }' \
                        b'       }' \
                        b'   ]' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'OK')
+        self.assertEqual(response.json['payload']['devices']['EE:FF:AA:BB:00:33']['on'], False)
 
-    def test_payload_execute_on_off_device_1(self):
+    def test_payload_execute_ok(self):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
@@ -77,7 +82,7 @@ class TestHome(TestCase):
                        b'                       ],' \
                        b'                       "devices": [' \
                        b'                           {' \
-                       b'                               "id":"1"' \
+                       b'                               "id":"EE:FF:AA:BB:00:33"' \
                        b'                           }' \
                        b'                       ]' \
                        b'                   }' \
@@ -88,7 +93,7 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'OK')
+        self.assertEqual(response.json['payload'][0]['status'], 'SUCCESS')
 
     def test_payload_execute_on_off_device_2(self):
         read_xml()
@@ -106,13 +111,13 @@ class TestHome(TestCase):
                        b'                           {' \
                        b'                               "command":"action.devices.commands.OnOff",' \
                        b'                               "params": {' \
-                       b'                                   "on": true' \
+                       b'                                   "on": false' \
                        b'                               }' \
                        b'                           }' \
                        b'                       ],' \
                        b'                       "devices": [' \
                        b'                           {' \
-                       b'                               "id":"2"' \
+                       b'                               "id":"EE:FF:AA:BB:00:33"' \
                        b'                           }' \
                        b'                       ]' \
                        b'                   }' \
@@ -123,41 +128,4 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'OK')
-
-    def test_payload_execute_color_device_2(self):
-        read_xml()
-        request = Request.blank('/api/home')
-        request.method = 'POST'
-        request.body = b'{' \
-                       b'   "requestId":"test",' \
-                       b'   "inputs": [' \
-                       b'       {' \
-                       b'           "intent":"action.devices.EXECUTE",' \
-                       b'           "payload": {' \
-                       b'               "commands": [' \
-                       b'                   {' \
-                       b'                       "execution": [' \
-                       b'                           {' \
-                       b'                               "command":"action.devices.commands.ColorAbsolute",' \
-                       b'                               "params": {' \
-                       b'                                   "color": {' \
-                       b'                                       "spectrumRGB": 16510692' \
-                       b'                                   }' \
-                       b'                               }' \
-                       b'                           }' \
-                       b'                       ],' \
-                       b'                       "devices": [' \
-                       b'                           {' \
-                       b'                               "id":"2"' \
-                       b'                           }' \
-                       b'                       ]' \
-                       b'                   }' \
-                       b'               ]' \
-                       b'            }' \
-                       b'       }' \
-                       b'   ]' \
-                       b'}'
-        response = request.get_response(app)
-        self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'OK')
+        self.assertEqual(response.json['payload'][0]['status'], 'ERROR')
