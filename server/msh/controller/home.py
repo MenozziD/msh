@@ -10,7 +10,13 @@ def prova(uno, due, tre):
     if due == "online":
         to_return = "ON"
     else:
-        to_return = "OFF"
+        if due == "ON":
+            to_return = {"output": "OK"}
+        else:
+            if due == "OFF":
+                to_return = {"output": "errore"}
+            else:
+                to_return = "OFF"
     return to_return
 
 
@@ -66,16 +72,15 @@ class Home(BaseHandler):
                     yield k1, v1
 
     @staticmethod
-    def iter_json(json_data, path, index, size):
+    def iter_json(json_data, path, index, size, primo, secondo, terzo):
         if index < size:
-            json_data[path[index]] = Home.iter_json(json_data[path[index]], path, index + 1, size)
+            json_data[path[index]] = Home.iter_json(json_data[path[index]], path, index + 1, size, primo, secondo, terzo)
             return json_data
         else:
-            return True if json_data == "ON" else False
+            return primo if json_data == secondo else terzo
 
     @staticmethod
-    def create_response(template, dev, data=None):
-        funzione = ""
+    def create_response(template, dev, data=None, result=None):
         for path, node in Home.traverse(template):
             if str(node)[0:1] != "{" and str(node)[0:1] != "[":
                 for i in path:
@@ -104,14 +109,16 @@ class Home(BaseHandler):
                         value = eval(funzione)
                         template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
                         if value in ("ON", "OFF"):
-                            template = Home.iter_json(template, path, 0, len(path))
+                            template = Home.iter_json(template, path, 0, len(path), True, "ON", False)
         return template
 
     @staticmethod
     def read_request(template):
         for path, node in Home.traverse(template):
-            if len(path) >= 2 and str(node)[0:1] != "{":
-                info("PARAMETRO: %s TIPOLOGIA: %s", path[-1], node)
+            if str(node)[0:1] != "{":
+                if type(node).__name__ == 'bool':
+                    template = Home.iter_json(template, path, 0, len(path), "ON", True, "OFF")
+        return template
 
     @staticmethod
     def sync(data):
@@ -134,38 +141,27 @@ class Home(BaseHandler):
 
     @staticmethod
     def execute(data):
-        '''
-        req_command = data['inputs'][0]['payload']['commands'][0]
-        command = req_command['execution'][0]['command']
-        params = req_command['execution'][0]['params']
-        device_id = req_command['devices'][0]['id']
-        if command == 'action.devices.commands.OnOff':
-            if device_id == 'A0:4F:D4:B4:3A:53':
-                info('device A0:4F:D4:B4:3A:53 %s', params['on'])
-                # cmd_esp('192.168.1.9', 'toggle')
-            if device_id == '2':
-                info('ON/OFF device 2')
-        if command == 'action.devices.commands.ColorAbsolute' and device_id == '2':
-                info('colore device 2 %s', params['color']['spectrumRGB'])
-        '''
-        device = DbManager.select_tb_net_device_and_google_info(
-            net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
-        data1 = {
-            "command": "action.devices.commands.OnOff",
-            "params": {
-                "color": {
-                    "name": "magenta",
-                    "spectrumRGB": 16711935
-                },
-                "color1": {
-                    "spectrumHSV": {
-                        "hue": 240.0,
-                        "saturation": 1.0,
-                        "value": 1.0
-                    }
-                },
-                "on": True
+        """
+        "color": {
+            "name": "magenta",
+            "spectrumRGB": 16711935
+        },
+        "color1": {
+            "spectrumHSV": {
+                "hue": 240.0,
+                "saturation": 1.0,
+                "value": 1.0
             }
-        }
-        Home.read_request(data1)
-        return Home.create_response(device['execute_response_ok'], device, data)
+        },
+        "on": true
+        """
+        dev = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
+        parametri = Home.read_request(data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"])
+        result = {}
+        for key in parametri.keys():
+            result = eval(dev['execute_request'][key])
+        if result['output'] == 'OK':
+            response = Home.create_response(dev['execute_response_ok'], dev, data)
+        else:
+            response = Home.create_response(dev['execute_response_ko'], dev, data, result=result)
+        return response
