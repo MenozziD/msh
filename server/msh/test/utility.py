@@ -53,7 +53,7 @@ def read_xml_prod():
     XmlReader.settings['ambiente'] = 'PROD'
 
 
-def prova(uno, due, tre):
+def prova(uno, due="", tre=""):
     if due == "online":
         to_return = "ON"
     else:
