@@ -6,7 +6,7 @@ from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_resp
 
 class UploadArduino(BaseHandler):
 
-    tipo_operazione = ['upload', 'compile']
+    tipo_operazione = ['upload', 'compile', 'core', 'tipo']
 
     def post(self):
         body = str(self.request.body)[2:-1]
