@@ -91,9 +91,6 @@ function net(type_op){
             body['dispositivo'] = dispositivo
         if (comando != null)
             body['comando'] = comando
-        $('#errore').text("");
-        $('#errore')[0].classList.remove("d-block");
-        $('#errore')[0].classList.add("d-none");
         if (type_op.search('scan') >= 0 || type_op.search('cmd') >= 0)
             $.blockUI();
         $.ajax({
@@ -162,9 +159,8 @@ function net(type_op){
                         net('list');
                     }
                 } else {
+                    $("#error_modal").modal();
                     $('#errore').text(json["output"]);
-                    $('#errore')[0].classList.remove("d-none");
-                    $('#errore')[0].classList.add("d-block");
                 }
             },
             error: function(xhr){
@@ -286,9 +282,6 @@ function user_function(type_op){
             body['username'] = user
         if (password != null)
             body['password'] = password
-        $('#errore_user').text("");
-        $('#errore_user')[0].classList.remove("d-block");
-        $('#errore_user')[0].classList.add("d-none");
         $.ajax({
             url: "/api/user",
             type: 'POST',
@@ -322,9 +315,8 @@ function user_function(type_op){
                         user_function('list');
                     }
                 } else {
-                    $('#errore_user').text(json["output"]);
-                    $('#errore_user')[0].classList.remove("d-none");
-                    $('#errore_user')[0].classList.add("d-block");
+                    $("#error_modal").modal();
+                    $('#errore').text(json["output"]);
                 }
             },
             error: function(xhr){
@@ -433,9 +425,6 @@ function upload_arduino(tipo_op){
             body['tipologia'] = tipologia
         if (['upload', 'compile'].indexOf(tipo_op) >= 0)
             $.blockUI();
-        $('#errore_upload').text("");
-        $('#errore_upload')[0].classList.remove("d-block");
-        $('#errore_upload')[0].classList.add("d-none");
         $.ajax({
             url: "/api/upload_arduino",
             type: 'POST',
@@ -492,9 +481,8 @@ function upload_arduino(tipo_op){
                         $('#time')[0].value = json["upload_output"]["time"];
                     }
                 } else {
-                    $('#errore_upload').text(json["output"]);
-                    $('#errore_upload')[0].classList.remove("d-none");
-                    $('#errore_upload')[0].classList.add("d-block");
+                    $("#error_modal").modal();
+                    $('#errore').text(json["output"]);
                 }
             },
             error: function(xhr){
