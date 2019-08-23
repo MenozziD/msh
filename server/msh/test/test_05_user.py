@@ -41,7 +41,7 @@ class TestUser(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Il campo tipo_operazione deve assumere uno dei seguenti valori: list, update, delete, add')
+        self.assertEqual(response.json['output'].find('Il campo tipo_operazione deve assumere uno dei seguenti valori:'), 0)
 
     def test_e_payload_with_operazione_exist_not_logged(self):
         read_xml()
@@ -236,7 +236,7 @@ class TestUser(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Nessun campo da aggiornare, i possibili campi da aggiornare sono role e password')
+        self.assertEqual(response.json['output'].find('Nessun campo da aggiornare, i possibili campi da aggiornare sono'), 0)
 
     def test_v_payload_with_operazione_update_with_username_exist_with_data_logged_user(self):
         read_xml()
