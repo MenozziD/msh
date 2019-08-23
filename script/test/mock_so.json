@@ -96,18 +96,18 @@
 	},
 	"ap-error": {
 		"output": "Errore comando su AP",
-		"cmd_output": "payload"
+		"cmd_out": "payload"
 	},
 	"ap-no-interface": {
 		"output": "OK",
-		"cmd_output": "output corretto iwconfig senza interfaccia"
+		"cmd_out": "output corretto iwconfig senza interfaccia"
 	},
 	"ap-on": {
 		"output": "OK",
-		"cmd_output": "wlan0     IEEE 802.11  ESSID:\"Infostrada-EB3118\"\n          Mode:Managed  Frequency:2.447 GHz  Access Point: 5C:6A:80:EB:31:18\n"
+		"cmd_out": "wlan0     IEEE 802.11  ESSID:\"Infostrada-EB3118\"\n          Mode:Managed  Frequency:2.447 GHz  Access Point: 5C:6A:80:EB:31:18\n"
 	},
 	"ap-off": {
 		"output": "OK",
-		"cmd_output": "wlan0   Access Point: \n"
+		"cmd_out": "wlan0   Access Point: \n"
 	}
 }
