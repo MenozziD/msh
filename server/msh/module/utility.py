@@ -15,8 +15,11 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
         info("Eseguo comando: %s", cmd)
         if not check_out and not sys:
             cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-            cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
-            cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n")
+            cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+            cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+            info("Return Code: %s", cmd.returncode)
+            info("Output: %s", cmd_out)
+            info("Error: %s", cmd_err)
             response = {
                 'return_code': cmd.returncode,
                 'cmd_out': cmd_out,
@@ -24,7 +27,8 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
             }
         else:
             if check_out:
-                cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t")
+                cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t").replace("\\r", "\r")
+                info("Output: %s", cmd_out)
                 response = {'cmd_out': cmd_out}
             else:
                 system(cmd)
@@ -47,7 +51,8 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
             info("Eseguo comando in SSH: %s", cmd)
             ss.sendline(cmd)
             ss.prompt()
-            response['cmd_output'] = str(ss.before)[2:-1].replace("\\r\\n", '\r\n')
+            response['cmd_out'] = str(ss.before)[2:-1].replace("\\r\\n", '\r\n')
+            info("Output: %s", response['cmd_out'])
             response['output'] = 'OK'
         except Exception as e:
             exception("Exception")
