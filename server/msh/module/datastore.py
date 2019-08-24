@@ -58,6 +58,20 @@ def update_user(username, password):
     write_file(data_file.replace(data_json, data_json_new))
 
 
+def verify_token(token):
+    data_file = read_file()
+    data_json = data_file.split("const Auth = ")[1].split(";")[0]
+    data = loads(convert_to_json(data_json))
+    response = {}
+    try:
+        response['uid'] = data['tokens'][token]['userId']
+        response['output'] = 'OK'
+    except Exception as e:
+        response['output'] = str(e)
+    finally:
+        return response
+
+
 def convert_to_json(data_json):
     data_json_new = data_json\
         .replace("clients", "\"clients\"")\

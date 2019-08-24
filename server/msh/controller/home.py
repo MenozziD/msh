@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format, DbManager, evaluate
+from module import set_api_response, validate_format, DbManager, evaluate, verify_token, XmlReader
 from json import loads, dumps
 
 
@@ -12,7 +12,7 @@ class Home(BaseHandler):
         response = {}
         try:
             DbManager()
-            response = Home.check(self.request, body)
+            response = Home.check(self.request, body, self.request.headers)
             if response['output'] == 'OK':
                 data = self.request.json
                 intent = data['inputs'][0]['intent']
@@ -31,15 +31,21 @@ class Home(BaseHandler):
             set_api_response(response, self.response, False)
 
     @staticmethod
-    def check(request, body):
+    def check(request, body, headers_list):
         response = {}
         if body != "" and validate_format(request):
-            response['output'] = 'OK'
+            if 'Authorization' in headers_list and verify_token(headers_list['Authorization'].split(" ")[1])['output'] == 'OK':
+                response['output'] = 'OK'
+            else:
+                if 'Authorization' in headers_list:
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 40).replace("%s", "Authorization")
+                else:
+                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 39) + "Authorization"
         else:
             if body != "":
-                response['output'] = "Il payload deve essere in formato JSON"
+                response['output'] = response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
             else:
-                response['output'] = "Questa API ha bisogno di un payload"
+                response['output'] = response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
         return response
 
     @staticmethod
