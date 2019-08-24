@@ -13,7 +13,7 @@ class TestUtility(TestCase):
 
     def test_execute_os_cmd_run_ko(self):
         read_xml_prod()
-        response = execute_os_cmd("ping")
+        response = execute_os_cmd("sudo arduino-cli board details sdad")
         self.assertNotEqual(response['return_code'], 0)
         self.assertNotEqual(response['cmd_err'], "")
 
