@@ -123,6 +123,7 @@ def validate_format(request_validate):
 
 
 def evaluate(command, data=None, dev=None, result=None, parametri=None):
+    from module import cmd_ping
     return eval(command)
 
 

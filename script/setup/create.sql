@@ -39,7 +39,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
             ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""online"":""cmd_ping(dev['net_ip'])""
          }
       }
    }
@@ -454,8 +454,8 @@ INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("off","ESP
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("toggle","ESP_RELE","130");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("stato","ESP_RELE","130");
 -- POPOLO TB_STRING
-INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","Ping OK!");
-INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","1","Ping KO!");
+INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");
+INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","1","OFF");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","2","Errore nel comando Ping!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","3","Comando Wake-On-Lan OK!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","4","Comando Wake-On-Lan KO!");

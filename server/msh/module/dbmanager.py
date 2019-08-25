@@ -68,7 +68,7 @@ class DbManager:
 
     @staticmethod
     def select_tb_net_device_and_google_info(net_mac=''):
-        query = 'SELECT NET_CODE, NET_TYPE, NET_MAC, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
+        query = 'SELECT NET_CODE, NET_TYPE, NET_IP, NET_MAC, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
                 'FROM TB_NET_DEVICE, TB_NET_DEVICE_TYPE ' \
                 'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE'
         if net_mac != '':
@@ -81,12 +81,13 @@ class DbManager:
             tb_net_device = {
                 'net_code': str(net_device[0]),
                 'net_type': str(net_device[1]),
-                'net_mac': str(net_device[2]),
-                'sync_response': loads(str(net_device[3])),
-                'query_response': loads(str(net_device[4])),
-                'execute_request': loads(str(net_device[5])),
-                'execute_response_ok': loads(str(net_device[6])),
-                'execute_response_ko': loads(str(net_device[7]))
+                'net_ip': str(net_device[2]),
+                'net_mac': str(net_device[3]),
+                'sync_response': loads(str(net_device[4])),
+                'query_response': loads(str(net_device[5])),
+                'execute_request': loads(str(net_device[6])),
+                'execute_response_ok': loads(str(net_device[7])),
+                'execute_response_ko': loads(str(net_device[8]))
             }
             devices.append(tb_net_device)
         return devices

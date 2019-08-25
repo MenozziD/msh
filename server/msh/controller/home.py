@@ -101,6 +101,8 @@ class Home(BaseHandler):
                 parametri = node.split("(")[1].split(")")[0]
                 funzione = Home.read_param_not_static(funzione, parametri, dev)
             value = evaluate(funzione)
+            if isinstance(value, dict):
+                value = value['result']
             template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
             if value in ("ON", "OFF"):
                 template = Home.iter_json(template, path, 0, len(path), True, "ON", False)
