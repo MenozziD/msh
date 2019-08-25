@@ -23,10 +23,44 @@ class TestHome(TestCase):
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il payload deve essere in formato JSON')
 
+    def test_payload_not_auth(self):
+        read_xml()
+        request = Request.blank('/api/home')
+        request.method = 'POST'
+        request.body = b'{' \
+                       b'   "requestId":"test",' \
+                       b'   "inputs": [' \
+                       b'       {' \
+                       b'           "intent":"action.devices.SYNC"' \
+                       b'       }' \
+                       b'   ]' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'È necessario l\'header Authorization')
+
+    def test_payload_auth_ko(self):
+        read_xml()
+        request = Request.blank('/api/home')
+        request.method = 'POST'
+        request.headers['Authorization'] = 'Bearer dfgsdgsdg'
+        request.body = b'{' \
+                       b'   "requestId":"test",' \
+                       b'   "inputs": [' \
+                       b'       {' \
+                       b'           "intent":"action.devices.SYNC"' \
+                       b'       }' \
+                       b'   ]' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'Il valore dell\'header Authorization non è corretto')
+
     def test_payload_sync(self):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
+        request.headers['Authorization'] = 'Bearer token_test'
         request.body = b'{' \
                        b'   "requestId":"test",' \
                        b'   "inputs": [' \
@@ -43,6 +77,7 @@ class TestHome(TestCase):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
+        request.headers['Authorization'] = 'Bearer token_test'
         request.body = b'{' \
                        b'   "requestId":"test",' \
                        b'   "inputs": [' \
@@ -64,6 +99,7 @@ class TestHome(TestCase):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
+        request.headers['Authorization'] = 'Bearer token_test'
         request.body = b'{' \
                        b'   "requestId":"test",' \
                        b'   "inputs": [' \
@@ -99,6 +135,7 @@ class TestHome(TestCase):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
+        request.headers['Authorization'] = 'Bearer token_test'
         request.body = b'{' \
                        b'   "requestId":"test",' \
                        b'   "inputs": [' \

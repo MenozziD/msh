@@ -59,7 +59,7 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
         except Exception as e:
             exception("Exception")
             if str(e) == "password refused":
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 13)
+                response['output'] = get_string(13)
             else:
                 response['output'] = str(e)
         finally:
@@ -102,8 +102,9 @@ def check_internet_connection():
     return internet
 
 
-def set_api_response(response_payload, response, timmestamp=True):
-    DbManager.close_db()
+def set_api_response(response_payload, response, timmestamp=True, close_db=True):
+    if close_db:
+        DbManager.close_db()
     if timmestamp:
         response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -123,6 +124,15 @@ def validate_format(request_validate):
 
 def evaluate(command, data=None, dev=None, result=None, parametri=None):
     return eval(command)
+
+
+def get_string(indice, da_sostiuire=None, da_aggiungere=None):
+    to_return = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], indice)
+    if da_sostiuire is not None:
+        to_return = to_return.replace("%s", da_sostiuire)
+    if da_aggiungere is not None:
+        to_return = to_return + da_aggiungere
+    return to_return
 
 
 def prova(uno, due="", tre=""):

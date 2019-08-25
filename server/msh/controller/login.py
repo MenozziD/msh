@@ -1,5 +1,5 @@
 from logging import info, exception
-from module import DbManager, set_api_response, validate_format, XmlReader
+from module import DbManager, set_api_response, validate_format, get_string
 from controller import BaseHandler
 
 
@@ -39,9 +39,9 @@ class Login(BaseHandler):
                 response = Login.check_password(data)
         else:
             if body != "":
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
+                response['output'] = get_string(22)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
+                response['output'] = get_string(21)
         return response
 
     @staticmethod
@@ -52,9 +52,9 @@ class Login(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'user' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 36)
+                response['output'] = get_string(36)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "user")
+                response['output'] = get_string(23, da_sostiuire="user")
         return response
 
     @staticmethod
@@ -65,16 +65,15 @@ class Login(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'password' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 37)
+                response['output'] = get_string(37)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "password")
+                response['output'] = get_string(23, da_sostiuire="password")
         return response
 
 
 class Logout(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        DbManager()
         self.session.clear()
         response = {'output': 'OK'}
-        set_api_response(response, self.response)
+        set_api_response(response, self.response, close_db=False)

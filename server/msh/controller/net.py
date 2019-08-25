@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, XmlReader
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string
 from netifaces import AF_INET, gateways, ifaddresses
 
 
@@ -85,14 +85,14 @@ class Net(BaseHandler):
                 response = Net.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(Net.tipo_operazione)
+                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(Net.tipo_operazione))
                 else:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
+                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
         else:
             if body != "":
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
+                response['output'] = get_string(22)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
+                response['output'] = get_string(21)
         return response
 
     @staticmethod
@@ -129,10 +129,10 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'tipo' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo") + ', '.join(type_list)
+                response['output'] = get_string(24, da_sostiuire="tipo", da_aggiungere=', '.join(type_list))
             else:
                 if required:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "tipo"
+                    response['output'] = get_string(27, da_aggiungere="tipo")
                 else:
                     response['output'] = 'OK'
         return response
@@ -145,9 +145,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'mac' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "mac") + ', '.join(mac_list)
+                response['output'] = get_string(24, da_sostiuire="mac", da_aggiungere=', '.join(mac_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "mac"
+                response['output'] = get_string(27, da_aggiungere="mac")
         return response
 
     @staticmethod
@@ -161,7 +161,7 @@ class Net(BaseHandler):
                 if data['codice'] != to_update['net_code']:
                     response = Net.check_code_exist(data, devices)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 34)
+                response['output'] = get_string(34)
         return response
 
     @staticmethod
@@ -175,7 +175,7 @@ class Net(BaseHandler):
         if not trovato:
             response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 35)
+            response['output'] = get_string(35)
         return response
 
     @staticmethod
@@ -184,13 +184,13 @@ class Net(BaseHandler):
         if user is not None:
             if tipo_operazione in ('update', 'delete'):
                 if role != 'ADMIN':
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
+                    response['output'] = get_string(26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
+            response['output'] = get_string(25)
         return response
 
     @staticmethod
@@ -201,9 +201,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'dispositivo' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "dispositivo") + ', '.join(code_list)
+                response['output'] = get_string(24, da_sostiuire="dispositivo", da_aggiungere=', '.join(code_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "dispositivo"
+                response['output'] = get_string(27, da_aggiungere="dispositivo")
         return response
 
     @staticmethod
@@ -215,9 +215,9 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'comando' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "comando") + ', '.join(command_list)
+                response['output'] = get_string(24, da_sostiuire="comando", da_aggiungere=', '.join(command_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "comando"
+                response['output'] = get_string(27, da_aggiungere="comando")
         return response
 
     @staticmethod
@@ -226,7 +226,7 @@ class Net(BaseHandler):
         if 'codice' in data or 'tipo' in data or 'user' in data or 'password' in data:
             response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 33) + ', '.join(Net.campi_aggiornabili)
+            response['output'] = get_string(33, da_aggiungere=', '.join(Net.campi_aggiornabili))
         return response
 
     @staticmethod

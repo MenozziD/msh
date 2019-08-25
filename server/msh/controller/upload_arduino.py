@@ -1,7 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
 from json import loads
-from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format, execute_request_http, DbManager, XmlReader
+from module import compile_arduino, upload_arduino, execute_os_cmd, set_api_response, validate_format, execute_request_http, get_string, DbManager
 
 
 class UploadArduino(BaseHandler):
@@ -56,14 +56,14 @@ class UploadArduino(BaseHandler):
                 response = UploadArduino.check_upload_compile(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(UploadArduino.tipo_operazione)
+                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(UploadArduino.tipo_operazione))
                 else:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
+                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
         else:
             if body != "":
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
+                response['output'] = get_string(22)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
+                response['output'] = get_string(21)
         return response
 
     @staticmethod
@@ -80,13 +80,13 @@ class UploadArduino(BaseHandler):
         if user is not None:
             if tipo_operazione in ('upload', 'compile'):
                 if role != 'ADMIN':
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
+                    response['output'] = get_string(26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
+            response['output'] = get_string(25)
         return response
 
     @staticmethod
@@ -101,9 +101,9 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'core' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "core") + ', '.join(core_list)
+                response['output'] = get_string(24, da_sostiuire="core", da_aggiungere=', '.join(core_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "core"
+                response['output'] = get_string(27, da_aggiungere="core")
         return response
 
     @staticmethod
@@ -118,9 +118,9 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'tipologia' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipologia") + ', '.join(tipologia_list)
+                response['output'] = get_string(24, da_sostiuire="tipologia", da_aggiungere=', '.join(tipologia_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "tipologia"
+                response['output'] = get_string(27, da_aggiungere="tipologia")
         return response
 
     @staticmethod

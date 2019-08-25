@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format, XmlReader
+from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format, get_string
 
 
 class User(BaseHandler):
@@ -59,14 +59,14 @@ class User(BaseHandler):
                 response = User.check_operation_param(response, data, user, role)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "tipo_operazione") + ', '.join(User.tipo_operazione)
+                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(User.tipo_operazione))
                 else:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 23).replace("%s", "tipo_operazione")
+                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
         else:
             if body != "":
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
+                response['output'] = get_string(22)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
+                response['output'] = get_string(21)
         return response
 
     @staticmethod
@@ -108,13 +108,13 @@ class User(BaseHandler):
         if user is not None:
             if tipo_operazione in ('add', 'delete'):
                 if role != 'ADMIN':
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
+                    response['output'] = get_string(26)
                 else:
                     response['output'] = 'OK'
             else:
                 response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
+            response['output'] = get_string(25)
         return response
 
     @staticmethod
@@ -125,9 +125,9 @@ class User(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'username' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "username") + ', '.join(username_list)
+                response['output'] = get_string(24, da_sostiuire="username", da_aggiungere=', '.join(username_list))
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "username"
+                response['output'] = get_string(27, da_aggiungere="username")
         return response
 
     @staticmethod
@@ -138,9 +138,9 @@ class User(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'username' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 28)
+                response['output'] = get_string(28)
             else:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "username"
+                response['output'] = get_string(27, da_aggiungere="username")
         return response
 
     @staticmethod
@@ -153,7 +153,7 @@ class User(BaseHandler):
             if role == 'ADMIN':
                 admin = admin + 1
         if to_delete['role'] == 'ADMIN' and admin == 1 and ((not to_modify) or (to_modify and to_delete['role'] != data['role'])):
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 29)
+            response['output'] = get_string(29)
         else:
             response['output'] = 'OK'
         return response
@@ -168,10 +168,10 @@ class User(BaseHandler):
                 response = User.check_user_for_role(data, session_role)
         else:
             if 'role' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 24).replace("%s", "role") + ', '.join(role_list)
+                response['output'] = get_string(24, da_sostiuire="role", da_aggiungere=', '.join(role_list))
             else:
                 if required:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "role"
+                    response['output'] = get_string(27, da_aggiungere="role")
                 else:
                     response['output'] = 'OK'
         return response
@@ -182,7 +182,7 @@ class User(BaseHandler):
         if session_role == 'ADMIN':
             response = User.check_one_admin(data, to_modify=True)
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 30)
+            response['output'] = get_string(30)
         return response
 
     @staticmethod
@@ -194,10 +194,10 @@ class User(BaseHandler):
                 response = User.check_user_for_password(data, session_user)
         else:
             if 'password' in data:
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 31)
+                response['output'] = get_string(31)
             else:
                 if required:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 27) + "password"
+                    response['output'] = get_string(27, da_aggiungere="password")
                 else:
                     response['output'] = 'OK'
         return response
@@ -208,7 +208,7 @@ class User(BaseHandler):
         if session_user == data['username']:
             response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 32)
+            response['output'] = get_string(32)
         return response
 
     @staticmethod
@@ -217,7 +217,7 @@ class User(BaseHandler):
         if 'role' in data or 'password' in data:
             response['output'] = 'OK'
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 33) + ', '.join(User.campi_aggiornabili)
+            response['output'] = get_string(33, da_aggiungere=', '.join(User.campi_aggiornabili))
         return response
 
     @staticmethod

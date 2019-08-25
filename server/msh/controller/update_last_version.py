@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info
-from module import execute_os_cmd, set_api_response, XmlReader, DbManager
+from module import execute_os_cmd, set_api_response, get_string, DbManager
 
 
 class UpdateLastVersion(BaseHandler):
@@ -13,7 +13,7 @@ class UpdateLastVersion(BaseHandler):
             cmd = "cd .. && sudo ./deploy.sh &"
             execute_os_cmd(cmd, sys=True)
         else:
-            response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 25)
+            response['output'] = get_string(25)
             if self.session.get('role') == 'USER':
-                response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 26)
+                response['output'] = get_string(26)
         set_api_response(response, self.response)

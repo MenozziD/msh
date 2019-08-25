@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format, DbManager, evaluate, verify_token, XmlReader
+from module import set_api_response, validate_format, DbManager, evaluate, verify_token, get_string
 from json import loads, dumps
 
 
@@ -28,7 +28,7 @@ class Home(BaseHandler):
             exception("Exception")
             response['output'] = str(e)
         finally:
-            set_api_response(response, self.response, False)
+            set_api_response(response, self.response, timmestamp=False)
 
     @staticmethod
     def check(request, body, headers_list):
@@ -38,14 +38,14 @@ class Home(BaseHandler):
                 response['output'] = 'OK'
             else:
                 if 'Authorization' in headers_list:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 40).replace("%s", "Authorization")
+                    response['output'] = get_string(40, da_sostiuire="Authorization")
                 else:
-                    response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 39) + "Authorization"
+                    response['output'] = get_string(39, da_aggiungere="Authorization")
         else:
             if body != "":
-                response['output'] = response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 22)
+                response['output'] = response['output'] = get_string(22)
             else:
-                response['output'] = response['output'] = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], 21)
+                response['output'] = response['output'] = get_string(21)
         return response
 
     @staticmethod
