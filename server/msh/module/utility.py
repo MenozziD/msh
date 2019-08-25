@@ -14,16 +14,16 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
     if XmlReader.settings["ambiente"] == 'PROD':
         info("Eseguo comando: %s", cmd)
         if not check_out and not sys:
-            cmd = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-            cmd_out = str(cmd.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-            cmd_err = str(cmd.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-            info("Return Code: %s", cmd.returncode)
+            cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
+            cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+            cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+            info("Return Code: %s", cmd_exec.returncode)
             info("Output: %s", cmd_out)
             info("Error: %s", cmd_err)
-            if cmd_err == "" and cmd.returncode != 0:
+            if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
                 cmd_err = cmd_out
             response = {
-                'return_code': cmd.returncode,
+                'return_code': cmd_exec.returncode,
                 'cmd_out': cmd_out,
                 'cmd_err': cmd_err
             }

@@ -154,7 +154,6 @@ function net(type_op){
                     }
                     if (type_op == 'cmd'){
                         $('#cmd_result')[0].value = json["result"];
-                        net('list');
                     }
                 } else {
                     $("#error_modal").modal();
