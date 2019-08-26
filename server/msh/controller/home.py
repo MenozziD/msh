@@ -71,8 +71,7 @@ class Home(BaseHandler):
         for path, node in Home.traverse(template):
             if isinstance(node, str) and (str(node).find("(") > 0 or str(node).find("[") > 0):
                 template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
-        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true"))
-        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"OFF\"", "false"))
+        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true").replace("\"OFF\"", "false"))
         return template
 
     @staticmethod
@@ -123,8 +122,7 @@ class Home(BaseHandler):
         """
         dev = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
         google_params = data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"]
-        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("true", "\"ON\""))
-        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("false", "\"OFF\""))
+        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("true", "\"ON\"").replace("false", "\"OFF\""))
         result = {}
         for key in google_params.keys():
             result = evaluate(dev['execute_request'][key], dev=dev, parametri=google_params)

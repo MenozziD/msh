@@ -86,20 +86,20 @@ def execute_request_http(url):
     return response
 
 
-def check_internet_connection():
-    internet = False
-    while not internet:
-        cmd = "curl -I -X GET http://www.google.com"
+def check_server_connection(url, tentativi, riposo):
+    server_on = False
+    for _ in range(tentativi):
+        cmd = "curl -I -m " + str(riposo) + " -X GET " + url
         response = execute_os_cmd(cmd)
         if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
-            internet = True
-            info("Connessione internet presente")
-        else:
-            info("Attendo 10 secondi...")
-            sleep(10)
+            server_on = True
+            info("Server online")
+        elif not response['return_code'] == 28:
+            info("Attendo " + str(riposo) + " secondi...")
+            sleep(riposo)
             if XmlReader.settings["ambiente"] == "TEST":
-                internet = True
-    return internet
+                server_on = True
+    return server_on
 
 
 def set_api_response(response_payload, response, timmestamp=True, close_db=True):
