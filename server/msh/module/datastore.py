@@ -126,5 +126,4 @@ def write_file(data_file):
     f = open(XmlReader.settings['path_datastore'], 'w')
     f.write(data_file)
     f.close()
-    cmd = "sudo service oauth restart"
-    execute_os_cmd(cmd)
+    execute_os_cmd("sudo service oauth restart")

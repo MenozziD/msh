@@ -10,8 +10,7 @@ class UpdateLastVersion(BaseHandler):
         DbManager()
         if self.session.get('user') is not None and self.session.get('role') == 'ADMIN':
             response['output'] = 'OK'
-            cmd = "cd .. && sudo ./deploy.sh &"
-            execute_os_cmd(cmd, sys=True)
+            execute_os_cmd("cd .. && sudo ./deploy.sh &", sys=True)
         else:
             response['output'] = get_string(25)
             if self.session.get('role') == 'USER':

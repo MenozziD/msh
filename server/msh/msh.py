@@ -38,32 +38,26 @@ def main(settings_path):
         level=XmlReader.settings['log']['level'])
     porta = '65177'
     ip_address = 'localhost'
-    cmd = 'pgrep node'
-    response = execute_os_cmd(cmd)
+    response = execute_os_cmd('pgrep node')
     local = True
     if response['cmd_out'] == "":
-        cmd = "sudo service oauth start"
-        execute_os_cmd(cmd)
+        execute_os_cmd("sudo service oauth start")
     else:
         info("Oauth server is already running")
     if check_server_connection("http://www.google.com", 10, 5) and check_server_connection("http://serveo.net", 2, 5):
-        cmd = 'pgrep autossh'
-        response = execute_os_cmd(cmd)
+        response = execute_os_cmd('pgrep autossh')
         if response['cmd_out'] == "":
-            cmd = "sudo service serveo start"
-            execute_os_cmd(cmd)
+            execute_os_cmd("sudo service serveo start")
         else:
             info("Serveo is already running")
         local = False
         if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 5, 5):
-            cmd = "sudo service serveo restart"
-            execute_os_cmd(cmd)
+            execute_os_cmd("sudo service serveo restart")
             if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 5, 5):
                 local = True
     if local:
         info("Avvio solo in locale")
-        cmd = "sudo service serveo stop"
-        execute_os_cmd(cmd)
+        execute_os_cmd("sudo service serveo stop")
         ip_address = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr']
     else:
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")

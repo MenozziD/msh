@@ -91,8 +91,7 @@ class UploadArduino(BaseHandler):
 
     @staticmethod
     def check_core(data):
-        cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        response = execute_os_cmd(cmd, check_out=True)
+        response = execute_os_cmd("arduino-cli board listall | awk '{$NF=\"\"; print $0}'", check_out=True)
         core_list = []
         for core in response['cmd_out'].split("\n")[1:]:
             if core != '':
@@ -133,8 +132,7 @@ class UploadArduino(BaseHandler):
 
     @staticmethod
     def core_list():
-        cmd = "arduino-cli board listall | awk '{$NF=\"\"; print $0}'"
-        response = execute_os_cmd(cmd, check_out=True)
+        response = execute_os_cmd("arduino-cli board listall | awk '{$NF=\"\"; print $0}'", check_out=True)
         cores = []
         for core in response['cmd_out'].split("\n")[1:]:
             if core != '':

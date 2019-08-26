@@ -8,8 +8,7 @@ def cmd_ping(ip, pacchetti=1):
     result = {}
     try:
         result['ip'] = ip
-        cmd = 'ping -c %s %s' % (str(pacchetti), ip)
-        response = execute_os_cmd(cmd)
+        response = execute_os_cmd('ping -c %s %s' % (str(pacchetti), ip))
         if response['cmd_err'] == "":
             cmd_out = response['cmd_out'].split('ping statistics ---\n')[1]
             result['pacchetti_lost'] = cmd_out.split(" packet loss,")[0].split("received, ")[1]
@@ -95,8 +94,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     result = {}
     try:
         # user%psw
-        cmd = 'net rcp -I %s -U %s' % (ip, usr + '%' + psw)
-        response = execute_os_cmd(cmd)
+        response = execute_os_cmd('net rcp -I %s -U %s' % (ip, usr + '%' + psw))
         if response['cmd_err'] == "":
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('succeeded') > 0:
@@ -118,8 +116,7 @@ def cmd_wakeonlan(mac):
     result = {}
     try:
         result['mac'] = mac
-        cmd = 'wakeonlan %s' % mac
-        response = execute_os_cmd(cmd)
+        response = execute_os_cmd('wakeonlan %s' % mac)
         if response['cmd_err'] == "":
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('Sending magic packet') >= 0:
@@ -140,8 +137,7 @@ def cmd_wakeonlan(mac):
 def cmd_netscan(ip, subnet):
     result = {}
     try:
-        cmd = "sudo nmap -sn %s/%s" % (ip, subnet)
-        response = execute_os_cmd(cmd)
+        response = execute_os_cmd("sudo nmap -sn %s/%s" % (ip, subnet))
         if response['cmd_err'] == "":
             rows = response['cmd_out'].split("\n")
             devices = []
@@ -224,18 +220,13 @@ def cmd_esp(ip, command):
 def compile_arduino(core, tipologia):
     result = {}
     try:
-        cmd = 'mkdir %s' % tipologia
-        execute_os_cmd(cmd)
+        execute_os_cmd('mkdir %s' % tipologia)
         url_repo_device = 'https://raw.githubusercontent.com/VanMenoz92/msh/master/devices/%s' % tipologia
         cmd = 'curl %s/%s.ino --output %s/%s.ino' % (url_repo_device, tipologia, tipologia, tipologia)
         execute_os_cmd(cmd)
-        cmd = 'curl %s/index.h --output %s/index.h' % (url_repo_device, tipologia)
-        execute_os_cmd(cmd)
-        cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
-        info("Eseguo comando: %s", cmd)
-        fqbn = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
-        cmd_compile = 'sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia)
-        response = execute_os_cmd(cmd_compile)
+        execute_os_cmd('curl %s/index.h --output %s/index.h' % (url_repo_device, tipologia))
+        fqbn = execute_os_cmd("arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'", check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
+        response = execute_os_cmd('sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia))
         if response['cmd_err'] == '':
             cmd_out_split = response['cmd_out'].split('\n')
             program_info = cmd_out_split[-3]
@@ -265,15 +256,11 @@ def compile_arduino(core, tipologia):
 def upload_arduino(core, tipologia):
     result = {}
     try:
-        cmd = "arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'"
-        info("Eseguo comando: %s", cmd)
-        fqbn = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
-        cmd = "arduino-cli board list | grep tty | awk '{print $1}'"
-        usb = execute_os_cmd(cmd, check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
+        fqbn = execute_os_cmd("arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'", check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
+        usb = execute_os_cmd("arduino-cli board list | grep tty | awk '{print $1}'", check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
         info("USB: %s", usb)
         if usb != "":
-            cmd_upload = 'sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia)
-            response = execute_os_cmd(cmd_upload)
+            response = execute_os_cmd('sudo arduino-cli upload -p %s --fqbn %s %s' % (usb, fqbn, tipologia))
             if response['cmd_err'] == "":
                 cmd_out = response['cmd_out'].replace("\\r", "")
                 upload_output = {
