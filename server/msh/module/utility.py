@@ -124,6 +124,7 @@ def validate_format(request_validate):
 
 def evaluate(command, data=None, dev=None, result=None, parametri=None):
     from module import cmd_ping
+    info("ESEGUO CON EVALUATE: %s", command)
     return eval(command)
 
 
@@ -146,5 +147,8 @@ def prova(uno, due="", tre=""):
             if due == "OFF":
                 to_return = {"output": "errore", "terzo": tre}
             else:
-                to_return = "OFF"
+                if due == "dizionario":
+                    to_return = {"result": "ON", "primo": uno}
+                else:
+                    to_return = "OFF"
     return to_return
