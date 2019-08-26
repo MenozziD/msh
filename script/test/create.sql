@@ -38,7 +38,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
+            ""on"":""prova(dev['net_code'], 'dizionario', dev['net_mac'])['result']"",
             ""online"":""prova(dev['net_code'])""
          }
       }
