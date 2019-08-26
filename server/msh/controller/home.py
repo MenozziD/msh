@@ -34,11 +34,14 @@ class Home(BaseHandler):
     def check(request, body, headers_list):
         response = {}
         if body != "" and validate_format(request):
-            if 'Authorization' in headers_list and verify_token(headers_list['Authorization'].split(" ")[1])['output'] == 'OK':
+            if 'Authorization' in headers_list and headers_list['Authorization'].find("Bearer ") == 0 and verify_token(headers_list['Authorization'].replace("Bearer ", ""))['output'] == 'OK':
                 response['output'] = 'OK'
             else:
                 if 'Authorization' in headers_list:
-                    response['output'] = get_string(40, da_sostiuire="Authorization")
+                    if headers_list['Authorization'].find("Bearer ") == 0:
+                        response['output'] = get_string(41)
+                    else:
+                        response['output'] = get_string(40, da_sostiuire="Authorization", da_aggiungere="Bearer Token")
                 else:
                     response['output'] = get_string(39, da_aggiungere="Authorization")
         else:
