@@ -63,67 +63,24 @@ class Home(BaseHandler):
                     yield k1, v1
 
     @staticmethod
-    def iter_json(json_data, path, index, size, primo, secondo, terzo):
-        if index < size:
-            json_data[path[index]] = Home.iter_json(json_data[path[index]], path, index + 1, size, primo, secondo, terzo)
-            return json_data
-        else:
-            return primo if json_data == secondo else terzo
-
-    @staticmethod
     def create_response(template, dev, data=None, result=None):
         template = Home.read_key(template, data)
         for path, node in Home.traverse(template):
-            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
-                if str(node).find("[") > 0 and str(node).find("(") == -1:
-                    # VALORE DA LEGGERE
-                    template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
-                else:
-                    template = Home.invoke_function(template, path, node, dev)
+            if isinstance(node, str) and (str(node).find("(") > 0 or str(node).find("[") > 0):
+                template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
+        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true"))
+        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"OFF\"", "false"))
         return template
 
     @staticmethod
     def read_key(template, data):
+        chiavi_da_sostituire = []
         for path, node in Home.traverse(template):
-            if str(node)[0:1] != "{" and str(node)[0:1] != "[":
-                for i in path:
-                    if str(i).find("[") > 0:
-                        template = loads(dumps(template, indent=4, sort_keys=True).replace(i, evaluate(i, data=data)))
-        return template
-
-    @staticmethod
-    def invoke_function(template, path, node, dev):
-        if str(node).find("(") > 0:
-            # FUNZIONE DA INVOCARE
-            funzione = node
-            if node.find("[") > 0:
-                # FUNZIONE CON PARAMETRI NON STATICI
-                parametri = node.split("(")[1].split(")")[0]
-                funzione = Home.read_param_not_static(funzione, parametri, dev)
-            value = evaluate(funzione)
-            if isinstance(value, dict):
-                value = value['result']
-            template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
-            if value in ("ON", "OFF"):
-                template = Home.iter_json(template, path, 0, len(path), True, "ON", False)
-        return template
-
-    @staticmethod
-    def read_param_not_static(funzione, parametri, dev):
-        if parametri.find(", ") > 0:
-            for parametro in parametri.split(", "):
-                if parametro.find("[") > 0:
-                    funzione = funzione.replace(parametro, "'" + evaluate(parametro, dev=dev) + "'")
-        else:
-            if parametri.find("[") > 0:
-                funzione = funzione.replace(parametri, "'" + evaluate(parametri, dev=dev) + "'")
-        return funzione
-
-    @staticmethod
-    def read_request(template):
-        for path, node in Home.traverse(template):
-            if str(node)[0:1] != "{" and type(node).__name__ == 'bool':
-                    template = Home.iter_json(template, path, 0, len(path), "ON", True, "OFF")
+            for i in path:
+                if str(i).find("[") > 0 and str(i) not in chiavi_da_sostituire:
+                    chiavi_da_sostituire.append(i)
+        for key in chiavi_da_sostituire:
+            template = loads(dumps(template, indent=4, sort_keys=True).replace(key, evaluate(key, data)))
         return template
 
     @staticmethod
@@ -162,12 +119,14 @@ class Home(BaseHandler):
         "on": true
         """
         dev = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
-        parametri = Home.read_request(data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"])
+        google_params = data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"]
+        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("true", "\"ON\""))
+        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("false", "\"OFF\""))
         result = {}
-        for key in parametri.keys():
-            result = evaluate(dev['execute_request'][key], dev=dev, parametri=parametri)
+        for key in google_params.keys():
+            result = evaluate(dev['execute_request'][key], dev=dev, parametri=google_params)
         if result['output'] == 'OK':
             response = Home.create_response(dev['execute_response_ok'], dev, data)
         else:
-            response = Home.create_response(dev['execute_response_ko'], dev, data, result=result)
+            response = Home.create_response(dev['execute_response_ko'], dev, data, result)
         return response
