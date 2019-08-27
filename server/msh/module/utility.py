@@ -7,6 +7,7 @@ from json import dumps, load
 from os import system
 from urllib import request
 from time import sleep
+from netifaces import gateways
 
 
 def execute_os_cmd(cmd, check_out=False, sys=False):
@@ -96,7 +97,8 @@ def execute_request_http(url):
 
 def check_server_connection(url, tentativi, riposo):
     server_on = False
-    for _ in range(tentativi):
+    index = 0
+    while index < tentativi and not server_on:
         cmd = "curl -I -m " + str(riposo) + " -X GET " + url
         response = execute_os_cmd(cmd)
         if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
@@ -105,9 +107,19 @@ def check_server_connection(url, tentativi, riposo):
         elif not response['return_code'] == 28:
             info("Attendo " + str(riposo) + " secondi...")
             sleep(riposo)
-            if XmlReader.settings["ambiente"] == "TEST":
-                server_on = True
+        index = index + 1
     return server_on
+
+
+def get_gateway():
+    gateway = ''
+    for path, node in traverse(gateways()):
+        if isinstance(node, tuple):
+            if node[0].find('192.168') == 0 and 'default' in path:
+                gateway = node[1]
+            elif node[0].find('192.168') == 0 and gateway == '':
+                gateway = node[1]
+    return gateway
 
 
 def set_api_response(response_payload, response, timmestamp=True, close_db=True):

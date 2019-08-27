@@ -1,11 +1,11 @@
 from webapp3 import WSGIApplication
 from logging import basicConfig, info
 from paste import httpserver
-from module import XmlReader, execute_os_cmd, check_server_connection, traverse
+from module import XmlReader, execute_os_cmd, check_server_connection, get_gateway
 from controller import handle_error
 from string import ascii_letters, digits
 from random import choice
-from netifaces import AF_INET, gateways, ifaddresses
+from netifaces import AF_INET, ifaddresses
 
 
 config = {
@@ -44,27 +44,21 @@ def main(settings_path):
         execute_os_cmd("sudo service oauth start")
     else:
         info("Oauth server is already running")
-    if check_server_connection("http://www.google.com", 10, 5) and check_server_connection("http://serveo.net", 2, 5):
+    if check_server_connection("http://www.google.com", 10, 5) and check_server_connection("http://serveo.net", 2, 2):
         response = execute_os_cmd('pgrep autossh')
         if response['cmd_out'] == "":
             execute_os_cmd("sudo service serveo start")
         else:
             info("Serveo is already running")
         local = False
-        if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 5, 5):
+        if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 2, 5):
             execute_os_cmd("sudo service serveo restart")
-            if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 5, 5):
+            if not check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 2, 5):
                 local = True
     if local:
         info("Avvio solo in locale")
         execute_os_cmd("sudo service serveo stop")
-        gateway = ''
-        for path, node in traverse(gateways()):
-            if isinstance(node, tuple):
-                if node[0].find('192.168') == 0:
-                    info("%s %s", path, node)
-                    gateway = node[1]
-        ip_address = ifaddresses(gateway)[AF_INET][0]['addr']
+        ip_address = ifaddresses(get_gateway())[AF_INET][0]['addr']
     else:
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
         info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")

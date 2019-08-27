@@ -1,7 +1,7 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string
-from netifaces import AF_INET, gateways, ifaddresses
+from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway
+from netifaces import AF_INET, ifaddresses
 
 
 class Net(BaseHandler):
@@ -277,8 +277,9 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_scan():
-        ip = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr'].split('.')
-        subnet = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['netmask'].split('.')
+        gateway = get_gateway()
+        ip = ifaddresses(gateway)[AF_INET][0]['addr'].split('.')
+        subnet = ifaddresses(gateway)[AF_INET][0]['netmask'].split('.')
         ip_subnet = Net.calculate_start(ip, subnet)
         response = cmd_netscan(ip_subnet['ip'], ip_subnet['count'])
         if response['output'] == 'OK':
