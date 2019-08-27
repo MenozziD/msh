@@ -1,7 +1,7 @@
 from webapp3 import WSGIApplication
 from logging import basicConfig, info
 from paste import httpserver
-from module import XmlReader, execute_os_cmd, check_server_connection
+from module import XmlReader, execute_os_cmd, check_server_connection, traverse
 from controller import handle_error
 from string import ascii_letters, digits
 from random import choice
@@ -58,7 +58,13 @@ def main(settings_path):
     if local:
         info("Avvio solo in locale")
         execute_os_cmd("sudo service serveo stop")
-        ip_address = ifaddresses(gateways()['default'][AF_INET][1])[AF_INET][0]['addr']
+        gateway = ''
+        for path, node in traverse(gateways()):
+            if isinstance(node, tuple):
+                if node[0].find('192.168') == 0:
+                    info("%s %s", path, node)
+                    gateway = node[1]
+        ip_address = ifaddresses(gateway)[AF_INET][0]['addr']
     else:
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
         info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")
