@@ -145,6 +145,20 @@ def get_string(indice, da_sostiuire=None, da_aggiungere=None):
     return to_return
 
 
+def traverse(dict_or_list, path=None):
+    if path is None:
+        path = []
+    if isinstance(dict_or_list, dict):
+        iterator = dict_or_list.items()
+    else:
+        iterator = enumerate(dict_or_list)
+    for k, v in iterator:
+        yield path + [k], v
+        if isinstance(v, (dict, list)):
+            for k1, v1 in traverse(v, path + [k]):
+                yield k1, v1
+
+
 def prova(uno, due="", tre=""):
     if due == "online":
         to_return = "ON"
