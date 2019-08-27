@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import set_api_response, validate_format, DbManager, evaluate, verify_token, get_string
+from module import set_api_response, validate_format, DbManager, evaluate, verify_token, get_string, traverse
 from json import loads, dumps
 
 
@@ -52,23 +52,9 @@ class Home(BaseHandler):
         return response
 
     @staticmethod
-    def traverse(dict_or_list, path=None):
-        if path is None:
-            path = []
-        if isinstance(dict_or_list, dict):
-            iterator = dict_or_list.items()
-        else:
-            iterator = enumerate(dict_or_list)
-        for k, v in iterator:
-            yield path + [k], v
-            if isinstance(v, (dict, list)):
-                for k1, v1 in Home.traverse(v, path + [k]):
-                    yield k1, v1
-
-    @staticmethod
     def create_response(template, dev, data=None, result=None):
         template = Home.read_key(template, data)
-        for path, node in Home.traverse(template):
+        for path, node in traverse(template):
             if isinstance(node, str) and (str(node).find("(") > 0 or str(node).find("[") > 0):
                 template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
         template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true").replace("\"OFF\"", "false"))
@@ -77,7 +63,7 @@ class Home(BaseHandler):
     @staticmethod
     def read_key(template, data):
         chiavi_da_sostituire = []
-        for path, node in Home.traverse(template):
+        for path, node in traverse(template):
             for i in path:
                 if str(i).find("[") > 0 and str(i) not in chiavi_da_sostituire:
                     chiavi_da_sostituire.append(i)
