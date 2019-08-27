@@ -12,28 +12,36 @@ from time import sleep
 def execute_os_cmd(cmd, check_out=False, sys=False):
     response = {}
     if XmlReader.settings["ambiente"] == 'PROD':
-        info("Eseguo comando: %s", cmd)
-        if not check_out and not sys:
-            cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-            cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-            cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-            info("Return Code: %s", cmd_exec.returncode)
-            info("Output: %s", cmd_out)
-            info("Error: %s", cmd_err)
-            if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
-                cmd_err = cmd_out
-            response = {
-                'return_code': cmd_exec.returncode,
-                'cmd_out': cmd_out,
-                'cmd_err': cmd_err
-            }
-        else:
-            if check_out:
-                cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t").replace("\\r", "\r")
+        try:
+            info("Eseguo comando: %s", cmd)
+            if not check_out and not sys:
+                cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
+                cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+                cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+                info("Return Code: %s", cmd_exec.returncode)
                 info("Output: %s", cmd_out)
-                response = {'cmd_out': cmd_out}
+                info("Error: %s", cmd_err)
+                if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
+                    cmd_err = cmd_out
+                response = {
+                    'return_code': cmd_exec.returncode,
+                    'cmd_out': cmd_out,
+                    'cmd_err': cmd_err
+                }
             else:
-                system(cmd)
+                if check_out:
+                    cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t").replace("\\r", "\r")
+                    info("Output: %s", cmd_out)
+                    response = {'cmd_out': cmd_out}
+                else:
+                    system(cmd)
+        except Exception as e:
+            exception(e)
+            response = {
+                'return_code': -1,
+                'cmd_out': '',
+                'cmd_err': str(e)
+            }
     else:
         f = open('command_simulate.json', 'r')
         response = load(f)
