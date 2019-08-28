@@ -39,6 +39,23 @@ class TestHome(TestCase):
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'È necessario l\'header Authorization')
 
+    def test_payload_auth_no_token(self):
+        read_xml()
+        request = Request.blank('/api/home')
+        request.method = 'POST'
+        request.headers['Authorization'] = 'asfafaf'
+        request.body = b'{' \
+                       b'   "requestId":"test",' \
+                       b'   "inputs": [' \
+                       b'       {' \
+                       b'           "intent":"action.devices.SYNC"' \
+                       b'       }' \
+                       b'   ]' \
+                       b'}'
+        response = request.get_response(app)
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(response.json['output'], 'L\'header Authorization deve contenere un Bearer Token')
+
     def test_payload_auth_ko(self):
         read_xml()
         request = Request.blank('/api/home')
@@ -54,7 +71,7 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['output'], 'Il valore dell\'header Authorization non è corretto')
+        self.assertEqual(response.json['output'], 'Il token fornito non è valido')
 
     def test_payload_sync(self):
         read_xml()
@@ -93,7 +110,7 @@ class TestHome(TestCase):
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
-        self.assertEqual(response.json['payload']['devices']['A1:FF:AA:BB:00:33']['on'], False)
+        self.assertEqual(response.json['payload']['devices']['A1:FF:AA:BB:00:33']['on'], True)
 
     def test_payload_execute_ok(self):
         read_xml()
@@ -118,7 +135,7 @@ class TestHome(TestCase):
                        b'                       ],' \
                        b'                       "devices": [' \
                        b'                           {' \
-                       b'                               "id":"A1:FF:AA:BB:00:33"' \
+                       b'                               "id":"A3:FF:AA:BB:00:33"' \
                        b'                           }' \
                        b'                       ]' \
                        b'                   }' \
