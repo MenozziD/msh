@@ -39,7 +39,7 @@ void handle_CMD() {
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
       jsonBuffer["cmd"] = server.arg(i);
-      if (jsonBuffer["cmd"] == "on" || jsonBuffer["cmd"] == "off" || jsonBuffer["cmd"] == "stato_rele" || jsonBuffer["cmd"] == "toggle")
+      if (jsonBuffer["cmd"] == "on" || jsonBuffer["cmd"] == "off" || jsonBuffer["cmd"] == "stato" || jsonBuffer["cmd"] == "toggle")
         ok=true;
   }
   
