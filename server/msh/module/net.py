@@ -35,8 +35,7 @@ def cmd_radio(ip, comando, usr, psw):
     try:
         result = cmd_radio_stato(ip, usr, psw)
         if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
-            cmd = "ifconfig %s %s" % (result['interface'], comando)
-            execute_ssh_cmd(ip, usr, psw, cmd)
+            execute_ssh_cmd(ip, usr, psw, "ifconfig %s %s" % (result['interface'], comando))
             result['result'] = get_string(9)
             result['output'] = 'OK'
         else:
@@ -77,7 +76,7 @@ def cmd_radio_stato(ip, usr, psw):
 def read_essid(row, result):
     if row.find("ESSID:") > 0 and row.find("ESSID:\"\"") == -1:
         result['interface'] = row[:8].strip()
-        result['result'] = get_string(10)
+        result['result'] = get_string(0)
     return result
 
 
@@ -86,7 +85,7 @@ def read_mac(row, result):
         result['mac'] = row.split("Access Point: ")[1].strip()
         if not row[:8] == "        ":
             result['interface'] = row[:8].strip()
-            result['result'] = get_string(11)
+            result['result'] = get_string(1)
     return result
 
 
@@ -202,13 +201,8 @@ def cmd_esp(ip, command):
         url = "http://" + ip + "/cmd?n=" + command
         result['url_request'] = url
         response = loads(execute_request_http(url))
-        esp_decode = {
-            'ON': get_string(15),
-            'OFF': get_string(15),
-            'ERR': get_string(16)
-        }
         result['output'] = 'OK'
-        result['result'] = esp_decode[response['output']]
+        result['result'] = response['output']
     except Exception as e:
         exception("Exception")
         result['result'] = get_string(16)
