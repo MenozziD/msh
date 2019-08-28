@@ -45,7 +45,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }",
 "{
-   ""on"":""info('%s', parametri['on'])""
+   ""on"":""{'output': 'OK'}""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -326,14 +326,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
          }
       }
    }
 }",
 "{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+   ""on"":""{'output': 'OK'}""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -345,8 +345,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""cmd_ping(dev['net_ip'])['result']"",
+               ""online"":""cmd_ping(dev['net_ip'])['result']""
             }
          }
       ]
@@ -398,14 +398,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
          }
       }
    }
 }",
 "{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+   ""on"":""{'output': 'OK'}""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -417,8 +417,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""cmd_ping(dev['net_ip'])['result']"",
+               ""online"":""cmd_ping(dev['net_ip'])['result']""
             }
          }
       ]
