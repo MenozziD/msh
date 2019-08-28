@@ -143,7 +143,7 @@ def validate_format(request_validate):
 
 
 def evaluate(command, data=None, dev=None, result=None, parametri=None):
-    from module import cmd_ping
+    from module import cmd_ping, cmd_pcwin_shutdown, cmd_wakeonlan, cmd_radio, cmd_esp
     info("ESEGUO CON EVALUATE: %s", command)
     return eval(command)
 
