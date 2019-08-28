@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_wakeonlan, cmd_pcwin_shutdown, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway
+from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_pcwin
 from netifaces import AF_INET, ifaddresses
 
 
@@ -340,20 +340,17 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_cmd(dispositivo, comando):
-        device_command = DbManager.select_tb_net_device_tb_net_diz_cmd_from_code_and_cmd(dispositivo, comando)
+        device_command = DbManager.select_device_and_function_code_from_code_and_cmd(dispositivo, comando)
         funzioni = {
-            '100': cmd_ping,
-            '102': cmd_wakeonlan,
-            '130': cmd_esp,
-            '201': cmd_pcwin_shutdown,
-            '300': cmd_radio,
+            '1': cmd_ping,
+            '2': cmd_pcwin,
+            '3': cmd_radio,
+            '4': cmd_esp
         }
         parametri = {
-            '100': [device_command['net_ip']],
-            '102': [device_command['net_mac']],
-            '130': [device_command['net_ip'], device_command['cmd_str']],
-            '201': [device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
-            '300': [device_command['net_ip'], device_command['cmd_str'].replace("radio_", ""),
-                    device_command['net_usr'], device_command['net_psw']]
+            '1': [device_command['net_ip']],
+            '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
+            '3': [device_command['net_ip'], comando],
+            '4': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']]
         }
-        return funzioni[device_command['cmd_result']](*parametri[device_command['cmd_result']])
+        return funzioni[device_command['function_code']](*parametri[device_command['function_code']])
