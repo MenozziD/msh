@@ -169,20 +169,3 @@ def traverse(dict_or_list, path=None):
         if isinstance(v, (dict, list)):
             for k1, v1 in traverse(v, path + [k]):
                 yield k1, v1
-
-
-def prova(uno, due="", tre=""):
-    if due == "online":
-        to_return = "ON"
-    else:
-        if due == "ON":
-            to_return = {"output": "OK", "primo": uno}
-        else:
-            if due == "OFF":
-                to_return = {"output": "errore", "terzo": tre}
-            else:
-                if due == "dizionario":
-                    to_return = {"result": "ON", "primo": uno}
-                else:
-                    to_return = "OFF"
-    return to_return
