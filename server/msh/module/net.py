@@ -89,6 +89,14 @@ def read_mac(row, result):
     return result
 
 
+def cmd_pcwin(comando, mac=None, ip=None, usr=None, psw=None):
+    if comando == 'on':
+        result = cmd_wakeonlan(mac)
+    else:
+        result = cmd_pcwin_shutdown(ip, usr, psw)
+    return result
+
+
 def cmd_pcwin_shutdown(ip, usr, psw):
     result = {}
     try:
