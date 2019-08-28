@@ -1,12 +1,12 @@
 BEGIN TRANSACTION;
 -- CREAZIONE TABELLE
-CREATE TABLE "TB_NET_DEVICE_TYPE" ( `TYPE_CODE` TEXT NOT NULL UNIQUE, `TYPE_DESCRIPTION` TEXT DEFAULT '-', `SYNC_RESPONSE` TEXT DEFAULT '' NOT NULL, `QUERY_RESPONSE` TEXT DEFAULT '' NOT NULL, `EXECUTE_REQUEST` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_OK` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_KO` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`TYPE_CODE`) );
+CREATE TABLE "TB_NET_DEVICE_TYPE" ( `TYPE_CODE` TEXT NOT NULL UNIQUE, `TYPE_DESCRIPTION` TEXT DEFAULT '-', `FUNCTION_CODE` TEXT NOT NULL, `SYNC_RESPONSE` TEXT DEFAULT '' NOT NULL, `QUERY_RESPONSE` TEXT DEFAULT '' NOT NULL, `EXECUTE_REQUEST` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_OK` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_KO` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`TYPE_CODE`) );
 CREATE TABLE "TB_NET_DEVICE" ( `NET_CODE` TEXT NOT NULL, `NET_DESC` TEXT, `NET_TYPE` TEXT NOT NULL, `NET_LASTUPDATE` TEXT DEFAULT (datetime('now','localtime')), `NET_IP` TEXT DEFAULT '', `NET_MAC` TEXT NOT NULL DEFAULT '' UNIQUE, `NET_USER` TEXT, `NET_PSW` TEXT, `NET_MAC_INFO` TEXT DEFAULT '', PRIMARY KEY(`NET_MAC`) );
-CREATE TABLE "TB_NET_DIZ_CMD" ( `CMD_STR` TEXT NOT NULL, `CMD_NET_TYPE` TEXT NOT NULL, `CMD_RESULT` TEXT );
+CREATE TABLE "TB_NET_DIZ_CMD" ( `CMD_STR` TEXT NOT NULL, `CMD_NET_TYPE` TEXT NOT NULL );
 CREATE TABLE "TB_STRING" ( `LANGUAGE` TEXT NOT NULL, `VALUE` TEXT NOT NULL, `RESULT` TEXT NOT NULL, PRIMARY KEY(`LANGUAGE`,`VALUE`) );
 CREATE TABLE "TB_USER" ( `USERNAME` TEXT NOT NULL, `PASSWORD` TEXT, `ROLE` TEXT, PRIMARY KEY(`USERNAME`));
 -- POPOLO TB_NET_DEVICE_TYPE
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("NET","Generic Device",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("NET","Generic Device", "1",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -38,27 +38,27 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'dizionario', dev['net_mac'])['result']"",
-            ""online"":""prova(dev['net_code'])""
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
          }
       }
    }
 }",
-"{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+"{
+   ""on"":""{'output': 'errore'}""
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""info('test')"",
+               ""online"":""info('test')""
             }
          }
       ]
@@ -78,7 +78,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ]
    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCWIN","PC Windows",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCWIN","PC Windows", "2",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -110,14 +110,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
          }
       }
    }
 }",
 "{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+   ""on"":""{'output': 'OK'}""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -129,8 +129,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""info('test')"",
+               ""online"":""info('test')""
             }
          }
       ]
@@ -150,7 +150,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ]
    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible", "3",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -182,14 +182,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
          }
       }
    }
 }",
 "{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+   ""on"":""{'output': 'errore'}""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -201,8 +201,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""info('test')"",
+               ""online"":""info('test')""
             }
          }
       ]
@@ -222,151 +222,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ]
    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PS4","Sony Playstation 4",
-"{  
-   ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
-   ""traits"":[  
-      ""action.devices.traits.OnOff""
-   ],
-   ""name"":{  
-      ""defaultNames"":[  
-         ""Sony Playstation 4""
-      ],
-      ""name"":""dev['net_code']"",
-      ""nicknames"":[  
-
-      ]
-   },
-   ""willReportState"":true,
-   ""deviceInfo"":{  
-      ""manufacturer"":""MSH"",
-      ""model"":""1"",
-      ""hwVersion"":""1.0"",
-      ""swVersion"":""1.0""
-   },
-   ""customData"":{  
-      ""mshType"":""dev['net_type']""
-   }
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""devices"":{  
-         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
-         }
-      }
-   }
-}",
-"{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
-               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
-            ],
-            ""status"":""SUCCESS"",
-            ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
-            }
-         }
-      ]
-   }
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
-               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
-            ],
-            ""status"":""ERROR"",
-            ""errorCode"":""result['output']""
-         }
-      ]
-   }
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("XBULB","Xiaomi Yeelight Bulb",
-"{  
-   ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
-   ""traits"":[  
-      ""action.devices.traits.OnOff""
-   ],
-   ""name"":{  
-      ""defaultNames"":[  
-         ""Xiaomi Yeelight Bulb""
-      ],
-      ""name"":""dev['net_code']"",
-      ""nicknames"":[  
-
-      ]
-   },
-   ""willReportState"":true,
-   ""deviceInfo"":{  
-      ""manufacturer"":""MSH"",
-      ""model"":""1"",
-      ""hwVersion"":""1.0"",
-      ""swVersion"":""1.0""
-   },
-   ""customData"":{  
-      ""mshType"":""dev['net_type']""
-   }
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""devices"":{  
-         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
-         }
-      }
-   }
-}",
-"{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
-               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
-            ],
-            ""status"":""SUCCESS"",
-            ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
-            }
-         }
-      ]
-   }
-}",
-"{  
-   ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
-               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
-            ],
-            ""status"":""ERROR"",
-            ""errorCode"":""result['output']""
-         }
-      ]
-   }
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_RELE","ESP8266 con software per rele",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_RELE","ESP8266 con software per rele", "4",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -398,14 +254,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-            ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
          }
       }
    }
 }",
 "{  
-   ""on"":""prova(dev['net_code'], parametri['on'], dev['net_mac'])""
+   ""on"":""{'output': 'errore'}""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -417,8 +273,152 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""prova(dev['net_code'], 'stato', dev['net_mac'])"",
-               ""online"":""prova(dev['net_code'], 'online', dev['net_mac'])""
+               ""on"":""info('test')"",
+               ""online"":""info('test')""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PS4","Sony Playstation 4", "5",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Sony Playstation 4""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""{'output': 'errore'}""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""info('test')"",
+               ""online"":""info('test'))""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("XBULB","Xiaomi Yeelight Bulb", "6",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[  
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""Xiaomi Yeelight Bulb""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""info('test')"",
+            ""online"":""info('test')""
+         }
+      }
+   }
+}",
+"{  
+   ""on"":""{'output': 'errore'}""
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{  
+               ""on"":""info('test')"",
+               ""online"":""info('test'))""
             }
          }
       ]
@@ -439,20 +439,16 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    }
 }");
 -- POPOLO TB_NET_DIZ_CMD
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("online","NET","100");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("online","PCWIN","100");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("on","PCWIN","102");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("off","PCWIN","201");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("online","AP","100");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("on","AP","102");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("radio_stato","AP","300");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("radio_up","AP","300");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("radio_down","AP","300");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("online","ESP_RELE","100");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("on","ESP_RELE","130");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("off","ESP_RELE","130");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("toggle","ESP_RELE","130");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE, CMD_RESULT) VALUES ("stato","ESP_RELE","130");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("online","NET");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","PCWIN");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","PCWIN");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","AP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("up","AP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("down","AP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","ESP_RELE");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","ESP_RELE");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_RELE");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_RELE");
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","1","OFF");
@@ -464,12 +460,9 @@ INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","6","Comando Shutdown
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","7","Comando Shutdown KO!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","8","Errore nel comando Shutdown!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","9","Comando Radio OK!");
-INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","10","WiFi acceso!");
-INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","11","WiFi spento!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","12","Nessuna interfaccia WiFi rilevata");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","13","Credenzilai non valide");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","14","Errore nel comando Radio!");
-INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","15","Comando Esp Rele OK");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","16","Errore Comando Esp Rele!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","17","Compilazione OK!");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","18","Errore nella compilazione!");
