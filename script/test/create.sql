@@ -38,8 +38,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -57,8 +57,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test')""
+               ""on"":""ON"",
+               ""online"":""ON""
             }
          }
       ]
@@ -110,8 +110,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -129,8 +129,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test')""
+               ""on"":""ON"",
+               ""online"":""ON""
             }
          }
       ]
@@ -182,8 +182,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -201,8 +201,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test')""
+               ""on"":""ON"",
+               ""online"":""ON""
             }
          }
       ]
@@ -254,8 +254,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -273,8 +273,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test')""
+               ""on"":""ON"",
+               ""online"":""ON""
             }
          }
       ]
@@ -326,8 +326,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -345,8 +345,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test'))""
+               ""on"":""ON"",
+               ""online"":""ON)""
             }
          }
       ]
@@ -398,8 +398,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""info('test')"",
-            ""online"":""info('test')""
+            ""on"":""ON"",
+            ""online"":""ON""
          }
       }
    }
@@ -417,8 +417,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""info('test')"",
-               ""online"":""info('test'))""
+               ""on"":""ON"",
+               ""online"":""ON)""
             }
          }
       ]
