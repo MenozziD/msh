@@ -118,8 +118,7 @@ class DbManager:
         for net_cmd in net_diz_cmd:
             tb_net_diz_cmd = {
                 'cmd_str': str(net_cmd[0]),
-                'cmd_net_type': str(net_cmd[1]),
-                'cmd_result': str(net_cmd[2])
+                'cmd_net_type': str(net_cmd[1])
             }
             diz_cmd.append(tb_net_diz_cmd)
         return diz_cmd
@@ -139,12 +138,12 @@ class DbManager:
     @staticmethod
     def select_device_and_function_code_from_code_and_cmd(net_code, cmd_str):
         query = 'SELECT NET_TYPE, NET_IP, NET_MAC, NET_USER, NET_PSW ' \
-                'FROM TB_NET_DEVICE' \
+                'FROM TB_NET_DEVICE ' \
                 'WHERE NET_CODE = \'%s\';' % net_code
         device = DbManager.select(query)[0]
         query = 'SELECT TYP.FUNCTION_CODE ' \
                 'FROM TB_NET_DEVICE_TYPE AS TYP INNER JOIN TB_NET_DIZ_CMD AS DIZ ON TYP.TYPE_CODE = DIZ.CMD_NET_TYPE ' \
-                'WHERE (TYP.TYPE_CODE IN (\'%s\', \'NET\') ' \
+                'WHERE TYP.TYPE_CODE IN (\'%s\', \'NET\') ' \
                 'AND DIZ.CMD_STR = \'%s\';' % (device[0], cmd_str)
         net_device = {
             'function_code': str(DbManager.select(query)[0][0]),
