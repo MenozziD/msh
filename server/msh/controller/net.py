@@ -350,7 +350,7 @@ class Net(BaseHandler):
         parametri = {
             '1': [device_command['net_ip']],
             '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
-            '3': [device_command['net_ip'], comando],
-            '4': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']]
+            '3': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']],
+            '4': [device_command['net_ip'], comando]
         }
         return funzioni[device_command['function_code']](*parametri[device_command['function_code']])

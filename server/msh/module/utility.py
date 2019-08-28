@@ -6,7 +6,6 @@ from datetime import datetime
 from json import dumps, load
 from os import system
 from urllib import request
-from time import sleep
 from netifaces import gateways
 
 
@@ -16,19 +15,7 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
         try:
             info("Eseguo comando: %s", cmd)
             if not check_out and not sys:
-                cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
-                cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-                cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
-                info("Return Code: %s", cmd_exec.returncode)
-                info("Output: %s", cmd_out)
-                info("Error: %s", cmd_err)
-                if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
-                    cmd_err = cmd_out
-                response = {
-                    'return_code': cmd_exec.returncode,
-                    'cmd_out': cmd_out,
-                    'cmd_err': cmd_err
-                }
+                response = execute_os_cmd_with_run(cmd)
             else:
                 if check_out:
                     cmd_out = str(check_output(cmd, shell=True))[2:-1].replace("\\n", "\n").replace("\\t", "\t").replace("\\r", "\r")
@@ -47,6 +34,23 @@ def execute_os_cmd(cmd, check_out=False, sys=False):
         f = open('command_simulate.json', 'r')
         response = load(f)
         f.close()
+    return response
+
+
+def execute_os_cmd_with_run(cmd):
+    cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
+    cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+    cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+    info("Return Code: %s", cmd_exec.returncode)
+    info("Output: %s", cmd_out)
+    info("Error: %s", cmd_err)
+    if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
+        cmd_err = cmd_out
+    response = {
+        'return_code': cmd_exec.returncode,
+        'cmd_out': cmd_out,
+        'cmd_err': cmd_err
+    }
     return response
 
 
@@ -95,29 +99,10 @@ def execute_request_http(url):
     return response
 
 
-def check_server_connection(url, tentativi, riposo):
-    server_on = False
-    index = 0
-    while index < tentativi and not server_on:
-        cmd = "curl -I -m " + str(riposo) + " -X GET " + url
-        response = execute_os_cmd(cmd)
-        if response['return_code'] == 0 and response['cmd_out'].find("200 OK") > 0:
-            server_on = True
-            info("Server online")
-        elif not response['return_code'] == 28:
-            info("Attendo " + str(riposo) + " secondi...")
-            sleep(riposo)
-        index = index + 1
-    return server_on
-
-
 def get_gateway():
     gateway = ''
     for path, node in traverse(gateways()):
-        if isinstance(node, tuple):
-            if node[0].find('192.168') == 0 and 'default' in path:
-                gateway = node[1]
-            elif node[0].find('192.168') == 0 and gateway == '':
+        if isinstance(node, tuple) and node[0].find('192.168') == 0 and ('default' in path or gateway == ''):
                 gateway = node[1]
     return gateway
 

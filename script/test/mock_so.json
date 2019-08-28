@@ -96,7 +96,7 @@
 	},
 	"internet-timeout": {
 		"return_code": 28,
-		"cmd_out": "internet",
+		"cmd_out": "",
 		"cmd_err": ""
 	},
 	"ap-error": {

@@ -37,18 +37,24 @@ class Home(BaseHandler):
             if 'Authorization' in headers_list and headers_list['Authorization'].find("Bearer ") == 0 and verify_token(headers_list['Authorization'].replace("Bearer ", ""))['output'] == 'OK':
                 response['output'] = 'OK'
             else:
-                if 'Authorization' in headers_list:
-                    if headers_list['Authorization'].find("Bearer ") == 0:
-                        response['output'] = get_string(41)
-                    else:
-                        response['output'] = get_string(40, da_sostiuire="Authorization", da_aggiungere="Bearer Token")
-                else:
-                    response['output'] = get_string(39, da_aggiungere="Authorization")
+                response = Home.check_header(headers_list)
         else:
             if body != "":
                 response['output'] = response['output'] = get_string(22)
             else:
                 response['output'] = response['output'] = get_string(21)
+        return response
+
+    @staticmethod
+    def check_header(headers_list):
+        response = {}
+        if 'Authorization' in headers_list:
+            if headers_list['Authorization'].find("Bearer ") == 0:
+                response['output'] = get_string(41)
+            else:
+                response['output'] = get_string(40, da_sostiuire="Authorization", da_aggiungere="Bearer Token")
+        else:
+            response['output'] = get_string(39, da_aggiungere="Authorization")
         return response
 
     @staticmethod
