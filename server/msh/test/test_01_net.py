@@ -473,7 +473,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"device_test_ap",' \
-                       b'   "comando":"radio_up"' \
+                       b'   "comando":"up"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -488,7 +488,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"device_test_ap",' \
-                       b'   "comando":"radio_up"' \
+                       b'   "comando":"up"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -503,7 +503,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"device_test_ap",' \
-                       b'   "comando":"radio_up"' \
+                       b'   "comando":"up"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
@@ -518,7 +518,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"device_test_ap",' \
-                       b'   "comando":"radio_up"' \
+                       b'   "comando":"up"' \
                        b'}'
         response = request.get_response(app)
         self.assertEqual(response.status_int, 200)
