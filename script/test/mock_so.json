@@ -89,9 +89,14 @@
 		"cmd_out": "oauth serveo",
 		"cmd_err": ""
 	},
-	"internet": {
+	"internet-ok": {
 		"return_code": 0,
 		"cmd_out": "internet 200 OK",
+		"cmd_err": ""
+	},
+	"internet-timeout": {
+		"return_code": 28,
+		"cmd_out": "internet",
 		"cmd_err": ""
 	},
 	"ap-error": {
