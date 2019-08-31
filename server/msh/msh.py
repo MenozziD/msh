@@ -76,7 +76,6 @@ def main(settings_path):
         format=XmlReader.settings['log']['format'],
         level=XmlReader.settings['log']['level'])
     porta = '65177'
-    ip_address = 'localhost'
     start_oauth()
     local = True
     if check_server_connection("http://www.google.com", 10, 5) and check_server_connection("http://serveo.net", 2, 2):
@@ -86,6 +85,7 @@ def main(settings_path):
         execute_os_cmd("sudo service serveo stop")
         ip_address = ifaddresses(get_gateway())[AF_INET][0]['addr']
     else:
+        ip_address = 'localhost'
         info("URL webapp: %s", "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net")
         info("URL oauth %s", "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net")
     info("Server in ascolto su http://%s:%s", ip_address, porta)
