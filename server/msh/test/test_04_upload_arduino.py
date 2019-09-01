@@ -1,4 +1,4 @@
-from msh import app
+from msh import Msh
 from unittest import TestCase
 from webapp3 import Request
 from test import simulate_login_admin, simulate_login_user, read_xml, simulate_os_command, simulate_request_http
@@ -11,7 +11,7 @@ class TestUploadArduino(TestCase):
         read_xml()
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Questa API ha bisogno di un payload')
 
@@ -20,7 +20,7 @@ class TestUploadArduino(TestCase):
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.body = b'dfsfs'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il payload deve essere in formato JSON')
 
@@ -29,7 +29,7 @@ class TestUploadArduino(TestCase):
         request = Request.blank('/api/upload_arduino')
         request.method = 'POST'
         request.body = b'{}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il campo tipo_operazione è obbligatorio')
 
@@ -40,7 +40,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"dsgsd"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo tipo_operazione deve assumere uno dei seguenti valori:'), 0)
 
@@ -51,7 +51,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"tipo"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Devi effettuare la login per utilizzare questa API')
 
@@ -64,7 +64,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"tipo"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -77,7 +77,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"core"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -89,7 +89,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"compile"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'La funzione richiesta può essere eseguita solo da un ADMIN')
 
@@ -101,7 +101,7 @@ class TestUploadArduino(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"compile"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo core')
 
@@ -115,7 +115,7 @@ class TestUploadArduino(TestCase):
                        b'   "tipo_operazione":"compile",' \
                        b'   "core":"afdasf"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find("Il campo core deve assumere uno dei seguenti valori:"), 0)
 
@@ -129,7 +129,7 @@ class TestUploadArduino(TestCase):
                        b'   "tipo_operazione":"compile",' \
                        b'   "core":"Generic ESP8266 Module"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo tipologia')
 
@@ -145,7 +145,7 @@ class TestUploadArduino(TestCase):
                        b'   "core":"Generic ESP8266 Module",' \
                        b'   "tipologia":"fdsfs"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find("Il campo tipologia deve assumere uno dei seguenti valori:"), 0)
 
@@ -161,7 +161,7 @@ class TestUploadArduino(TestCase):
                        b'   "core":"core_test",' \
                        b'   "tipologia":"DEV_1"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -177,7 +177,7 @@ class TestUploadArduino(TestCase):
                        b'   "core":"core_test",' \
                        b'   "tipologia":"DEV_1"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Errore compilazione')
 
@@ -193,7 +193,7 @@ class TestUploadArduino(TestCase):
                        b'   "core":"core_test",' \
                        b'   "tipologia":"DEV_1"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -209,7 +209,7 @@ class TestUploadArduino(TestCase):
                        b'   "core":"core_test",' \
                        b'   "tipologia":"DEV_1"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Errore upload')
 

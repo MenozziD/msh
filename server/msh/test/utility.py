@@ -1,5 +1,5 @@
 from webapp3 import Request
-from msh import app
+from msh import Msh
 from module import XmlReader
 from json import load, dump
 
@@ -11,7 +11,7 @@ def simulate_login_admin():
                    b'   "user":"admin",' \
                    b'   "password":"admin"' \
                    b'}'
-    return request.get_response(app)
+    return request.get_response(Msh.app)
 
 
 def simulate_login_user():
@@ -21,7 +21,7 @@ def simulate_login_user():
                    b'   "user":"test",' \
                    b'   "password":"test"' \
                    b'}'
-    return request.get_response(app)
+    return request.get_response(Msh.app)
 
 
 def simulate_os_command(command):

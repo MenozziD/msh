@@ -1,4 +1,4 @@
-from msh import app
+from msh import Msh
 from unittest import TestCase
 from webapp3 import Request
 from controller import Net
@@ -12,7 +12,7 @@ class TestNet(TestCase):
         read_xml()
         request = Request.blank('/api/net')
         request.method = 'POST'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Questa API ha bisogno di un payload')
 
@@ -21,7 +21,7 @@ class TestNet(TestCase):
         request = Request.blank('/api/net')
         request.method = 'POST'
         request.body = b'dfsfs'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il payload deve essere in formato JSON')
 
@@ -30,7 +30,7 @@ class TestNet(TestCase):
         request = Request.blank('/api/net')
         request.method = 'POST'
         request.body = b'{}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il campo tipo_operazione è obbligatorio')
 
@@ -41,7 +41,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"dsgsd"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo tipo_operazione deve assumere uno dei seguenti valori:'), 0)
 
@@ -52,7 +52,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"list"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Devi effettuare la login per utilizzare questa API')
 
@@ -64,7 +64,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"list"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -76,7 +76,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"list"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -88,7 +88,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"type"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -102,7 +102,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"scan"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -115,7 +115,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"scan"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Errore netscan')
 
@@ -127,7 +127,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"command"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo tipo')
 
@@ -140,7 +140,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"command",' \
                        b'   "tipo":"dfsf"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo tipo deve assumere uno dei seguenti valori'), 0)
 
@@ -153,7 +153,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"command",' \
                        b'   "tipo":"NET"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -165,7 +165,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"delete"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'La funzione richiesta può essere eseguita solo da un ADMIN')
 
@@ -177,7 +177,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"delete"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo mac')
 
@@ -190,7 +190,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"delete",' \
                        b'   "mac":"FF:FF:FF:FF:FF:FF"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo mac deve assumere uno dei seguenti valori: '), 0)
 
@@ -203,7 +203,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"delete",' \
                        b'   "mac":"EE:FF:AA:BB:00:33"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -216,7 +216,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"update",' \
                        b'   "mac":"A1:FF:AA:BB:00:33"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Nessun campo da aggiornare, i possibili campi da aggiornare sono'), 0)
 
@@ -231,7 +231,7 @@ class TestNet(TestCase):
                        b'   "user":"test",' \
                        b'   "password":"test"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -245,7 +245,7 @@ class TestNet(TestCase):
                        b'   "mac":"A1:FF:AA:BB:00:33",' \
                        b'   "codice":""' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il campo codice non può essere valorizzato con una stringa vuota')
 
@@ -259,7 +259,7 @@ class TestNet(TestCase):
                        b'   "mac":"A1:FF:AA:BB:00:33",' \
                        b'   "codice":"device_test_duplicato"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Esiste già un dispositivo con questo codice')
 
@@ -273,7 +273,7 @@ class TestNet(TestCase):
                        b'   "mac":"A1:FF:AA:BB:00:33",' \
                        b'   "codice":"device_test_rinominato"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
 
@@ -285,7 +285,7 @@ class TestNet(TestCase):
         request.body = b'{' \
                        b'   "tipo_operazione":"cmd"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo dispositivo')
 
@@ -298,7 +298,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"dfsf"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo dispositivo deve assumere uno dei seguenti valori: '), 0)
 
@@ -311,7 +311,7 @@ class TestNet(TestCase):
                        b'   "tipo_operazione":"cmd",' \
                        b'   "dispositivo":"device_test_duplicato"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Per l\'operazione scelta è obbligatorio il campo comando')
 
@@ -325,7 +325,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_duplicato",' \
                        b'   "comando":"fasdfs"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'].find('Il campo comando deve assumere uno dei seguenti valori: '), 0)
 
@@ -340,7 +340,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_duplicato",' \
                        b'   "comando":"online"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -355,7 +355,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_duplicato",' \
                        b'   "comando":"online"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -370,7 +370,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_duplicato",' \
                        b'   "comando":"online"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore ping")
 
@@ -385,7 +385,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"on"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -400,7 +400,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"on"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -415,7 +415,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"on"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore pcwin on")
 
@@ -430,7 +430,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"off"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -445,7 +445,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"off"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -460,7 +460,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_pc_win",' \
                        b'   "comando":"off"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore pcwin off")
 
@@ -475,7 +475,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_ap",' \
                        b'   "comando":"up"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Errore comando su AP")
 
@@ -490,7 +490,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_ap",' \
                        b'   "comando":"up"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "Nessuna interfaccia WiFi rilevata")
 
@@ -505,7 +505,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_ap",' \
                        b'   "comando":"up"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 
@@ -520,7 +520,7 @@ class TestNet(TestCase):
                        b'   "dispositivo":"device_test_ap",' \
                        b'   "comando":"up"' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], "OK")
 

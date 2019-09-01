@@ -22,6 +22,8 @@ class XmlReader:
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data
         subdomain_oauth = xml.getElementsByTagName('subdomain_oauth')[0].firstChild.data
         subdomain_webapp = xml.getElementsByTagName('subdomain_webapp')[0].firstChild.data
+        subdomain_oauth_pagekite = xml.getElementsByTagName('subdomain_oauth_pagekite')[0].firstChild.data
+        subdomain_webapp_pagekite = xml.getElementsByTagName('subdomain_webapp_pagekite')[0].firstChild.data
         log = {
             'filename': xml.getElementsByTagName('log')[0].getElementsByTagName('filename')[0].firstChild.data,
             'format': xml.getElementsByTagName('log')[0].getElementsByTagName('format')[0].firstChild.data,
@@ -38,6 +40,8 @@ class XmlReader:
             'project_id_google_actions': project_id_google_actions,
             'subdomain_oauth': subdomain_oauth,
             'subdomain_webapp': subdomain_webapp,
+            'subdomain_oauth_pagekite': subdomain_oauth_pagekite,
+            'subdomain_webapp_pagekite': subdomain_webapp_pagekite,
             'log': log
         }
         return

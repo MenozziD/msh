@@ -1,4 +1,4 @@
-from msh import app
+from msh import Msh
 from unittest import TestCase
 from webapp3 import Request
 from test import read_xml
@@ -10,7 +10,7 @@ class TestHome(TestCase):
         read_xml()
         request = Request.blank('/api/home')
         request.method = 'POST'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Questa API ha bisogno di un payload')
 
@@ -19,7 +19,7 @@ class TestHome(TestCase):
         request = Request.blank('/api/home')
         request.method = 'POST'
         request.body = b'dfsfs'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il payload deve essere in formato JSON')
 
@@ -35,7 +35,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'È necessario l\'header Authorization')
 
@@ -52,7 +52,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'L\'header Authorization deve contenere un Bearer Token')
 
@@ -69,7 +69,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Il token fornito non è valido')
 
@@ -86,7 +86,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['payload']['devices'][0]['willReportState'], True)
 
@@ -108,7 +108,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['payload']['devices']['A1:FF:AA:BB:00:33']['on'], True)
 
@@ -144,7 +144,7 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['payload']['commands'][0]['status'], 'SUCCESS')
 
@@ -180,6 +180,6 @@ class TestHome(TestCase):
                        b'       }' \
                        b'   ]' \
                        b'}'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['payload']['commands'][0]['status'], 'ERROR')

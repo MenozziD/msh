@@ -1,5 +1,5 @@
 from unittest import TestCase
-from test import read_xml_prod, read_xml, simulate_os_command
+from test import read_xml_prod
 from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, DbManager
 
 

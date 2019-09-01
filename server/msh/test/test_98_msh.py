@@ -1,24 +1,30 @@
 from unittest import TestCase
 from test import simulate_os_command, read_xml
-from msh import main, check_server_connection, start_serveo
+from msh import Msh
 
 
 class TestMsh(TestCase):
 
-    def test_oauth_serveo(self):
+    def test_a_oauth_serveo_no_internet(self):
+        simulate_os_command("internet-timeout")
+        Msh("settings_test.xml")
+        self.assertEqual(len(Msh.service_avaiable), 0)
+
+    def test_b_oauth_serveo(self):
         simulate_os_command("internet-ok")
-        self.assertEqual(main("settings_test.xml"), True)
+        Msh("settings_test.xml")
+        self.assertEqual(len(Msh.service_avaiable), 2)
 
     def test_check_server_connection_no_timeout(self):
         simulate_os_command("no-usb")
-        self.assertEqual(check_server_connection("url", 1, 1), False)
+        self.assertEqual(Msh.check_server_connection("url", 1, 1), False)
 
-    def test_check_server_ko(self):
+    def test_check_serveo_ko(self):
         read_xml()
         simulate_os_command("internet-timeout")
-        self.assertEqual(start_serveo(), True)
+        self.assertEqual(Msh.start_serveo()[0], True)
 
-    def test_oauth_serveo_no_internet(self):
+    def test_check_pagekite_ko(self):
+        read_xml()
         simulate_os_command("internet-timeout")
-        self.assertEqual(main("settings_test.xml"), True)
-
+        self.assertEqual(Msh.start_pagekite()[0], True)

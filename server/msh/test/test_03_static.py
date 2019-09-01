@@ -1,4 +1,4 @@
-from msh import app
+from msh import Msh
 from unittest import TestCase
 from webapp3 import Request
 from test import read_xml, simulate_login_admin
@@ -10,7 +10,7 @@ class TestStatic(TestCase):
         read_xml()
         request = Request.blank('/')
         request.method = 'GET'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/static/page/index.html')
 
@@ -18,7 +18,7 @@ class TestStatic(TestCase):
         read_xml()
         request = Request.blank('/favicon.ico')
         request.method = 'GET'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/static/image/hub.png')
 
@@ -26,7 +26,7 @@ class TestStatic(TestCase):
         read_xml()
         request = Request.blank('/static/page/index.html')
         request.method = 'GET'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/static/page/login.html')
 
@@ -34,7 +34,7 @@ class TestStatic(TestCase):
         read_xml()
         request = Request.blank('/static/page/login.html')
         request.method = 'GET'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
 
     def test_static_resources_with_login(self):
@@ -42,5 +42,5 @@ class TestStatic(TestCase):
         request = Request.blank('/static/page/index.html')
         request.method = 'GET'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)

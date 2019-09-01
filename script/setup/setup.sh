@@ -199,6 +199,9 @@ CONF_SWAPSIZE=2048
 #CONF_MAXSWAP=2048" > /etc/dphys-swapfile
 echo "Restart servzio dphys-swapfile"
 sudo /etc/init.d/dphys-swapfile restart 1>/dev/null
+#SCARICO PAGEKITE
+echo "Download di pagekite.py"
+sudo curl https://pagekite.net/pk/pagekite.py --output server/pagekite.py 1>/dev/null 2>/dev/null
 # SCARICO I SERVER
 echo "Scarico server da GIT"
 sudo curl https://codeload.github.com/VanMenoz92/msh/zip/master --output msh.zip 1>/dev/null 2>/dev/null
@@ -211,6 +214,7 @@ echo "1) Accedere all'URL https://console.actions.google.com/ e creare un nuovo 
 echo "2) Accedere alla voce project settings e copiare il project ID"
 echo "---------- LETTURA PARAMETRI ----------"
 read -p "Inserire GOOGLE_PROJECT_ID: " GOOGLE_PROJECT_ID
+read -p "Inserire inidrizzo e-mail per pagekite: " PAGEKITE_MAIL
 read -p "Inserire un USERNAME per applicazione (es. simone): " USERNAME
 read -p "Inserire la PASSWORD per l'utente $USERNAME: " PASSWORD
 read -p "Inserire DOMINIO per l'OAUTH (es. oauthsimone): " OAUTH_DOMAIN
@@ -276,9 +280,16 @@ do
 done
 sudo rm -f action.json 
 sudo rm -f creds.data
+#REGISTRAZIONE DOMINI SU PAGEKITE
+cd server
+echo "---------- CREAZIONE DOMINI PAGEKITE ----------"
+echo "Creo dominio $WEBAPP_DOMAIN.pagekite.me"
+echo $'Y\n'$PAGEKITE_MAIL$'\nY\nY' | sudo python pagekite.py 65177 $WEBAPP_DOMAIN.pagekite.me 2>/dev/null &
+echo "Creo dominio oauth-$WEBAPP_DOMAIN.pagekite.me"
+echo $'Y\nY' | sudo python pagekite.py 3000 oauth-$WEBAPP_DOMAIN.pagekite.me 1>/dev/null 2>/dev/null &
+sudo pgrep python | awk '{print $0}' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 # DATABASE
 echo "---------- CREAZIONE DATABASE ----------"
-cd server
 echo "Creo cartella per il database"
 mkdir msh/db
 echo "Scarico script di create"
@@ -414,6 +425,8 @@ echo "<settings>
 	<project_id_google_actions>$1</project_id_google_actions>
 	<subdomain_oauth>$OAUTH_DOMAIN</subdomain_oauth>
 	<subdomain_webapp>$WEBAPP_DOMAIN</subdomain_webapp>
+	<subdomain_oauth_pagekite>oauth-$WEBAPP_DOMAIN</subdomain_oauth_pagekite>
+	<subdomain_webapp_pagekite>$WEBAPP_DOMAIN</subdomain_webapp_pagekite>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
 		<filename>msh.log</filename>
@@ -475,6 +488,58 @@ echo "Assegno permessi di esecuzione a /etc/init.d/oauth"
 sudo chmod +x /etc/init.d/oauth 1>/dev/null
 echo "Eseguo systemctl enable oauth"
 sudo systemctl enable oauth 1>/dev/null 2>/dev/null
+# SERVIZIO PAGEKITE
+echo "---------- CREAZIONE SERVIZIO PAGEKITE ----------"
+echo "Creo script pagekite.sh"
+echo $'#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          pagekite
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servizio PAGEKITE
+# Description:       Servizio PAGEKITE
+### END INIT INFO
+
+case "$1" in
+start)  if [[ $(ps -aux | grep pagekite.py | grep python) ]]
+                then
+						echo "Servizio PAGEKITE attivo"
+                else
+                        cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
+						echo "Avviato servizio PAGEKITE"
+                fi
+                ;;
+stop)   if [[ $(ps -aux | grep pagekite.py | grep python) ]]
+                then
+                        ps -aux | grep pagekite | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+						echo "Stoppato servizio PAGEKITE"
+                else
+                        echo "Servizio PAGEKITE non attivo"
+                fi
+        ;;
+restart) if [[ $(ps -aux | grep pagekite.py | grep python) ]]
+                 then
+                        ps -aux | grep pagekite | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+						cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
+						echo "Restart servizio PAGEKITE"
+                else
+                        cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
+						echo "Avviato servizio PAGEKITE"
+                fi
+        ;;
+*)      echo "Usage: $0 {start|stop|restart}"
+        exit 2
+        ;;
+esac
+exit 0' > pagekite.sh
+echo "Sposto script pagekite.sh in /etc/init.d/pagekite"
+sudo mv pagekite.sh /etc/init.d/pagekite
+echo "Assegno permessi di esecuzione a /etc/init.d/pagekite"
+sudo chmod +x /etc/init.d/pagekite 1>/dev/null
+echo "Eseguo systemctl enable pagekite"
+sudo systemctl enable pagekite 1>/dev/null 2>/dev/null
 # SERVIZIO SERVEO
 echo "---------- CREAZIONE SERVIZIO SERVEO ----------"
 echo "Creo script serveo.sh"
@@ -550,7 +615,7 @@ echo $'#!/bin/bash
 ### END INIT INFO
 
 case "$1" in
-start)  if [ $(pgrep python) ]
+start)  if [[ $(ps -aux | grep msh.py | grep python) ]]
 		then
 			echo "Servizio MSH attivo"
 		else
@@ -558,17 +623,17 @@ start)  if [ $(pgrep python) ]
 			echo "Avviato servizio MSH"
 		fi
 		;;
-stop)   if [ $(pgrep python) ]
+stop)   if [[ $(ps -aux | grep msh.py | grep python) ]]
 		then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			echo "Stoppato servizio MSH"
 		else
 			echo "Servizio MSH non attivo"
 		fi
         ;;
-restart) if [ $(pgrep python) ]
+restart) if [[ $(ps -aux | grep msh.py | grep python) ]]
 		 then
-			pgrep python | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+			ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
 			echo "Restart servizio MSH"
 		else
@@ -602,9 +667,21 @@ else
 	echo "INSTALLAZIONE KO!!"
 fi
 echo "---------- TO DO ----------"
-echo "Impostare credenziali Account Linking | OAuth | Authorization Code
-Client ID: $client_id
-Client secret: $client_secret
-Authorization URL: https://$OAUTH_DOMAIN.serveo.net/oauth
-Token URL: https://$OAUTH_DOMAIN.serveo.net/token"
+echo $'Accedere a Google Actions e impostare nella sezione Develop | Account Linking:
+Account Creation -> NO
+Linking Type: OAuth | Authorization Code
+OAuth Client information:
+	\tClient ID: $client_id
+	\tClient secret: $client_secret
+	\tAuthorization URL: https://$OAUTH_DOMAIN.serveo.net/oauth
+	\tToken URL: https://$OAUTH_DOMAIN.serveo.net/token
+Testing instructions: test
+
+Se serveo dovesse smettere di funzionare:
+1) Accedere a Google Actions e impostare nella sezione Develop | Actions:
+	\tFulfillment: https://$WEBAPP_DOMAIN.pagekite.me/api/home
+2) Accedere a Google Actions e impostare nella sezione Develop | Account Linking:
+OAuth Client information:
+	\tAuthorization URL: https://oauth-$WEBAPP_DOMAIN.pagekite.me/oauth
+	\tToken URL: https://oauth-$WEBAPP_DOMAIN.pagekite.me/token'
 exit 0

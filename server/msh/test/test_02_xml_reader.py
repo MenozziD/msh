@@ -14,6 +14,8 @@ def test_xml_reader_log_file():
             "   <project_id_google_actions>fake_project</project_id_google_actions>"
             "   <subdomain_oauth>fake_oauth</subdomain_oauth>"
             "   <subdomain_webapp>fake_webapp</subdomain_webapp>"
+            "   <subdomain_oauth_pagekite>fake_oauth</subdomain_oauth_pagekite>"
+            "   <subdomain_webapp_pagekite>fake_webapp</subdomain_webapp_pagekite>"
             "   <log>"
             "       <!-- Se valorizzato con None logga in console -->"
             "       <filename>msh.log</filename>"

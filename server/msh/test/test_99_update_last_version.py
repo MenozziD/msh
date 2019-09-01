@@ -1,4 +1,4 @@
-from msh import app
+from msh import Msh
 from unittest import TestCase
 from webapp3 import Request
 from test import simulate_login_user, simulate_login_admin, read_xml
@@ -10,7 +10,7 @@ class TestUpdateLastVersion(TestCase):
         read_xml()
         request = Request.blank('/api/update_last_version')
         request.method = 'GET'
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'Devi effettuare la login per utilizzare questa API')
 
@@ -19,7 +19,7 @@ class TestUpdateLastVersion(TestCase):
         request = Request.blank('/api/update_last_version')
         request.method = 'GET'
         request.headers['Cookie'] = simulate_login_user().headers['Set-Cookie']
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'La funzione richiesta può essere eseguita solo da un ADMIN')
 
@@ -28,6 +28,6 @@ class TestUpdateLastVersion(TestCase):
         request = Request.blank('/api/update_last_version')
         request.method = 'GET'
         request.headers['Cookie'] = simulate_login_admin().headers['Set-Cookie']
-        response = request.get_response(app)
+        response = request.get_response(Msh.app)
         self.assertEqual(response.status_int, 200)
         self.assertEqual(response.json['output'], 'OK')
