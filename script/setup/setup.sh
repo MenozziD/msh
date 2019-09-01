@@ -671,17 +671,17 @@ echo $'Accedere a Google Actions e impostare nella sezione Develop | Account Lin
 Account Creation -> NO
 Linking Type: OAuth | Authorization Code
 OAuth Client information:
-	\tClient ID: $client_id
-	\tClient secret: $client_secret
-	\tAuthorization URL: https://$OAUTH_DOMAIN.serveo.net/oauth
-	\tToken URL: https://$OAUTH_DOMAIN.serveo.net/token
+	\tClient ID: '$client_id$'
+	\tClient secret: '$client_secret$'
+	\tAuthorization URL: https://'$OAUTH_DOMAIN$'.serveo.net/oauth
+	\tToken URL: https://'$OAUTH_DOMAIN$'.serveo.net/token
 Testing instructions: test
 
 Se serveo dovesse smettere di funzionare:
 1) Accedere a Google Actions e impostare nella sezione Develop | Actions:
-	\tFulfillment: https://$WEBAPP_DOMAIN.pagekite.me/api/home
+	\tFulfillment: https://'$WEBAPP_DOMAIN$'.pagekite.me/api/home
 2) Accedere a Google Actions e impostare nella sezione Develop | Account Linking:
 OAuth Client information:
-	\tAuthorization URL: https://oauth-$WEBAPP_DOMAIN.pagekite.me/oauth
-	\tToken URL: https://oauth-$WEBAPP_DOMAIN.pagekite.me/token'
+	\tAuthorization URL: https://oauth-'$WEBAPP_DOMAIN$'.pagekite.me/oauth
+	\tToken URL: https://oauth-'$WEBAPP_DOMAIN$'.pagekite.me/token'
 exit 0
