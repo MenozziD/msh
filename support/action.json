@@ -1,0 +1,94 @@
+{
+  "manifest": {
+    "displayName": string,
+    "invocationName": string,
+    "shortDescription": string,
+    "longDescription": string,
+    "category": string,
+    "smallSquareLogoUrl": string,
+    "largeLandscapeLogoUrl": string,
+    "companyName": string,
+    "contactEmail": string,
+    "termsOfServiceUrl": string,
+    "privacyUrl": string,
+    "sampleInvocation": [
+      string
+    ],
+    "introduction": string,
+    "testingInstructions": string,
+    "voiceName": string,
+    "surfaceRequirements": {
+      "minimumCapabilities": [
+        {
+          "name": string
+        }
+      ]
+    }
+  },
+  "accountLinking": {
+    "clientId": string,
+    "clientSecret": string,
+    "grantType": "AUTH_GRANT_TYPE_UNSPECIFIED or AUTH_CODE or IMPLICIT",
+    "authenticationUrl": string,
+    "accessTokenUrl": string,
+    "scopes": [
+      string
+    ],
+    "scopeExplanationUrl": string,
+    "googleSignInClientId": string,
+    "assertionTypes": [
+      UNKNOWN_ASSERTION_TYPE,
+      ID_TOKEN,
+      ACCOUNT_CREATION
+    ]
+  },
+  "actions": [
+    {
+      "name": string,
+      "fulfillment": {
+        "conversationName": string
+      },
+      "intent": {
+        "name": string,
+        "parameters": [
+          {
+            "name": string,
+            "type": string
+          }
+        ],
+        "trigger": {
+          "queryPatterns": [
+            string
+          ]
+        }
+      },
+      "description": string,
+      "signInRequired": boolean
+    }
+  ],
+  "types": [
+    {
+      "name": string,
+      "entities": [
+        {
+          "key": string,
+          "synonyms": [
+            string
+          ]
+        }
+      ],
+      "isUserDefined": boolean
+    }
+  ],
+  "conversations": {
+    string: {
+      "name": string,
+      "url": string,
+      "httpHeaders": {
+        string: string
+      },
+      "fulfillmentApiVersion": number
+    }
+  },
+  "locale": "it"
+}
