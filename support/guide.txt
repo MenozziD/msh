@@ -1,36 +1,45 @@
+-- WEBOB
 https://docs.pylonsproject.org/projects/webob/en/stable/api/response.html
+https://webapp2.readthedocs.io/en/latest/guide/testing.html
+
+-- GOOGLE HOME
 https://github.com/Nilhcem/smarthome-androidthings
+https://github.com/actions-on-google
 https://developers.google.com/actions/smarthome/traits/
 https://developers.google.com/actions/reference/rest/Shared.Types/ActionPackage
-https://github.com/actions-on-google
+https://developers.google.com/actions/reference/rest/Shared.Types/AppResponse
+https://developers.google.com/actions/sdk/define-actions
+https://developers.google.com/actions/reference/rest/intents
 https://developers.google.com/assistant/sdk/guides/library/python/extend/custom-actions
 https://stackoverflow.com/questions/41088596/make-google-actions-development-project-preview-persist-longer
 
+-- DOCKER
 https://docs.docker.com/install/linux/docker-ce/debian/
 https://ownyourbits.com/2018/06/27/running-and-building-arm-docker-containers-in-x86/
-
 https://www.quora.com/How-can-I-generate-a-bootable-iso-from-a-Docker-image
 https://www.packer.io/intro/getting-started/build-image.html
 https://mr.gy/blog/build-vm-image-with-docker.html
 https://github.com/CodersOS/linux-iso-creator
 
+-- RASPBERRY
 https://wiki.debian.org/RaspberryPi
 https://wiki.debian.org/RaspberryPi2
 https://wiki.debian.org/ArmPorts
 
+-- SCHEDA SD
 https://www.paragon-drivers.com/en/lfswin/
 https://github.com/balena-io/etcher/releases/download/v1.5.43/balenaEtcher-Portable-1.5.43.exe
 https://www.raspberryitaly.com/backup-scheda-sd/
 https://github.com/Drewsif/PiShrink
 
+-- SERVIZI
 http://guide.debianizzati.org/index.php/Gestione_e_creazione_di_servizi_in_Debian
 https://gist.github.com/naholyr/4275302
 
+-- SWAP
 https://docs.alfresco.com/3.4/tasks/swap-space-lin.html
 
+-- TEST
 https://docs.sonarqube.org/display/PLUG/SonarPython
 https://docs.pytest.org/en/latest/getting-started.html
 https://ludusrusso.cc/2018/01/25/tdd-flask-pytest-2/
-https://webapp2.readthedocs.io/en/latest/guide/testing.html
-
-https://developers.google.com/actions/reference/rest/Shared.Types/ActionPackage
