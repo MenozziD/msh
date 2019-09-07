@@ -423,8 +423,8 @@ echo "<settings>
 	<path_datastore>../oauth/datastore.js</path_datastore>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
 	<project_id_google_actions>$1</project_id_google_actions>
-	<subdomain_oauth>$OAUTH_DOMAIN</subdomain_oauth>
-	<subdomain_webapp>$WEBAPP_DOMAIN</subdomain_webapp>
+	<subdomain_oauth_serveo>$OAUTH_DOMAIN</subdomain_oauth_serveo>
+	<subdomain_webapp_serveo>$WEBAPP_DOMAIN</subdomain_webapp_serveo>
 	<subdomain_oauth_pagekite>oauth-$WEBAPP_DOMAIN</subdomain_oauth_pagekite>
 	<subdomain_webapp_pagekite>$WEBAPP_DOMAIN</subdomain_webapp_pagekite>
 	<log>
@@ -559,8 +559,8 @@ start)  if [ $(pgrep autossh) ]
                 then
 						echo "Servizio SERVEO attivo"
                 else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
                         autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
                         echo "Avviato servizio SERVEO"
                 fi
@@ -578,13 +578,13 @@ restart) if [ $(pgrep autossh) ]
                  then
                         pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
                         ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-						oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
 						autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
                         echo "Restart servizio SERVEO"
                 else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
                         autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
                         echo "Avviato servizio SERVEO"
                 fi

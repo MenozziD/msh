@@ -5,8 +5,8 @@
    <path_datastore>../oauth/datastore_test.js</path_datastore>
    <timestamp>%Y-%m-%d %H:%M:%S</timestamp>
    <project_id_google_actions>fake_project</project_id_google_actions>
-   <subdomain_oauth>fake_oauth</subdomain_oauth>
-   <subdomain_webapp>fake_webapp</subdomain_webapp>
+   <subdomain_oauth_serveo>fake_oauth</subdomain_oauth_serveo>
+   <subdomain_webapp_serveo>fake_webapp</subdomain_webapp_serveo>
    <subdomain_oauth_pagekite>fake_oauth</subdomain_oauth_pagekite>
    <subdomain_webapp_pagekite>fake_webapp</subdomain_webapp_pagekite>
    <log>

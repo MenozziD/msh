@@ -22,9 +22,4 @@ class TestMsh(TestCase):
     def test_check_serveo_ko(self):
         read_xml()
         simulate_os_command("internet-timeout")
-        self.assertEqual(Msh.start_serveo()[0], True)
-
-    def test_check_pagekite_ko(self):
-        read_xml()
-        simulate_os_command("internet-timeout")
-        self.assertEqual(Msh.start_pagekite()[0], True)
+        self.assertEqual(Msh.final_check('serveo', 'dominio')[0], True)

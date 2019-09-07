@@ -41,13 +41,12 @@ class Msh:
             format=XmlReader.settings['log']['format'],
             level=XmlReader.settings['log']['level'])
         porta = '65177'
-        Msh.start_oauth()
+        Msh.start_service('pgrep node', 'oauth')
         if Msh.check_server_connection("http://www.google.com", 10, 5):
-            Msh.start_dns_service("http://serveo.net", Msh.start_serveo, "serveo")
-            Msh.start_dns_service("http://pagekite.net", Msh.start_pagekite, "pagekite")
+            Msh.start_dns_service("http://serveo.net", "serveo", 'pgrep autossh', '.serveo.net')
+            Msh.start_dns_service("http://pagekite.net", "pagekite", 'ps -aux | grep pagekite.py | grep python', '.pagekite.me')
         if len(Msh.service_avaiable) == 0:
             info("Avvio solo in locale")
-            execute_os_cmd("sudo service serveo stop")
             ip_address = ifaddresses(get_gateway())[AF_INET][0]['addr']
         else:
             ip_address = 'localhost'
@@ -74,53 +73,31 @@ class Msh:
         return server_on
 
     @staticmethod
-    def start_oauth():
-        response = execute_os_cmd('pgrep node')
+    def start_service(cmd_live, name):
+        response = execute_os_cmd(cmd_live, check_out=True)
         if response['cmd_out'] == "":
-            execute_os_cmd("sudo service oauth start")
+            execute_os_cmd("sudo service " + name + " start")
         else:
-            info("Oauth server is already running")
+            info("%s is already running", name)
 
     @staticmethod
-    def start_serveo():
-        response = execute_os_cmd('pgrep autossh')
-        if response['cmd_out'] == "":
-            execute_os_cmd("sudo service serveo start")
-        else:
-            info("Serveo is already running")
+    def final_check(name, dominio):
         local = False
-        oauth_url = "https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net"
-        webapp_url = "https://" + XmlReader.settings['subdomain_webapp'] + ".serveo.net"
-        if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 2, 5):
-            execute_os_cmd("sudo service serveo restart")
-            if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth'] + ".serveo.net/login", 2, 5):
+        oauth_url = "https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio
+        webapp_url = "https://" + XmlReader.settings['subdomain_webapp_' + name] + dominio
+        if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 2, 5):
+            execute_os_cmd("sudo service " + name + " restart")
+            if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 2, 5):
                 local = True
                 oauth_url = ''
                 webapp_url = ''
         return local, oauth_url, webapp_url
 
     @staticmethod
-    def start_pagekite():
-        response = execute_os_cmd('ps -aux | grep pagekite.py | grep python', check_out=True)
-        if response['cmd_out'] == "":
-            execute_os_cmd("sudo service pagekite start")
-        else:
-            info("Pagekite is already running")
-        local = False
-        oauth_url = "https://" + XmlReader.settings['subdomain_oauth_pagekite'] + ".pagekite.me"
-        webapp_url = "https://" + XmlReader.settings['subdomain_webapp_pagekite'] + ".pagekite.me"
-        if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_pagekite'] + ".pagekite.me/login", 2, 5):
-            execute_os_cmd("sudo service pagekite restart")
-            if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_pagekite'] + ".pagekite.me/login", 2, 5):
-                local = True
-                oauth_url = ''
-                webapp_url = ''
-        return local, oauth_url, webapp_url
-
-    @staticmethod
-    def start_dns_service(test_url, funzione, name):
+    def start_dns_service(test_url, name, cmd_live, dominio):
         if Msh.check_server_connection(test_url, 2, 2):
-            local, oauth_url, webapp_url = funzione()
+            Msh.start_service(cmd_live, name)
+            local, oauth_url, webapp_url = Msh.final_check(name, dominio)
             if not local:
                 Msh.service_avaiable.append(name)
                 Msh.oauth_urls.append(oauth_url)

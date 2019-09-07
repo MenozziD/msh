@@ -20,8 +20,8 @@ class XmlReader:
         path_datastore = xml.getElementsByTagName('path_datastore')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data
-        subdomain_oauth = xml.getElementsByTagName('subdomain_oauth')[0].firstChild.data
-        subdomain_webapp = xml.getElementsByTagName('subdomain_webapp')[0].firstChild.data
+        subdomain_oauth_serveo = xml.getElementsByTagName('subdomain_oauth_serveo')[0].firstChild.data
+        subdomain_webapp_serveo = xml.getElementsByTagName('subdomain_webapp_serveo')[0].firstChild.data
         subdomain_oauth_pagekite = xml.getElementsByTagName('subdomain_oauth_pagekite')[0].firstChild.data
         subdomain_webapp_pagekite = xml.getElementsByTagName('subdomain_webapp_pagekite')[0].firstChild.data
         log = {
@@ -38,8 +38,8 @@ class XmlReader:
             'path_datastore': path_datastore,
             'timestamp': timestamp,
             'project_id_google_actions': project_id_google_actions,
-            'subdomain_oauth': subdomain_oauth,
-            'subdomain_webapp': subdomain_webapp,
+            'subdomain_oauth_serveo': subdomain_oauth_serveo,
+            'subdomain_webapp_serveo': subdomain_webapp_serveo,
             'subdomain_oauth_pagekite': subdomain_oauth_pagekite,
             'subdomain_webapp_pagekite': subdomain_webapp_pagekite,
             'log': log

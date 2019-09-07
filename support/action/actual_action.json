@@ -1,0 +1,27 @@
+{
+	"actions": [
+		{
+			"description": "Device Intent",
+			"fulfillment": {
+				"conversationName": "mshApp"
+			},
+			"name": "actions.devices"
+			"intent": {
+				"name": "actions.devices.EXECUTE",
+				"trigger": {
+				  "queryPatterns": [
+					"accendi la lampada",
+					"spegni la lampada"
+				  ]
+				}
+			}
+		}
+	],
+	"conversations": {
+		"mshApp": {
+			"name": "mshApp",
+			"url": "https://$WEBAPP_DOMAIN.serveo.net/api/home"
+		}
+	},
+	"locale": "it"
+}

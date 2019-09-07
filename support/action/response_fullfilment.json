@@ -1,0 +1,25 @@
+{
+  "expectUserResponse": true,
+  "expectedInputs": [
+    {
+      "inputPrompt": {
+        "richInitialPrompt": {
+          "items": [
+            {
+              "simpleResponse": {
+                "textToSpeech": "Hi! Say something, and I'll repeat it."
+              }
+            }
+          ]
+        }
+      },
+      "possibleIntents": [
+        {
+          "intent": "actions.intent.TEXT"
+        }
+      ]
+    }
+  ],
+  "conversationToken": "{\"data\":{}}",
+  "userStorage": "{\"data\":{}}"
+}
