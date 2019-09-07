@@ -8,6 +8,21 @@
 			"name": "actions.devices"
 		},
 		{
+		  "description": "MSH Welcome Intent",
+		  "name": "MAIN",
+		  "fulfillment": {
+			"conversationName": "mshApp"
+		  },
+		  "intent": {
+			"name": "actions.intent.MAIN",
+			"trigger": {
+			  "queryPatterns": [
+				"parla con MSH"
+			  ]
+			}
+		  }
+		},
+		{
 			"description": "Text Intent",
 			"fulfillment": {
 				"conversationName": "mshApp"
@@ -17,8 +32,8 @@
 				"name": "actions.intent.TEXT",
 				"trigger": {
 				  "queryPatterns": [
-					"accendi lampada",
-					"spegni lampada"
+					"calcio",
+					"prova dialogo"
 				  ]
 				}
 			}
@@ -27,7 +42,7 @@
 	"conversations": {
 		"mshApp": {
 			"name": "mshApp",
-			"url": "https://$WEBAPP_DOMAIN.serveo.net/api/home"
+			"url": "https://domain.serveo.net/api/home"
 		}
 	},
 	"locale": "it"

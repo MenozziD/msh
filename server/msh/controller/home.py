@@ -62,7 +62,12 @@ class Home(BaseHandler):
         template = Home.read_key(template, data)
         for path, node in traverse(template):
             if isinstance(node, str) and (str(node).find("(") > 0 or str(node).find("[") > 0):
-                template = loads(dumps(template, indent=4, sort_keys=True).replace(node, evaluate(node, data, dev, result)))
+                value = evaluate(node, data, dev, result)
+                if not isinstance(value, str):
+                    template = loads(dumps(template, indent=4, sort_keys=True).replace("\"" + node + "\"", str(value)))
+                else:
+                    template = loads(dumps(template, indent=4, sort_keys=True).replace(node, value))
+        template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true").replace("\"OFF\"", "false"))
         template = loads(dumps(template, indent=4, sort_keys=True).replace("\"ON\"", "true").replace("\"OFF\"", "false"))
         return template
 

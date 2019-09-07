@@ -263,12 +263,43 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 "{  
    ""on"":""cmd_esp(dev['net_ip'], 'toggle')""
 }",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+               ""on"": ""cmd_esp(dev['net_ip'], 'stato')['result']"",
+			   ""online"": ""cmd_ping(dev['net_ip'])['result']""
+            }
+         }
+      ]
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""commands"":[  
+         {  
+            ""ids"":[  
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_TEMP","ESP8266 con software per temperatura", "4",
 "{  
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.KETTLE"",
+   ""type"":""action.devices.types.THERMOSTAT"",
    ""traits"":[  
-      ""action.devices.traits.TemperatureControl""
+      ""action.devices.traits.TemperatureSetting""
    ],
    ""name"":{  
       ""defaultNames"":[  
@@ -281,9 +312,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    },
    ""willReportState"":true,
    ""attributes"": {
-          ""temperatureStepCelsius"": 0.5,
-          ""temperatureUnitForUX"": ""C"",
-		  ""queryOnlyTemperatureControl"": true
+	  ""queryOnlyTemperatureSetting"": true,
+          ""thermostatTemperatureUnit"": ""C""
         },
    ""deviceInfo"":{  
       ""manufacturer"":""MSH"",
@@ -299,11 +329,11 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""requestId"":""data['requestId']"",
    ""payload"":{  
       ""devices"":{  
-         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+        ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
             ""online"":""cmd_ping(dev['net_ip'])['result']"",
-			""temperatureAmbientCelsius"": ""cmd_esp(dev['net_ip'], 'stato')""
-         }
+			""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
+			""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
+        }
       }
    }
 }",
@@ -320,7 +350,9 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{
-               ""temperatureAmbientCelsius"": ""cmd_esp(dev['net_ip'], 'stato')""
+				""online"":""cmd_ping(dev['net_ip'])['result']"",
+				""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
+				""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
             }
          }
       ]

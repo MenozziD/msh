@@ -210,7 +210,12 @@ def cmd_esp(ip, command):
         result['url_request'] = url
         response = loads(execute_request_http(url))
         result['output'] = 'OK'
-        result['result'] = response['output']
+        if response['output'].find("ERR") == 0:
+            sleep(1)
+            response = loads(execute_request_http(url))
+            result['result'] = response['output']
+        else:
+            result['result'] = response['output']
     except Exception as e:
         exception("Exception")
         result['result'] = get_string(16)

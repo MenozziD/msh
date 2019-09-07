@@ -43,3 +43,5 @@ https://docs.alfresco.com/3.4/tasks/swap-space-lin.html
 https://docs.sonarqube.org/display/PLUG/SonarPython
 https://docs.pytest.org/en/latest/getting-started.html
 https://ludusrusso.cc/2018/01/25/tdd-flask-pytest-2/
+
+https://www.arduinolibraries.info/libraries/simple-dht
