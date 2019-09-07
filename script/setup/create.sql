@@ -263,6 +263,53 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 "{  
    ""on"":""cmd_esp(dev['net_ip'], 'toggle')""
 }",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_TEMP","ESP8266 con software per temperatura", "4",
+"{  
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.KETTLE"",
+   ""traits"":[  
+      ""action.devices.traits.TemperatureControl""
+   ],
+   ""name"":{  
+      ""defaultNames"":[  
+         ""ESP8266 con software per temperatura""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[  
+
+      ]
+   },
+   ""willReportState"":true,
+   ""attributes"": {
+          ""temperatureStepCelsius"": 0.5,
+          ""temperatureUnitForUX"": ""C"",
+		  ""queryOnlyTemperatureControl"": true
+        },
+   ""deviceInfo"":{  
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{  
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{  
+   ""requestId"":""data['requestId']"",
+   ""payload"":{  
+      ""devices"":{  
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""cmd_ping(dev['net_ip'])['result']"",
+			""temperatureAmbientCelsius"": ""cmd_esp(dev['net_ip'], 'stato')""
+         }
+      }
+   }
+}",
+"{  
+   ""temperature"":""{'output': 'OK'}""
+}",
 "{  
    ""requestId"":""data['requestId']"",
    ""payload"":{  
@@ -272,9 +319,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""SUCCESS"",
-            ""states"":{  
-               ""on"":""cmd_esp(dev['net_ip'], 'stato')['result']"",
-               ""online"":""cmd_ping(dev['net_ip'])['result']""
+            ""states"":{
+               ""temperatureAmbientCelsius"": ""cmd_esp(dev['net_ip'], 'stato')""
             }
          }
       ]
@@ -449,6 +495,7 @@ INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_RELE");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_TEMP");
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","1","OFF");

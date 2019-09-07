@@ -50,11 +50,11 @@ void handle_CMD() {
   bool ok = false;
   int chk;
   float temp, humi;
-  
+  jsonBuffer.clear();
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
       jsonBuffer["cmd"] = server.arg(i);
-      if (jsonBuffer["cmd"] == "read_dht")
+      if (jsonBuffer["cmd"] == "stato")
         ok=true;
   }
   
@@ -77,7 +77,7 @@ void handle_CMD() {
                 jsonBuffer["output"] ="ERR Connection error"; 
                 break;                
       default: 
-                jsonBuffer["output"] ="ERR Unknown error"; 
+                jsonBuffer["output"] ="ERR " + String(chk) + " error"; 
                 break;
     }
   }  

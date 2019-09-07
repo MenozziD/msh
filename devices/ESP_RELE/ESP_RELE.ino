@@ -35,7 +35,7 @@ void handle_CMD() {
 
   String jsonOut = "";
   bool ok = false;
-  
+  jsonBuffer.clear();
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
       jsonBuffer["cmd"] = server.arg(i);

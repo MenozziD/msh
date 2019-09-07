@@ -25,8 +25,7 @@ const char* password = STAPSK;
 
 ESP8266WebServer server(80);
 
-StaticJsonBuffer<200> jsonBuffer;
-JsonObject& root = jsonBuffer.createObject();
+DynamicJsonDocument jsonBuffer(1024);
 
 const int GPIO0 = 0;
 IRsend irsend(GPIO0); //an IR led is connected to GPIO pin 0
@@ -40,28 +39,28 @@ void handle_CMD() {
 
   String jsonOut = "";
   bool ok = false;
-  
+  jsonBuffer.clear();
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
-      root["cmd"] = server.arg(i);
-      if (root["cmd"] == "pwr" )
+      jsonBuffer["cmd"] = server.arg(i);
+      if (jsonBuffer["cmd"] == "pwr" )
         ok=true;
   }
   
   if (ok)
   {
-    if (root["cmd"] == "pwr")          cmdIR = 0xC; //ON/OF
+    if (jsonBuffer["cmd"] == "pwr")          cmdIR = 0xC; //ON/OF
     for (int i = 0; i < 3; i++)
     {
       irsend.sendRC5(cmdIR, 12); // RC5 TV power code
       delay(10);
     }
-    root["output"] = "OK";
+    jsonBuffer["output"] = "OK";
   }
   else
-    root["output"] = "ERR";    //Comando non valido
+    jsonBuffer["output"] = "ERR";    //Comando non valido
   
-  root.printTo(jsonOut);
+  serializeJson(jsonBuffer, jsonOut);
   server.send(200, " application/json", jsonOut);
 }
 

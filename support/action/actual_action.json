@@ -6,12 +6,19 @@
 				"conversationName": "mshApp"
 			},
 			"name": "actions.devices"
+		},
+		{
+			"description": "Text Intent",
+			"fulfillment": {
+				"conversationName": "mshApp"
+			},
+			"name": "TEXT",
 			"intent": {
-				"name": "actions.devices.EXECUTE",
+				"name": "actions.intent.TEXT",
 				"trigger": {
 				  "queryPatterns": [
-					"accendi la lampada",
-					"spegni la lampada"
+					"accendi lampada",
+					"spegni lampada"
 				  ]
 				}
 			}
