@@ -211,7 +211,7 @@ def cmd_esp(ip, command):
         response = loads(execute_request_http(url))
         result['output'] = 'OK'
         if response['output'].find("ERR") == 0:
-            sleep(1)
+            sleep(2)
             response = loads(execute_request_http(url))
             result['result'] = response['output']
         else:

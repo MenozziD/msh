@@ -312,7 +312,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    },
    ""willReportState"":true,
    ""attributes"": {
-	  ""queryOnlyTemperatureSetting"": true,
+		  ""availableThermostatModes"": ""heat"",
+		  ""queryOnlyTemperatureSetting"": true,
           ""thermostatTemperatureUnit"": ""C""
         },
    ""deviceInfo"":{  
@@ -330,6 +331,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+			""thermostatMode"": ""heat"",
+			""thermostatTemperatureSetpoint"": 23,
             ""online"":""cmd_ping(dev['net_ip'])['result']"",
 			""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
 			""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
@@ -350,6 +353,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{
+				""thermostatMode"": ""heat"",
+				""thermostatTemperatureSetpoint"": 23,
 				""online"":""cmd_ping(dev['net_ip'])['result']"",
 				""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
 				""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
