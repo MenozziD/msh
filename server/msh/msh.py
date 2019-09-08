@@ -42,8 +42,8 @@ class Msh:
             level=XmlReader.settings['log']['level'])
         porta = '65177'
         Msh.start_service('pgrep node', 'oauth')
-        if Msh.check_server_connection("http://www.google.com", 10, 5):
-            Msh.start_dns_service("http://serveo.net", "serveo", 'pgrep autossh', '.serveo.net')
+        if Msh.check_server_connection("http://www.google.com", 15, 5):
+            Msh.start_dns_service("http://serveo.net", "serveo", 'ps -aux | grep serveo | grep 65177', '.serveo.net')
             Msh.start_dns_service("http://pagekite.net", "pagekite", 'ps -aux | grep pagekite.py | grep python', '.pagekite.me')
         if len(Msh.service_avaiable) == 0:
             info("Avvio solo in locale")

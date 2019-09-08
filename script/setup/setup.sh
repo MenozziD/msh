@@ -555,7 +555,7 @@ echo $'#!/bin/bash
 ### END INIT INFO
 
 case "$1" in
-start)  if [ $(pgrep autossh) ]
+start)  if [[ $(ps -aux | grep serveo | grep 65177) ]]
                 then
 						echo "Servizio SERVEO attivo"
                 else
@@ -565,19 +565,17 @@ start)  if [ $(pgrep autossh) ]
                         echo "Avviato servizio SERVEO"
                 fi
                 ;;
-stop)   if [ $(pgrep autossh) ]
+stop)   if [[ $(ps -aux | grep serveo | grep 65177) ]]
                 then
-                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-						ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+                        ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
                         echo "Stoppato servizio SERVEO"
                 else
                         echo "Servizio SERVEO non attivo"
                 fi
         ;;
-restart) if [ $(pgrep autossh) ]
+restart) if [[ $(ps -aux | grep serveo | grep 65177) ]]
                  then
-                        pgrep autossh | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        ps -aux | grep serveo | grep localhost | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
+                        ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
 						oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
 						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
 						autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
