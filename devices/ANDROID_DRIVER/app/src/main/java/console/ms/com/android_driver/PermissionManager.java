@@ -1,6 +1,8 @@
 package console.ms.com.android_driver;
 
 import android.Manifest;
+import android.app.Service;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
 
 import console.ms.com.android_driver.MainActivity;
 import console.ms.com.android_driver.ManageXml;
@@ -23,49 +27,47 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class PermissionManager {
 
-    private ManageXml manageXml;
-    private MainActivity activity;
-    private boolean WRITE_EXTERNAL_STORAGE=false;
-    public boolean getWRITE_EXTERNAL_STORAGE (){return WRITE_EXTERNAL_STORAGE;}
-    public void setWRITE_EXTERNAL_STORAGE (Boolean value){this.WRITE_EXTERNAL_STORAGE=value;}
-    private boolean READ_EXTERNAL_STORAGE=false;
-    public boolean getREAD_EXTERNAL_STORAGE (){return READ_EXTERNAL_STORAGE;}
-    public void setREAD_EXTERNAL_STORAGE (Boolean value){this.READ_EXTERNAL_STORAGE=value;}
+    private String[] PERMISSIONS;
+    private boolean permissionsOK;
+    public boolean getpermissionsOK () {return permissionsOK;}
+    public int PERMISSION_ALL;
 
 
-    public PermissionManager (File configFile){
-        manageXml=new ManageXml(configFile);
+    public PermissionManager (){
+        PERMISSION_ALL = 1;
+        PERMISSIONS= new String[2];
+        PERMISSIONS[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        PERMISSIONS[1] = Manifest.permission.CAMERA;
     }
 
     static void requestPermission(MainActivity activity , String permission, int requestCode)
     {
-        ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
+        ActivityCompat.requestPermissions( activity, new String[] { permission }, requestCode);
     }
 
-    public void WritePermissionManagerInXml(){
-        manageXml.set_app_permission_write(WRITE_EXTERNAL_STORAGE);
-        manageXml.set_app_permission_read(READ_EXTERNAL_STORAGE);
-        manageXml.writeXml();
-    }
+    public static boolean hasPermissions(Context context, String... permissions) {
 
-    public void ReadPermissionManagerInXml(){
-        manageXml.readXml();
-        WRITE_EXTERNAL_STORAGE=manageXml.get_app_permission_write();
-        READ_EXTERNAL_STORAGE=manageXml.get_app_permission_read();
-    }
-
-    // Function to check and request permission
-    static boolean checkPermission(String permission, MainActivity activity)
-    {
         boolean result=false;
-        // Checking if permission is not granted
-        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED)
+        if (context != null && permissions != null) {
             result=true;
-        else
-            if (activity != null) requestPermission(activity,permission,1);
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    result=false;
+                }
+            }
+        }
         return result;
     }
 
+    // Function to check and request permission
+    public void checkPermissions(Context c)
+    {
+        permissionsOK=hasPermissions(c, PERMISSIONS);
+        if (!permissionsOK && c != null && c.getClass().getSimpleName().equals("MainActivity")) {
+            MainActivity activity = (MainActivity) c;
+            ActivityCompat.requestPermissions(activity, PERMISSIONS, PERMISSION_ALL);
+        }
+    }
 
 }
 

@@ -73,7 +73,7 @@
                     var array_settings=[];
                     var autoupdate="false";
                     var timeupdate=2000;
-                    var myVar = setInterval(scanTimer, timeupdate);
+                    var myVar = setInterval(read_all, timeupdate);
 
                     $( document ).ready(init());
 
@@ -92,7 +92,7 @@
 
                     function save_setting(str_set,str_val){
                         $.ajax({
-                            url: "setting",
+                            url: "settings",
                             type: "GET",
                             data: {setting:str_set,cmd:"set",value:str_val},
                             success: function(response,str_set){
@@ -175,6 +175,7 @@
                                 {
                                     $("#timeupdate").val(jsonSetting["timeupdate"]);
                                     timeupdate=parseInt(jsonSetting["timeupdate"]);
+                                    myVar = setInterval(read_all, timeupdate);
                                 }
                             },
                             error: function(xhr){
@@ -225,10 +226,7 @@
                             firstTime=0
                         }
                     }
-                    function scanTimer()
-                    {
-                        read_all();
-                    }
+
                 </script>
                 <body>
                     <div class="container">

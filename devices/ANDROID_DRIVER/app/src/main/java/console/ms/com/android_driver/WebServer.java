@@ -216,14 +216,18 @@ public class WebServer   {
                 request = is.readLine();
 
                 os = new PrintWriter(socket.getOutputStream(), true);
-                arequest = new String [3];
                 arequest=request.split(" ");
-                msgLog +="Method:".concat(arequest[0]+"\n");
-                msgLog +="Resource:".concat(arequest[1]+"\n");
-                msgLog +="HTTP Version:".concat(arequest[2]+"\n");
-                os.print(route(arequest[1]));
-                os.flush();
-                socket.close();
+                if (arequest !=  null)
+                {
+                    msgLog +="Method:".concat(arequest[0]+"\n");
+                    msgLog +="Resource:".concat(arequest[1]+"\n");
+                    msgLog +="HTTP Version:".concat(arequest[2]+"\n");
+                    os.print(route(arequest[1]));
+                    os.flush();
+                    socket.close();
+                }else
+                    msgLog="Richiesta non valida:\n"+request;
+
                 FileManager.Log(msgLog,FileManager.Log_Info);
 
             } catch (Exception e) {

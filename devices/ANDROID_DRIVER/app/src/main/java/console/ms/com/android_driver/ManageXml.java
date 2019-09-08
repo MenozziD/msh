@@ -2,6 +2,7 @@ package console.ms.com.android_driver;
 
 import android.util.Xml;
 
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -22,21 +23,42 @@ public class ManageXml {
     private XmlPullParser xrp;
 
     // frontend_info
+    public String getFrontEndInfo(String tag){
+        String result=null;
+        switch(tag) {
+            case "devicename":
+                result=devicename;
+                break;
+            case "autoupdate":
+                result=autoupdate;
+                break;
+            case "timeupdate":
+                result=timeupdate;
+                break;
+        }
+        return result;
+    }
+
+    public void setFrontEndInfo(String tag,String val){
+        switch(tag) {
+            case "devicename":
+                devicename=val;
+                break;
+            case "autoupdate":
+                autoupdate=val;
+                break;
+            case "timeupdate":
+                timeupdate=val;
+                break;
+        }
+    }
+
     private String devicename;
-    public String get_devicename() { return devicename; }
-    public void set_devicename(String p_devicename) { this.devicename = p_devicename; }
     private String autoupdate;
-    public String get_autoupdate() { return this.autoupdate; }
-    public void set_autoupdate(String p_autoupdate) { this.autoupdate = p_autoupdate; }
-
     private String timeupdate;
-    public String get_timeupdate() { return this.timeupdate; }
-    public void set_timeupdate(String p_timeupdate) { this.timeupdate = p_timeupdate; }
 
 
 
-    // backend_info
-    private String log_record;
 
     // app_info
     private String app_permission_write;
@@ -72,35 +94,10 @@ public class ManageXml {
 
     public ManageXml(File file){
         devicename ="ADTW";
-        timeupdate="false";
-        autoupdate="5000";
-        log_record="";
+        timeupdate="5000";
+        autoupdate="false";
         app_permission_write="false";
         app_permission_read="false";
-        boolean newFile=false;
-        try {
-            if (file.exists()){
-                InputStream  is = new FileInputStream(file);
-                setXrp(XmlPullParserFromInputStream(is));
-            }
-            else{
-                file.createNewFile();
-                newFile=true;
-            }
-
-            setOst(new FileOutputStream(file));
-            setIst(new FileInputStream(file));
-            if (newFile)
-                writeXml();
-            readXml();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     public void writeXml() {
@@ -146,7 +143,6 @@ public class ManageXml {
             xmlSerializer.endDocument();
 
             ost.write(writer.toString().getBytes());
-            ost.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

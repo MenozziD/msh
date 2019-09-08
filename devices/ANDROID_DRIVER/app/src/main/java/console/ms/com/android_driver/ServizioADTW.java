@@ -83,9 +83,9 @@ public class ServizioADTW extends Service {
         try {
             configFile = new File(this.getFilesDir(), "config.xml");
             manageXml=new ManageXml(configFile);
-            permissionManager= new PermissionManager(configFile);
-            permissionManager.ReadPermissionManagerInXml();
-            if(permissionManager.getWRITE_EXTERNAL_STORAGE())
+            permissionManager= new PermissionManager();
+            permissionManager.checkPermissions(this);
+            if(permissionManager.getpermissionsOK())
                 FileManager.makeAppDirectory();
             FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
             sensorsOnBoard= new SensorsOnBoard((SensorManager) getSystemService(SENSOR_SERVICE));

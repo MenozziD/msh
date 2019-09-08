@@ -134,7 +134,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                     activity.getVwLog().setLayoutParams(par_open);
                     activity.getbLogDim().setTag(activity.getTAG_Visible());
                     activity.getbLogDim().setBackgroundResource(R.drawable.down);
-                    if(activity.getPermissionManager().getWRITE_EXTERNAL_STORAGE()) {
+                    if(activity.getPermissionManager().getpermissionsOK()) {
                         activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_OK));
                         activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorGreen));
                     }

@@ -4,13 +4,18 @@ package console.ms.com.android_driver;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity  {
     public PermissionManager getPermissionManager(){return permissionManager;}
     private ManageXml manageXml;
     public ManageXml getManageXml(){return manageXml;}
+    public static final int PERMISSION_ALL = 1;
 
     /* SERVER */
     private Button bServer;
@@ -103,19 +109,9 @@ public class MainActivity extends AppCompatActivity  {
         /* Permission
             Questo per impostare all'avvio le permission e richiderle se mancano.
             Per chiederle serve un activity quindi lo faccio qui
-            Scrivo su Xml Tag delle permission
          */
-        File f = new File(getFilesDir(), "config.xml");
-        permissionManager=new PermissionManager(f);
-        permissionManager.setWRITE_EXTERNAL_STORAGE(PermissionManager.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this));
-        permissionManager.setREAD_EXTERNAL_STORAGE(PermissionManager.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,this));
-        permissionManager.WritePermissionManagerInXml();
-
-        /* Creazione Directory App su memoria esterna*/
-        if (PermissionManager.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this))
-            FileManager.makeAppDirectory();
-        FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
-
+        permissionManager=new PermissionManager();
+        permissionManager.checkPermissions(this);
         /* SERVER */
         tvServer = (TextView) findViewById(R.id.tvServer);
         tvServer.setOnClickListener(Ascoltatore);
@@ -226,25 +222,36 @@ public class MainActivity extends AppCompatActivity  {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        int PERMISSION_REQUEST_CODE=1;
-        boolean result=false;
-        // If this is our permission request result.
-        if(requestCode==PERMISSION_REQUEST_CODE)
-        {
-            if(grantResults.length > 0)
-            {
-                if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                    result=true;
-                if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    permissionManager.setWRITE_EXTERNAL_STORAGE(result);
-                if (permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE))
-                    permissionManager.setREAD_EXTERNAL_STORAGE(result);
-                permissionManager.WritePermissionManagerInXml();
-                FileManager.Log(permissions[0],Integer.toString(grantResults[0]));
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d("TAG", "Permission callback called-------");
+        switch (requestCode) {
+            case PERMISSION_ALL: {
+
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(Manifest.permission.SEND_SMS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (permissionManager.getpermissionsOK()) {
+                        Log.d("TAG", "All services permission granted");
+                        // process the normal flow
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Log.d("TAG", "Some permissions are not granted ask again ");
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    }
+                }
             }
         }
+
     }
 
 }
