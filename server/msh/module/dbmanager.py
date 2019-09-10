@@ -9,7 +9,7 @@ class DbManager:
     db = None
     
     def __init__(self):
-        DbManager.db = connect(XmlReader.settings['path_db'])
+        DbManager.db = connect(XmlReader.settings['path_db'], check_same_thread=False)
     
     @staticmethod
     def close_db():

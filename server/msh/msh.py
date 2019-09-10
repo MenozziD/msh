@@ -25,7 +25,7 @@ class Msh:
         ('/logout', 'controller.Logout'),
         ('/favicon.ico', 'controller.Icon'),
         ('/', 'controller.Index'),
-        (r'/static/(\D+)', 'controller.Static'),
+        (r'/static/(.*)', 'controller.Static'),
     ], config=config, debug=True)
     app.error_handlers[404] = handle_error
     app.error_handlers[405] = handle_error
@@ -41,7 +41,7 @@ class Msh:
             format=XmlReader.settings['log']['format'],
             level=XmlReader.settings['log']['level'])
         porta = '65177'
-        Msh.start_service('pgrep node', 'oauth')
+        Msh.start_service('ps -aux | grep node | grep server.js', 'oauth')
         if Msh.check_server_connection("http://www.google.com", 15, 5):
             Msh.start_dns_service("http://serveo.net", "serveo", 'ps -aux | grep serveo | grep 65177', '.serveo.net')
             Msh.start_dns_service("http://pagekite.net", "pagekite", 'ps -aux | grep pagekite.py | grep python', '.pagekite.me')
@@ -75,7 +75,7 @@ class Msh:
     @staticmethod
     def start_service(cmd_live, name):
         response = execute_os_cmd(cmd_live, check_out=True)
-        if response['cmd_out'] == "":
+        if len(response['cmd_out'].split("\n")) <= 2:
             execute_os_cmd("sudo service " + name + " start")
         else:
             info("%s is already running", name)
@@ -85,9 +85,9 @@ class Msh:
         local = False
         oauth_url = "https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio
         webapp_url = "https://" + XmlReader.settings['subdomain_webapp_' + name] + dominio
-        if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 2, 5):
+        if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 3, 5):
             execute_os_cmd("sudo service " + name + " restart")
-            if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 2, 5):
+            if not Msh.check_server_connection("https://" + XmlReader.settings['subdomain_oauth_' + name] + dominio + "/login", 3, 5):
                 local = True
                 oauth_url = ''
                 webapp_url = ''

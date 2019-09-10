@@ -486,8 +486,6 @@ echo "Sposto script oauth.sh in /etc/init.d/oauth"
 sudo mv oauth.sh /etc/init.d/oauth
 echo "Assegno permessi di esecuzione a /etc/init.d/oauth"
 sudo chmod +x /etc/init.d/oauth 1>/dev/null
-echo "Eseguo systemctl enable oauth"
-sudo systemctl enable oauth 1>/dev/null 2>/dev/null
 # SERVIZIO PAGEKITE
 echo "---------- CREAZIONE SERVIZIO PAGEKITE ----------"
 echo "Creo script pagekite.sh"
@@ -538,8 +536,6 @@ echo "Sposto script pagekite.sh in /etc/init.d/pagekite"
 sudo mv pagekite.sh /etc/init.d/pagekite
 echo "Assegno permessi di esecuzione a /etc/init.d/pagekite"
 sudo chmod +x /etc/init.d/pagekite 1>/dev/null
-echo "Eseguo systemctl enable pagekite"
-sudo systemctl enable pagekite 1>/dev/null 2>/dev/null
 # SERVIZIO SERVEO
 echo "---------- CREAZIONE SERVIZIO SERVEO ----------"
 echo "Creo script serveo.sh"
@@ -596,8 +592,6 @@ echo "Sposto script serveo.sh in /etc/init.d/serveo"
 sudo mv serveo.sh /etc/init.d/serveo
 echo "Assegno permessi di esecuzione a /etc/init.d/serveo"
 sudo chmod +x /etc/init.d/serveo 1>/dev/null
-echo "Eseguo systemctl enable serveo"
-sudo systemctl enable serveo 1>/dev/null 2>/dev/null
 # SERVIZIO MSH
 echo "---------- CREAZIONE SERVIZIO MSH ----------"
 echo "Creo script msh.sh"
@@ -648,12 +642,10 @@ echo "Sposto script msh.sh in /etc/init.d/msh"
 sudo mv msh.sh /etc/init.d/msh
 echo "Assegno permessi di esecuzione a /etc/init.d/msh"
 sudo chmod +x /etc/init.d/msh 1>/dev/null
-echo "Eseguo systemctl enable msh"
+echo "Imposto avvio servizio msh all'avvio"
 sudo systemctl enable msh 1>/dev/null 2>/dev/null
 echo "Eseguo service msh start"
 sudo service msh start 1>/dev/null
-echo "Imposto avvio servizio msh all'avvio"
-sudo update-rc.d msh enable 1>/dev/null
 # TEST
 echo "---------- TEST INSTALLAZIONE ----------"
 sleep 5
