@@ -22,6 +22,17 @@ public class ManageXml {
     private FileOutputStream ost;
     private XmlPullParser xrp;
 
+    private boolean my_config;
+    public void setMy_config(boolean value){my_config=value;}
+    public boolean getMy_config(){return my_config;}
+
+    private String devicename;
+    private String autoupdate;
+    private String timeupdate;
+
+
+
+
     // frontend_info
     public String getFrontEndInfo(String tag){
         String result=null;
@@ -53,51 +64,11 @@ public class ManageXml {
         }
     }
 
-    private String devicename;
-    private String autoupdate;
-    private String timeupdate;
-
-
-
-
-    // app_info
-    private String app_permission_write;
-    private String app_permission_read;
-    public boolean get_app_permission_write(){
-        boolean result=false;
-        if (app_permission_write.equals("true"))
-            result=true;
-        return result;
-    }
-
-    public void set_app_permission_write(boolean value){
-        String strValue="false";
-        if(value)
-            strValue="true";
-        app_permission_write=strValue;
-    }
-
-    public void set_app_permission_read(boolean value){
-        String strValue="false";
-        if(value)
-            strValue="true";
-        app_permission_read=strValue;
-
-    }
-
-    public boolean get_app_permission_read(){
-        boolean result=false;
-        if (app_permission_write.equals("true"))
-            result=true;
-        return result;
-    }
-
-    public ManageXml(File file){
+    public ManageXml(){
+        my_config=false;
         devicename ="ADTW";
         timeupdate="5000";
         autoupdate="false";
-        app_permission_write="false";
-        app_permission_read="false";
     }
 
     public void writeXml() {
@@ -119,30 +90,19 @@ public class ManageXml {
             xmlSerializer.attribute("","value", autoupdate);
             xmlSerializer.endTag("", "autoupdate");
 
-
             xmlSerializer.startTag("", "timeupdate");
             xmlSerializer.attribute("","value", timeupdate);
             xmlSerializer.endTag("", "timeupdate");
 
             xmlSerializer.endTag("", "frontend_info");
 
-            xmlSerializer.startTag("", "app_info");
-
-            xmlSerializer.startTag("", "app_permission_write");
-            xmlSerializer.attribute("","value", app_permission_write);
-            xmlSerializer.endTag("", "app_permission_write");
-
-            xmlSerializer.startTag("", "app_permission_read");
-            xmlSerializer.attribute("","value", app_permission_read);
-            xmlSerializer.endTag("", "app_permission_read");
-
-            xmlSerializer.endTag("", "app_info");
-
             xmlSerializer.endTag("", "settings");
 
             xmlSerializer.endDocument();
 
             ost.write(writer.toString().getBytes());
+            ost.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,6 +114,10 @@ public class ManageXml {
         boolean app_info = false;
 
         try {
+            if (my_config){
+                xrp = Xml.newPullParser();
+                xrp.setInput(ist, null);
+            }
             int event = xrp.getEventType();
             while (event != XmlPullParser.END_DOCUMENT)  {
                 String name=xrp.getName();
@@ -169,10 +133,6 @@ public class ManageXml {
                             autoupdate=xrp.getAttributeValue(0);
                         if (name.equals("timeupdate")&& frontend_info)
                             timeupdate=xrp.getAttributeValue(0);
-                        if (name.equals("app_permission_write")&& app_info)
-                            app_permission_write=xrp.getAttributeValue(0);
-                        if (name.equals("app_permission_read")&& app_info)
-                            app_permission_read=xrp.getAttributeValue(0);
                         break;
                 }
                 event = xrp.next();
@@ -180,23 +140,6 @@ public class ManageXml {
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public XmlPullParser XmlPullParserFromInputStream(InputStream input)
-    {
-        XmlPullParser xpp = null;
-        try {
-            XmlPullParserFactory xppf = XmlPullParserFactory.newInstance();
-            xpp = xppf.newPullParser();
-            xpp.setInput(input,null);
-
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        }
-        finally {
-            return xpp;
-        }
-
     }
 
     public void setXrp(XmlPullParser xrp) {
@@ -210,6 +153,5 @@ public class ManageXml {
     public void setOst(FileOutputStream ost) {
         this.ost = ost;
     }
-
 
 }

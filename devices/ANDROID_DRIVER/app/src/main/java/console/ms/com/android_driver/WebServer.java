@@ -121,6 +121,16 @@ public class WebServer   {
                     content = "application/json";
 
                 }
+                if (uri.getPath().equals("/camera"))
+                {
+                    result=api.Sensor(uri);
+                    jsonObject.put("response",result);
+                    jsonObject.put("timestamp", sdf.format(new Date()));
+                    response = jsonObject.toString();
+                    content = "application/json";
+
+                }
+
                 if (uri.getPath().equals("/settings"))
                 {
                     result=api.Settings(uri);

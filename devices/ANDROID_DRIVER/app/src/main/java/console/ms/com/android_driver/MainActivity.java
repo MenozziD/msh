@@ -2,32 +2,53 @@ package console.ms.com.android_driver;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
-public class MainActivity extends AppCompatActivity  {
 
+public class MainActivity extends AppCompatActivity {
+
+
+    private String tag ="TAG";
 
     private static final String TAG_Visible = "Visible";
     private static final String TAG_Server = "Server";
@@ -91,10 +112,9 @@ public class MainActivity extends AppCompatActivity  {
 
 
     @Override
-    protected void onResume() { super.onResume(); }
-
-    @Override
-    protected void onPause() { super.onPause(); }
+    protected void onResume() {
+        super.onResume();
+    }
 
 
     @Override
@@ -103,8 +123,10 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         Toast toast;
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         AscoltatoreMainActivity Ascoltatore = new AscoltatoreMainActivity(this);
         App this_app = App.getInstance();
+
 
         /* Permission
             Questo per impostare all'avvio le permission e richiderle se mancano.
@@ -112,6 +134,7 @@ public class MainActivity extends AppCompatActivity  {
          */
         permissionManager=new PermissionManager();
         permissionManager.checkPermissions(this);
+
         /* SERVER */
         tvServer = (TextView) findViewById(R.id.tvServer);
         tvServer.setOnClickListener(Ascoltatore);
@@ -173,8 +196,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -224,7 +245,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-        Log.d("TAG", "Permission callback called-------");
+        Log.d(tag, "Permission callback called-------");
         switch (requestCode) {
             case PERMISSION_ALL: {
 
@@ -238,11 +259,11 @@ public class MainActivity extends AppCompatActivity  {
                         perms.put(permissions[i], grantResults[i]);
                     // Check for both permissions
                     if (permissionManager.getpermissionsOK()) {
-                        Log.d("TAG", "All services permission granted");
+                        Log.d(tag, "All services permission granted");
                         // process the normal flow
                         //else any one or both the permissions are not granted
                     } else {
-                        Log.d("TAG", "Some permissions are not granted ask again ");
+                        Log.d(tag, "Some permissions are not granted ask again ");
                         //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
                         // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
@@ -253,6 +274,5 @@ public class MainActivity extends AppCompatActivity  {
         }
 
     }
-
 }
 

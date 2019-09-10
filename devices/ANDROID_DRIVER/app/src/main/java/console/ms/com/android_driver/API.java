@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class API {
 
     //private ServizioADTW servizioADTW;

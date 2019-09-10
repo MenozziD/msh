@@ -63,6 +63,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
 
 
         switch (v.getId()) {
+
             case R.id.bServer:
                 if (activity.getbServer().getTag().equals(activity.getTAG_Server())) {
                     app.stopServerService();
@@ -73,12 +74,18 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                     activity.gettvServer().setText("");
                 }
                 else {
-                    app.startServerService();
-                    activity.getbServer().setTag(activity.getTAG_Server());
-                    activity.gettvStatus().setText("ON");
-                    activity.gettvStatus().setTextColor(Color.GREEN);
-                    activity.getbServer().setBackgroundResource(R.drawable.stop);
-                    activity.gettvServer().setText(WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
+                    activity.getPermissionManager().checkPermissions(activity);
+                    if (activity.getPermissionManager().getpermissionsOK()) {
+                        app.startServerService();
+                        activity.getbServer().setTag(activity.getTAG_Server());
+                        activity.gettvStatus().setText("ON");
+                        activity.gettvStatus().setTextColor(Color.GREEN);
+                        activity.getbServer().setBackgroundResource(R.drawable.stop);
+                        activity.gettvServer().setText(WebServer.getIpAddress() + ":" + WebServer.HttpServerPORT);
+                    }
+                    else
+                        Toast.makeText(app, activity.getResources().getString(R.string.mex_Alt), Toast.LENGTH_LONG).show();
+
                 }
                 break;
             case R.id.tvServer:
@@ -158,5 +165,8 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         activity.startActivity(intent);
     }
+
+
+
 
 }

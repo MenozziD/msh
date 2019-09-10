@@ -26,6 +26,9 @@
     <string name="mex_WebServer_ON">"WebServer ON</string>
     <string name="mex_Service_ON">"Servizio Background ON</string>
     <string name="mex_Service_OFF">"Servizio Background OFF</string>
+    <string name="mex_Alt">E\' necessario accettare tutti i permessi !! </string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 
     <string-array name="sh_reserved_words">
         <item>case</item>
@@ -72,10 +75,11 @@
                     var firstTime=1;
                     var array_settings=[];
                     var autoupdate="false";
-                    var timeupdate=2000;
-                    var myVar = setInterval(read_all, timeupdate);
+                    var timeupdate=30000;
+                    init();
+                    //var myVar = setInterval(read_all, timeupdate);
 
-                    $( document ).ready(init());
+                    $( document ).ready(read_all);
 
                     function init(){
                         read_settings();

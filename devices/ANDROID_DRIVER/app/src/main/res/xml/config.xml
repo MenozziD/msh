@@ -5,8 +5,4 @@
         <autoupdate value="true" />
         <timeupdate value ="30000" />
     </frontend_info>
-    <app_info>
-        <write_ext_permission value="False" />
-        <read_ext_permission value="False" />
-    </app_info>
 </settings>

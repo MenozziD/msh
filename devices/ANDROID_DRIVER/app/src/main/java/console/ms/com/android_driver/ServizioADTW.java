@@ -81,8 +81,24 @@ public class ServizioADTW extends Service {
         int result=0;
 
         try {
-            configFile = new File(this.getFilesDir(), "config.xml");
-            manageXml=new ManageXml(configFile);
+            manageXml = new ManageXml();
+            configFile = new File(FileManager.getAbsPath(), "config.xml");
+            for (int i=0;i<2;i++) {
+                if (configFile.exists()) {
+                    try {
+                        manageXml.setIst(this.openFileInput("config.xml"));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    manageXml.setMy_config(true);
+                } else {
+                    manageXml.setXrp(this.getResources().getXml(R.xml.config));
+                    manageXml.setMy_config(false);
+                }
+                manageXml.readXml();
+                manageXml.setOst(this.openFileOutput("config.xml",MODE_PRIVATE));
+                manageXml.writeXml();
+            }
             permissionManager= new PermissionManager();
             permissionManager.checkPermissions(this);
             if(permissionManager.getpermissionsOK())

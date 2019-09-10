@@ -35,9 +35,10 @@ public class PermissionManager {
 
     public PermissionManager (){
         PERMISSION_ALL = 1;
-        PERMISSIONS= new String[2];
+        PERMISSIONS= new String[3];
         PERMISSIONS[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         PERMISSIONS[1] = Manifest.permission.CAMERA;
+        PERMISSIONS[2] = Manifest.permission.RECORD_AUDIO;
     }
 
     static void requestPermission(MainActivity activity , String permission, int requestCode)
