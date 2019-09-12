@@ -9,6 +9,7 @@ public class App extends Application {
 
     private static App sInstance;
     private Intent server_intent;
+    private Intent camera_intent;
 
 
     @Override
@@ -16,6 +17,7 @@ public class App extends Application {
         super.onCreate();
         sInstance = this;
         server_intent= new Intent(this, ServizioADTW.class);
+        camera_intent= new Intent(this, ServizioCamera.class);
 
     }
 
@@ -29,13 +31,34 @@ public class App extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void stopServerService() {
         try {
             if (isServerServiceRunning(ServizioADTW.class)) {
                 stopService(server_intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void startCameraService() {
+        try {
+            if (!isServerServiceRunning(ServizioADTW.class)) {
+                startService(camera_intent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopCameraService() {
+        try {
+            if (isServerServiceRunning(ServizioCamera.class)) {
+                stopService(camera_intent);
             }
         } catch (Exception e) {
             e.printStackTrace();

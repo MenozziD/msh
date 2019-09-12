@@ -60,102 +60,113 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-
-
-        switch (v.getId()) {
-
-            case R.id.bServer:
-                if (activity.getbServer().getTag().equals(activity.getTAG_Server())) {
-                    app.stopServerService();
-                    activity.gettvStatus().setText("OFF");
-                    activity.gettvStatus().setTextColor(Color.RED);
-                    activity.getbServer().setTag("");
-                    activity.getbServer().setBackgroundResource(R.drawable.play);
-                    activity.gettvServer().setText("");
-                }
-                else {
-                    activity.getPermissionManager().checkPermissions(activity);
-                    if (activity.getPermissionManager().getpermissionsOK()) {
-                        app.startServerService();
-                        activity.getbServer().setTag(activity.getTAG_Server());
-                        activity.gettvStatus().setText("ON");
-                        activity.gettvStatus().setTextColor(Color.GREEN);
-                        activity.getbServer().setBackgroundResource(R.drawable.stop);
-                        activity.gettvServer().setText(WebServer.getIpAddress() + ":" + WebServer.HttpServerPORT);
+        try {
+            switch (v.getId()) {
+                case R.id.button_capture:
+                    if (activity.IsOn) {
+                        //mThread = new SocketClient(mPreview);
+                        app.stopCameraService();
+                        activity.IsOn = false;
+                        activity.getButton().setText(R.string.stop);
+                    } else {
+                        Intent intent = new Intent(MainActivity.getActivity(), ServizioCamera.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        app.startCameraService();
+                        activity.getButton().setText(R.string.start);
+                        activity.IsOn = true;
                     }
-                    else
-                        Toast.makeText(app, activity.getResources().getString(R.string.mex_Alt), Toast.LENGTH_LONG).show();
+                    break;
 
-                }
-                break;
-            case R.id.tvServer:
-                if (!activity.gettvServer().getText().toString().equals(""))
-                    openWebPage(activity.gettvServer().getText().toString());
-                break;
-            /* SENSOR */
-            case R.id.bSensorDim:
-                if (activity.getbSensorDim().getTag().equals(activity.getTAG_Visible())) {
-                    activity.getVwSensor().setLayoutParams(par_close);
-                    activity.getVwSensor().setVisibility(View.INVISIBLE);
-                    activity.getbSensorDim().setTag("");
-                    activity.getbSensorDim().setBackgroundResource(R.drawable.left);
-                }
-                else {
-                    activity.getVwSensor().setVisibility(View.VISIBLE);
-                    activity.getVwSensor().setLayoutParams(par_open);
-                    activity.getbSensorDim().setTag(activity.getTAG_Visible());
-                    activity.getbSensorDim().setBackgroundResource(R.drawable.down);
-                    //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
-                }
-                break;
+                case R.id.bServer:
+                    if (activity.getbServer().getTag().equals(activity.getTAG_Server())) {
+                        app.stopServerService();
+                        activity.gettvStatus().setText("OFF");
+                        activity.gettvStatus().setTextColor(Color.RED);
+                        activity.getbServer().setTag("");
+                        activity.getbServer().setBackgroundResource(R.drawable.play);
+                        activity.gettvServer().setText("");
+                    } else {
+                        activity.getPermissionManager().checkPermissions(activity);
+                        if (activity.getPermissionManager().getpermissionsOK()) {
+                            app.startServerService();
+                            activity.getbServer().setTag(activity.getTAG_Server());
+                            activity.gettvStatus().setText("ON");
+                            activity.gettvStatus().setTextColor(Color.GREEN);
+                            activity.getbServer().setBackgroundResource(R.drawable.stop);
+                            activity.gettvServer().setText(WebServer.getIpAddress() + ":" + WebServer.HttpServerPORT);
+                        } else
+                            Toast.makeText(app, activity.getResources().getString(R.string.mex_Alt), Toast.LENGTH_LONG).show();
 
-            /* SET */
-            case R.id.bSetDim:
-                if (activity.getbSetDim().getTag().equals(activity.getTAG_Visible())) {
-                    activity.getVwSet().setLayoutParams(par_close);
-                    activity.getVwSet().setVisibility(View.INVISIBLE);
-                    activity.getbSetDim().setTag("");
-                    activity.getbSetDim().setBackgroundResource(R.drawable.left);
-                }
-                else {
-                    activity.getVwSet().setVisibility(View.VISIBLE);
-                    activity.getVwSet().setLayoutParams(par_open);
-                    activity.getbSetDim().setTag(activity.getTAG_Visible());
-                    activity.getbSetDim().setBackgroundResource(R.drawable.down);
-                    //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            /* LOG */
-            case R.id.bLogDim:
-                if (activity.getbLogDim().getTag().equals(activity.getTAG_Visible())) {
-                    activity.getVwLog().setLayoutParams(par_close);
-                    activity.getVwLog().setVisibility(View.INVISIBLE);
-                    activity.getbLogDim().setTag("");
-                    activity.getbLogDim().setBackgroundResource(R.drawable.left);
-                }
-                else {
-                    activity.getVwLog().setVisibility(View.VISIBLE);
-                    activity.getVwLog().setLayoutParams(par_open);
-                    activity.getbLogDim().setTag(activity.getTAG_Visible());
-                    activity.getbLogDim().setBackgroundResource(R.drawable.down);
-                    if(activity.getPermissionManager().getpermissionsOK()) {
-                        activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_OK));
-                        activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorGreen));
                     }
-                    else {
-                        activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_ERR));
-                        activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorRed));
+                    break;
+                case R.id.tvServer:
+                    if (!activity.gettvServer().getText().toString().equals(""))
+                        openWebPage(activity.gettvServer().getText().toString());
+                    break;
+                /* SENSOR */
+                case R.id.bSensorDim:
+                    if (activity.getbSensorDim().getTag().equals(activity.getTAG_Visible())) {
+                        activity.getVwSensor().setLayoutParams(par_close);
+                        activity.getVwSensor().setVisibility(View.INVISIBLE);
+                        activity.getbSensorDim().setTag("");
+                        activity.getbSensorDim().setBackgroundResource(R.drawable.left);
+                    } else {
+                        activity.getVwSensor().setVisibility(View.VISIBLE);
+                        activity.getVwSensor().setLayoutParams(par_open);
+                        activity.getbSensorDim().setTag(activity.getTAG_Visible());
+                        activity.getbSensorDim().setBackgroundResource(R.drawable.down);
+                        //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.bDeleteLog:
+                    break;
 
-                break;
+                /* SET */
+                case R.id.bSetDim:
+                    if (activity.getbSetDim().getTag().equals(activity.getTAG_Visible())) {
+                        activity.getVwSet().setLayoutParams(par_close);
+                        activity.getVwSet().setVisibility(View.INVISIBLE);
+                        activity.getbSetDim().setTag("");
+                        activity.getbSetDim().setBackgroundResource(R.drawable.left);
+                    } else {
+                        activity.getVwSet().setVisibility(View.VISIBLE);
+                        activity.getVwSet().setLayoutParams(par_open);
+                        activity.getbSetDim().setTag(activity.getTAG_Visible());
+                        activity.getbSetDim().setBackgroundResource(R.drawable.down);
+                        //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                /* LOG */
+                case R.id.bLogDim:
+                    if (activity.getbLogDim().getTag().equals(activity.getTAG_Visible())) {
+                        activity.getVwLog().setLayoutParams(par_close);
+                        activity.getVwLog().setVisibility(View.INVISIBLE);
+                        activity.getbLogDim().setTag("");
+                        activity.getbLogDim().setBackgroundResource(R.drawable.left);
+                    } else {
+                        activity.getVwLog().setVisibility(View.VISIBLE);
+                        activity.getVwLog().setLayoutParams(par_open);
+                        activity.getbLogDim().setTag(activity.getTAG_Visible());
+                        activity.getbLogDim().setBackgroundResource(R.drawable.down);
+                        if (activity.getPermissionManager().getpermissionsOK()) {
+                            activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_OK));
+                            activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorGreen));
+                        } else {
+                            activity.gettvStatusLogMex().setText(activity.getResources().getString(R.string.mex_LOG_ERR));
+                            activity.gettvStatusLogMex().setTextColor(activity.getResources().getColor(R.color.colorRed));
+                        }
+                        //Toast.makeText(app, "Start Scan...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(app, "Done", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case R.id.bDeleteLog:
+
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FileManager.Log(e.toString(),FileManager.Log_Error);
         }
     }
 

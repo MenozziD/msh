@@ -45,7 +45,8 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+
 
 
     private String tag ="TAG";
@@ -105,7 +106,15 @@ public class MainActivity extends AppCompatActivity {
     public Button getbDeleteLog() {return bDeleteLog; }
     public GridLayout getVwLog() {return vwLog; }
     public TextView gettvStatusLogMex() {return tvStatusLogMex; }
+    public boolean IsOn =false;
 
+
+    public static SurfaceView mSurfaceView;
+    public static SurfaceHolder mSurfaceHolder;
+    public static Camera mCamera;
+    public static boolean mPreviewRunning;
+    private Button mButton;
+    public Button getButton (){return mButton;}
 
     @Override
     protected void onStart() {  super.onStart(); }
@@ -134,6 +143,24 @@ public class MainActivity extends AppCompatActivity {
          */
         permissionManager=new PermissionManager();
         permissionManager.checkPermissions(this);
+        
+        /*
+            CAMERA
+         */
+        // Create our Preview view and set it as the content of our activity.
+        mCamera=Camera.open();
+
+        mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView1);
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceHolder.addCallback(this);
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+        mButton = (Button) findViewById(R.id.button_capture);
+        mButton.setOnClickListener(Ascoltatore);
+
+
+
+
 
         /* SERVER */
         tvServer = (TextView) findViewById(R.id.tvServer);
@@ -272,7 +299,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
 }
+
 
