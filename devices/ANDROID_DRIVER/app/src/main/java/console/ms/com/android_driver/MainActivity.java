@@ -1,48 +1,28 @@
 package console.ms.com.android_driver;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.Manifest;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
-import android.media.MediaRecorder;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Bundle;
 import android.widget.Toast;
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 
 public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
@@ -212,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             gettvStatus().setText("ON");
             gettvStatus().setTextColor(Color.GREEN);
             getbServer().setBackgroundResource(R.drawable.stop);
-            gettvServer().setText(WebServer.getIpAddress()+":"+WebServer.HttpServerPORT);
+            gettvServer().setText(exWebServer.getIpAddress()+":"+ exWebServer.HttpServerPORT);
         }else{
             gettvStatus().setText("OFF");
             gettvStatus().setTextColor(Color.RED);

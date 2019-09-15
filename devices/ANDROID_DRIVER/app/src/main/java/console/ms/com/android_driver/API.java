@@ -29,7 +29,7 @@ public class API {
 
     public API(SensorsOnBoard sensorsOnBoard,String html_index,String html_404,ManageXml manageXml){
         //this.servizioADTW = servizioADTW;
-        String html_file=FileManager.ReadFile(FileManager.path+FileManager.getFileSeparator()+ FileManager.main_dir_name+FileManager.getFileSeparator()+ FileManager.webui_dir_name+FileManager.getFileSeparator(),FileManager.webui_file_name);
+        String html_file=FileManager.ReadFile_Text(FileManager.path+FileManager.getFileSeparator()+ FileManager.main_dir_name+FileManager.getFileSeparator()+ FileManager.webui_dir_name+FileManager.getFileSeparator(),FileManager.webui_file_name).toString();
         this.sensorsOnBoard=sensorsOnBoard;
         if (html_file!=null)
             this.html_index=html_file;
@@ -82,6 +82,20 @@ public class API {
         }
         if(uri.getQueryParameter("list")!=null)
             result = sensorsOnBoard.SensorList(uri.getQueryParameter("list")).toString();
+        return result;
+    }
+
+    public String Camera(Uri uri) {
+        App app = App.getInstance();
+        String result = null;
+        if (uri.getQueryParameter("cmd").equals("start")) {
+            //START REC
+            if (!app.isServerServiceRunning(ServizioADTW.class))
+                app.startCameraService();
+                //STOP REC
+            else
+                app.stopCameraService();
+        }
         return result;
     }
 

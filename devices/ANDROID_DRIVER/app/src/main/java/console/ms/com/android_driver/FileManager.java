@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,11 +27,15 @@ public class FileManager {
     final static String Log_Error="Error";
     final static String main_dir_name="ADTW";
     final static String log_dir_name="log";
+    final static String stream_dir_name="stream";
     final static String webui_dir_name="webui";
     final static String webui_file_name="index.html";
     final static String config_file_name="config.xml";
+    final static String stream_file_name="foto.jpg";
     public static String getAbsPath(){return path+ File.separator +main_dir_name; }
     public static String getAbsConfigPath(){return path+ File.separator +main_dir_name+ File.separator +config_file_name; }
+    public static String getAbsWebuiPath(){return FileManager.getAbsPath()+ File.separator +webui_dir_name+ File.separator; }
+    public static String getAbsStreamPath(){return FileManager.getAbsPath()+ File.separator +stream_dir_name+ File.separator; }
 
 
 
@@ -88,7 +93,7 @@ public class FileManager {
         }
     }
 
-    public static  String ReadFile(String path,String fileName ){
+    public static String ReadFile_Text(String path,String fileName ){
         String result = null;
 
         try {
@@ -115,6 +120,26 @@ public class FileManager {
         return result;
     }
 
+    public static byte []  ReadFile_Media(String path,String fileName ){
+
+        byte [] mybytearray  =null;
+        try {
+            File myFile = new File (path + fileName);
+            FileInputStream fileInputStream = new FileInputStream (myFile);
+            BufferedInputStream bis = new BufferedInputStream(fileInputStream);
+            mybytearray  = new byte [(int)myFile.length()];
+            bis.read(mybytearray,0,mybytearray.length);
+            bis.close();
+            fileInputStream.close();
+        }
+        catch(FileNotFoundException ex) {
+            Log.d(TAG, ex.getMessage());
+        }
+        catch(IOException ex) {
+            Log.d(TAG, ex.getMessage());
+        }
+        return mybytearray;
+    }
 
     static boolean saveToFile( File file, String data){
         try {

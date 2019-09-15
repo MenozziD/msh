@@ -133,9 +133,7 @@
                             data: {list:"install"},
                             success: function(response)
                             {
-                                var json = jQuery.parseJSON(response);
-                                var res=json["response"];
-                                var jsonSensor = jQuery.parseJSON(res);
+                                var jsonSensor = response;
                                 var listSensor=jsonSensor["sensors"].substr(1, jsonSensor["sensors"].length-2);
                                 array_sensors=listSensor.split(", ");
                                 var template=$("#sensor-template").html();
@@ -159,9 +157,7 @@
                             type: "GET",
                             data: {setting:str_s,cmd:"get"},
                             success: function(response){
-                                var json = jQuery.parseJSON(response);
-                                var res=json["response"];
-                                var jsonSetting = jQuery.parseJSON(res);
+                                var jsonSetting = response;
                                 var element ="#"+str_s;
                                 if (jsonSetting[str_s]!=null)
                                     $(element).val(jsonSetting[str_s]);
@@ -194,9 +190,7 @@
                             data: {list:"all"},
                             success: function(response)
                             {
-                                var json = jQuery.parseJSON(response);
-                                var res=json["response"];
-                                var jsonSettings = jQuery.parseJSON(res);
+                                var jsonSettings = response;
                                 var listSettings=jsonSettings["settings"].substr(1, jsonSettings["settings"].length-2);
                                 array_settings=listSettings.split(", ");
                                 var template=$("#settings-template").html();

@@ -47,7 +47,7 @@ public class App extends Application {
 
     public void startCameraService() {
         try {
-            if (!isServerServiceRunning(ServizioADTW.class)) {
+            if (!isServerServiceRunning(ServizioCamera.class)) {
                 startService(camera_intent);
             }
         } catch (Exception e) {

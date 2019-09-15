@@ -33,7 +33,7 @@ public class ServizioADTW extends Service {
 
     private SensorsOnBoard sensorsOnBoard;
     public SensorsOnBoard getSensorsOnBoard(){return sensorsOnBoard;}
-    private WebServer webServer;
+    HttpServiceThread httpServiceThread;
     private ManageXml manageXml;
     public ManageXml getManageXml(){return manageXml;}
     private File configFile;
@@ -52,10 +52,9 @@ public class ServizioADTW extends Service {
     @Override
     public void onDestroy() {
 
+        httpServiceThread.stopServer();
         try
         {
-            if (webServer != null ) webServer.close();
-            webServer=null;
             FileManager.Log(getResources().getString(R.string.mex_WebServer_OFF),getResources().getString(R.string.mex_Log_Type_Info));
             if (sensorsOnBoard != null ) sensorsOnBoard.Close();
             sensorsOnBoard=null;
@@ -83,6 +82,15 @@ public class ServizioADTW extends Service {
         try {
             manageXml = new ManageXml();
             configFile = new File(FileManager.getAbsPath(), "config.xml");
+            permissionManager= new PermissionManager();
+            permissionManager.checkPermissions(this);
+            if(permissionManager.getpermissionsOK())
+                FileManager.makeAppDirectory();
+            FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
+            sensorsOnBoard= new SensorsOnBoard((SensorManager) getSystemService(SENSOR_SERVICE));
+            FileManager.Log(sensorsOnBoard.toString(),getResources().getString(R.string.mex_Log_Type_Info));
+
+
             for (int i=0;i<2;i++) {
                 if (configFile.exists()) {
                     try {
@@ -99,16 +107,10 @@ public class ServizioADTW extends Service {
                 manageXml.setOst(this.openFileOutput("config.xml",MODE_PRIVATE));
                 manageXml.writeXml();
             }
-            permissionManager= new PermissionManager();
-            permissionManager.checkPermissions(this);
-            if(permissionManager.getpermissionsOK())
-                FileManager.makeAppDirectory();
-            FileManager.Log(getResources().getString(R.string.mex_PermissionManager),getResources().getString(R.string.mex_Log_Type_Info));
-            sensorsOnBoard= new SensorsOnBoard((SensorManager) getSystemService(SENSOR_SERVICE));
-            FileManager.Log(sensorsOnBoard.toString(),getResources().getString(R.string.mex_Log_Type_Info));
 
-            webServer=new WebServer(this);
-            webServer.getHttpServerThread().start();
+            httpServiceThread = new HttpServiceThread(this,getResources().getString(R.string.html_index),getResources().getString(R.string.html_404));
+            httpServiceThread.start();
+
             FileManager.Log(getResources().getString(R.string.mex_WebServer_ON),getResources().getString(R.string.mex_Log_Type_Info));
 
 

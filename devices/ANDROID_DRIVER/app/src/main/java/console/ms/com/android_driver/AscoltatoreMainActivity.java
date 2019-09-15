@@ -1,41 +1,16 @@
 package console.ms.com.android_driver;
-import android.Manifest;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.Html;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
 //import com.physicaloid.lib.usb.driver.uart.ReadLisener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.concurrent.ExecutionException;
 
 public class AscoltatoreMainActivity  implements View.OnClickListener{
 
@@ -93,7 +68,7 @@ public class AscoltatoreMainActivity  implements View.OnClickListener{
                             activity.gettvStatus().setText("ON");
                             activity.gettvStatus().setTextColor(Color.GREEN);
                             activity.getbServer().setBackgroundResource(R.drawable.stop);
-                            activity.gettvServer().setText(WebServer.getIpAddress() + ":" + WebServer.HttpServerPORT);
+                            activity.gettvServer().setText(exWebServer.getIpAddress() + ":" + exWebServer.HttpServerPORT);
                         } else
                             Toast.makeText(app, activity.getResources().getString(R.string.mex_Alt), Toast.LENGTH_LONG).show();
 

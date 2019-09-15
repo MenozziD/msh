@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 
-public class WebServer   {
+public class exWebServer {
 
     private HttpServerThread webHttpServerThread;
     private API api;
@@ -31,7 +31,7 @@ public class WebServer   {
 
 
 
-    public WebServer(ServizioADTW pService) {
+    public exWebServer(ServizioADTW pService) {
         servizioADTW = pService;
         api= new API(   servizioADTW.getSensorsOnBoard(),
                         servizioADTW.getResources().getString(R.string.html_index),
@@ -123,8 +123,8 @@ public class WebServer   {
                 }
                 if (uri.getPath().equals("/camera"))
                 {
-                    result=api.Sensor(uri);
-                    jsonObject.put("response",result);
+                    result=api.Camera(uri);
+                    jsonObject.put("response","OK");
                     jsonObject.put("timestamp", sdf.format(new Date()));
                     response = jsonObject.toString();
                     content = "application/json";
