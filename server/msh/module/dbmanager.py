@@ -10,6 +10,7 @@ class DbManager:
     
     def __init__(self):
         DbManager.db = connect(XmlReader.settings['path_db'], check_same_thread=False)
+        DbManager.db.isolation_level = None
     
     @staticmethod
     def close_db():
@@ -33,6 +34,16 @@ class DbManager:
             cur = DbManager.db.cursor()
             info("ESEGUO LA QUERY: %s", query)
             cur.execute(str(query))
+            DbManager.db.commit()
+        except Error:
+            DbManager.db.rollback()
+            raise
+
+    @staticmethod
+    def multiple_statement(query):
+        try:
+            cur = DbManager.db.cursor()
+            cur.executescript(str(query))
             DbManager.db.commit()
         except Error:
             DbManager.db.rollback()

@@ -6,7 +6,7 @@
 # SCARICA SCRIPT -------------------------> sudo curl https://raw.githubusercontent.com/VanMenoz92/msh/master/script/setup/01_setup.sh --output 01_setup.sh 1>/dev/null 2>/dev/null
 # ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
-# ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config
+# ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config (Rimuovere without-password dopo:  PermitRootLogin, Aggiungere yes dopo: PermitRootLogin)
 
 #CHECK WIFI
 WIFI=false
@@ -349,18 +349,18 @@ def main():
 if __name__ == '__main__':
     main()" > oauth.py
 echo "Eseguo script python per generazione token"
-python3 oauth.py
+sudo python3 oauth.py
 token=`cat token.txt`
 client_id=`cat clientid.txt`
 client_secret=`cat clientsecret.txt`
 echo "Rimuovo file temporanei"
-rm -f token.txt
-rm -f clientid.txt
-rm -f clientsecret.txt
-rm -f token.txt
-rm -f oauth.py
+sudo rm -f token.txt
+sudo rm -f clientid.txt
+sudo rm -f clientsecret.txt
+sudo rm -f token.txt
+sudo rm -f oauth.py
 echo "Creo datastore.js"
-echo "const Data = {};
+sudo echo "const Data = {};
 
 const Auth = {
   clients: {
@@ -416,7 +416,7 @@ sudo npm install 1>/dev/null 2>/dev/null
 # SALVO PROJECT ID DI GOOGLE ACTIONS IN SETTINGS.XML
 echo "---------- CREAZIONE SETTINGS.XML ----------"
 echo "Creo settings.xml"
-echo "<settings>
+sudo echo "<settings>
 	<lingua>IT</lingua>
 	<ambiente>PROD</ambiente>
 	<path_db>db/system.db</path_db>
@@ -439,7 +439,7 @@ cd ../..
 echo "---------- CREAZIONE SERVIZIO OAUTH ----------"
 # SERVIZIO OAUTH
 echo "Creo script oauth.sh"
-echo $'#!/bin/bash
+sudo echo $'#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          oauth
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -489,7 +489,7 @@ sudo chmod +x /etc/init.d/oauth 1>/dev/null
 # SERVIZIO PAGEKITE
 echo "---------- CREAZIONE SERVIZIO PAGEKITE ----------"
 echo "Creo script pagekite.sh"
-echo $'#!/bin/bash
+sudo echo $'#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          pagekite
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -539,7 +539,7 @@ sudo chmod +x /etc/init.d/pagekite 1>/dev/null
 # SERVIZIO SERVEO
 echo "---------- CREAZIONE SERVIZIO SERVEO ----------"
 echo "Creo script serveo.sh"
-echo $'#!/bin/bash
+sudo echo $'#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          serveo
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -595,7 +595,7 @@ sudo chmod +x /etc/init.d/serveo 1>/dev/null
 # SERVIZIO MSH
 echo "---------- CREAZIONE SERVIZIO MSH ----------"
 echo "Creo script msh.sh"
-echo $'#!/bin/bash
+sudo echo $'#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          msh
 # Required-Start:    $local_fs $network $named $time $syslog

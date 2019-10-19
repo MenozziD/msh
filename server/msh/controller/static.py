@@ -1,19 +1,20 @@
 from controller import BaseHandler
 from logging import info, exception
 from mimetypes import MimeTypes
+from module import XmlReader
 
 
 class Index(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        self.redirect('/static/page/index.html')
+        self.redirect(XmlReader.settings['domain'] + '/static/page/index.html')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
 class Icon(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        self.redirect('/static/image/hub.png')
+        self.redirect(XmlReader.settings['domain'] + '/static/image/hub.png')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
@@ -29,7 +30,7 @@ class Static(BaseHandler):
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
         else:
-            self.redirect('/static/page/login.html')
+            self.redirect(XmlReader.settings['domain'] + '/static/page/login.html')
             info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 

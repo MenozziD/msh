@@ -1,3 +1,10 @@
+# List cron job
+sudo crontab  -l
+
+# Rimuovere cron
+sudo crontab -e
+# commenta linea
+
 # Ricarica configurazione servizi
 sudo systemctl daemon-reload
 
