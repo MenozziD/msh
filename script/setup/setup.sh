@@ -423,10 +423,6 @@ sudo echo "<settings>
 	<path_datastore>../oauth/datastore.js</path_datastore>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
 	<project_id_google_actions>$1</project_id_google_actions>
-	<subdomain_oauth_serveo>$OAUTH_DOMAIN</subdomain_oauth_serveo>
-	<subdomain_webapp_serveo>$WEBAPP_DOMAIN</subdomain_webapp_serveo>
-	<subdomain_oauth_pagekite>oauth-$WEBAPP_DOMAIN</subdomain_oauth_pagekite>
-	<subdomain_webapp_pagekite>$WEBAPP_DOMAIN</subdomain_webapp_pagekite>
 	<dns>
 		<serveo>
 			<!-- n/s -->
