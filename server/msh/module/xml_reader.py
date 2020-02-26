@@ -11,6 +11,7 @@ class XmlReader:
         'error': ERROR,
         'critical': CRITICAL
     }
+    servizi_dns = ['serveo', 'pagekite']
 
     def __init__(self, filename):
         xml = minidom.parse(filename)
@@ -20,11 +21,17 @@ class XmlReader:
         path_datastore = xml.getElementsByTagName('path_datastore')[0].firstChild.data
         timestamp = xml.getElementsByTagName('timestamp')[0].firstChild.data
         project_id_google_actions = xml.getElementsByTagName('project_id_google_actions')[0].firstChild.data
-        domain = xml.getElementsByTagName('domain')[0].firstChild.data
-        subdomain_oauth_serveo = xml.getElementsByTagName('subdomain_oauth_serveo')[0].firstChild.data
-        subdomain_webapp_serveo = xml.getElementsByTagName('subdomain_webapp_serveo')[0].firstChild.data
-        subdomain_oauth_pagekite = xml.getElementsByTagName('subdomain_oauth_pagekite')[0].firstChild.data
-        subdomain_webapp_pagekite = xml.getElementsByTagName('subdomain_webapp_pagekite')[0].firstChild.data
+        dns = []
+        for servizio in XmlReader.servizi_dns:
+            servizio_json = {
+                'name': servizio,
+                'abil': xml.getElementsByTagName('dns')[0].getElementsByTagName(servizio)[0].getElementsByTagName('abil')[0].firstChild.data,
+                'test_url': xml.getElementsByTagName('dns')[0].getElementsByTagName(servizio)[0].getElementsByTagName('test_url')[0].firstChild.data,
+                'domain': xml.getElementsByTagName('dns')[0].getElementsByTagName(servizio)[0].getElementsByTagName('domain')[0].firstChild.data,
+                'subdomain_oauth': xml.getElementsByTagName('dns')[0].getElementsByTagName(servizio)[0].getElementsByTagName('subdomain_oauth')[0].firstChild.data,
+                'subdomain_webapp': xml.getElementsByTagName('dns')[0].getElementsByTagName(servizio)[0].getElementsByTagName('subdomain_webapp')[0].firstChild.data
+            }
+            dns.append(servizio_json)
         log = {
             'filename': xml.getElementsByTagName('log')[0].getElementsByTagName('filename')[0].firstChild.data,
             'format': xml.getElementsByTagName('log')[0].getElementsByTagName('format')[0].firstChild.data,
@@ -39,11 +46,8 @@ class XmlReader:
             'path_datastore': path_datastore,
             'timestamp': timestamp,
             'project_id_google_actions': project_id_google_actions,
-            'domain': domain,
-            'subdomain_oauth_serveo': subdomain_oauth_serveo,
-            'subdomain_webapp_serveo': subdomain_webapp_serveo,
-            'subdomain_oauth_pagekite': subdomain_oauth_pagekite,
-            'subdomain_webapp_pagekite': subdomain_webapp_pagekite,
+            'dns': dns,
             'log': log
         }
+        print(XmlReader.settings)
         return
