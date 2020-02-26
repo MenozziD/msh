@@ -57,7 +57,7 @@ class Msh:
             info("URL oauth %s", ', '.join(Msh.oauth_urls))
         info("Server in ascolto su http://%s:%s", ip_address, porta)
         if XmlReader.settings["ambiente"] == 'PROD':
-            httpserver.serve(Msh.app, host=ip_address, port=porta)  # pragma: no cover
+            httpserver.serve(Msh.app, host=ip_address, port=porta, use_threadpool=True, threadpool_workers=5, request_queue_size=25, daemon_threads=True)  # pragma: no cover
 
     @staticmethod
     def start_dns_service(servizio):
@@ -88,8 +88,8 @@ class Msh:
 
     @staticmethod
     def start_service(name):
-        response = execute_os_cmd("sudo service " + name + " check", check_out=True)
-        if len(response['cmd_out']) == "Spento":
+        response = execute_os_cmd("sudo service " + name + " check")
+        if response['cmd_out'] == "Spento\n":
             execute_os_cmd("sudo service " + name + " start")
         else:
             info("%s is already running", name)

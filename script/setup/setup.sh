@@ -7,6 +7,18 @@
 # ABILITARE ESECUZIONE PER LO SCRIPT -----> sudo chmod 744 01_setup.sh
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
 # ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config (Rimuovere without-password dopo:  PermitRootLogin, Aggiungere yes dopo: PermitRootLogin)
+# SE ROUTER AES
+#ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+# update_config=1
+#
+# network={
+#        ssid="Infostrada-EB3118"
+#        psk="G7LLFX7R7G"
+#        proto=RSN
+#        key_mgmt=WPA-PSK
+#        pairwise=CCMP
+#        auth_alg=OPEN
+# }
 
 #CHECK WIFI
 WIFI=false
@@ -464,12 +476,12 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio OAUTH
 ### END INIT INFO
 
-command_check="ps -aux | grep node | grep server.js"
 command_start="cd /home/pi/server/oauth && sudo npm start 1>/dev/null 2>/dev/null &"
-command_kill="ps -aux | grep node | grep server.js | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+command_kill="ps -aux | grep node | grep server.js | awk \'{print \$2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+ret_check=`ps -aux | grep node | grep server.js`
 case "$1" in
 	check)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Attivo"
 			else
@@ -477,7 +489,7 @@ case "$1" in
 		fi
 	;;
 	start)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Servizio OAUTH attivo"
 			else
@@ -486,7 +498,7 @@ case "$1" in
 		fi
 	;;
 	stop)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				echo "Stoppato servizio OAUTH"
@@ -495,7 +507,7 @@ case "$1" in
 		fi
 	;;
 	restart)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				eval $command_start
@@ -529,12 +541,12 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio PAGEKITE
 ### END INIT INFO
 
-command_check="ps -aux | grep pagekite.py | grep python"
 command_start="cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &"
-command_kill="ps -aux | grep pagekite.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+command_kill="ps -aux | grep pagekite.py | grep python | awk \'{print \$2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+ret_check=`ps -aux | grep pagekite.py | grep python`
 case "$1" in
 	check)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Attivo"
 			else
@@ -542,7 +554,7 @@ case "$1" in
 		fi
 	;;
 	start)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Servizio PAGEKITE attivo"
 			else
@@ -551,7 +563,7 @@ case "$1" in
 		fi
 	;;
 	stop)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				echo "Stoppato servizio PAGEKITE"
@@ -560,7 +572,7 @@ case "$1" in
 		fi
 	;;
 	restart)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				eval $command_start
@@ -599,12 +611,12 @@ riga_oauth=`expr $riga_serveo + 5`
 riga_webapp=`expr $riga_oauth + 1`
 oauth=`cat /home/pi/server/msh/settings.xml | head -n$riga_oauth | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
 webapp=`cat /home/pi/server/msh/settings.xml | head -n$riga_webapp | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-command_start="autossh -M 0 -o \"StrictHostKeyChecking no\" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &"
-command_kill="ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
-command_check="ps -aux | grep serveo | grep 65177"
+command_start="autossh -M 0 -o \\"StrictHostKeyChecking no\\" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &"
+command_kill="ps -aux | grep serveo | grep 65177 | awk \'{print \$2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+ret_check=`ps -aux | grep serveo | grep 65177`
 case "$1" in
 	check)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Attivo"
 			else
@@ -612,7 +624,7 @@ case "$1" in
 		fi
 	;;
 	start)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Servizio SERVEO attivo"
 			else
@@ -621,7 +633,7 @@ case "$1" in
 		fi
 	;;
 	stop)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				echo "Stoppato servizio SERVEO"
@@ -630,7 +642,7 @@ case "$1" in
 		fi
 	;;
 	restart)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				eval $command_start
@@ -664,12 +676,12 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio MSH
 ### END INIT INFO
 
-command_check="ps -aux | grep msh.py | grep python"
 command_start="cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &"
-command_kill="ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+command_kill="ps -aux | grep msh.py | grep python | awk \'{print \$2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+ret_check=`ps -aux | grep msh.py | grep python`
 case "$1" in
 	check)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Attivo"
 			else
@@ -677,7 +689,7 @@ case "$1" in
 		fi
 	;;
 	start)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				echo "Servizio MSH attivo"
 			else
@@ -686,7 +698,7 @@ case "$1" in
 		fi
 	;;
 	stop)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				echo "Stoppato servizio MSH"
@@ -695,7 +707,7 @@ case "$1" in
 		fi
 	;;
 	restart)
-		if [[ eval $command_check ]]
+		if [ "$ret_check" != "" ]
 			then
 				eval $command_kill
 				eval $command_start
