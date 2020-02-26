@@ -427,6 +427,24 @@ sudo echo "<settings>
 	<subdomain_webapp_serveo>$WEBAPP_DOMAIN</subdomain_webapp_serveo>
 	<subdomain_oauth_pagekite>oauth-$WEBAPP_DOMAIN</subdomain_oauth_pagekite>
 	<subdomain_webapp_pagekite>$WEBAPP_DOMAIN</subdomain_webapp_pagekite>
+	<dns>
+		<serveo>
+			<!-- n/s -->
+			<abil>n</abil>
+			<test_url>http://serveo.net</test_url>
+			<domain>.serveo.net</domain>
+			<subdomain_oauth>$OAUTH_DOMAIN</subdomain_oauth>
+			<subdomain_webapp>$WEBAPP_DOMAIN</subdomain_webapp>
+		</serveo>
+		<pagekite>
+			<!-- n/s -->
+			<abil>n</abil>
+			<test_url>http://pagekite.net</test_url>
+			<domain>.pagekite.me</domain>
+			<subdomain_oauth>oauth-$WEBAPP_DOMAIN</subdomain_oauth>
+			<subdomain_webapp>$WEBAPP_DOMAIN</subdomain_webapp>
+		</pagekite>
+	</dns>
 	<log>
 		<!-- Se valorizzato con None logga in console -->
 		<filename>msh.log</filename>
@@ -450,36 +468,51 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio OAUTH
 ### END INIT INFO
 
+command_check="ps -aux | grep node | grep server.js"
+command_start="cd /home/pi/server/oauth && sudo npm start 1>/dev/null 2>/dev/null &"
+command_kill="ps -aux | grep node | grep server.js | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
 case "$1" in
-start)  if [ $(pgrep node) ]
-                then
-                        echo "Servizio OAUTH attivo"
-                else
-                        cd /home/pi/server/oauth && sudo npm start 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio OAUTH"
-                fi
-                ;;
-stop)   if [ $(pgrep node) ]
-                then
-                        pgrep node | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        echo "Stoppato servizio OAUTH"
-                else
-                        echo "Servizio OAUTH non attivo"
-                fi
-        ;;
-restart) if [ $(pgrep node) ]
-                 then
-                        pgrep node | awk \'{print $0}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        cd /home/pi/server/oauth && npm start 1>/dev/null 2>/dev/null &
-                        echo "Restart servizio OAUTH"
-                else
-                        cd /home/pi/server/oauth && sudo npm start 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio OAUTH"
-                fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
-        exit 2
-        ;;
+	check)
+		if [[ eval $command_check ]]
+			then
+				echo "Attivo"
+			else
+				echo "Spento"
+		fi
+	;;
+	start)
+		if [[ eval $command_check ]]
+			then
+				echo "Servizio OAUTH attivo"
+			else
+				eval $command_start
+				echo "Avviato servizio OAUTH"
+		fi
+	;;
+	stop)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				echo "Stoppato servizio OAUTH"
+			else
+				echo "Servizio OAUTH non attivo"
+		fi
+	;;
+	restart)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				eval $command_start
+				echo "Restart servizio OAUTH"
+			else
+				eval $command_start
+				echo "Avviato servizio OAUTH"
+		fi
+	;;
+	*)
+		echo "Usage: $0 {check|start|stop|restart}"
+		exit 2
+	;;
 esac
 exit 0' > oauth.sh
 echo "Sposto script oauth.sh in /etc/init.d/oauth"
@@ -500,36 +533,51 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio PAGEKITE
 ### END INIT INFO
 
+command_check="ps -aux | grep pagekite.py | grep python"
+command_start="cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &"
+command_kill="ps -aux | grep pagekite.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
 case "$1" in
-start)  if [[ $(ps -aux | grep pagekite.py | grep python) ]]
-                then
-						echo "Servizio PAGEKITE attivo"
-                else
-                        cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
-						echo "Avviato servizio PAGEKITE"
-                fi
-                ;;
-stop)   if [[ $(ps -aux | grep pagekite.py | grep python) ]]
-                then
-                        ps -aux | grep pagekite | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-						echo "Stoppato servizio PAGEKITE"
-                else
-                        echo "Servizio PAGEKITE non attivo"
-                fi
-        ;;
-restart) if [[ $(ps -aux | grep pagekite.py | grep python) ]]
-                 then
-                        ps -aux | grep pagekite | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-						cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
-						echo "Restart servizio PAGEKITE"
-                else
-                        cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &
-						echo "Avviato servizio PAGEKITE"
-                fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
+	check)
+		if [[ eval $command_check ]]
+			then
+				echo "Attivo"
+			else
+				echo "Spento"
+		fi
+	;;
+	start)
+		if [[ eval $command_check ]]
+			then
+				echo "Servizio PAGEKITE attivo"
+			else
+				eval $command_start
+				echo "Avviato servizio PAGEKITE"
+		fi
+	;;
+	stop)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				echo "Stoppato servizio PAGEKITE"
+			else
+				echo "Servizio PAGEKITE non attivo"
+		fi
+	;;
+	restart)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				eval $command_start
+				echo "Restart servizio PAGEKITE"
+			else
+				eval $command_start
+				echo "Avviato servizio PAGEKITE"
+		fi
+	;;
+	*)
+		echo "Usage: $0 {check|start|stop|restart}"
         exit 2
-        ;;
+	;;
 esac
 exit 0' > pagekite.sh
 echo "Sposto script pagekite.sh in /etc/init.d/pagekite"
@@ -550,42 +598,56 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio SERVEO
 ### END INIT INFO
 
+riga_serveo=`cat /home/pi/server/msh/settings.xml | grep -n "<serveo>" | awk \'{split($0, a, ":"); print a[1]}\'`
+riga_oauth=`expr $riga_serveo + 5`
+riga_webapp=`expr $riga_oauth + 1`
+oauth=`cat /home/pi/server/msh/settings.xml | head -n$riga_oauth | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+webapp=`cat /home/pi/server/msh/settings.xml | head -n$riga_webapp | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+command_start="autossh -M 0 -o \"StrictHostKeyChecking no\" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &"
+command_kill="ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
+command_check="ps -aux | grep serveo | grep 65177"
 case "$1" in
-start)  if [[ $(ps -aux | grep serveo | grep 65177) ]]
-                then
-						echo "Servizio SERVEO attivo"
-                else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio SERVEO"
-                fi
-                ;;
-stop)   if [[ $(ps -aux | grep serveo | grep 65177) ]]
-                then
-                        ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-                        echo "Stoppato servizio SERVEO"
-                else
-                        echo "Servizio SERVEO non attivo"
-                fi
-        ;;
-restart) if [[ $(ps -aux | grep serveo | grep 65177) ]]
-                 then
-                        ps -aux | grep serveo | grep 65177 | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-						oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Restart servizio SERVEO"
-                else
-                        oauth=`cat /home/pi/server/msh/settings.xml | grep subdomain_oauth_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-						webapp=`cat /home/pi/server/msh/settings.xml | grep subdomain_webapp_serveo | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
-                        autossh -M 0 -o "StrictHostKeyChecking no" -R $webapp:80:localhost:65177 -R $oauth:80:localhost:3000 serveo.net 1>/dev/null 2>/dev/null &
-                        echo "Avviato servizio SERVEO"
-                fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
+	check)
+		if [[ eval $command_check ]]
+			then
+				echo "Attivo"
+			else
+				echo "Spento"
+		fi
+	;;
+	start)
+		if [[ eval $command_check ]]
+			then
+				echo "Servizio SERVEO attivo"
+			else
+				eval $command_start
+				echo "Avviato servizio SERVEO"
+		fi
+	;;
+	stop)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				echo "Stoppato servizio SERVEO"
+			else
+				echo "Servizio SERVEO non attivo"
+		fi
+	;;
+	restart)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				eval $command_start
+				echo "Restart servizio SERVEO"
+			else
+				eval $command_start
+				echo "Avviato servizio SERVEO"
+		fi
+	;;
+	*)
+		echo "Usage: $0 {check|start|stop|restart}"
         exit 2
-        ;;
+	;;
 esac
 exit 0' > serveo.sh
 echo "Sposto script serveo.sh in /etc/init.d/serveo"
@@ -606,36 +668,51 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio MSH
 ### END INIT INFO
 
+command_check="ps -aux | grep msh.py | grep python"
+command_start="cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &"
+command_kill="ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
 case "$1" in
-start)  if [[ $(ps -aux | grep msh.py | grep python) ]]
-		then
-			echo "Servizio MSH attivo"
-		else
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Avviato servizio MSH"
+	check)
+		if [[ eval $command_check ]]
+			then
+				echo "Attivo"
+			else
+				echo "Spento"
 		fi
-		;;
-stop)   if [[ $(ps -aux | grep msh.py | grep python) ]]
-		then
-			ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-			echo "Stoppato servizio MSH"
-		else
-			echo "Servizio MSH non attivo"
+	;;
+	start)
+		if [[ eval $command_check ]]
+			then
+				echo "Servizio MSH attivo"
+			else
+				eval $command_start
+				echo "Avviato servizio MSH"
 		fi
-        ;;
-restart) if [[ $(ps -aux | grep msh.py | grep python) ]]
-		 then
-			ps -aux | grep msh.py | grep python | awk \'{print $2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Restart servizio MSH"
-		else
-			cd /home/pi/server/msh && sudo python3 msh.py 1>/dev/null 2>/dev/null &
-			echo "Avviato servizio MSH"
+	;;
+	stop)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				echo "Stoppato servizio MSH"
+			else
+				echo "Servizio MSH non attivo"
 		fi
-        ;;
-*)      echo "Usage: $0 {start|stop|restart}"
+	;;
+	restart)
+		if [[ eval $command_check ]]
+			then
+				eval $command_kill
+				eval $command_start
+				echo "Restart servizio MSH"
+			else
+				eval $command_start
+				echo "Avviato servizio MSH"
+		fi
+	;;
+	*)
+		echo "Usage: $0 {check|start|stop|restart}"
         exit 2
-        ;;
+	;;
 esac
 exit 0' > msh.sh
 echo "Sposto script msh.sh in /etc/init.d/msh"
