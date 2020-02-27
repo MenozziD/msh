@@ -8,7 +8,7 @@
 # ESEGUIRE LO SCRIPT ---------------------> sudo ./01_setup.sh
 # ABILITARE SSH PER UTENTE ROOT ----------> sudo nano /etc/ssh/sshd_config (Rimuovere without-password dopo:  PermitRootLogin, Aggiungere yes dopo: PermitRootLogin)
 # SE ROUTER AES
-#ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+# ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 # update_config=1
 #
 # network={
@@ -20,19 +20,21 @@
 #        auth_alg=OPEN
 # }
 
-#CHECK WIFI
+# CHECK WIFI
 WIFI=false
-if [ "$#" -ne 2 ]; then
-  echo "Non verra configurato il Wi-Fi"
-else
-  echo "Verra configurato il Wi-Fi"
-  WIFI=true
+if [ "$#" -ne 2 ]
+	then
+		echo "Non verra configurato il Wi-Fi"
+	else
+		echo "Verra configurato il Wi-Fi"
+		WIFI=true
 fi
 # ABILITO WIFI
-if [ "$WIFI" == true ]; then
-	echo "---------- CONFIGURAZIONE WIFI ----------"
-	echo "Scrivo file delle interfacce di rete al path /etc/network/interfaces"
-	sudo echo "auto lo
+if [ "$WIFI" == true ]
+	then
+		echo "---------- CONFIGURAZIONE WIFI ----------"
+		echo "Scrivo file delle interfacce di rete al path /etc/network/interfaces"
+		sudo echo "auto lo
 
 iface lo inet loopback
 iface eth0 inet dhcp
@@ -40,9 +42,9 @@ iface eth0 inet dhcp
 auto wlan0
 iface wlan0 inet dhcp
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" > /etc/network/interfaces
-	sudo mkdir /etc/wpa_supplicant/
-	echo "Scrivo file di configurazione per l'interfaccia wlan0 al path /etc/wpa_supplicant/wpa_supplicant.conf"
-	sudo echo "ctrl_interface=/var/run/wpa_supplicant
+		sudo mkdir /etc/wpa_supplicant/
+		echo "Scrivo file di configurazione per l'interfaccia wlan0 al path /etc/wpa_supplicant/wpa_supplicant.conf"
+		sudo echo "ctrl_interface=/var/run/wpa_supplicant
 ctrl_interface_group=0
 update_config=1
 
@@ -56,8 +58,8 @@ network={
         id_str=\"$1\"
 }" > /etc/wpa_supplicant/wpa_supplicant.conf
 # RESTART DEL SERVIZIO PER FARGLI LEGGERE LE CONFIGURAZIONI
-	echo "Eseguo restart del servizio networking"
-	sudo /etc/init.d/networking restart
+		echo "Eseguo restart del servizio networking"
+		sudo /etc/init.d/networking restart
 fi
 # CAMBIO PASSWORD
 echo "---------- CAMBIO PASSWORD ----------"
@@ -166,7 +168,7 @@ echo "Imposto avvio servizio cron all'avvio"
 sudo update-rc.d cron enable 1>/dev/null
 echo "Imposto avvio servizio ssh all'avvio"
 sudo update-rc.d ssh enable 1>/dev/null
-#SCARICO E CONFIGURO ARDUINO-CLI
+# SCARICO E CONFIGURO ARDUINO-CLI
 echo "Eseguo download di arduino-cli.tar.bz2"
 sudo curl "https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2" --output arduino-cli.tar.bz2 1>/dev/null 2>/dev/null
 echo "Decomprimo arduino-cli.tar.bz2"
@@ -193,7 +195,7 @@ echo "Install SimpleDHT"
 sudo arduino-cli lib install SimpleDHT
 echo "Install ArduinoJson"
 sudo arduino-cli lib install ArduinoJson
-#INSTALLAZIONE CORE SCHEDE
+# INSTALLAZIONE CORE SCHEDE
 echo "Eseguo arduino-cli core install esp8266:esp8266"
 sudo arduino-cli core install esp8266:esp8266 1>/dev/null
 # AGGIUNGO 2 GB DI SWAP PER LA RAM
@@ -211,7 +213,7 @@ CONF_SWAPSIZE=2048
 #CONF_MAXSWAP=2048" > /etc/dphys-swapfile
 echo "Restart servzio dphys-swapfile"
 sudo /etc/init.d/dphys-swapfile restart 1>/dev/null
-#SCARICO PAGEKITE
+# SCARICO PAGEKITE
 echo "Download di pagekite.py"
 sudo curl https://pagekite.net/pk/pagekite.py --output server/pagekite.py 1>/dev/null 2>/dev/null
 # SCARICO I SERVER
@@ -259,7 +261,7 @@ do
 		read -p "Inserire un nuovo dominio per la WEBAPP: " WEBAPP_DOMAIN
 	fi
 done
-#RIMUOVO PRIMO SETUP
+# RIMUOVO PRIMO SETUP
 echo "Rimuovo vecchio setup"
 sudo rm -rf 01_setup.sh
 # CREO GACTIONS
@@ -286,13 +288,13 @@ OK=false
 while [ "$OK" == false ]
 do	
 	if gactions update --action_package action.json --project $GOOGLE_PROJECT_ID
-	then
-		OK=true
+		then
+			OK=true
 	fi
 done
 sudo rm -f action.json 
 sudo rm -f creds.data
-#REGISTRAZIONE DOMINI SU PAGEKITE
+# REGISTRAZIONE DOMINI SU PAGEKITE
 cd server
 echo "---------- CREAZIONE DOMINI PAGEKITE ----------"
 echo "Creo dominio $WEBAPP_DOMAIN.pagekite.me"
@@ -541,7 +543,12 @@ sudo echo $'#!/bin/bash
 # Description:       Servizio PAGEKITE
 ### END INIT INFO
 
-command_start="cd /home/pi/server && sudo python pagekite.py '$WEBAPP_DOMAIN'.pagekite.me AND oauth-'$WEBAPP_DOMAIN''$'.pagekite.me 1>/dev/null 2>/dev/null &"
+riga_pagekite=`cat /home/pi/server/msh/settings.xml | grep -n "<pagekite>" | awk \'{split($0, a, ":"); print a[1]}\'`
+riga_oauth=`expr $riga_pagekite + 5`
+riga_webapp=`expr $riga_oauth + 1`
+oauth=`cat /home/pi/server/msh/settings.xml | head -n$riga_oauth | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+webapp=`cat /home/pi/server/msh/settings.xml | head -n$riga_webapp | tail -n1 | cut -d\'>\' -f 2 | cut -d\'<\' -f 1`
+command_start="cd /home/pi/server && sudo python pagekite.py $webapp.pagekite.me AND $oauth.pagekite.me 1>/dev/null 2>/dev/null &"
 command_kill="ps -aux | grep pagekite.py | grep python | awk \'{print \$2}\' | xargs sudo kill -9 1>/dev/null 2>/dev/null"
 ret_check=`ps -aux | grep pagekite.py | grep python`
 case "$1" in
