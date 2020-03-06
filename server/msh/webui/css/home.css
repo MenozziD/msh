@@ -1,0 +1,114 @@
+.container {
+    max-width: 90%;
+}
+
+.make-cursor {
+    cursor: pointer;
+}
+
+.remove-margin {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.first-margin {
+    width: 40%;
+}
+
+.col-titolo {
+    width: 20%;
+}
+
+.icona-titolo{
+    width: 30%;
+    height: 100%;
+}
+
+.titolo{
+    width: 70%;
+    padding-left: 5%;
+    margin-bottom: 5%;
+    margin-top: 5%;
+}
+
+.second-margin {
+    width: 35%;
+}
+
+.col-logout {
+    width: 5%;
+}
+
+.my-panel-icon {
+    vertical-align: middle !important;
+    font-size: 85%;
+    padding: 10% !important;
+}
+
+.panel-col {
+    width: 16.66%;
+    padding-right: 0.5%;
+    padding-left: 0.5%;
+}
+
+.my-table-device {
+    word-break: break-all;
+}
+
+.my-text-table {
+    vertical-align: middle !important;
+    font-size: 75%;
+    padding: 0.25% !important;
+}
+
+input, .dropdown-toggle, .card {
+    border: 3px solid #ced4da !important;
+}
+
+.col-check {
+    width: 2%;
+}
+
+.col-codice {
+    width: 18%;
+}
+
+.col-tipo {
+    width: 5%;
+}
+
+.col-ip {
+    width: 8%;
+}
+
+.col-mac {
+    width: 11%;
+}
+
+.col-mac-info {
+    width: 11%;
+}
+
+.col-user {
+    width: 15%;
+}
+
+.col-password {
+    width: 18%;
+}
+
+.col-ultimo {
+    width: 12%;
+}
+
+.col-username {
+    width: 28%;
+}
+
+.col-password-us {
+    width: 30%;
+}
+
+.col-ruolo {
+    width: 25%;
+}
