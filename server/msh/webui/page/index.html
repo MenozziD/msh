@@ -17,159 +17,155 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 
-		<script src="/static/js/home.js"></script>
+		<link rel="stylesheet" href="/static/css/home.css">
+        <script src="/static/js/home.js"></script>
 
 		<title>Home</title>
 	</head>
 	<body onload="carica()">
-        <div class="modal" id="error_modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 id="errore_title" class="col-12 modal-title text-center">
-                        Attenzione!!!
-                    </h4>
-                  </div>
-                  <div class="modal-body">
-                    <h5 id="errore"></h5>
-                  </div>
-                  <div class="modal-footer">
-                      <div class="col-md-3"></div>
-                      <button type="button" class="btn btn-danger btn-lg btn-block col-md-6" data-dismiss="modal">Close</button>
-                      <div class="col-md-3"></div>
-                  </div>
-                </div>
-            </div>
-        </div>
 		<div class="container">
-            <div class="mb-3 mt-3 text-center">
-                <h1><img src="/static/image/hub.png" class="img-fluid" style="width: 200px; height: 200px" alt="Icona di google home">Home</h1>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <button class="btn btn-warning btn-lg btn-block" type="button" onclick="logout()">Logout</button>
+            <div class="row mb-3 mt-3 remove-margin">
+                <div class="first-margin"></div>
+                <div class="col-titolo">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <img src="/static/image/hub.png" class="img-fluid icona-titolo my-auto" alt="Icona di google home">
+                                <h2 class="font-weight-bold text-center titolo">HOME</h2>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="update()">Aggiorna a Ultima Versione</button>
+                </div>
+                <div class="second-margin"></div>
+                <div class="col-logout">
+                    <div class="card">
+                        <div class="card-body make-cursor my-panel-icon text-center" onclick="logout()">
+                            <img src="/static/image/logout.png" class="img-fluid my-auto" alt="Icona di google home">
+                            <p class="font-weight-bold mb-0">ESCI</p>
+                        </div>
                     </div>
                 </div>
             </div>
-			<div class="mb-3 row">
-				<div class="col-md-12">
-					<form>
-						<div class="row">
-                            <div class="col-md-3 mb-3">
-							    <div class="dropdown">
-                                    <label for="device">Dispositivo</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
-									<ul class="dropdown-menu" id="drop_device">
-                                    </ul>
+            <div class="row mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_search').modal();">
+                                        <div class="row">
+                                            <img src="/static/image/lente.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">SCANSIONA RETE</h6>
+                                        </div>
+                                    </div>
                                 </div>
-                                <script id="drop_device-template" type="text/x-handlebars-template">
-                                    {{#each this}}
-                                        <li class="dropdown-item">{{net_code}}</li>
-                                    {{/each}}
-                                </script>
-								<div class="invalid-feedback" id="chk_device">
-									Il dispositivo &egrave un campo obbligatorio
-								</div>
                             </div>
-                            <div class="col-md-3 mb-3">
-							    <div class="dropdown">
-                                    <label for="device">Comando</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
-                                    <ul class="dropdown-menu" id="drop_command">
-                                    </ul>
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_exec_cmd').modal();">
+                                        <div class="row">
+                                            <img src="/static/image/command.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">ESEGUI COMANDO</h6>
+                                        </div>
+                                    </div>
                                 </div>
-                                <script id="drop_command-template" type="text/x-handlebars-template">
-                                    {{#each this}}
-                                        <li class="dropdown-item">{{cmd_str}}</li>
-                                    {{/each}}
-                                </script>
-								<div class="invalid-feedback" id="chk_command">
-									Il comando &egrave un campo obbligatorio
-								</div>
                             </div>
-							<div class="col-md-6 mb-3">
-								<label for="cmd_result">Esito Comando</label>
-								<input type="text" class="form-control" id="cmd_result" readonly>
-							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net('cmd')">Invia</button>
-						</div>
-					</form>
-				</div>
-			</div>
-			<div class="mb-3 row">
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_rich_release').modal();">
+                                        <div class="row">
+                                            <img src="/static/image/user.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">GESTIONE UTENTI</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_add_user').modal();">
+                                        <div class="row">
+                                            <img src="/static/image/add.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">AGGIUNGI UTENTE</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_compile').modal();">
+                                        <div class="row">
+                                            <img src="/static/image/esp.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">CODICE PER ESP</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-col">
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="update()">
+                                        <div class="row">
+                                            <img src="/static/image/update.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
+                                            <h6 class="font-weight-bold text-center titolo">AGGIORNA</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<div class="row">
 				<div class="col-md-12">
-				    <form>
-						<div class="row">
-							<div class="col-md-4 mb-3">
-								<label for="found">Trovati</label>
-								<input type="text" class="form-control" id="found" readonly>
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="new">Nuovi</label>
-								<input type="text" class="form-control" id="new" readonly>
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="update">Aggiornati</label>
-								<input type="text" class="form-control" id="update" readonly>
-							</div>
-							<button class="btn btn-primary btn-lg btn-block" type="button" onclick="net('scan')">Net Scan</button>
-						</div>
-				    </form>
-				</div>
-		    </div>
-			<div class="mb-3 row">
-				<div class="col-md-12">
-					<div class="row">
-						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="net('list')">List Device</button>
-					</div>
 					<div  id="table-device" class="table-responsive"></div>
                     <script id="table-device-template" type="text/x-handlebars-template">
-                        <table class="table">
+                        <table class="table my-table-device">
                             <thead>
                                 <tr>
-                                    <th>Codice</th>
-                                    <th>Tipo</th>
-                                    <th>IP</th>
-                                    <th>MAC</th>
-                                    <th>MAC info</th>
+                                    <th class="my-text-table col-check">#</th>
+                                    <th class="my-text-table col-codice">CODICE</th>
+                                    <th class="my-text-table col-tipo">TIPO</th>
+                                    <th class="my-text-table col-ip">IP</th>
+                                    <th class="my-text-table col-mac">MAC</th>
+                                    <th class="my-text-table col-mac-info">MAC INFO</th>
                                     {{#if_eq user_role "ADMIN"}}
-                                        <th>User SSH</th>
-                                        <th>Password SSH</th>
+                                        <th class="my-text-table col-user">USER SSH</th>
+                                        <th class="my-text-table col-password">PASSWORD SSH</th>
                                     {{/if_eq}}
-                                    <th>Ultimo aggiornamento</th>
-                                    {{#if_eq user_role "ADMIN"}}
-                                        <th>Salvataggio</th>
-                                        <th>Reset</th>
-                                        <th>Elimina</th>
-                                    {{/if_eq}}
+                                    <th class="my-text-table col-ultimo">AGGIORNAMENTO</th>
+                                  <!--  {{#if_eq user_role "ADMIN"}}
+                                        <th class="my-text-table">Salvataggio</th>
+                                        <th class="my-text-table">Reset</th>
+                                        <th class="my-text-table">Elimina</th>
+                                    {{/if_eq}}-->
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each devices}}
                                     <tr>
-                                        <td>
-                                            <input class="form-control" style="width: auto" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        <td class="my-text-table">
+                                            <input id="checkbox_dev{{@index}}" type="checkbox">
                                         </td>
-                                        <td>
+                                        <td class="my-text-table">
+                                            <input  class="form-control font-weight-bold" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        </td>
+                                        <td class="my-text-table">
                                             <div class="dropdown{{@index}}">
-                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
                                                 <ul class="dropdown-menu" id="drop_type{{@index}}"></ul>
                                             </div>
                                         </td>
-                                        <td>{{net_ip}}</td>
-                                        <td>
+                                        <td class="font-weight-bold my-text-table">{{net_ip}}</td>
+                                        <td class="font-weight-bold my-text-table">
                                             <span id="mac{{@index}}">{{net_mac}}</span>
                                         </td>
-                                        <td>{{net_mac_info}}</td>
+                                        <td class="font-weight-bold my-text-table">{{net_mac_info}}</td>
                                         {{#if_eq ../user_role "ADMIN"}}
-                                            <td>
-                                                <input class="form-control" style="width: auto" type="text" id="usr{{@index}}" value="{{net_usr}}">
+                                            <td class="my-text-table">
+                                                <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}">
                                             </td>
-                                            <td>
-                                                <div class="input-group" style="width: 230px">
-                                                    <input class="form-control" id="psw{{@index}}" value="{{net_psw}}" type="password">
+                                            <td class="my-text-table">
+                                                <div class="input-group">
+                                                    <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-primary input-group-button" onclick="view_password({{@index}})">
                                                             <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
@@ -178,58 +174,72 @@
                                                 </div>
                                             </td>
                                         {{/if_eq}}
-                                        <td>{{net_last_update}}</td>
-                                        {{#if_eq ../user_role "ADMIN"}}
+                                        <td class="font-weight-bold my-text-table">{{net_last_update}}</td>
+                                        <!--{{#if_eq ../user_role "ADMIN"}}
                                             <td>
-                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">Salva</button>
+                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">S</button>
                                             </td>
                                             <td>
-                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">Reset</button>
+                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">R</button>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">Elimina</button>
+                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">E</button>
                                             </td>
-                                        {{/if_eq}}
+                                        {{/if_eq}}-->
                                     </tr>
                                 {{/each}}
                             </tbody>
                         </table>
+                        {{#if_eq user_role "ADMIN"}}
+                        {{/if_eq}}
                     </script>
                     <script id="drop_type-template" type="text/x-handlebars-template">
                         {{#each this}}
-                            <li class="dropdown-item">{{type_code}}</li>
+                            <li class="dropdown-item font-weight-bold">{{type_code}}</li>
                         {{/each}}
                     </script>
 				</div>
 		    </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <button disabled class="btn btn-warning btn-lg btn-block" type="button">RESET</button>
+                </div>
+                <div class="col-md-4">
+                    <button disabled class="btn btn-danger btn-lg btn-block" type="button">ELIMINA</button>
+                </div>
+                <div class="col-md-4">
+                    <button disabled class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
+                </div>
+            </div>
             <div class="mb-3 row">
                 <div class="col-md-12">
-                    <div class="row">
-						<button class="mb-3 btn btn-primary btn-lg btn-block" type="button" onclick="user_function('list')">List User</button>
-                    </div>
 					<div  id="table-user" class="table-responsive"></div>
                     <script id="table-user-template" type="text/x-handlebars-template">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Username</th>
-                                    <th>Password</th>
-                                    <th>Ruolo</th>
-                                    <th>Salva</th>
+                                    <th class="my-text-table col-check">#</th>
+                                    <th class="my-text-table">USERNAME</th>
+                                    <th class="my-text-table">PASSWORD</th>
+                                    <th class="my-text-table">RUOLO</th>
+                                    <!--<th>Salva</th>
                                     <th>Reset</th>
                                     {{#if_eq user_role "ADMIN"}}
                                         <th>Elimina</th>
-                                    {{/if_eq}}
+                                    {{/if_eq}}-->
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each users}}
                                     <tr>
-                                        <td>
-                                            <span id="username{{@index}}">{{username}}</span>
+                                        <td class="my-text-table">
+                                            <input id="checkbox_user{{@index}}" type="checkbox">
                                         </td>
-                                        <td>
-                                            <div class="input-group" style="width: 230px">
+                                        <td class="my-text-table col-username">
+                                            <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
+                                        </td>
+                                        <td class="my-text-table col-password-us">
+                                            <div class="input-group">
                                                 <input class="form-control" id="psw_user{{@index}}" value="{{password}}" type="password">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-primary input-group-button" onclick="view_password_user({{@index}})">
@@ -238,16 +248,16 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
+                                        <td class="my-text-table col-ruolo">
                                             <div class="dropdown{{@index}}">
-                                                <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
+                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
                                                 <ul class="dropdown-menu">
-                                                    <li class="dropdown-item" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
-                                                    <li class="dropdown-item" onclick="user_role('{{@index}}', 'USER')">USER</li>
+                                                    <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
+                                                    <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'USER')">USER</li>
                                                 </ul>
                                             </div>
                                         </td>
-                                        <td>
+                                        <!--<td>
                                             <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva_user{{@index}}" onclick="user_function('update{{@index}}')">Salva</button>
                                         </td>
                                         <td>
@@ -257,7 +267,7 @@
                                             <td>
                                                 <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
                                             </td>
-                                        {{/if_eq}}
+                                        {{/if_eq}}-->
                                     </tr>
                                 {{/each}}
                             </tbody>
@@ -265,153 +275,306 @@
                     </script>
                 </div>
             </div>
-            <div class="row mb-3 d-none" id="add-user">
-                <div class="col-md-12">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="username_add">Username</label>
-                                <input type="text" class="form-control" id="username_add">
-                                <div class="invalid-feedback" id="chk_username">
-                                    L username &egrave un campo obbligatorio
-                                </div>
+            <div class="row mb-3">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    <button disabled class="btn btn-danger btn-lg btn-block" type="button">ELIMINA</button>
+                </div>
+                <div class="col-md-4">
+                    <button disabled class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="modal_exec_cmd">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                        <h4 class="col-11 modal-title text-center">
+                            ESEGUI COMANDO
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <label class="font-weight-bold" for="device">DISPOSITIVO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
+                                <ul class="dropdown-menu" id="drop_device">
+                                </ul>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="password_add">Password</label>
-                                <input type="text" class="form-control" id="password_add">
-                                <div class="invalid-feedback" id="chk_password">
-                                    La password &egrave un campo obbligatorio
-                                </div>
+                            <script id="drop_device-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{net_code}}</li>
+                                {{/each}}
+                            </script>
+                            <div class="invalid-feedback" id="chk_device">
+                                Il dispositivo &egrave un campo obbligatorio
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="dropdown_add">
-                                    <label for="role_user_add">Ruolo</label>
-                                    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="role_user_add"></button>
-                                    <ul class="dropdown-menu">
-                                        <li class="dropdown-item" onclick="user_role('add', 'ADMIN')">ADMIN</li>
-                                        <li class="dropdown-item" onclick="user_role('add', 'USER')">USER</li>
-                                    </ul>
-                                </div>
-                                <div class="invalid-feedback" id="chk_role">
-                                    Il ruolo &egrave un campo obbligatorio
-                                </div>
-                            </div>
-                            <button class="btn btn-primary btn-lg btn-block" type="button" onclick="user_function('add')">Add User</button>
                         </div>
-                    </form>
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <label class="font-weight-bold" for="device">COMANDO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
+                                <ul class="dropdown-menu" id="drop_command">
+                                </ul>
+                            </div>
+                            <script id="drop_command-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{cmd_str}}</li>
+                                {{/each}}
+                            </script>
+                            <div class="invalid-feedback" id="chk_command">
+                                Il comando &egrave un campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="font-weight-bold" for="cmd_result">ESITO</label>
+                            <input type="text" class="form-control font-weight-bold" id="cmd_result" readonly>
+                        </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="net('cmd')">INVIA</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal_search">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            SCANSIONA RETE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="font-weight-bold" for="found">TROVATI</label>
+                            <input type="text" class="form-control" id="found" readonly>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="font-weight-bold" for="new">NUOVI</label>
+                            <input type="text" class="form-control" id="new" readonly>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="font-weight-bold" for="update">AGGIORNATI</label>
+                            <input type="text" class="form-control" id="update" readonly>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-3"></div>
+                      <div class="col-md-6">
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="net('scan')">SCANSIONA</button>
+                      </div>
+                      <div class="col-md-3"></div>
+                  </div>
                 </div>
             </div>
-            <div class="row mb-3 d-none" id="upload-arduino">
-                <div class="col-md-12">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-							    <div class="dropdown">
-                                    <label for="device_arduino">Dispositivo</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="device_arduino" onclick="upload_arduino('core')"></button>
-									<ul class="dropdown-menu" id="drop_device_arduino">
-                                    </ul>
-                                </div>
-                                <script id="drop_device_arduino-template" type="text/x-handlebars-template">
-                                    {{#each this}}
-                                        <li class="dropdown-item">{{this}}</li>
-                                    {{/each}}
-                                </script>
-								<div class="invalid-feedback" id="chk_device_arduino">
-									Il dispositivo &egrave un campo obbligatorio
-								</div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="modal_add_user">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            AGGIUNGI UTENTE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="font-weight-bold" for="username_add">USERNAME</label>
+                            <input type="text" class="form-control font-weight-bold" id="username_add">
+                            <div class="invalid-feedback" id="chk_username">
+                                L username &egrave un campo obbligatorio
                             </div>
-                            <div class="col-md-4 mb-3">
-							    <div class="dropdown">
-                                    <label for="tipo_arduino">Tipologia</label>
-						  		    <button class="btn btn-secondary btn-lg btn-block dropdown-toggle " type="button" data-toggle="dropdown" id="tipo_arduino" onclick="upload_arduino('tipo')"></button>
-									<ul class="dropdown-menu" id="drop_tipo_arduino">
-                                    </ul>
-                                </div>
-                                <script id="drop_tipo_arduino-template" type="text/x-handlebars-template">
-                                    {{#each this}}
-                                        <li class="dropdown-item">{{this}}</li>
-                                    {{/each}}
-                                </script>
-								<div class="invalid-feedback" id="chk_tipo_arduino">
-									La tipologia &egrave un campo obbligatorio
-								</div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-								<label for="esito_upload">Esito</label>
-								<input type="text" class="form-control" id="esito_upload" readonly>
-							</div>
-                            <div class="col-md-4 mb-3">
-								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('compile')">Compila</button>
-							</div>
-                            <div class="col-md-4 mb-3">
-								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('upload')">Upload</button>
-							</div>
-                            <div class="col-md-4 mb-3">
-								<button class="btn btn-primary btn-lg btn-block mb-3" type="button" onclick="upload_arduino('compile_upload')">Compila e Upload</button>
-							</div>
-                            <div class="col-md-12 mb-3">
-                                <h3>Report Compilazione</h3>
-                            </div>
-                            <div class="col-md-3 mb-3">
-								<label for="program_bytes_used">Byte Programma Utilizzati</label>
-								<input type="text" class="form-control" id="program_bytes_used" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="program_percentual_used">Byte Programma Percentuale</label>
-								<input type="text" class="form-control" id="program_percentual_used" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="program_bytes_total">Byte Programma Totali</label>
-								<input type="text" class="form-control" id="program_bytes_total" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="memory_bytes_used">Byte Memoria Utilizzati</label>
-								<input type="text" class="form-control" id="memory_bytes_used" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="memory_percentual_used">Byte Memoria Percentuale</label>
-								<input type="text" class="form-control" id="memory_percentual_used" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="memory_bytes_free">Byte Memoria Liberi</label>
-								<input type="text" class="form-control" id="memory_bytes_free" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="memory_bytes_total">Byte Memoria Totali</label>
-								<input type="text" class="form-control" id="memory_bytes_total" readonly>
-							</div>
-                            <div class="col-md-12 mb-3">
-                                <h3>Report Caricamento</h3>
-                            </div>
-                            <div class="col-md-3 mb-3">
-								<label for="porta_seriale">Porta Seriale</label>
-								<input type="text" class="form-control" id="porta_seriale" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="chip">Chip</label>
-								<input type="text" class="form-control" id="chip" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="mac_addres">MAC Adrres</label>
-								<input type="text" class="form-control" id="mac_addres" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="byte_write">Byte Write</label>
-								<input type="text" class="form-control" id="byte_write" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="byte_write_compressed">Byte Write Compressi</label>
-								<input type="text" class="form-control" id="byte_write_compressed" readonly>
-							</div>
-                            <div class="col-md-3 mb-3">
-								<label for="time">Tempo Upload</label>
-								<input type="text" class="form-control" id="time" readonly>
-							</div>
                         </div>
-                    </form>
+                        <div class="col-md-5">
+                            <label class="font-weight-bold" for="password_add">PASSWORD</label>
+                            <input type="text" class="form-control font-weight-bold" id="password_add">
+                            <div class="invalid-feedback" id="chk_password">
+                                La password &egrave un campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="dropdown_add">
+                                <label class="font-weight-bold" for="role_user_add">RUOLO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user_add"></button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'ADMIN')">ADMIN</li>
+                                    <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'USER')">USER</li>
+                                </ul>
+                            </div>
+                            <div class="invalid-feedback" id="chk_role">
+                                Il ruolo &egrave un campo obbligatorio
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-4"></div>
+                      <div class="col-md-4">
+                          <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="user_function('add')">AGGIUNGI</button>
+                      </div>
+                      <div class="col-md-4"></div>
+                  </div>
                 </div>
-		    </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="modal_compile">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            CODICE PER ESP
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <div class="dropdown">
+                                <label for="device_arduino" class="font-weight-bold">DISPOSITIVO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="upload_arduino('core')"></button>
+                                <ul class="dropdown-menu" id="drop_device_arduino">
+                                </ul>
+                            </div>
+                            <script id="drop_device_arduino-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{this}}</li>
+                                {{/each}}
+                            </script>
+                            <div class="invalid-feedback" id="chk_device_arduino">
+                                Il dispositivo &egrave un campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="dropdown">
+                                <label for="tipo_arduino" class="font-weight-bold">TIPOLOGIA</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="upload_arduino('tipo')"></button>
+                                <ul class="dropdown-menu" id="drop_tipo_arduino">
+                                </ul>
+                            </div>
+                            <script id="drop_tipo_arduino-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{this}}</li>
+                                {{/each}}
+                            </script>
+                            <div class="invalid-feedback" id="chk_tipo_arduino">
+                                La tipologia &egrave un campo obbligatorio
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="esito_upload" class="font-weight-bold">ESITO</label>
+                            <input type="text" class="form-control" id="esito_upload" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h5 class="font-weight-bold">REPORT COMPILAZIONE</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="program_bytes_used" class="font-weight-bold">BYTE PROGR UTILIZZATI</label>
+                            <input type="text" class="form-control" id="program_bytes_used" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="program_percentual_used" class="font-weight-bold">BYTE PROGR PERCENTUALE</label>
+                            <input type="text" class="form-control" id="program_percentual_used" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="program_bytes_total" class="font-weight-bold">BYTE PROGR TOTALI</label>
+                            <input type="text" class="form-control" id="program_bytes_total" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memory_bytes_used" class="font-weight-bold">BYTE MEMORIA UTILIZZATI</label>
+                            <input type="text" class="form-control" id="memory_bytes_used" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memory_percentual_used" class="font-weight-bold">BYTE MEMORIA PERCENTUALE</label>
+                            <input type="text" class="form-control" id="memory_percentual_used" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memory_bytes_free" class="font-weight-bold">BYTE MEMORIA LIBERI</label>
+                            <input type="text" class="form-control" id="memory_bytes_free" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="memory_bytes_total" class="font-weight-bold">BYTE MEMORIA TOTALI</label>
+                            <input type="text" class="form-control" id="memory_bytes_total" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="font-weight-bold">REPORT UPLOAD</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="porta_seriale" class="font-weight-bold">PORTA SERIALE</label>
+                            <input type="text" class="form-control" id="porta_seriale" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="chip" class="font-weight-bold">CHIP</label>
+                            <input type="text" class="form-control" id="chip" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="mac_addres" class="font-weight-bold">MAC ADDRESS</label>
+                            <input type="text" class="form-control" id="mac_addres" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="byte_write" class="font-weight-bold">BYTE SCRITTI</label>
+                            <input type="text" class="form-control" id="byte_write" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="byte_write_compressed" class="font-weight-bold">BYTE SCRITTI COMPRESSI</label>
+                            <input type="text" class="form-control" id="byte_write_compressed" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="time" class="font-weight-bold">TEMPO UPLOAD</label>
+                            <input type="text" class="form-control" id="time" readonly>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-4">
+                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile')">COMPILA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('upload')">UPLOAD</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="error_modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 id="errore_title" class="col-12 modal-title text-center">
+                        ATTENZIONE!!!
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="errore" class="col-12 text-center"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-4"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">CHIUDI</button>
+                      </div>
+                      <div class="col-md-4"></div>
+                  </div>
+                </div>
+            </div>
         </div>
 	</body>
 </html>
