@@ -295,12 +295,6 @@ function user_function(type_op){
                         var users = json["users"];
                         var user_template = Handlebars.compile($("#table-user-template")[0].innerHTML);
                         $('#table-user').html(user_template(json));
-                        if (json['user_role'] == 'ADMIN'){
-                            $('#add-user')[0].classList.remove("d-none");
-                            $('#add-user')[0].classList.add("d-block");
-                            $('#upload-arduino')[0].classList.remove("d-none");
-                            $('#upload-arduino')[0].classList.add("d-block");
-                        }
                         user_list = [];
                         for(var i = 0; i < users.length;i++) {
                             user_list.push(users[i]);
@@ -497,17 +491,19 @@ function upload_arduino(tipo_op){
 }
 
 function update(){
+    $.blockUI();
     $.ajax({
         url: "/api/update_last_version",
         type: 'GET',
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
             if (json["output"].search("OK") == 0){
-                $.blockUI();
                 setTimeout(function () {
                     $.unblockUI();
                     $(window.location).attr('href', '/');
                 }, 15000);
+            } else {
+                $.unblockUI();
             }
         },
         error: function(xhr){
