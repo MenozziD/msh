@@ -55,7 +55,7 @@
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_search').modal();">
                                         <div class="row">
                                             <img src="/static/image/lente.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">SCANSIONA RETE</h6>
+                                            <h4 class="font-weight-bold text-center comando">SCANSIONA RETE</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -65,27 +65,17 @@
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_exec_cmd').modal();">
                                         <div class="row">
                                             <img src="/static/image/command.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">ESEGUI COMANDO</h6>
+                                            <h4 class="font-weight-bold text-center comando">ESEGUI COMANDO</h4>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="panel-col">
                                 <div class="card">
-                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_rich_release').modal();">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_user').modal();">
                                         <div class="row">
                                             <img src="/static/image/user.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">GESTIONE UTENTI</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-col">
-                                <div class="card">
-                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_add_user').modal();">
-                                        <div class="row">
-                                            <img src="/static/image/add.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">AGGIUNGI UTENTE</h6>
+                                            <h4 class="font-weight-bold text-center comando">GESTIONE UTENTI</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -95,7 +85,7 @@
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_compile').modal();">
                                         <div class="row">
                                             <img src="/static/image/esp.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">CODICE PER ESP</h6>
+                                            <h4 class="font-weight-bold text-center comando">CODICE PER ESP</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -105,7 +95,7 @@
                                     <div class="card-body make-cursor my-panel-icon" onclick="update()">
                                         <div class="row">
                                             <img src="/static/image/update.png" class="img-fluid my-auto icona-titolo" alt="Icona di google home">
-                                            <h6 class="font-weight-bold text-center titolo">AGGIORNA</h6>
+                                            <h4 class="font-weight-bold text-center comando">AGGIORNA</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -211,80 +201,6 @@
                     <button disabled class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
                 </div>
             </div>
-            <div class="mb-3 row">
-                <div class="col-md-12">
-					<div  id="table-user" class="table-responsive"></div>
-                    <script id="table-user-template" type="text/x-handlebars-template">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="my-text-table col-check">#</th>
-                                    <th class="my-text-table">USERNAME</th>
-                                    <th class="my-text-table">PASSWORD</th>
-                                    <th class="my-text-table">RUOLO</th>
-                                    <!--<th>Salva</th>
-                                    <th>Reset</th>
-                                    {{#if_eq user_role "ADMIN"}}
-                                        <th>Elimina</th>
-                                    {{/if_eq}}-->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each users}}
-                                    <tr>
-                                        <td class="my-text-table">
-                                            <input id="checkbox_user{{@index}}" type="checkbox">
-                                        </td>
-                                        <td class="my-text-table col-username">
-                                            <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
-                                        </td>
-                                        <td class="my-text-table col-password-us">
-                                            <div class="input-group">
-                                                <input class="form-control" id="psw_user{{@index}}" value="{{password}}" type="password">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-primary input-group-button" onclick="view_password_user({{@index}})">
-                                                        <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="my-text-table col-ruolo">
-                                            <div class="dropdown{{@index}}">
-                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
-                                                <ul class="dropdown-menu">
-                                                    <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
-                                                    <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'USER')">USER</li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                        <!--<td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva_user{{@index}}" onclick="user_function('update{{@index}}')">Salva</button>
-                                        </td>
-                                        <td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset_user{{@index}}" onclick="user_reset('{{@index}}')">Reset</button>
-                                        </td>
-                                        {{#if_eq ../user_role "ADMIN"}}
-                                            <td>
-                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
-                                            </td>
-                                        {{/if_eq}}-->
-                                    </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
-                    </script>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-2"></div>
-                <div class="col-md-4">
-                    <button disabled class="btn btn-danger btn-lg btn-block" type="button">ELIMINA</button>
-                </div>
-                <div class="col-md-4">
-                    <button disabled class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
-                </div>
-                <div class="col-md-2"></div>
-            </div>
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_exec_cmd">
             <div class="modal-dialog modal-lg">
@@ -338,7 +254,7 @@
                 <div class="modal-footer">
                     <div class="col-md-4"></div>
                     <div class="col-md-4">
-                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="net('cmd')">INVIA</button>
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="net('cmd')">INVIA</button>
                     </div>
                     <div class="col-md-4"></div>
                 </div>
@@ -380,17 +296,85 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade bd-example-modal-lg" id="modal_add_user">
+        <div class="modal fade bd-example-modal-lg" id="modal_user">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="col-11 modal-title text-center">
-                            AGGIUNGI UTENTE
+                            GESTIONE UTENTI
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                            <div  id="table-user" class="table-responsive"></div>
+                            <script id="table-user-template" type="text/x-handlebars-template">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="my-text-table col-check">#</th>
+                                            <th class="my-text-table">USERNAME</th>
+                                            <th class="my-text-table">PASSWORD</th>
+                                            <th class="my-text-table">RUOLO</th>
+                                            <!--<th>Salva</th>
+                                            <th>Reset</th>
+                                            {{#if_eq user_role "ADMIN"}}
+                                                <th>Elimina</th>
+                                            {{/if_eq}}-->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each users}}
+                                            <tr>
+                                                <td class="my-text-table">
+                                                    <input id="checkbox_user{{@index}}" type="checkbox">
+                                                </td>
+                                                <td class="my-text-table col-username">
+                                                    <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
+                                                </td>
+                                                <td class="my-text-table col-password-us">
+                                                    <div class="input-group">
+                                                        <input class="form-control" id="psw_user{{@index}}" value="{{password}}" type="password">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-primary input-group-button" onclick="view_password_user({{@index}})">
+                                                                <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="my-text-table col-ruolo">
+                                                    <div class="dropdown{{@index}}">
+                                                        <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
+                                                        <ul class="dropdown-menu">
+                                                            <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
+                                                            <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'USER')">USER</li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <!--<td>
+                                                    <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva_user{{@index}}" onclick="user_function('update{{@index}}')">Salva</button>
+                                                </td>
+                                                <td>
+                                                    <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset_user{{@index}}" onclick="user_reset('{{@index}}')">Reset</button>
+                                                </td>
+                                                {{#if_eq ../user_role "ADMIN"}}
+                                                    <td>
+                                                        <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
+                                                    </td>
+                                                {{/if_eq}}-->
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </script>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-center">AGGIUNGI UTENTE </h4>
+                        </div>
                         <div class="col-md-5">
                             <label class="font-weight-bold" for="username_add">USERNAME</label>
                             <input type="text" class="form-control font-weight-bold" id="username_add">
@@ -421,11 +405,15 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                      <div class="col-md-4"></div>
                       <div class="col-md-4">
-                          <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="user_function('add')">AGGIUNGI</button>
+                          <button class="btn btn-danger btn-lg btn-block" type="button">ELIMINA</button>
                       </div>
-                      <div class="col-md-4"></div>
+                      <div class="col-md-4">
+                            <button class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
+                      </div>
+                      <div class="col-md-4">
+                          <button class="btn btn-success btn-lg btn-block" type="button" onclick="user_function('add')">AGGIUNGI</button>
+                      </div>
                   </div>
                 </div>
             </div>
@@ -543,13 +531,13 @@
                   </div>
                   <div class="modal-footer">
                       <div class="col-md-4">
-                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile')">COMPILA</button>
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile')">COMPILA</button>
                       </div>
                       <div class="col-md-4">
-                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('upload')">UPLOAD</button>
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('upload')">UPLOAD</button>
                       </div>
                       <div class="col-md-4">
-                        <button disabled class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
                       </div>
                   </div>
                 </div>

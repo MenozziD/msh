@@ -150,6 +150,10 @@ sudo ps4-waker
 # scegliere ps4-waker
 # inserire il pin nella shell
 
+# Leggi WIFI password e ssid
+cat wireless | grep "ssid" | awk '{split($0,a," '\''"); print a[2]}'
+cat wireless | grep "wpa_psk_key" | awk '{split($0,a," "); print a[3]}'
+
 # Rimozione pacchetti 
 sudo apt autoremove
 

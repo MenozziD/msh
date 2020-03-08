@@ -88,7 +88,11 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
 def execute_request_http(url):
     if XmlReader.settings["ambiente"] == 'PROD':
         info("MAKE REQUEST: %s", url)
-        response = request.urlopen(url).read().decode('utf-8')
+        try:
+            response = request.urlopen(url).read().decode('utf-8')
+        except Exception as e:
+            exception("Exception")
+            response = "Error " + str(e)
         info("RESPONSE: %s", response)
     else:
         f = open('request_simulate.json', 'r')
