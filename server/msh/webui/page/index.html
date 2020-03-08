@@ -133,7 +133,12 @@
                                 {{#each devices}}
                                     <tr>
                                         <td class="my-text-table">
-                                            <input id="checkbox_dev{{@index}}" type="checkbox">
+                                            <form>
+                                              <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="checkbox_device{{@index}}">
+                                                <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
+                                              </div>
+                                            </form>
                                         </td>
                                         <td class="my-text-table">
                                             <input  class="form-control font-weight-bold" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
@@ -328,7 +333,12 @@
                                         {{#each users}}
                                             <tr>
                                                 <td class="my-text-table">
-                                                    <input id="checkbox_user{{@index}}" type="checkbox">
+                                                    <form>
+                                                      <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
+                                                      </div>
+                                                    </form>
                                                 </td>
                                                 <td class="my-text-table col-username">
                                                     <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
