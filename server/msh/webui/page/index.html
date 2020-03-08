@@ -111,7 +111,7 @@
                         <table class="table my-table-device">
                             <thead>
                                 <tr>
-                                    <th class="my-text-table col-check">#</th>
+                                    <th class="my-text-table col-check"><i id="trash_dev" class="fa fa-trash" aria-hidden="true"></i></th>
                                     <th class="my-text-table col-codice">CODICE</th>
                                     <th class="my-text-table col-tipo">TIPO</th>
                                     <th class="my-text-table col-ip">IP</th>
@@ -146,7 +146,7 @@
                                         <td class="my-text-table">
                                             <div class="dropdown{{@index}}">
                                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
-                                                <ul class="dropdown-menu" id="drop_type{{@index}}"></ul>
+                                                <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
                                             </div>
                                         </td>
                                         <td class="font-weight-bold my-text-table">{{net_ip}}</td>
@@ -162,7 +162,7 @@
                                                 <div class="input-group">
                                                     <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password">
                                                     <div class="input-group-append">
-                                                        <button class="btn btn-primary input-group-button" onclick="view_password({{@index}})">
+                                                        <button class="btn btn-primary input-group-button btn-pass" onclick="view_password({{@index}})">
                                                             <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
                                                         </button>
                                                     </div>
@@ -222,7 +222,7 @@
                             <div class="dropdown">
                                 <label class="font-weight-bold" for="device">DISPOSITIVO</label>
                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
-                                <ul class="dropdown-menu" id="drop_device">
+                                <ul class="dropdown-menu scrollable-menu" id="drop_device">
                                 </ul>
                             </div>
                             <script id="drop_device-template" type="text/x-handlebars-template">
@@ -238,7 +238,7 @@
                             <div class="dropdown">
                                 <label class="font-weight-bold" for="device">COMANDO</label>
                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
-                                <ul class="dropdown-menu" id="drop_command">
+                                <ul class="dropdown-menu scrollable-menu" id="drop_command">
                                 </ul>
                             </div>
                             <script id="drop_command-template" type="text/x-handlebars-template">
@@ -347,7 +347,7 @@
                                                     <div class="input-group">
                                                         <input class="form-control" id="psw_user{{@index}}" value="{{password}}" type="password">
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-primary input-group-button" onclick="view_password_user({{@index}})">
+                                                            <button class="btn btn-primary input-group-button btn-pass" onclick="view_password_user({{@index}})">
                                                                 <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
                                                             </button>
                                                         </div>
@@ -356,7 +356,7 @@
                                                 <td class="my-text-table col-ruolo">
                                                     <div class="dropdown{{@index}}">
                                                         <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
-                                                        <ul class="dropdown-menu">
+                                                        <ul class="dropdown-menu scrollable-menu">
                                                             <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
                                                             <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'USER')">USER</li>
                                                         </ul>
@@ -403,7 +403,7 @@
                             <div class="dropdown_add">
                                 <label class="font-weight-bold" for="role_user_add">RUOLO</label>
                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user_add"></button>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu scrollable-menu">
                                     <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'ADMIN')">ADMIN</li>
                                     <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'USER')">USER</li>
                                 </ul>
@@ -443,7 +443,7 @@
                             <div class="dropdown">
                                 <label for="device_arduino" class="font-weight-bold">DISPOSITIVO</label>
                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="upload_arduino('core')"></button>
-                                <ul class="dropdown-menu" id="drop_device_arduino">
+                                <ul class="dropdown-menu scrollable-menu" id="drop_device_arduino">
                                 </ul>
                             </div>
                             <script id="drop_device_arduino-template" type="text/x-handlebars-template">
@@ -459,7 +459,7 @@
                             <div class="dropdown">
                                 <label for="tipo_arduino" class="font-weight-bold">TIPOLOGIA</label>
                                 <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="upload_arduino('tipo')"></button>
-                                <ul class="dropdown-menu" id="drop_tipo_arduino">
+                                <ul class="dropdown-menu scrollable-menu" id="drop_tipo_arduino">
                                 </ul>
                             </div>
                             <script id="drop_tipo_arduino-template" type="text/x-handlebars-template">

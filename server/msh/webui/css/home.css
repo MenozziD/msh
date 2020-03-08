@@ -2,6 +2,12 @@
     max-width: 90%;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 500%;
+    overflow-x: hidden;
+}
+
 .make-cursor {
     cursor: pointer;
 }
@@ -11,8 +17,38 @@
     margin-left: 0px;
 }
 
-body, .form-control, .card {
-    background-color: #fff2d1;
+body, .form-control, .card, .modal-content, .scrollable-menu {
+    background-color: #fff2d1 !important;
+}
+
+input, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
+    border: 3px solid #2c53a2 !important;
+}
+
+.custom-control-input:checked~.custom-control-label::before, .dropdown-item:hover {
+    background-color: #2c53a2 !important;
+    color: #fff2d1 !important;
+}
+
+.custom-control-label::before {
+    background-color: #fff2d1 !important;
+}
+
+hr {
+    border: 2px solid #2c53a2;
+}
+
+.modal-header {
+    border-bottom: 3px solid #2c53a2;
+}
+
+ .modal-footer {
+    border-top: 3px solid #2c53a2;
+ }
+
+.btn-pass {
+    background-color: #2c53a2;
+    border-color: #2c53a2;
 }
 
 .first-margin {
@@ -35,7 +71,7 @@ body, .form-control, .card {
 
 .titolo{
     width: 70%;
-    font-size: 320%;
+    font-size: 300%;
     padding-left: 5%;
     margin-bottom: 5%;
     margin-top: 5%;
@@ -53,10 +89,6 @@ body, .form-control, .card {
     vertical-align: middle !important;
     font-size: 100%;
     padding: 3% !important;
-}
-
-hr {
-    border: 2px solid #000dff6e;
 }
 
 .comando{
@@ -81,10 +113,6 @@ hr {
     padding: 0.25% !important;
 }
 
-input, .dropdown-toggle, .card {
-    border: 3px solid #2c53a2 !important;
-}
-
 .col-check {
     width: 2%;
 }
@@ -98,27 +126,27 @@ input, .dropdown-toggle, .card {
 }
 
 .col-ip {
-    width: 8%;
+    width: 9%;
 }
 
 .col-mac {
-    width: 11%;
+    width: 12%;
 }
 
 .col-mac-info {
-    width: 11%;
+    width: 12%;
 }
 
 .col-user {
-    width: 15%;
+    width: 13%;
 }
 
 .col-password {
-    width: 18%;
+    width: 16%;
 }
 
 .col-ultimo {
-    width: 12%;
+    width: 13%;
 }
 
 .col-username {
