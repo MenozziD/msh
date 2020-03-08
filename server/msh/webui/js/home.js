@@ -93,6 +93,13 @@ function sortTable(attribute){
     last_sort = !last_sort;
 }
 
+function check_change(indice, chiave, nome){
+    var mex = "";
+    if (table_device['devices'][indice][chiave] != new_device_net_list[indice][chiave])
+        mex = "\t# Cambiato il " +  nome + " da " + table_device['devices'][indice][chiave] + " a " + new_device_net_list[indice][chiave] + "\n";
+    return mex;
+}
+
 function net(type_op){
     var code = null;
     var type = null;
@@ -102,8 +109,26 @@ function net(type_op){
     var id = null;
     var dispositivo = null;
     var comando = null;
-    /*if (type_op.search('update') >=0){
-        id = type_op.replace('update','');
+    if (type_op.search('update') >=0){
+        var message = "";
+        for (var i = 0; i < table_device['devices'].length; i++){
+            if (JSON.stringify(table_device['devices'][i]) != JSON.stringify(new_device_net_list[i])){
+                if (check_change(i, 'to_delete', "") != ""){
+                    message = message + "- Il device con MAC address " + table_device['devices'][i]['net_mac'] + " verra eliminato\n";
+                } else {
+                    message = message + "- Modificato device con MAC address " + table_device['devices'][i]['net_mac'] + "\n";
+                    message = message + check_change(i, 'net_code', "CODICE");
+                    message = message + check_change(i, 'net_type', "TIPO");
+                    message = message + check_change(i, 'net_usr', "USER SSH");
+                    message = message + check_change(i, 'net_psw', "PASSWORD SSH");
+                }
+                message = message + "\n"
+            }
+        }
+        $('#recap').text(message);
+        $('#modal_recap_change').modal();
+        return;
+        /*id = type_op.replace('update','');
         mac = $("#mac" + id).text();
         type_op = 'update';
         for (var i = 0; i < table_device.length; i++){
@@ -117,8 +142,8 @@ function net(type_op){
                 if ($("#psw" + id)[0].value != table_device[i]['net_psw'])
                     password = $("#psw" + id)[0].value;
             }
-        }
-    }*/
+        }*/
+    }
     if (type_op.search('type') >=0){
         id = type_op.replace('type','');
         type_op = 'type';
@@ -284,9 +309,7 @@ function change_page(pagina){
 }
 
 function cambioVal(id){
-    console.log(id);
     var ind = ((table_device['current_page']-1)*8) + parseInt(id);
-    console.log(ind);
     var type = $("#type" + id)[0].value;
     var code = $("#code" + id)[0].value;
     var user = $("#usr" + id)[0].value;
