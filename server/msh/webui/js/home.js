@@ -15,6 +15,7 @@ function carica(){
     $.blockUI.defaults.css.height = '0%';
     $.blockUI.defaults.css.left = '50%';
     $.blockUI.defaults.css.border = '';
+    $.blockUI.defaults.baseZ = 2000;
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
