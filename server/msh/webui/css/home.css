@@ -28,6 +28,11 @@ body, .form-control, .card {
     height: 100%;
 }
 
+.icona-panel{
+    width: 22%;
+    height: 100%;
+}
+
 .titolo{
     width: 70%;
     font-size: 320%;
@@ -46,8 +51,8 @@ body, .form-control, .card {
 
 .my-panel-icon {
     vertical-align: middle !important;
-    font-size: 85%;
-    padding: 10% !important;
+    font-size: 100%;
+    padding: 3% !important;
 }
 
 hr {
