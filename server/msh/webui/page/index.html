@@ -104,107 +104,144 @@
                     </div>
                 </div>
             </div>
-			<div class="row">
-				<div class="col-md-12">
-					<div  id="table-device" class="table-responsive"></div>
-                    <script id="table-device-template" type="text/x-handlebars-template">
-                        <table class="table my-table-device">
-                            <thead>
+            <div id="table-device" class="row"></div>
+            <script id="table-device-template" type="text/x-handlebars-template">
+                <div class="col-md-12">
+                    <table class="table table-responsive my-table-device">
+                        <thead>
+                            <tr>
+                                <th class="my-text-table col-check"><i id="trash_dev" class="fa fa-trash" aria-hidden="true"></i></th>
+                                <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code')">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type')">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-ip"><a class="make-cursor" onclick="sortTable('net_ip')">IP <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-mac"><a class="make-cursor" onclick="sortTable('net_mac')">MAC <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-mac-info"><a class="make-cursor" onclick="sortTable('net_mac_info')">MAC INFO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                {{#if_eq user_role "ADMIN"}}
+                                    <th class="my-text-table col-user">USER SSH</th>
+                                    <th class="my-text-table col-password">PASSWORD SSH</th>
+                                {{/if_eq}}
+                                <th class="my-text-table col-ultimo"><a class="make-cursor" onclick="sortTable('net_last_update')">AGGIORNAMENTO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                              <!--  {{#if_eq user_role "ADMIN"}}
+                                    <th class="my-text-table">Salvataggio</th>
+                                    <th class="my-text-table">Reset</th>
+                                    <th class="my-text-table">Elimina</th>
+                                {{/if_eq}}-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each devices}}
                                 <tr>
-                                    <th class="my-text-table col-check"><i id="trash_dev" class="fa fa-trash" aria-hidden="true"></i></th>
-                                    <th class="my-text-table col-codice">CODICE</th>
-                                    <th class="my-text-table col-tipo">TIPO</th>
-                                    <th class="my-text-table col-ip">IP</th>
-                                    <th class="my-text-table col-mac">MAC</th>
-                                    <th class="my-text-table col-mac-info">MAC INFO</th>
-                                    {{#if_eq user_role "ADMIN"}}
-                                        <th class="my-text-table col-user">USER SSH</th>
-                                        <th class="my-text-table col-password">PASSWORD SSH</th>
-                                    {{/if_eq}}
-                                    <th class="my-text-table col-ultimo">AGGIORNAMENTO</th>
-                                  <!--  {{#if_eq user_role "ADMIN"}}
-                                        <th class="my-text-table">Salvataggio</th>
-                                        <th class="my-text-table">Reset</th>
-                                        <th class="my-text-table">Elimina</th>
-                                    {{/if_eq}}-->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each devices}}
-                                    <tr>
+                                    <td class="my-text-table">
+                                        <form>
+                                          <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="checkbox_device{{@index}}">
+                                            <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
+                                          </div>
+                                        </form>
+                                    </td>
+                                    <td class="my-text-table">
+                                        <input  class="form-control font-weight-bold" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                    </td>
+                                    <td class="my-text-table">
+                                        <div class="dropdown{{@index}}">
+                                            <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                            <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
+                                        </div>
+                                    </td>
+                                    <td class="font-weight-bold my-text-table">{{net_ip}}</td>
+                                    <td class="font-weight-bold my-text-table">
+                                        <span id="mac{{@index}}">{{net_mac}}</span>
+                                    </td>
+                                    <td class="font-weight-bold my-text-table">{{net_mac_info}}</td>
+                                    {{#if_eq ../user_role "ADMIN"}}
                                         <td class="my-text-table">
-                                            <form>
-                                              <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="checkbox_device{{@index}}">
-                                                <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
-                                              </div>
-                                            </form>
+                                            <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}">
                                         </td>
                                         <td class="my-text-table">
-                                            <input  class="form-control font-weight-bold" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
-                                        </td>
-                                        <td class="my-text-table">
-                                            <div class="dropdown{{@index}}">
-                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
-                                                <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
+                                            <div class="input-group">
+                                                <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-primary input-group-button btn-pass" onclick="view_password({{@index}})">
+                                                        <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td class="font-weight-bold my-text-table">{{net_ip}}</td>
-                                        <td class="font-weight-bold my-text-table">
-                                            <span id="mac{{@index}}">{{net_mac}}</span>
+                                    {{/if_eq}}
+                                    <td class="font-weight-bold my-text-table">{{net_last_update}}</td>
+                                    <!--{{#if_eq ../user_role "ADMIN"}}
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">S</button>
                                         </td>
-                                        <td class="font-weight-bold my-text-table">{{net_mac_info}}</td>
-                                        {{#if_eq ../user_role "ADMIN"}}
-                                            <td class="my-text-table">
-                                                <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}">
-                                            </td>
-                                            <td class="my-text-table">
-                                                <div class="input-group">
-                                                    <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password">
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-primary input-group-button btn-pass" onclick="view_password({{@index}})">
-                                                            <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        {{/if_eq}}
-                                        <td class="font-weight-bold my-text-table">{{net_last_update}}</td>
-                                        <!--{{#if_eq ../user_role "ADMIN"}}
-                                            <td>
-                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">S</button>
-                                            </td>
-                                            <td>
-                                                <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">R</button>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">E</button>
-                                            </td>
-                                        {{/if_eq}}-->
-                                    </tr>
-                                {{/each}}
-                            </tbody>
-                        </table>
-                        {{#if_eq user_role "ADMIN"}}
-                        {{/if_eq}}
-                    </script>
-                    <script id="drop_type-template" type="text/x-handlebars-template">
-                        {{#each this}}
-                            <li class="dropdown-item font-weight-bold">{{type_code}}</li>
-                        {{/each}}
-                    </script>
-				</div>
-		    </div>
-            <div class="row mb-3">
-                <div class="col-md-2"></div>
-                <div class="col-md-4">
+                                        <td>
+                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">R</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">E</button>
+                                        </td>
+                                    {{/if_eq}}-->
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-3">
                     <button class="btn btn-warning btn-lg btn-block" type="button">RESET</button>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
+                    <nav class="font-weight-bold">
+                      <ul class="pagination justify-content-center mb-0">
+                          <li><a class="page-link" onclick="change_page(1)">PRIMA</a></li>
+                          <li>
+                              <a class="page-link" aria-label="Previous" onclick="change_page({{dif current_page 1}})">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                              </a>
+                            </li>
+                        {{#if_mag current_page 4 pages 'release'}}
+                            <li id="{{dif current_page 4}}"><a class="page-link" onclick="change_page({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                        {{/if_mag}}
+                          {{#if_mag current_page 3 pages 'release'}}
+                            <li id="{{dif current_page 3}}"><a class="page-link" onclick="change_page({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                        {{/if_mag}}
+                        {{#if_mag current_page 2 pages 'release'}}
+                        <li id="{{dif current_page 2}}"><a class="page-link" onclick="change_page({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                        {{/if_mag}}
+                        {{#if_mag current_page 1 pages 'release'}}
+                          <li id="{{dif current_page 1}}"><a class="page-link" onclick="change_page({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                        {{/if_mag}}
+                          <li id="{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
+                        {{#if_min current_page 1 pages 'release'}}
+                          <li id="{{sum current_page 1}}"><a class="page-link" onclick="change_page({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                        {{/if_min}}
+                          {{#if_min current_page 2 pages 'release'}}
+                          <li id="{{sum current_page 2}}"><a class="page-link" onclick="change_page({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                        {{/if_min}}
+                          {{#if_min current_page 3 pages 'release'}}
+                          <li id="{{sum current_page 3}}"><a class="page-link" onclick="change_page({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                        {{/if_min}}
+                          {{#if_min current_page 4 pages 'release'}}
+                          <li id="{{sum current_page 4}}"><a class="page-link" onclick="change_page({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                        {{/if_min}}
+                          <li>
+                          <a class="page-link" aria-label="Next" onclick="change_page({{sum current_page 1}})">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        <li><a class="page-link" onclick="change_page({{pages}})">ULTIMA</a></li>
+                      </ul>
+                    </nav>
+                </div>
+                <div class="col-md-3">
                     <button class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
                 </div>
-                <div class="col-md-2"></div>
-            </div>
+            </script>
+            <script id="drop_type-template" type="text/x-handlebars-template">
+                {{#each this}}
+                    <li class="dropdown-item font-weight-bold">{{type_code}}</li>
+                {{/each}}
+            </script>
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_exec_cmd">
             <div class="modal-dialog modal-lg">
@@ -318,9 +355,9 @@
                                     <thead>
                                         <tr>
                                             <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash" aria-hidden="true"></i></th>
-                                            <th class="my-text-table">USERNAME</th>
-                                            <th class="my-text-table">PASSWORD</th>
-                                            <th class="my-text-table">RUOLO</th>
+                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTablU('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTable('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTable('ruolo')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                             <!--<th>Salva</th>
                                             <th>Reset</th>
                                             {{#if_eq user_role "ADMIN"}}

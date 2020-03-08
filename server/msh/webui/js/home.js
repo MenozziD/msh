@@ -1,5 +1,11 @@
-var device_net_list = [];
-var user_list = [];
+var device_net_list = {};
+var tipologie = [];
+var user_list = {};
+var last_sort = true;
+var page_up = 0;
+var page_down = 0;
+var page_up_u = 0;
+var page_down_u = 0;
 
 function carica(){
     Handlebars.registerHelper('if_eq', function(a, b, opts) {
@@ -8,6 +14,41 @@ function carica(){
         } else {
             return opts.inverse(this);
         }
+    });
+    Handlebars.registerHelper('if_not_eq', function(a, b, opts) {
+        if (a == b) {
+            return opts.inverse(this);
+        } else {
+            return opts.fn(this);
+        }
+    });
+    Handlebars.registerHelper('if_min', function(a, b, c, d, opts) {
+        if (a+b <= c) {
+            if (d == 'device')
+                page_up = page_up + 1;
+            else
+                page_up_u = page_up_u + 1;
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
+    Handlebars.registerHelper('if_mag', function(a, b, c, d, opts) {
+        if (a-b > 0) {
+            if (d == 'device')
+                page_down = page_down + 1;
+            else
+                page_down_u = page_down_u + 1;
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
+    Handlebars.registerHelper('sum', function(a, b, opts) {
+        return a+b;
+    });
+    Handlebars.registerHelper('dif', function(a, b, opts) {
+        return a-b;
     });
     net('list');
     setTimeout(user_function, 250, 'list');
@@ -19,6 +60,56 @@ function carica(){
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
+ function sortTable(attribute){
+    // a.data.localeCompare(b.data); crescente
+    // b.data.localeCompare(a.data); decrescente
+    if (last_sort) {
+        device_net_list['devices'].sort(function(a, b){
+            return a[attribute].localeCompare(b[attribute], undefined, {'numeric': true});
+        });
+    } else {
+       device_net_list['devices'].sort(function(a, b){
+            return b[attribute].localeCompare(a[attribute], undefined, {'numeric': true});
+        });
+    }
+    device_net_list['current_page'] = 1;
+    var tmp_list = Object.assign({}, device_net_list);
+    tmp_list['devices'] = tmp_list['devices'].slice(0,8);
+    var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+    $('#table-device').html(device_template(tmp_list));
+    last_sort = !last_sort;
+}
+
+function change_page(pagina){
+    if (pagina >= 1 && pagina <= device_net_list['pages']) {
+        page_up = 0;
+        page_down = 0;
+        device_net_list['current_page'] = pagina;
+        var tmp_list = Object.assign({}, device_net_list);
+        tmp_list['devices'] = tmp_list['devices'].slice((pagina-1)*8,pagina*8);
+        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+        $('#table-device').html(device_template(tmp_list));
+        if (page_down+page_up > 4){
+            if (page_up+page_down == 6 || page_up+page_down == 7 || page_up+page_down == 8){
+                for (var i=page_up; i > 2; i--){
+                    $("#" + (pagina+i))[0].classList.add("d-none");
+                }
+                for (var i=page_down; i > 2; i--){
+                    $("#" + (pagina-i))[0].classList.add("d-none");
+                }
+            }
+            if (page_up+page_down == 5){
+                if (page_up == 4){
+                   $("#" + (pagina+page_up))[0].classList.add("d-none");
+                }
+                if (page_down == 4){
+                   $("#" + (pagina-page_down))[0].classList.add("d-none");
+                }
+            }
+        }
+    }
+}
+
 function net(type_op){
     var code = null;
     var type = null;
@@ -28,7 +119,7 @@ function net(type_op){
     var id = null;
     var dispositivo = null;
     var comando = null;
-    if (type_op.search('update') >=0){
+    /*if (type_op.search('update') >=0){
         id = type_op.replace('update','');
         mac = $("#mac" + id).text();
         type_op = 'update';
@@ -44,15 +135,16 @@ function net(type_op){
                     password = $("#psw" + id)[0].value;
             }
         }
-    }
+    }*/
     if (type_op.search('type') >=0){
         id = type_op.replace('type','');
         type_op = 'type';
     }
     if (type_op == 'command'){
-        for(var l = 0; l < device_net_list.length; l++) {
-            if (device_net_list[l]['net_code'] == $('#device')[0].value)
-                type = device_net_list[l]['net_type'];
+        for(var l = 0; l < device_net_list['devices'].length; l++) {
+            if (device_net_list['devices'][l]['net_code'] == $('#device')[0].value)
+                type = device_net_list['devices'][l]['net_type'];
+                break;
         }
     }
     if (type_op.search('delete') >= 0){
@@ -123,11 +215,18 @@ function net(type_op){
                         }
                     }
                     if (type_op == 'list'){
+                        var page_number = Math.floor(json['devices'].length / 8);
+                        var resto = json['devices'].length % 8;
+                        if (resto > 0)
+                            page_number = page_number + 1;
+                        json['pages'] = page_number;
+                        json['current_page'] = 1;
+                        device_net_list = Object.assign({}, json);
+                        json['devices'] = json['devices'].slice(0,8);
                         var devices = json["devices"];
                         var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
                         $('#table-device').html(device_template(json));
-                        device_net_list = [];
-                        for(var j = 0; j < devices.length; j++) {
+                        /*for(var j = 0; j < devices.length; j++) {
                             device_net_list.push(devices[j]);
                             $('#code' + j).on('input',function(e){must_save(this.id.replace("code", ""))});
                             $('#usr' + j).on('input',function(e){must_save(this.id.replace("usr", ""))});
@@ -136,7 +235,7 @@ function net(type_op){
                                 $('#code' + j).prop('readonly', true);
                                 $('#type' + j).prop('disabled', true);
                             }
-                        }
+                        }*/
                     }
                     if (type_op == 'command'){
                         var commands = json["commands"]
@@ -173,8 +272,8 @@ function net(type_op){
 
 function device_net_code(){
     var template = Handlebars.compile($("#drop_device-template")[0].innerHTML);
-    $('#drop_device').html(template(device_net_list));
-    for(var i = 0; i < device_net_list.length;i++) {
+    $('#drop_device').html(template(device_net_list['devices']));
+    for(var i = 0; i < device_net_list['devices'].length;i++) {
         $("#drop_device li").click(function(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
@@ -183,7 +282,7 @@ function device_net_code(){
     }
 }
 
-function must_save(id){
+/*function must_save(id){
     var type = $("#type" + id)[0].value;
     var code = $("#code" + id)[0].value;
     var mac = $("#mac" + id).text();
@@ -215,7 +314,7 @@ function net_reset(id){
             $("#psw" + id)[0].value = device_net_list[i]['net_psw'];
         }
     }
-}
+}*/
 
 function view_password(i){
     var input_text = $("#psw" + i)[0];

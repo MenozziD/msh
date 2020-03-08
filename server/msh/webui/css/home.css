@@ -17,15 +17,20 @@
     margin-left: 0px;
 }
 
+.order-icon {
+    width: 8px;
+    height: 8px;
+}
+
 .principale {
     padding: 0.5%;
 }
 
-body, .form-control, .card, .modal-content, .scrollable-menu {
+body, .form-control, .card, .modal-content, .scrollable-menu, .page-link {
     background-color: #fff2d1 !important;
 }
 
-input, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
+input, .page-link, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
     border: 3px solid #2c53a2 !important;
 }
 
@@ -38,15 +43,32 @@ input, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-contro
     background-color: #fff2d1 !important;
 }
 
+.pagination>li>a {
+    cursor: pointer;
+}
+
+.pagination>li.active>a {
+  background: #2c53a2 !important;
+  color: #fff;
+}
+
 hr {
     border: 2px solid #2c53a2;
 }
 
-.modal-header, thead {
+tr, th {
+    border-bottom: 2px solid #2c53a2 !important;
+}
+
+th {
+    border-top: 2px solid #2c53a2 !important;
+}
+
+.modal-header {
     border-bottom: 3px solid #2c53a2;
 }
 
- .modal-footer, thead {
+ .modal-footer {
     border-top: 3px solid #2c53a2;
  }
 
