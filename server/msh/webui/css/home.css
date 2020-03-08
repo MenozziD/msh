@@ -38,11 +38,11 @@ hr {
     border: 2px solid #2c53a2;
 }
 
-.modal-header {
+.modal-header, thead {
     border-bottom: 3px solid #2c53a2;
 }
 
- .modal-footer {
+ .modal-footer, thead {
     border-top: 3px solid #2c53a2;
  }
 
