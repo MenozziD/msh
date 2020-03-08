@@ -17,6 +17,10 @@
     margin-left: 0px;
 }
 
+.principale {
+    padding: 0.5%;
+}
+
 body, .form-control, .card, .modal-content, .scrollable-menu {
     background-color: #fff2d1 !important;
 }
@@ -88,7 +92,7 @@ hr {
 .my-panel-icon {
     vertical-align: middle !important;
     font-size: 100%;
-    padding: 3% !important;
+    padding: 2% !important;
 }
 
 .comando{
