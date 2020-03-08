@@ -1,4 +1,5 @@
-var device_net_list = {};
+var table_device = {};
+var new_device_net_list = [];
 var tipologie = [];
 var user_list = {};
 var last_sort = true;
@@ -6,6 +7,7 @@ var page_up = 0;
 var page_down = 0;
 var page_up_u = 0;
 var page_down_u = 0;
+var select_all = false;
 
 function carica(){
     Handlebars.registerHelper('if_eq', function(a, b, opts) {
@@ -51,7 +53,8 @@ function carica(){
         return a-b;
     });
     net('list');
-    setTimeout(user_function, 250, 'list');
+    setTimeout(net, 250, 'type');
+    setTimeout(user_function, 500, 'list');
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.height = '0%';
     $.blockUI.defaults.css.left = '50%';
@@ -60,54 +63,34 @@ function carica(){
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
  }
 
- function sortTable(attribute){
+function view_drop(id){
+    var type_template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
+    $('#drop_type' + id).html(type_template(tipologie));
+    $('#drop_type' + id + ' li').click(function() {
+        $('#type' + id).text($(this).text());
+        $("#type" + id).val($(this).text());
+        cambioVal(id);
+    });
+}
+
+function sortTable(attribute){
     // a.data.localeCompare(b.data); crescente
     // b.data.localeCompare(a.data); decrescente
     if (last_sort) {
-        device_net_list['devices'].sort(function(a, b){
+        table_device['devices'].sort(function(a, b){
             return a[attribute].localeCompare(b[attribute], undefined, {'numeric': true});
         });
     } else {
-       device_net_list['devices'].sort(function(a, b){
+       table_device['devices'].sort(function(a, b){
             return b[attribute].localeCompare(a[attribute], undefined, {'numeric': true});
         });
     }
-    device_net_list['current_page'] = 1;
-    var tmp_list = Object.assign({}, device_net_list);
+    table_device['current_page'] = 1;
+    var tmp_list = Object.assign({}, table_device);
     tmp_list['devices'] = tmp_list['devices'].slice(0,8);
     var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
     $('#table-device').html(device_template(tmp_list));
     last_sort = !last_sort;
-}
-
-function change_page(pagina){
-    if (pagina >= 1 && pagina <= device_net_list['pages']) {
-        page_up = 0;
-        page_down = 0;
-        device_net_list['current_page'] = pagina;
-        var tmp_list = Object.assign({}, device_net_list);
-        tmp_list['devices'] = tmp_list['devices'].slice((pagina-1)*8,pagina*8);
-        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-        $('#table-device').html(device_template(tmp_list));
-        if (page_down+page_up > 4){
-            if (page_up+page_down == 6 || page_up+page_down == 7 || page_up+page_down == 8){
-                for (var i=page_up; i > 2; i--){
-                    $("#" + (pagina+i))[0].classList.add("d-none");
-                }
-                for (var i=page_down; i > 2; i--){
-                    $("#" + (pagina-i))[0].classList.add("d-none");
-                }
-            }
-            if (page_up+page_down == 5){
-                if (page_up == 4){
-                   $("#" + (pagina+page_up))[0].classList.add("d-none");
-                }
-                if (page_down == 4){
-                   $("#" + (pagina-page_down))[0].classList.add("d-none");
-                }
-            }
-        }
-    }
 }
 
 function net(type_op){
@@ -123,15 +106,15 @@ function net(type_op){
         id = type_op.replace('update','');
         mac = $("#mac" + id).text();
         type_op = 'update';
-        for (var i = 0; i < device_net_list.length; i++){
-            if (device_net_list[i]['net_mac'] == mac){
-                if ($("#type" + id)[0].value != device_net_list[i]['net_type'])
+        for (var i = 0; i < table_device.length; i++){
+            if (table_device[i]['net_mac'] == mac){
+                if ($("#type" + id)[0].value != table_device[i]['net_type'])
                     type = $("#type" + id)[0].value;
-                if ($("#code" + id)[0].value != device_net_list[i]['net_code'])
+                if ($("#code" + id)[0].value != table_device[i]['net_code'])
                     code = $("#code" + id)[0].value;
-                if ($("#usr" + id)[0].value != device_net_list[i]['net_usr'])
+                if ($("#usr" + id)[0].value != table_device[i]['net_usr'])
                     user = $("#usr" + id)[0].value;
-                if ($("#psw" + id)[0].value != device_net_list[i]['net_psw'])
+                if ($("#psw" + id)[0].value != table_device[i]['net_psw'])
                     password = $("#psw" + id)[0].value;
             }
         }
@@ -141,32 +124,18 @@ function net(type_op){
         type_op = 'type';
     }
     if (type_op == 'command'){
-        for(var l = 0; l < device_net_list['devices'].length; l++) {
-            if (device_net_list['devices'][l]['net_code'] == $('#device')[0].value)
-                type = device_net_list['devices'][l]['net_type'];
+        for(var l = 0; l < table_device['devices'].length; l++) {
+            if (table_device['devices'][l]['net_code'] == $('#device')[0].value){
+                type = table_device['devices'][l]['net_type'];
                 break;
+            }
         }
-    }
-    if (type_op.search('delete') >= 0){
-        id = type_op.replace('delete','');
-        type_op = 'delete';
-        mac = $("#mac" + id).text();
     }
     if (type_op.search('cmd') >= 0){
         dispositivo = $('#device')[0].value;
         comando = $('#command')[0].value;
-        var check_device = $('#chk_device');
-        var check_command = $('#chk_command');
-        if (device == "")
-            check_device.show();
-        else
-            check_device.hide();
-        if (command == "")
-            check_command.show();
-        else
-            check_command.hide();
     }
-    if (type_op != 'cmd' || (dispositivo != "" && comando != "")){
+    if ( (type_op == 'cmd' && dispositivo != "" && comando != "") || (type_op == 'type' && tipologie.length == 0) || (type_op != 'cmd' && type_op != 'type')){
         var body = {
             "tipo_operazione": type_op
         };
@@ -203,16 +172,7 @@ function net(type_op){
                         net('list');
                     }
                     if (type_op == 'type'){
-                        var types = json["types"]
-                        var type_template = Handlebars.compile($("#drop_type-template")[0].innerHTML);
-                        $('#drop_type' + id).html(type_template(types));
-                        for(var i = 0; i < types.length;i++) {
-                            $('#drop_type' + id + ' li').click(function() {
-                                $('#type' + id).text($(this).text());
-                                $("#type" + id).val($(this).text());
-                                must_save(id);
-                            });
-                        }
+                        tipologie = json["types"]
                     }
                     if (type_op == 'list'){
                         var page_number = Math.floor(json['devices'].length / 8);
@@ -221,13 +181,16 @@ function net(type_op){
                             page_number = page_number + 1;
                         json['pages'] = page_number;
                         json['current_page'] = 1;
-                        device_net_list = Object.assign({}, json);
+                        for (i = 0; i < json['devices'].length; i++){
+                            json['devices'][i]['to_delete'] = false;
+                        }
+                        table_device = Object.assign({}, json);
+                        new_device_net_list = $.extend(true, [], table_device["devices"]);
                         json['devices'] = json['devices'].slice(0,8);
-                        var devices = json["devices"];
                         var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
                         $('#table-device').html(device_template(json));
-                        /*for(var j = 0; j < devices.length; j++) {
-                            device_net_list.push(devices[j]);
+                        /*for(var j = 0; j < new_device_net_list.length; j++) {
+                            new_device_net_list[j]['to_delete'] = false;
                             $('#code' + j).on('input',function(e){must_save(this.id.replace("code", ""))});
                             $('#usr' + j).on('input',function(e){must_save(this.id.replace("usr", ""))});
                             $('#psw' + j).on('input',function(e){must_save(this.id.replace("psw", ""))});
@@ -245,7 +208,6 @@ function net(type_op){
                             $("#drop_command li").click(function(){
                               $('#command').text($(this).text());
                               $("#command").val($(this).text());
-                              $('#chk_command').hide();
                            });
                         }
                     }
@@ -270,14 +232,80 @@ function net(type_op){
     }
 }
 
+function selectAllD(){
+    var ind = ((table_device['current_page']-1)*8);
+    var ind_final = null;
+    var value = null;
+    if (table_device['current_page'] == table_device['pages'])
+        ind_final = table_device['devices'].length;
+    else
+        ind_final = ind + 8;
+    if (! select_all)
+        value = true;
+    else
+        value = false;
+    for(var j = ind; j < ind_final; j++)
+        new_device_net_list[j]['to_delete'] = value;
+    for (var i = 0; i < ind_final - ind; i++)
+        $("#checkbox_device" + i).prop("checked", value);
+    select_all = value;
+}
+
+function change_page(pagina){
+    if (pagina >= 1 && pagina <= table_device['pages']) {
+        page_up = 0;
+        page_down = 0;
+        table_device['current_page'] = pagina;
+        var tmp_list = Object.assign({}, table_device);
+        tmp_list['devices'] = $.extend(true, [], new_device_net_list);
+        tmp_list['devices'] = tmp_list['devices'].slice((pagina-1)*8,pagina*8);
+        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+        $('#table-device').html(device_template(tmp_list));
+        select_all = false;
+        if (page_down+page_up > 4){
+            if (page_up+page_down == 6 || page_up+page_down == 7 || page_up+page_down == 8){
+                for (var i=page_up; i > 2; i--){
+                    $("#" + (pagina+i))[0].classList.add("d-none");
+                }
+                for (var i=page_down; i > 2; i--){
+                    $("#" + (pagina-i))[0].classList.add("d-none");
+                }
+            }
+            if (page_up+page_down == 5){
+                if (page_up == 4){
+                   $("#" + (pagina+page_up))[0].classList.add("d-none");
+                }
+                if (page_down == 4){
+                   $("#" + (pagina-page_down))[0].classList.add("d-none");
+                }
+            }
+        }
+    }
+}
+
+function cambioVal(id){
+    console.log(id);
+    var ind = ((table_device['current_page']-1)*8) + parseInt(id);
+    console.log(ind);
+    var type = $("#type" + id)[0].value;
+    var code = $("#code" + id)[0].value;
+    var user = $("#usr" + id)[0].value;
+    var password = $("#psw" + id)[0].value;
+    var to_del = $("#checkbox_device" + id).prop("checked");
+    new_device_net_list[ind]['net_code'] = code;
+    new_device_net_list[ind]['net_usr'] = user;
+    new_device_net_list[ind]['net_psw'] = password;
+    new_device_net_list[ind]['net_type'] = type;
+    new_device_net_list[ind]['to_delete'] = to_del;
+}
+
 function device_net_code(){
     var template = Handlebars.compile($("#drop_device-template")[0].innerHTML);
-    $('#drop_device').html(template(device_net_list['devices']));
-    for(var i = 0; i < device_net_list['devices'].length;i++) {
+    $('#drop_device').html(template(table_device['devices']));
+    for(var i = 0; i < table_device['devices'].length;i++) {
         $("#drop_device li").click(function(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
-          $('#chk_device').hide();
        });
     }
 }
@@ -288,9 +316,9 @@ function device_net_code(){
     var mac = $("#mac" + id).text();
     var user = $("#usr" + id)[0].value;
     var password = $("#psw" + id)[0].value;
-    for (var i = 0; i < device_net_list.length; i++){
-        if (device_net_list[i]['net_mac'] == mac){
-            if (type != device_net_list[i]['net_type'] || code != device_net_list[i]['net_code'] || user != device_net_list[i]['net_usr'] || password != device_net_list[i]['net_psw']){
+    for (var i = 0; i < table_device.length; i++){
+        if (table_device[i]['net_mac'] == mac){
+            if (type != table_device[i]['net_type'] || code != table_device[i]['net_code'] || user != table_device[i]['net_usr'] || password != table_device[i]['net_psw']){
                 $("#salva" + i).attr("disabled", false);
                 $("#reset" + i).attr("disabled", false);
             } else {
@@ -299,22 +327,15 @@ function device_net_code(){
             }
         }
     }
-}
-
-function net_reset(id){
-    var mac = $("#mac" + id).text();
-    for (var i = 0; i < device_net_list.length; i++){
-        if (device_net_list[i]['net_mac'] == mac){
-            $("#salva" + i).attr("disabled", true);
-            $("#reset" + i).attr("disabled", true);
-            $("#type" + id)[0].value = device_net_list[i]['net_type'];
-            $("#type" + id).text(device_net_list[i]['net_type']);
-            $("#code" + id)[0].value = device_net_list[i]['net_code'];
-            $("#usr" + id)[0].value = device_net_list[i]['net_usr'];
-            $("#psw" + id)[0].value = device_net_list[i]['net_psw'];
-        }
-    }
 }*/
+
+function net_reset(){
+    new_device_net_list = $.extend(true, [], table_device["devices"]);
+    var tmp_list = Object.assign({}, table_device);
+    tmp_list['devices'] = tmp_list['devices'].slice((table_device['current_page']-1)*8,table_device['current_page']*8);
+    var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+    $('#table-device').html(device_template(tmp_list));
+}
 
 function view_password(i){
     var input_text = $("#psw" + i)[0];
@@ -357,21 +378,6 @@ function user_function(type_op){
         user = $("#username_add")[0].value;
         password = $("#password_add")[0].value;
         role = $("#role_user_add")[0].value;
-        var check_username = $('#chk_username');
-	    var check_password = $('#chk_password');
-	    var check_role = $('#chk_role');
-        if (user == "")
-            check_username.show();
-        else
-            check_username.hide();
-        if (password == "")
-            check_password.show();
-        else
-            check_password.hide();
-        if (role == "")
-            check_role.show();
-        else
-            check_role.hide();
     }
     if (type_op != 'add' || (user != "" && password != "" && role != "")){
         var body = {
@@ -494,16 +500,6 @@ function upload_arduino(tipo_op){
     if (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) >= 0){
         core = $("#device_arduino")[0].value;
         tipologia = $("#tipo_arduino")[0].value;
-        var check_core = $('#chk_device_arduino');
-        var check_tipologia = $('#chk_tipo_arduino');
-        if (core == "")
-            check_core.show();
-        else
-            check_core.hide();
-        if (tipologia == "")
-            check_tipologia.show();
-        else
-            check_tipologia.hide();
     }
     if (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) < 0 || (core != "" && tipologia != "")){
         var toUpload = false;
@@ -538,7 +534,6 @@ function upload_arduino(tipo_op){
                             $("#drop_device_arduino li").click(function(){
                               $('#device_arduino').text($(this).text());
                               $("#device_arduino").val($(this).text());
-                              $('#chk_device_arduino').hide();
                            });
                         }
                     }
@@ -550,7 +545,6 @@ function upload_arduino(tipo_op){
                             $("#drop_tipo_arduino li").click(function(){
                               $('#tipo_arduino').text($(this).text());
                               $("#tipo_arduino").val($(this).text());
-                              $('#chk_tipo_arduino').hide();
                            });
                         }
                     }

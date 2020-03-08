@@ -27,6 +27,7 @@ class Static(BaseHandler):
             self.response.body = f.read()
             f.close()
             self.response.headers['Content-Type'] = MimeTypes().guess_type(filename)[0]
+            self.response.headers['Cache-Control'] = "max-age=3600"
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s%s", path_ui, filename)
         else:

@@ -110,7 +110,9 @@
                     <table class="table table-responsive my-table-device">
                         <thead>
                             <tr>
-                                <th class="my-text-table col-check"><i id="trash_dev" class="fa fa-trash" aria-hidden="true"></i></th>
+                                {{#if_eq user_role "ADMIN"}}
+                                    <th class="my-text-table col-check"><i class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAllD()"></i></th>
+                                {{/if_eq}}
                                 <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code')">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                 <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type')">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                 <th class="my-text-table col-ip"><a class="make-cursor" onclick="sortTable('net_ip')">IP <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
@@ -121,30 +123,31 @@
                                     <th class="my-text-table col-password">PASSWORD SSH</th>
                                 {{/if_eq}}
                                 <th class="my-text-table col-ultimo"><a class="make-cursor" onclick="sortTable('net_last_update')">AGGIORNAMENTO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                              <!--  {{#if_eq user_role "ADMIN"}}
-                                    <th class="my-text-table">Salvataggio</th>
-                                    <th class="my-text-table">Reset</th>
-                                    <th class="my-text-table">Elimina</th>
-                                {{/if_eq}}-->
                             </tr>
                         </thead>
                         <tbody>
                             {{#each devices}}
                                 <tr>
+                                    {{#if_eq ../user_role "ADMIN"}}
+                                        <td class="my-text-table">
+                                            <form>
+                                              <div class="custom-control custom-checkbox">
+                                                {{#if to_delete}}
+                                                  <input type="checkbox" onchange="cambioVal({{@index}})" checked class="custom-control-input" id="checkbox_device{{@index}}">
+                                                {{else}}
+                                                  <input type="checkbox" onchange="cambioVal({{@index}})" class="custom-control-input" id="checkbox_device{{@index}}">
+                                                {{/if}}
+                                                <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
+                                              </div>
+                                            </form>
+                                        </td>
+                                    {{/if_eq}}
                                     <td class="my-text-table">
-                                        <form>
-                                          <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="checkbox_device{{@index}}">
-                                            <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
-                                          </div>
-                                        </form>
-                                    </td>
-                                    <td class="my-text-table">
-                                        <input  class="form-control font-weight-bold" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        <input class="form-control font-weight-bold" onchange="cambioVal({{@index}})" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
                                     </td>
                                     <td class="my-text-table">
                                         <div class="dropdown{{@index}}">
-                                            <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="net('type{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                            <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="view_drop('{{@index}}')" value="{{net_type}}">{{net_type}}</button>
                                             <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
                                         </div>
                                     </td>
@@ -155,11 +158,11 @@
                                     <td class="font-weight-bold my-text-table">{{net_mac_info}}</td>
                                     {{#if_eq ../user_role "ADMIN"}}
                                         <td class="my-text-table">
-                                            <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}">
+                                            <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}" onchange="cambioVal({{@index}})">
                                         </td>
                                         <td class="my-text-table">
                                             <div class="input-group">
-                                                <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password">
+                                                <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password" onchange="cambioVal({{@index}})">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-primary input-group-button btn-pass" onclick="view_password({{@index}})">
                                                         <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
@@ -169,24 +172,15 @@
                                         </td>
                                     {{/if_eq}}
                                     <td class="font-weight-bold my-text-table">{{net_last_update}}</td>
-                                    <!--{{#if_eq ../user_role "ADMIN"}}
-                                        <td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva{{@index}}" onclick="net('update{{@index}}')">S</button>
-                                        </td>
-                                        <td>
-                                            <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset{{@index}}" onclick="net_reset('{{@index}}')">R</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger btn-lg btn-block" type="button" id="delete{{@index}}" onclick="net('delete{{@index}}')">E</button>
-                                        </td>
-                                    {{/if_eq}}-->
                                 </tr>
                             {{/each}}
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-warning btn-lg btn-block" type="button">RESET</button>
+                    {{#if_eq user_role "ADMIN"}}
+                        <button class="btn btn-warning btn-lg btn-block" type="button" onclick="net_reset()">RESET</button>
+                    {{/if_eq}}
                 </div>
                 <div class="col-md-6">
                     <nav class="font-weight-bold">
@@ -234,7 +228,9 @@
                     </nav>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
+                    {{#if_eq user_role "ADMIN"}}
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="net('update')">SALVA</button>
+                    {{/if_eq}}
                 </div>
             </script>
             <script id="drop_type-template" type="text/x-handlebars-template">
@@ -248,7 +244,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                         <h4 class="col-11 modal-title text-center">
-                            ESEGUI COMANDO
+                            COMANDO
                         </h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
@@ -266,9 +262,6 @@
                                     <li class="dropdown-item font-weight-bold">{{net_code}}</li>
                                 {{/each}}
                             </script>
-                            <div class="invalid-feedback" id="chk_device">
-                                Il dispositivo &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-4">
                             <div class="dropdown">
@@ -282,9 +275,6 @@
                                     <li class="dropdown-item font-weight-bold">{{cmd_str}}</li>
                                 {{/each}}
                             </script>
-                            <div class="invalid-feedback" id="chk_command">
-                                Il comando &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-4">
                             <label class="font-weight-bold" for="cmd_result">ESITO</label>
@@ -307,7 +297,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="col-11 modal-title text-center">
-                            SCANSIONA RETE
+                            RICERCA
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
@@ -342,7 +332,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="col-11 modal-title text-center">
-                            GESTIONE UTENTI
+                            UTENTI
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
@@ -424,16 +414,10 @@
                         <div class="col-md-5">
                             <label class="font-weight-bold" for="username_add">USERNAME</label>
                             <input type="text" class="form-control font-weight-bold" id="username_add">
-                            <div class="invalid-feedback" id="chk_username">
-                                L username &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-5">
                             <label class="font-weight-bold" for="password_add">PASSWORD</label>
                             <input type="text" class="form-control font-weight-bold" id="password_add">
-                            <div class="invalid-feedback" id="chk_password">
-                                La password &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-2">
                             <div class="dropdown_add">
@@ -443,9 +427,6 @@
                                     <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'ADMIN')">ADMIN</li>
                                     <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'USER')">USER</li>
                                 </ul>
-                            </div>
-                            <div class="invalid-feedback" id="chk_role">
-                                Il ruolo &egrave un campo obbligatorio
                             </div>
                         </div>
                     </div>
@@ -471,7 +452,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="col-11 modal-title text-center">
-                            CODICE PER ESP
+                            SVILUPPO
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
@@ -489,9 +470,6 @@
                                     <li class="dropdown-item font-weight-bold">{{this}}</li>
                                 {{/each}}
                             </script>
-                            <div class="invalid-feedback" id="chk_device_arduino">
-                                Il dispositivo &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-5">
                             <div class="dropdown">
@@ -505,9 +483,6 @@
                                     <li class="dropdown-item font-weight-bold">{{this}}</li>
                                 {{/each}}
                             </script>
-                            <div class="invalid-feedback" id="chk_tipo_arduino">
-                                La tipologia &egrave un campo obbligatorio
-                            </div>
                         </div>
                         <div class="col-md-2">
                             <label for="esito_upload" class="font-weight-bold">ESITO</label>
