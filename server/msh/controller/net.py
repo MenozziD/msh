@@ -6,8 +6,8 @@ from netifaces import AF_INET, ifaddresses
 
 class Net(BaseHandler):
 
-    tipo_operazione = ['scan', 'list', 'type', 'command', 'update', 'delete', 'cmd']
-    campi_aggiornabili = ['codice', 'tipo', 'user', 'password']
+    tipo_operazione = ['scan', 'list', 'type', 'command', 'update', 'cmd']
+    campi_aggiornabili = ['to_delete', 'net_code', 'net_type', 'net_usr', 'net_psw']
 
     def post(self):
         body = str(self.request.body)[2:-1]
@@ -27,16 +27,14 @@ class Net(BaseHandler):
                     'type': Net.device_type,
                     'command': Net.device_command,
                     'update': Net.device_update,
-                    'delete': Net.device_delete,
                     'cmd': Net.device_cmd
                 }
                 parametri = {
                     'scan': [],
                     'list': [self.session.get('role')],
                     'type': [],
-                    'command': [param['tipo']],
-                    'update': [param['mac'], param['codice'], param['tipo'], param['user'], param['password']],
-                    'delete': [param['mac']],
+                    'command': [param['net_type']],
+                    'update': [param['list_up_device']],
                     'cmd': [param['dispositivo'], param['comando']]
                 }
                 response = funzioni[type_op](*parametri[type_op])
@@ -51,28 +49,19 @@ class Net(BaseHandler):
     @staticmethod
     def read_param(data):
         param = {
-            'tipo': None,
-            'mac': None,
-            'codice': None,
-            'user': None,
-            'password': None,
+            'net_type': None,
             'dispositivo': None,
-            'comando': None
+            'comando': None,
+            'list_up_device': None
         }
-        if 'codice' in data:
-            param['codice'] = data['codice']
-        if 'tipo' in data:
-            param['tipo'] = data['tipo']
-        if 'mac' in data:
-            param['mac'] = data['mac']
-        if 'user' in data:
-            param['user'] = data['user']
-        if 'password' in data:
-            param['password'] = data['password']
+        if 'net_type' in data:
+            param['net_type'] = data['net_type']
         if 'dispositivo' in data:
             param['dispositivo'] = data['dispositivo']
         if 'comando' in data:
             param['comando'] = data['comando']
+        if 'list_up_device' in data:
+            param['list_up_device'] = data['list_up_device']
         return param
 
     @staticmethod
@@ -80,7 +69,7 @@ class Net(BaseHandler):
         response = {}
         if body != "" and validate_format(request):
             data = request.json
-            if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'delete', 'cmd'):
+            if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'cmd'):
                 response = Net.check_user(user, role, data['tipo_operazione'])
                 response = Net.check_operation_param(response, data)
             else:
@@ -100,8 +89,6 @@ class Net(BaseHandler):
         if response['output'] == 'OK':
             if data['tipo_operazione'] == 'command':
                 response = Net.check_tipo(data)
-            if data['tipo_operazione'] == 'delete':
-                response = Net.check_mac(data)
             if data['tipo_operazione'] == 'update':
                 response = Net.check_update(data)
             if data['tipo_operazione'] == 'cmd':
@@ -112,27 +99,62 @@ class Net(BaseHandler):
 
     @staticmethod
     def check_update(data):
-        response = Net.check_mac(data)
-        if response['output'] == 'OK':
-            response = Net.check_any_to_update(data)
-            if response['output'] == 'OK':
-                response = Net.check_tipo(data, required=False)
-                if response['output'] == 'OK':
-                    response = Net.check_code(data)
+        response = {}
+        error = False
+        if 'list_up_device' in data and data['list_up_device'] != []:
+            for device in data['list_up_device']:
+                if error is False:
+                    response = Net.check_mac(device)
+                    if response['output'] == 'OK':
+                        response = Net.check_any_to_update(device)
+                        if response['output'] == 'OK':
+                            response = Net.check_to_delete(device)
+                            if response['output'] == 'NO':
+                                response = Net.check_tipo(device, required=False)
+                                if response['output'] == 'OK':
+                                    response = Net.check_code(device)
+                                else:
+                                    error = True
+                            else:
+                                if response['output'] != 'OK':
+                                    error = True
+                        else:
+                            error = True
+                    else:
+                        error = True
+                else:
+                    break
+        else:
+            if 'list_up_device' in data:
+                response['output'] = get_string(24, da_sostiuire="list_up_device", da_aggiungere='non lista vuota')
+            else:
+                response['output'] = get_string(27, da_aggiungere="list_up_device")
+        return response
+
+    @staticmethod
+    def check_to_delete(data):
+        response = {
+            'output': "NO"
+        }
+        if 'to_delete' in data and data['to_delete'] in (True, False):
+            response['output'] = 'OK'
+        else:
+            if 'to_delete' in data:
+                response['output'] = get_string(24, da_sostiuire="to_delete", da_aggiungere='true, false')
         return response
 
     @staticmethod
     def check_tipo(data, required=True):
         response = {}
         type_list = [d['type_code'] for d in DbManager.select_tb_net_device_type()]
-        if 'tipo' in data and data['tipo'] in type_list:
+        if 'net_type' in data and data['net_type'] in type_list:
             response['output'] = 'OK'
         else:
-            if 'tipo' in data:
-                response['output'] = get_string(24, da_sostiuire="tipo", da_aggiungere=', '.join(type_list))
+            if 'net_type' in data:
+                response['output'] = get_string(24, da_sostiuire="net_type", da_aggiungere=', '.join(type_list))
             else:
                 if required:
-                    response['output'] = get_string(27, da_aggiungere="tipo")
+                    response['output'] = get_string(27, da_aggiungere="net_type")
                 else:
                     response['output'] = 'OK'
         return response
@@ -141,24 +163,24 @@ class Net(BaseHandler):
     def check_mac(data):
         response = {}
         mac_list = [d['net_mac'] for d in DbManager.select_tb_net_device()]
-        if 'mac' in data and data['mac'] in mac_list:
+        if 'net_mac' in data and data['net_mac'] in mac_list:
             response['output'] = 'OK'
         else:
-            if 'mac' in data:
-                response['output'] = get_string(24, da_sostiuire="mac", da_aggiungere=', '.join(mac_list))
+            if 'net_mac' in data:
+                response['output'] = get_string(24, da_sostiuire="net_mac", da_aggiungere=', '.join(mac_list))
             else:
-                response['output'] = get_string(27, da_aggiungere="mac")
+                response['output'] = get_string(27, da_aggiungere="net_mac")
         return response
 
     @staticmethod
     def check_code(data):
         response = {}
         devices = DbManager.select_tb_net_device()
-        to_update = DbManager.select_tb_net_device(data['mac'])[0]
+        to_update = DbManager.select_tb_net_device(data['net_mac'])[0]
         response['output'] = "OK"
-        if 'codice' in data:
-            if data['codice'] != "":
-                if data['codice'] != to_update['net_code']:
+        if 'net_code' in data:
+            if data['net_code'] != "":
+                if data['net_code'] != to_update['net_code']:
                     response = Net.check_code_exist(data, devices)
             else:
                 response['output'] = get_string(34)
@@ -169,7 +191,7 @@ class Net(BaseHandler):
         trovato = False
         response = {}
         for device in devices:
-            if device['net_code'] == data['codice']:
+            if device['net_code'] == data['net_code']:
                 trovato = True
                 break
         if not trovato:
@@ -223,7 +245,7 @@ class Net(BaseHandler):
     @staticmethod
     def check_any_to_update(data):
         response = {}
-        if 'codice' in data or 'tipo' in data or 'user' in data or 'password' in data:
+        if 'net_code' in data or 'net_type' in data or 'net_usr' in data or 'net_psw' in data or 'to_delete' in data:
             response['output'] = 'OK'
         else:
             response['output'] = get_string(33, da_aggiungere=', '.join(Net.campi_aggiornabili))
@@ -260,16 +282,24 @@ class Net(BaseHandler):
         return response
 
     @staticmethod
-    def device_update(mac, codice=None, tipo=None, user=None, password=None):
-        DbManager.update_tb_net_device(mac, net_code=codice, net_type=tipo, net_user=user, net_psw=password)
-        response = {
-            'output': 'OK'
-        }
-        return response
-
-    @staticmethod
-    def device_delete(mac):
-        DbManager.delete_tb_net_device(mac)
+    def device_update(list_device):
+        for device in list_device:
+            if Net.check_to_delete(device)['output'] == 'OK':
+                DbManager.delete_tb_net_device(device['net_mac'])
+            else:
+                codice = None
+                tipo = None
+                user = None
+                password = None
+                if 'net_code' in device:
+                    codice = device['net_code']
+                if 'net_type' in device:
+                    tipo = device['net_type']
+                if 'net_usr' in device:
+                    user = device['net_usr']
+                if 'net_psw' in device:
+                    password = device['net_psw']
+                DbManager.update_tb_net_device(device['net_mac'], net_code=codice, net_type=tipo, net_user=user, net_psw=password)
         response = {
             'output': 'OK'
         }
