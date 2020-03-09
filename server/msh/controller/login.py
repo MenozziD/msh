@@ -12,7 +12,6 @@ class Login(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            DbManager()
             response = Login.check(self.request, body)
             if response['output'] == 'OK':
                 data = self.request.json
@@ -76,4 +75,4 @@ class Logout(BaseHandler):
         info("%s %s", self.request.method, self.request.url)
         self.session.clear()
         response = {'output': 'OK'}
-        set_api_response(response, self.response, close_db=False)
+        set_api_response(response, self.response)

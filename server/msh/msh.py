@@ -1,7 +1,7 @@
 from webapp3 import WSGIApplication
 from logging import basicConfig, info
 from paste import httpserver
-from module import XmlReader, execute_os_cmd, get_gateway
+from module import XmlReader, execute_os_cmd, get_gateway, DbManager
 from controller import handle_error
 from string import ascii_letters, digits
 from random import choice
@@ -56,8 +56,10 @@ class Msh:
             info("URL webapp: %s",  ', '.join(Msh.webapp_urls))
             info("URL oauth %s", ', '.join(Msh.oauth_urls))
         info("Server in ascolto su http://%s:%s", ip_address, porta)
+        DbManager()
         if XmlReader.settings["ambiente"] == 'PROD':
             httpserver.serve(Msh.app, host=ip_address, port=porta, use_threadpool=True, threadpool_workers=5, request_queue_size=25, daemon_threads=True)  # pragma: no cover
+        DbManager.close_db()
 
     @staticmethod
     def start_dns_service(servizio):

@@ -1,3 +1,8 @@
+var cores_list = []
+var script_list = []
+var core_set = false;
+var script_set = false;
+
 function upload_arduino(tipo_op){
     var core = null;
     var tipologia = null;
@@ -18,8 +23,7 @@ function upload_arduino(tipo_op){
             body['core'] = core
         if (tipologia != null)
             body['tipologia'] = tipologia
-        if (['upload', 'compile'].indexOf(tipo_op) >= 0)
-            $.blockUI();
+        $.blockUI();
         $.ajax({
             url: "/api/upload_arduino",
             type: 'POST',
@@ -27,28 +31,31 @@ function upload_arduino(tipo_op){
             data : JSON.stringify(body),
             success: function(response){
                 var json = $.parseJSON(JSON.stringify(response));
-                if (['upload', 'compile'].indexOf(tipo_op) >= 0)
-                    $.unblockUI();
+                $.unblockUI();
                 if (json["output"].search("OK") == 0){
                     if (tipo_op == 'core'){
-                        var cores = json["cores"]
+                        cores_list = json["cores"]
                         var device_template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
-                        $('#drop_device_arduino').html(device_template(cores));
-                        for(var i = 0; i < cores.length; i++) {
+                        $('#drop_device_arduino').html(device_template(cores_list));
+                        for(var i = 0; i < cores_list.length; i++) {
                             $("#drop_device_arduino li").click(function(){
                               $('#device_arduino').text($(this).text());
                               $("#device_arduino").val($(this).text());
+                              core_set = true;
+                              changeTooltip();
                            });
                         }
                     }
                     if (tipo_op == 'tipo'){
-                        var types = json["types"]
+                        script_list = json["types"]
                         var tipo_template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
-                        $('#drop_tipo_arduino').html(tipo_template(types));
-                        for(var j = 0; j < types.length; j++) {
+                        $('#drop_tipo_arduino').html(tipo_template(script_list));
+                        for(var j = 0; j < script_list.length; j++) {
                             $("#drop_tipo_arduino li").click(function(){
                               $('#tipo_arduino').text($(this).text());
                               $("#tipo_arduino").val($(this).text());
+                              script_set = true;
+                              changeTooltip();
                            });
                         }
                     }
@@ -85,5 +92,30 @@ function upload_arduino(tipo_op){
             error: function(xhr){
             }
         });
+    }
+}
+
+function changeTooltip(){
+    if (!script_set){
+        $("#tooltip_compila").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
+        $("#tooltip_upload").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
+        $("#tooltip_compila_upload").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
+
+    }
+    if (!core_set){
+        $("#tooltip_compila").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
+        $("#tooltip_upload").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
+        $("#tooltip_compila_upload").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
+    }
+    if (core_set && script_set){
+        $("#compila").prop("disabled", false);
+        $("#compila").removeAttr("style");
+        $("#tooltip_compila").removeAttr("data-original-title");
+        $("#upload").prop("disabled", false);
+        $("#upload").removeAttr("style");
+        $("#tooltip_upload").removeAttr("data-original-title");
+        $("#compila_upload").prop("disabled", false);
+        $("#compila_upload").removeAttr("style");
+        $("#tooltip_compila_upload").removeAttr("data-original-title");
     }
 }

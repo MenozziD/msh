@@ -20,7 +20,7 @@ function view_drop(id){
 function createTable(struttura){
     var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
     $('#table-device').html(device_template(struttura));
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({html: true});
     abilButton();
 }
 
@@ -186,6 +186,7 @@ function net(type_op){
                             $("#drop_command li").click(function(){
                               $('#command').text($(this).text());
                               $("#command").val($(this).text());
+                              abilInvia();
                            });
                         }
                     }
@@ -300,8 +301,26 @@ function device_net_code(){
         $("#drop_device li").click(function(){
           $('#device').text($(this).text());
           $("#device").val($(this).text());
+          abilCommand();
        });
     }
+}
+
+function abilCommand(){
+    $("#invia").prop("disabled", true);
+    $("#invia").attr("style", "pointer-events: none;");
+    $("#tooltip_invia").attr("data-original-title", "Campi mancanti: <ul><li>COMANDO</li></ul>");
+    $("#command").val("");
+    $("#command").text("");
+    $("#command").prop("disabled", false);
+    $("#command").removeAttr("style");
+    $("#tooltip_comando").removeAttr("data-original-title");
+}
+
+function abilInvia(){
+    $("#invia").prop("disabled", false);
+    $("#invia").removeAttr("style");
+    $("#tooltip_invia").removeAttr("data-original-title");
 }
 
 function net_reset(){

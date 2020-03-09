@@ -11,7 +11,6 @@ class Home(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            DbManager()
             response = Home.check(self.request, body, self.request.headers)
             if response['output'] == 'OK':
                 data = self.request.json

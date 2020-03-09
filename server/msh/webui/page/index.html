@@ -273,59 +273,6 @@
                 {{/each}}
             </script>
         </div>
-        <div class="modal fade bd-example-modal-lg" id="modal_exec_cmd">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                  <div class="modal-header">
-                        <h4 class="col-11 modal-title text-center">
-                            COMANDO
-                        </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="dropdown">
-                                <label class="font-weight-bold" for="device">DISPOSITIVO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
-                                <ul class="dropdown-menu scrollable-menu" id="drop_device">
-                                </ul>
-                            </div>
-                            <script id="drop_device-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{net_code}}</li>
-                                {{/each}}
-                            </script>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="dropdown">
-                                <label class="font-weight-bold" for="device">COMANDO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
-                                <ul class="dropdown-menu scrollable-menu" id="drop_command">
-                                </ul>
-                            </div>
-                            <script id="drop_command-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{cmd_str}}</li>
-                                {{/each}}
-                            </script>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="font-weight-bold" for="cmd_result">ESITO</label>
-                            <input type="text" class="form-control font-weight-bold" id="cmd_result" readonly>
-                        </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="col-md-4"></div>
-                    <div class="col-md-4">
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="net('cmd')">INVIA</button>
-                    </div>
-                    <div class="col-md-4"></div>
-                </div>
-              </div>
-            </div>
-        </div>
         <div class="modal fade" id="modal_search">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -359,6 +306,59 @@
                       <div class="col-md-3"></div>
                   </div>
                 </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="modal_exec_cmd">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                        <h4 class="col-11 modal-title text-center">
+                            COMANDO
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <label class="font-weight-bold" for="device">DISPOSITIVO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
+                                <ul class="dropdown-menu scrollable-menu" id="drop_device">
+                                </ul>
+                            </div>
+                            <script id="drop_device-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{net_code}}</li>
+                                {{/each}}
+                            </script>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dropdown" id="tooltip_comando" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
+                                <label class="font-weight-bold" for="device">COMANDO</label>
+                                <button disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
+                                <ul class="dropdown-menu scrollable-menu" id="drop_command">
+                                </ul>
+                            </div>
+                            <script id="drop_command-template" type="text/x-handlebars-template">
+                                {{#each this}}
+                                    <li class="dropdown-item font-weight-bold">{{cmd_str}}</li>
+                                {{/each}}
+                            </script>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="font-weight-bold" for="cmd_result">ESITO</label>
+                            <input type="text" class="form-control font-weight-bold" id="cmd_result" readonly>
+                        </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4" id="tooltip_invia" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>COMANDO</li></ul>">
+                        <button disabled id="invia" class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="net('cmd')">ESEGUI</button>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+              </div>
             </div>
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_user">
@@ -587,14 +587,14 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                      <div class="col-md-4">
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile')">COMPILA</button>
+                      <div class="col-md-4" id="tooltip_compila" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>TIPOLOGIA</li></ul>">
+                        <button id="compila" disabled class="btn btn-success btn-lg btn-block" type="button" style="pointer-events: none;" onclick="upload_arduino('compile')">COMPILA</button>
                       </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('upload')">UPLOAD</button>
+                      <div class="col-md-4" id="tooltip_upload" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>TIPOLOGIA</li></ul>">
+                        <button id="upload" disabled class="btn btn-success btn-lg btn-block" type="button" style="pointer-events: none;" onclick="upload_arduino('upload')">UPLOAD</button>
                       </div>
-                      <div class="col-md-4">
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
+                      <div class="col-md-4" id="tooltip_compila_upload" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>TIPOLOGIA</li></ul>">
+                        <button id="compila_upload" disabled class="btn btn-success btn-lg btn-block" type="button" style="pointer-events: none;" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
                       </div>
                   </div>
                 </div>

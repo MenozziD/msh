@@ -111,9 +111,7 @@ def get_gateway():
     return gateway
 
 
-def set_api_response(response_payload, response, timmestamp=True, close_db=True):
-    if close_db:
-        DbManager.close_db()
+def set_api_response(response_payload, response, timmestamp=True):
     if timmestamp:
         response_payload['timestamp'] = datetime.now().strftime(XmlReader.settings['timestamp'])
     response.headers.add('Access-Control-Allow-Origin', '*')

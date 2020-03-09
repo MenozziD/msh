@@ -69,6 +69,10 @@ hr {
     border: 2px solid #2c53a2;
 }
 
+ul {
+    text-align: left;
+}
+
 tr, th {
     border-bottom: 2px solid #2c53a2 !important;
 }

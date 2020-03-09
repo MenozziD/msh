@@ -15,7 +15,6 @@ class Net(BaseHandler):
         info("BODY %s", body)
         response = {}
         try:
-            DbManager()
             response = Net.check(self.session.get('user'), self.session.get('role'), self.request, body)
             if response['output'] == 'OK':
                 data = self.request.json

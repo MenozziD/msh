@@ -7,7 +7,6 @@ class UpdateLastVersion(BaseHandler):
     def get(self):
         response = {}
         info("%s %s", self.request.method, self.request.url)
-        DbManager()
         if self.session.get('user') is not None and self.session.get('role') == 'ADMIN':
             response['output'] = 'OK'
             ret = execute_os_cmd("cd .. && sudo ./deploy.sh &")

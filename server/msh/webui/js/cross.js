@@ -43,8 +43,8 @@ function carica(){
         return a-b;
     });
     net('list');
-    setTimeout(net, 100, 'type');
-    setTimeout(user_function, 250, 'list');
+    net('type');
+    user_function('list');
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.height = '0%';
     $.blockUI.defaults.css.left = '50%';
