@@ -49,7 +49,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div id="funzioni_bar" class="row mb-3"></div>
+            <script id="funzioni-bar-template" type="text/x-handlebars-template">
                 <div class="card">
                     <div class="card-body principale">
                         <div class="row remove-margin">
@@ -85,28 +86,46 @@
                             </div>
                             <div class="panel-col">
                                 <div class="card">
+                                    {{#if_eq user_role "ADMIN"}}
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_compile').modal();">
                                         <div class="row remove-margin">
                                             <img src="/static/image/esp.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">SVILUPPO</h4>
                                         </div>
                                     </div>
+                                    {{else}}
+                                    <div class="card-body my-panel-icon" data-toggle="tooltip" data-placement="top" title="Funzione disponibile solo per gli ADMIN">
+                                        <div class="row remove-margin">
+                                            <img src="/static/image/esp.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
+                                            <h4 class="font-weight-bold text-center comando">SVILUPPO</h4>
+                                        </div>
+                                    </div>
+                                    {{/if_eq}}
                                 </div>
                             </div>
                             <div class="panel-col">
                                 <div class="card">
-                                    <div class="card-body make-cursor my-panel-icon" onclick="update()">
+                                    {{#if_eq user_role "ADMIN"}}
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_confirm').modal();">
                                         <div class="row remove-margin">
                                             <img src="/static/image/update.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">AGGIORNA</h4>
                                         </div>
                                     </div>
+                                    {{else}}
+                                    <div class="card-body my-panel-icon" data-toggle="tooltip" data-placement="top" title="Funzione disponibile solo per gli ADMIN">
+                                        <div class="row remove-margin">
+                                            <img src="/static/image/update.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
+                                            <h4 class="font-weight-bold text-center comando">AGGIORNA</h4>
+                                        </div>
+                                    </div>
+                                    {{/if_eq}}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </script>
             <div id="table-device" class="row"></div>
             <script id="table-device-template" type="text/x-handlebars-template">
                 <div class="col-md-12">
@@ -188,11 +207,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-3">
-                    {{#if_eq user_role "ADMIN"}}
-                        <button class="btn btn-warning btn-lg btn-block" type="button" onclick="net_reset()">RESET</button>
-                    {{/if_eq}}
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_reset" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="reset" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="net_reset()">RESET</button>
                 </div>
+                {{else}}
+                <div class="col-md-3"></div>
+                {{/if_eq}}
                 <div class="col-md-6">
                     <nav class="font-weight-bold">
                       <ul class="pagination justify-content-center mb-0">
@@ -238,11 +259,13 @@
                       </ul>
                     </nav>
                 </div>
-                <div class="col-md-3">
-                    {{#if_eq user_role "ADMIN"}}
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogo()">SALVA</button>
-                    {{/if_eq}}
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_salva" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="salva" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo()">SALVA</button>
                 </div>
+                {{else}}
+                <div class="col-md-3"></div>
+                {{/if_eq}}
             </script>
             <script id="drop_type-template" type="text/x-handlebars-template">
                 {{#each this}}
@@ -595,6 +618,30 @@
                       </div>
                       <div class="col-md-4">
                         <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('update')" data-dismiss="modal">CONFERMA</button>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal bd-example-modal-lg" id="modal_confirm">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-12 modal-title text-center">
+                        AGGIORNA
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <h5 class="col-12" style="white-space: pre-wrap">Confermi di voler aggiornare il software con l'ultima versione disponibile?</h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="update()" data-dismiss="modal">CONFERMA</button>
                       </div>
                       <div class="col-md-2"></div>
                   </div>
