@@ -17,23 +17,50 @@ function view_drop(id){
     });
 }
 
+function createTable(struttura){
+    var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
+    $('#table-device').html(device_template(struttura));
+    $('[data-toggle="tooltip"]').tooltip();
+    abilButton();
+}
+
 function sortTable(attribute){
     // a.data.localeCompare(b.data); crescente
     // b.data.localeCompare(a.data); decrescente
     if (last_sort_device) {
-        table_device['devices'].sort(function(a, b){
+        new_device_net_list.sort(function(a, b){
             return a[attribute].localeCompare(b[attribute], undefined, {'numeric': true});
         });
+        tmp_dev = []
+        for (var i=0; i < new_device_net_list.length; i++){
+            for (var j=0; j < new_device_net_list.length; j++){
+                if (new_device_net_list[i]['net_mac'] == table_device['devices'][j]['net_mac']){
+                    tmp_dev.push(table_device['devices'][j]);
+                    break;
+                }
+            }
+        }
+        table_device['devices'] = $.extend(true, [], tmp_dev);
     } else {
-       table_device['devices'].sort(function(a, b){
+       new_device_net_list.sort(function(a, b){
             return b[attribute].localeCompare(a[attribute], undefined, {'numeric': true});
         });
+        tmp_dev = []
+        for (var i=0; i < new_device_net_list.length; i++){
+            for (var j=0; j < new_device_net_list.length; j++){
+                if (new_device_net_list[i]['net_mac'] == table_device['devices'][j]['net_mac']){
+                    tmp_dev.push(table_device['devices'][j]);
+                    break;
+                }
+            }
+        }
+        table_device['devices'] = $.extend(true, [], tmp_dev);
     }
     table_device['current_page'] = 1;
     var tmp_list = Object.assign({}, table_device);
-    tmp_list['devices'] = tmp_list['devices'].slice(0,numero_device_pagina);
-    var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-    $('#table-device').html(device_template(tmp_list));
+    tmp_list['devices'] = $.extend(true, [], new_device_net_list);
+    tmp_list['devices'] = tmp_list['devices'].slice(0, numero_device_pagina);
+    createTable(tmp_list);
     last_sort_device = !last_sort_device;
 }
 
@@ -108,7 +135,7 @@ function net(type_op){
             "tipo_operazione": type_op
         };
         if (type != null)
-            body['tipo'] = type;
+            body['net_type'] = type;
         if (dispositivo != null)
             body['dispositivo'] = dispositivo;
         if (comando != null)
@@ -135,6 +162,8 @@ function net(type_op){
                         tipologie = json["types"]
                     }
                     if (type_op == 'list'){
+                        var funzioni_bar_template = Handlebars.compile($("#funzioni-bar-template")[0].innerHTML);
+                        $('#funzioni_bar').html(funzioni_bar_template(json));
                         var page_number = Math.floor(json['devices'].length / numero_device_pagina);
                         var resto = json['devices'].length % numero_device_pagina;
                         if (resto > 0)
@@ -147,8 +176,7 @@ function net(type_op){
                         table_device = Object.assign({}, json);
                         new_device_net_list = $.extend(true, [], table_device["devices"]);
                         json['devices'] = json['devices'].slice(0, numero_device_pagina);
-                        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-                        $('#table-device').html(device_template(json));
+                        createTable(json);
                     }
                     if (type_op == 'command'){
                         var commands = json["commands"]
@@ -194,11 +222,29 @@ function selectAllD(){
         value = true;
     else
         value = false;
-    for(var j = ind; j < ind_final; j++)
-        new_device_net_list[j]['to_delete'] = value;
     for (var i = 0; i < ind_final - ind; i++)
         $("#checkbox_device" + i).prop("checked", value);
+    for(var j = ind; j < ind_final; j++)
+        cambioVal(j);
     select_all = value;
+}
+
+function abilButton(){
+    if (JSON.stringify(table_device['devices']) != JSON.stringify(new_device_net_list)){
+        $("#reset").prop("disabled", false);
+        $("#reset").removeAttr("style");
+        $("#salva").prop("disabled", false);
+        $("#salva").removeAttr("style");
+        $("#tooltip_reset").removeAttr("data-original-title");
+        $("#tooltip_salva").removeAttr("data-original-title");
+    } else {
+        $("#reset").prop("disabled", true);
+        $("#reset").attr("style", "pointer-events: none;");
+        $("#salva").prop("disabled", true);
+        $("#salva").attr("style", "pointer-events: none;");
+        $("#tooltip_reset").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
+        $("#tooltip_salva").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
+    }
 }
 
 function change_page(pagina){
@@ -209,8 +255,7 @@ function change_page(pagina){
         var tmp_list = Object.assign({}, table_device);
         tmp_list['devices'] = $.extend(true, [], new_device_net_list);
         tmp_list['devices'] = tmp_list['devices'].slice((pagina-1)*numero_device_pagina, pagina*numero_device_pagina);
-        var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-        $('#table-device').html(device_template(tmp_list));
+        createTable(tmp_list);
         select_all = false;
         if (page_down+page_up > 4){
             if (page_up+page_down == 6 || page_up+page_down == 7 || page_up+page_down == 8){
@@ -245,6 +290,7 @@ function cambioVal(id){
     new_device_net_list[ind]['net_psw'] = password;
     new_device_net_list[ind]['net_type'] = type;
     new_device_net_list[ind]['to_delete'] = to_del;
+    abilButton();
 }
 
 function device_net_code(){
@@ -262,8 +308,7 @@ function net_reset(){
     new_device_net_list = $.extend(true, [], table_device["devices"]);
     var tmp_list = Object.assign({}, table_device);
     tmp_list['devices'] = tmp_list['devices'].slice((table_device['current_page']-1)*numero_device_pagina, table_device['current_page']*numero_device_pagina);
-    var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
-    $('#table-device').html(device_template(tmp_list));
+    createTable(tmp_list);
 }
 
 function view_password(i){
