@@ -26,11 +26,24 @@
     padding: 0.5%;
 }
 
-body, .form-control, .card, .modal-content, .scrollable-menu, .page-link {
+.tooltip-inner {
+    background-color: #f00;
+}
+
+.bs-tooltip-top .arrow:before {
+    border-top-color: #2c53a2 !important;
+}
+
+.tooltip-inner {
+    color: #2c53a2;
+    font-weight: 700!important;
+}
+
+body, .form-control, .card, .modal-content, .scrollable-menu, .page-link, .tooltip-inner {
     background-color: #fff2d1 !important;
 }
 
-input, .page-link, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
+input, .tooltip-inner, .page-link, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
     border: 3px solid #2c53a2 !important;
 }
 
