@@ -18,7 +18,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 
 		<link rel="stylesheet" href="/static/css/home.css">
-        <script src="/static/js/home.js"></script>
+        <script src="/static/js/cross.js"></script>
+        <script src="/static/js/device.js"></script>
+        <script src="/static/js/sviluppo.js"></script>
+        <script src="/static/js/user.js"></script>
 
 		<title>Home</title>
 	</head>
@@ -143,11 +146,19 @@
                                         </td>
                                     {{/if_eq}}
                                     <td class="my-text-table">
-                                        <input class="form-control font-weight-bold" onchange="cambioVal({{@index}})" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        {{#if_eq ../user_role "ADMIN"}}
+                                            <input class="form-control font-weight-bold" onchange="cambioVal({{@index}})" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                        {{else}}
+                                            <span class="font-weight-bold" id="code{{@index}}">{{net_code}}</span>
+                                        {{/if_eq}}
                                     </td>
                                     <td class="my-text-table">
                                         <div class="dropdown{{@index}}">
-                                            <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="view_drop('{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                            {{#if_eq ../user_role "ADMIN"}}
+                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="view_drop('{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                            {{else}}
+                                                <span class="font-weight-bold" id="type{{@index}}">{{net_type}}</span>
+                                            {{/if_eq}}
                                             <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
                                         </div>
                                     </td>
@@ -229,7 +240,7 @@
                 </div>
                 <div class="col-md-3">
                     {{#if_eq user_role "ADMIN"}}
-                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="net('update')">SALVA</button>
+                        <button class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogo()">SALVA</button>
                     {{/if_eq}}
                 </div>
             </script>
@@ -583,7 +594,7 @@
                         <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
                       </div>
                       <div class="col-md-4">
-                        <button type="button" class="btn btn-success btn-lg btn-block" data-dismiss="modal">CONFERMA</button>
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('update')" data-dismiss="modal">CONFERMA</button>
                       </div>
                       <div class="col-md-2"></div>
                   </div>
