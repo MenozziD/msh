@@ -44,7 +44,9 @@ function carica(){
     });
     net('list');
     net('type');
-    user_function('list');
+    upload_arduino('core');
+    upload_arduino('tipo');
+    user('list');
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.height = '0%';
     $.blockUI.defaults.css.left = '50%';

@@ -3,6 +3,32 @@ var script_list = []
 var core_set = false;
 var script_set = false;
 
+function view_drop_device(){
+    var device_template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
+    $('#drop_device_arduino').html(device_template(cores_list));
+    for(var i = 0; i < cores_list.length; i++) {
+        $("#drop_device_arduino li").click(function(){
+          $('#device_arduino').text($(this).text());
+          $("#device_arduino").val($(this).text());
+          core_set = true;
+          changeTooltip();
+       });
+    }
+}
+
+function view_drop_command(){
+    var tipo_template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
+    $('#drop_tipo_arduino').html(tipo_template(script_list));
+    for(var j = 0; j < script_list.length; j++) {
+        $("#drop_tipo_arduino li").click(function(){
+          $('#tipo_arduino').text($(this).text());
+          $("#tipo_arduino").val($(this).text());
+          script_set = true;
+          changeTooltip();
+       });
+    }
+}
+
 function upload_arduino(tipo_op){
     var core = null;
     var tipologia = null;
@@ -10,7 +36,7 @@ function upload_arduino(tipo_op){
         core = $("#device_arduino")[0].value;
         tipologia = $("#tipo_arduino")[0].value;
     }
-    if (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) < 0 || (core != "" && tipologia != "")){
+    if ( (['upload', 'compile', 'compile_upload'].indexOf(tipo_op) >= 0 && core != "" && tipologia != "") || (tipo_op == 'core' && cores_list.length == 0) || (tipo_op == 'tipo' && script_list.length == 0) ){
         var toUpload = false;
         if (tipo_op == 'compile_upload'){
             tipo_op = 'compile';
@@ -35,29 +61,9 @@ function upload_arduino(tipo_op){
                 if (json["output"].search("OK") == 0){
                     if (tipo_op == 'core'){
                         cores_list = json["cores"]
-                        var device_template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
-                        $('#drop_device_arduino').html(device_template(cores_list));
-                        for(var i = 0; i < cores_list.length; i++) {
-                            $("#drop_device_arduino li").click(function(){
-                              $('#device_arduino').text($(this).text());
-                              $("#device_arduino").val($(this).text());
-                              core_set = true;
-                              changeTooltip();
-                           });
-                        }
                     }
                     if (tipo_op == 'tipo'){
                         script_list = json["types"]
-                        var tipo_template = Handlebars.compile($("#drop_tipo_arduino-template")[0].innerHTML);
-                        $('#drop_tipo_arduino').html(tipo_template(script_list));
-                        for(var j = 0; j < script_list.length; j++) {
-                            $("#drop_tipo_arduino li").click(function(){
-                              $('#tipo_arduino').text($(this).text());
-                              $("#tipo_arduino").val($(this).text());
-                              script_set = true;
-                              changeTooltip();
-                           });
-                        }
                     }
                     if (tipo_op == 'compile'){
                         $('#esito_upload')[0].value = json["result"];

@@ -31,31 +31,21 @@ function sortTable(attribute){
         new_device_net_list.sort(function(a, b){
             return a[attribute].localeCompare(b[attribute], undefined, {'numeric': true});
         });
-        tmp_dev = []
-        for (var i=0; i < new_device_net_list.length; i++){
-            for (var j=0; j < new_device_net_list.length; j++){
-                if (new_device_net_list[i]['net_mac'] == table_device['devices'][j]['net_mac']){
-                    tmp_dev.push(table_device['devices'][j]);
-                    break;
-                }
-            }
-        }
-        table_device['devices'] = $.extend(true, [], tmp_dev);
     } else {
        new_device_net_list.sort(function(a, b){
             return b[attribute].localeCompare(a[attribute], undefined, {'numeric': true});
         });
-        tmp_dev = []
-        for (var i=0; i < new_device_net_list.length; i++){
-            for (var j=0; j < new_device_net_list.length; j++){
-                if (new_device_net_list[i]['net_mac'] == table_device['devices'][j]['net_mac']){
-                    tmp_dev.push(table_device['devices'][j]);
-                    break;
-                }
+    }
+    tmp_dev = []
+    for (var i=0; i < new_device_net_list.length; i++){
+        for (var j=0; j < new_device_net_list.length; j++){
+            if (new_device_net_list[i]['net_mac'] == table_device['devices'][j]['net_mac']){
+                tmp_dev.push(table_device['devices'][j]);
+                break;
             }
         }
-        table_device['devices'] = $.extend(true, [], tmp_dev);
     }
+    table_device['devices'] = $.extend(true, [], tmp_dev);
     table_device['current_page'] = 1;
     var tmp_list = Object.assign({}, table_device);
     tmp_list['devices'] = $.extend(true, [], new_device_net_list);

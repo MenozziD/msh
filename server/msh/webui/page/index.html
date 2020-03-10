@@ -333,9 +333,11 @@
                             </script>
                         </div>
                         <div class="col-md-4">
-                            <div class="dropdown" id="tooltip_comando" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
+                            <div class="dropdown">
                                 <label class="font-weight-bold" for="device">COMANDO</label>
-                                <button disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
+                                <div id="tooltip_comando" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
+                                    <button disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
+                                </div>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_command">
                                 </ul>
                             </div>
@@ -363,7 +365,8 @@
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_user">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content">
+                <div class="modal-content" id="table-user"></div>
+                  <script id="table-user-template" type="text/x-handlebars-template">
                   <div class="modal-header">
                     <h4 class="col-11 modal-title text-center">
                             UTENTI
@@ -371,114 +374,160 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
-                      <div class="row">
+                      <div class="row mb-3">
                         <div class="col-md-12">
-                            <div  id="table-user" class="table-responsive"></div>
-                            <script id="table-user-template" type="text/x-handlebars-template">
-                                <table class="table">
-                                    <thead>
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        {{#if_eq user_role "ADMIN"}}
+                                            <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAllU()"></i></th>
+                                        {{/if_eq}}
+                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('role')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each users}}
                                         <tr>
-                                            <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash" aria-hidden="true"></i></th>
-                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTablU('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTable('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <th class="my-text-table"><a class="make-cursor" onclick="sortTable('ruolo')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <!--<th>Salva</th>
-                                            <th>Reset</th>
-                                            {{#if_eq user_role "ADMIN"}}
-                                                <th>Elimina</th>
-                                            {{/if_eq}}-->
+                                            {{#if_eq ../user_role "ADMIN"}}
+                                            <td class="my-text-table">
+                                                <form>
+                                                  <div class="custom-control custom-checkbox">
+                                                      {{#if to_delete}}
+                                                      <input type="checkbox" onchange="cambioValUser({{@index}})" checked class="custom-control-input" id="checkbox_user{{@index}}">
+                                                      {{else}}
+                                                      <input type="checkbox" onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
+                                                      {{/if}}
+                                                      <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
+                                                  </div>
+                                                </form>
+                                            </td>
+                                            {{/if_eq}}
+                                            <td class="my-text-table col-username">
+                                                <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
+                                            </td>
+                                            <td class="my-text-table col-password-us">
+                                                <div class="input-group">
+                                                    {{#if_eq username ../user_username}}
+                                                    <input class="form-control font-weight-bold" onchange="cambioValUser({{@index}})" id="psw_user{{@index}}" value="{{password}}" type="password">
+                                                    {{else}}
+                                                    <input class="form-control font-weight-bold" readonly id="psw_user{{@index}}" value="{{password}}" type="password">
+                                                    {{/if_eq}}
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary input-group-button btn-pass" onclick="view_password_user({{@index}})">
+                                                            <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="my-text-table col-ruolo">
+                                                <div class="dropdown{{@index}}">
+                                                    {{#if_eq ../user_role "ADMIN"}}
+                                                        <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}" onclick="view_user_role('{{@index}}')">{{role}}</button>
+                                                    {{else}}
+                                                        <span class="font-weight-bold" id="role_user{{@index}}">{{role}}</span>
+                                                    {{/if_eq}}
+                                                    <ul class="dropdown-menu scrollable-menu" id="drop_role{{@index}}">
+                                                    </ul>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each users}}
-                                            <tr>
-                                                <td class="my-text-table">
-                                                    <form>
-                                                      <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="checkbox_user{{@index}}">
-                                                        <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
-                                                      </div>
-                                                    </form>
-                                                </td>
-                                                <td class="my-text-table col-username">
-                                                    <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
-                                                </td>
-                                                <td class="my-text-table col-password-us">
-                                                    <div class="input-group">
-                                                        <input class="form-control font-weight-bold" id="psw_user{{@index}}" value="{{password}}" type="password">
-                                                        <div class="input-group-append">
-                                                            <button class="btn btn-primary input-group-button btn-pass" onclick="view_password_user({{@index}})">
-                                                                <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="my-text-table col-ruolo">
-                                                    <div class="dropdown{{@index}}">
-                                                        <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}">{{role}}</button>
-                                                        <ul class="dropdown-menu scrollable-menu">
-                                                            <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'ADMIN')">ADMIN</li>
-                                                            <li class="dropdown-item font-weight-bold" onclick="user_role('{{@index}}', 'USER')">USER</li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                                <!--<td>
-                                                    <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="salva_user{{@index}}" onclick="user_function('update{{@index}}')">Salva</button>
-                                                </td>
-                                                <td>
-                                                    <button disabled class="btn btn-primary btn-lg btn-block" type="button" id="reset_user{{@index}}" onclick="user_reset('{{@index}}')">Reset</button>
-                                                </td>
-                                                {{#if_eq ../user_role "ADMIN"}}
-                                                    <td>
-                                                        <button class="btn btn-danger btn-lg btn-block" type="button" id="delete_user{{@index}}" onclick="user_function('delete{{@index}}')">Elimina</button>
-                                                    </td>
-                                                {{/if_eq}}-->
-                                            </tr>
-                                        {{/each}}
-                                    </tbody>
-                                </table>
-                            </script>
+                                    {{/each}}
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
+                        {{#if_eq user_role "ADMIN"}}
                         <div class="col-md-12">
-                            <h4 class="font-weight-bold text-center">AGGIUNGI UTENTE </h4>
+                            <hr>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-center">AGGIUNGI UTENTE</h4>
+                        </div>
+                        <div class="col-md-3">
                             <label class="font-weight-bold" for="username_add">USERNAME</label>
                             <input type="text" class="form-control font-weight-bold" id="username_add">
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <label class="font-weight-bold" for="password_add">PASSWORD</label>
                             <input type="text" class="form-control font-weight-bold" id="password_add">
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="dropdown_add">
-                                <label class="font-weight-bold" for="role_user_add">RUOLO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user_add"></button>
-                                <ul class="dropdown-menu scrollable-menu">
-                                    <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'ADMIN')">ADMIN</li>
-                                    <li class="dropdown-item font-weight-bold" onclick="user_role('add', 'USER')">USER</li>
+                                <label class="font-weight-bold" for="role_useradd">RUOLO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_useradd" onclick="view_user_role('add')"></button>
+                                <ul id="drop_roleadd" class="dropdown-menu scrollable-menu">
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-md-3">
+                            <label></label>
+                            <div id="tooltip_add_user" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>USERNAME</li><li>PASSWORD</li><li>TIPOLOGIA</li></ul>">
+                                <button id="add_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="user_add()">AGGIUNGI</button>
+                            </div>
+                        </div>
+                        {{/if_eq}}
                   </div>
                   <div class="modal-footer">
-                      <div class="col-md-2"></div>
-                      <div class="col-md-4">
-                          <button class="btn btn-warning btn-lg btn-block" type="button">RESET</button>
+                      <div id="tooltip_reset_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                          <button id="reset_user" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="user_reset()">RESET</button>
                       </div>
-                      <div class="col-md-4">
-                            <button class="btn btn-success btn-lg btn-block" type="button">SALVA</button>
+                      <div class="col-md-6">
+                        <nav class="font-weight-bold">
+                          <ul class="pagination justify-content-center mb-0">
+                              <li><a class="page-link" onclick="change_page_u(1)">PRIMA</a></li>
+                              <li>
+                                  <a class="page-link" aria-label="Previous" onclick="change_page_u({{dif current_page 1}})">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                            {{#if_mag current_page 4 pages 'release'}}
+                                <li id="u{{dif current_page 4}}"><a class="page-link" onclick="change_page_u({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                            {{/if_mag}}
+                              {{#if_mag current_page 3 pages 'release'}}
+                                <li id="u{{dif current_page 3}}"><a class="page-link" onclick="change_page_u({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                            {{/if_mag}}
+                            {{#if_mag current_page 2 pages 'release'}}
+                            <li id="u{{dif current_page 2}}"><a class="page-link" onclick="change_page_u({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                            {{/if_mag}}
+                            {{#if_mag current_page 1 pages 'release'}}
+                              <li id="u{{dif current_page 1}}"><a class="page-link" onclick="change_page_u({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                            {{/if_mag}}
+                              <li id="u{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
+                            {{#if_min current_page 1 pages 'release'}}
+                              <li id="u{{sum current_page 1}}"><a class="page-link" onclick="change_page_u({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 2 pages 'release'}}
+                              <li id="u{{sum current_page 2}}"><a class="page-link" onclick="change_page_u({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 3 pages 'release'}}
+                              <li id="u{{sum current_page 3}}"><a class="page-link" onclick="change_page_u({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 4 pages 'release'}}
+                              <li id="u{{sum current_page 4}}"><a class="page-link" onclick="change_page_u({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                            {{/if_min}}
+                              <li>
+                              <a class="page-link" aria-label="Next" onclick="change_page_u({{sum current_page 1}})">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                              </a>
+                            </li>
+                            <li><a class="page-link" onclick="change_page_u({{pages}})">ULTIMA</a></li>
+                          </ul>
+                        </nav>
                       </div>
-                      <div class="col-md-2"></div>
-                      <!--<div class="col-md-4">
-                          <button class="btn btn-success btn-lg btn-block" type="button" onclick="user_function('add')">AGGIUNGI</button>
-                      </div>-->
+                      <div id="tooltip_salva_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                            <button id="salva_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogoUser()">SALVA</button>
+                      </div>
                   </div>
                 </div>
+              </script>
+              <script id="drop_type_user-template" type="text/x-handlebars-template">
+                {{#each role}}
+                    <li class="dropdown-item font-weight-bold">{{this}}</li>
+                {{/each}}
+              </script>
             </div>
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_compile">
@@ -495,7 +544,7 @@
                         <div class="col-md-5">
                             <div class="dropdown">
                                 <label for="device_arduino" class="font-weight-bold">DISPOSITIVO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="upload_arduino('core')"></button>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="view_drop_device()"></button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_device_arduino">
                                 </ul>
                             </div>
@@ -508,7 +557,7 @@
                         <div class="col-md-5">
                             <div class="dropdown">
                                 <label for="tipo_arduino" class="font-weight-bold">TIPOLOGIA</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="upload_arduino('tipo')"></button>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="view_drop_command()"></button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_tipo_arduino">
                                 </ul>
                             </div>
@@ -596,6 +645,30 @@
                       <div class="col-md-4" id="tooltip_compila_upload" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>TIPOLOGIA</li></ul>">
                         <button id="compila_upload" disabled class="btn btn-success btn-lg btn-block" type="button" style="pointer-events: none;" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
                       </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal bd-example-modal-lg" id="modal_recap_change_user">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-12 modal-title text-center">
+                        RIEPILOGO MODIFICHE
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="recap_user" class="col-12" style="white-space: pre-wrap"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="user('update')" data-dismiss="modal">CONFERMA</button>
+                      </div>
+                      <div class="col-md-2"></div>
                   </div>
                 </div>
             </div>
