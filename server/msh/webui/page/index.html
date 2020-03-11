@@ -85,42 +85,46 @@
                                 </div>
                             </div>
                             <div class="panel-col">
+                                {{#if_eq user_role "ADMIN"}}
                                 <div class="card">
-                                    {{#if_eq user_role "ADMIN"}}
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_compile').modal();">
                                         <div class="row remove-margin">
                                             <img src="/static/image/esp.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">SVILUPPO</h4>
                                         </div>
                                     </div>
-                                    {{else}}
+                                </div>
+                                {{else}}
+                                <div class="card card-opaca">
                                     <div class="card-body my-panel-icon" data-toggle="tooltip" data-placement="top" title="Funzione disponibile solo per gli ADMIN">
                                         <div class="row remove-margin">
                                             <img src="/static/image/esp.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">SVILUPPO</h4>
                                         </div>
                                     </div>
-                                    {{/if_eq}}
                                 </div>
+                                {{/if_eq}}
                             </div>
                             <div class="panel-col">
+                                {{#if_eq user_role "ADMIN"}}
                                 <div class="card">
-                                    {{#if_eq user_role "ADMIN"}}
                                     <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_confirm').modal();">
                                         <div class="row remove-margin">
                                             <img src="/static/image/update.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">AGGIORNA</h4>
                                         </div>
                                     </div>
-                                    {{else}}
+                                </div>
+                                {{else}}
+                                <div class="card card-opaca">
                                     <div class="card-body my-panel-icon" data-toggle="tooltip" data-placement="top" title="Funzione disponibile solo per gli ADMIN">
                                         <div class="row remove-margin">
                                             <img src="/static/image/update.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">AGGIORNA</h4>
                                         </div>
                                     </div>
-                                    {{/if_eq}}
                                 </div>
+                                {{/if_eq}}
                             </div>
                         </div>
                     </div>
@@ -333,11 +337,9 @@
                             </script>
                         </div>
                         <div class="col-md-4">
-                            <div class="dropdown">
-                                <label class="font-weight-bold" for="device">COMANDO</label>
-                                <div id="tooltip_comando" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
-                                    <button disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" id="command" onclick="net('command')"></button>
-                                </div>
+                            <label class="font-weight-bold" for="command">COMANDO</label>
+                            <div class="dropdown" id="tooltip_command" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
+                                <button id="command" disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" onclick="net('command')"></button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_command">
                                 </ul>
                             </div>
@@ -438,34 +440,11 @@
                             </table>
                         </div>
                         {{#if_eq user_role "ADMIN"}}
-                        <div class="col-md-12">
-                            <hr>
-                        </div>
-                        <div class="col-md-12">
-                            <h4 class="font-weight-bold text-center">AGGIUNGI UTENTE</h4>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="font-weight-bold" for="username_add">USERNAME</label>
-                            <input type="text" class="form-control font-weight-bold" id="username_add">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="font-weight-bold" for="password_add">PASSWORD</label>
-                            <input type="text" class="form-control font-weight-bold" id="password_add">
-                        </div>
-                        <div class="col-md-3">
-                            <div class="dropdown_add">
-                                <label class="font-weight-bold" for="role_useradd">RUOLO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_useradd" onclick="view_user_role('add')"></button>
-                                <ul id="drop_roleadd" class="dropdown-menu scrollable-menu">
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label></label>
-                            <div id="tooltip_add_user" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>USERNAME</li><li>PASSWORD</li><li>TIPOLOGIA</li></ul>">
-                                <button id="add_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="user_add()">AGGIUNGI</button>
-                            </div>
-                        </div>
+                          <div class="col-md-6"></div>
+                          <div id="tooltip_plus_user">
+	                        <button id="plus_user" class="btn btn-success btn-lg btn-block btn-circle font-weight-bold" type="button" onclick="$('#modal_add_user').modal();">+</button>
+                          </div>
+                          <div class="col-md-5"></div>
                         {{/if_eq}}
                   </div>
                   <div class="modal-footer">
@@ -653,9 +632,10 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="col-12 modal-title text-center">
-                        RIEPILOGO MODIFICHE
+                    <h4 class="col-11 modal-title text-center">
+                            RIEPILOGO MODIFICHE
                     </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
                     <h5 id="recap_user" class="col-12" style="white-space: pre-wrap"></h5>
@@ -677,9 +657,10 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="col-12 modal-title text-center">
-                        RIEPILOGO MODIFICHE
+                    <h4 class="col-11 modal-title text-center">
+                            RIEPILOGO MODIFICHE
                     </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
                     <h5 id="recap" class="col-12" style="white-space: pre-wrap"></h5>
@@ -701,9 +682,10 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="col-12 modal-title text-center">
-                        AGGIORNA
+                    <h4 class="col-11 modal-title text-center">
+                            AGGIORNA
                     </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
                     <h5 class="col-12" style="white-space: pre-wrap">Confermi di voler aggiornare il software con l'ultima versione disponibile?</h5>
@@ -721,13 +703,58 @@
                 </div>
             </div>
         </div>
+        <div class="modal" id="modal_add_user">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            AGGIUNGI UTENTE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="row">
+                        <div class="col-md-4">
+                            <label class="font-weight-bold" for="username_add">USERNAME</label>
+                            <input type="text" class="form-control font-weight-bold" id="username_add" onchange="cambioValAddUser()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="font-weight-bold" for="password_add">PASSWORD</label>
+                            <input type="text" class="form-control font-weight-bold" id="password_add" onchange="cambioValAddUser()">
+                        </div>
+                        <div class="col-md-4">
+                            <div class="dropdown_add">
+                                <label class="font-weight-bold" for="role_useradd">RUOLO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_useradd" onclick="view_user_role('add')"></button>
+                                <ul id="drop_roleadd" class="dropdown-menu scrollable-menu">
+                                </ul>
+                            </div>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <div id="tooltip_add_user" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>USERNAME</li><li>PASSWORD</li><li>TIPOLOGIA</li></ul>">
+                            <button id="add_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="user_add()">AGGIUNGI</button>
+                        </div>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
         <div class="modal" id="error_modal">
             <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 id="errore_title" class="col-12 modal-title text-center">
-                        ATTENZIONE!!!
+                    <h4 class="col-11 modal-title text-center">
+                            ATTENZIONE!!!
                     </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
                     <h5 id="errore" class="col-12 text-center"></h5>
