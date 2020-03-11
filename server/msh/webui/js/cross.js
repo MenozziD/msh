@@ -1,5 +1,10 @@
 function carica(){
-    $.blockUI();
+    $.blockUI.defaults.css.width = '0%';
+    $.blockUI.defaults.css.height = '0%';
+    $.blockUI.defaults.css.left = '50%';
+    $.blockUI.defaults.css.border = '';
+    $.blockUI.defaults.baseZ = 2000;
+    $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
     Handlebars.registerHelper('if_eq', function(a, b, opts) {
         if (a == b) {
             return opts.fn(this);
@@ -47,13 +52,13 @@ function carica(){
     upload_arduino('core');
     upload_arduino('tipo');
     user('list');
-    $.blockUI.defaults.css.width = '0%';
-    $.blockUI.defaults.css.height = '0%';
-    $.blockUI.defaults.css.left = '50%';
-    $.blockUI.defaults.css.border = '';
-    $.blockUI.defaults.baseZ = 2000;
-    $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
-    $.unblockUI();
+    $('#modal_user').on('shown.bs.modal', function (e) {
+        var cw = $("#tooltip_plus_user").height();
+        $('#tooltip_plus_user').css({'width':cw+'px'});
+    })
+    $('#modal_add_user').on('hide.bs.modal', function () {
+        user_clear_add();
+    })
  }
 
 function logout(){
@@ -87,4 +92,16 @@ function update(){
         error: function(xhr){
         }
     });
+}
+
+function abilButtonTooltip(name){
+    $("#" + name).prop("disabled", false);
+    $("#" + name).removeAttr("style");
+    $("#tooltip_" + name).removeAttr("data-original-title");
+}
+
+function disabilButtonTooltip(name, mex){
+    $("#" + name).prop("disabled", true);
+    $("#" + name).attr("style", "pointer-events: none;");
+    $("#tooltip_" + name).attr("data-original-title", mex);
 }
