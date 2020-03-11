@@ -501,4 +501,5 @@ INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","38","Nessun disposit
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","39","È necessario l'header ");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","40","L'header %s deve contenere un ");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","41","Il token fornito non è valido");
+INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","42","Il campo username non può essere valorizzato con una stringa vuota");
 COMMIT;

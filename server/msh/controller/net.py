@@ -112,6 +112,8 @@ class Net(BaseHandler):
                                 response = Net.check_tipo(device, required=False)
                                 if response['output'] == 'OK':
                                     response = Net.check_code(device)
+                                    if response['output'] != 'OK':
+                                        error = True
                                 else:
                                     error = True
                             else:

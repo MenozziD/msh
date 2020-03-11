@@ -5,7 +5,7 @@ from module import DbManager, add_user, delete_user, update_user, set_api_respon
 
 class User(BaseHandler):
 
-    tipo_operazione = ['list', 'update', 'delete', 'add']
+    tipo_operazione = ['list', 'update']
     campi_aggiornabili = ['role', 'password']
 
     def post(self):
@@ -18,26 +18,16 @@ class User(BaseHandler):
             if response['output'] == 'OK':
                 data = self.request.json
                 tipo_operazione = data['tipo_operazione']
-                username = None
-                password = None
-                role = None
-                if 'username' in data:
-                    username = data['username']
-                if 'password' in data:
-                    password = data['password']
-                if 'role' in data:
-                    role = data['role']
+                list_up_user = None
+                if 'list_up_user' in data:
+                    list_up_user = data['list_up_user']
                 funzioni = {
                     'list': User.user_list,
                     'update': User.user_update,
-                    'delete': User.user_delete,
-                    'add': User.user_add
                 }
                 parametri = {
                     'list': [self.session.get('user'), self.session.get('role')],
-                    'update': [username, password, role],
-                    'delete': [username],
-                    'add': [username, password, role]
+                    'update': [list_up_user],
                 }
                 response = funzioni[tipo_operazione](*parametri[tipo_operazione])
             else:
@@ -54,8 +44,9 @@ class User(BaseHandler):
         if body != "" and validate_format(request):
             data = request.json
             if 'tipo_operazione' in data and data['tipo_operazione'] in User.tipo_operazione:
-                response = User.check_user(user, role, data['tipo_operazione'])
-                response = User.check_operation_param(response, data, user, role)
+                response = User.check_user(user)
+                if response['output'] == 'OK' and data['tipo_operazione'] == 'update':
+                    response = User.check_delete_add_update(data, user, role)
             else:
                 if 'tipo_operazione' in data:
                     response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(User.tipo_operazione))
@@ -69,25 +60,59 @@ class User(BaseHandler):
         return response
 
     @staticmethod
-    def check_operation_param(response, data, user, role):
-        if response['output'] == 'OK':
-            if data['tipo_operazione'] == 'delete':
-                response = User.check_username_exist(data)
-                if response['output'] == 'OK':
-                    response = User.check_one_admin(data)
-            if data['tipo_operazione'] == 'add':
-                response = User.check_add(data)
-            if data['tipo_operazione'] == 'update':
-                response = User.check_update(data, user, role)
+    def check_delete_add_update(data, user, role):
+        response = {}
+        error = False
+        if 'list_up_user' in data and data['list_up_user'] != []:
+            for usr in data['list_up_user']:
+                if error is False:
+                    response = User.check_to_add_delete(usr, role, 'to_add')
+                    if response['output'] == 'NO':
+                        response = User.check_to_add_delete(usr, role, 'to_delete')
+                        if response['output'] == 'NO':
+                            response = User.check_update(usr, user, role)
+                            if response['output'] != 'OK':
+                                error = True
+                        else:
+                            if response['output'] != 'OK':
+                                error = True
+                    else:
+                        if response['output'] != 'OK':
+                            error = True
+        return response
+
+    @staticmethod
+    def check_to_add_delete(data, role, my_key):
+        response = {
+            'output': "NO"
+        }
+        if my_key in data and data[my_key] in (True, False):
+            if role == 'ADMIN':
+                if my_key == 'to_add':
+                    response = User.check_add(data)
+                else:
+                    response = User.check_delete(data)
+            else:
+                response = get_string(26)
+        else:
+            if my_key in data:
+                response['output'] = get_string(24, da_sostiuire=my_key, da_aggiungere='true, false')
         return response
 
     @staticmethod
     def check_add(data):
-        response = User.check_username_not_exist(data)
+        response = User.check_username_not_exist_not_empty(data)
         if response['output'] == 'OK':
             response = User.check_role(data)
             if response['output'] == 'OK':
                 response = User.check_password(data)
+        return response
+
+    @staticmethod
+    def check_delete(data):
+        response = User.check_username_exist(data)
+        if response['output'] == 'OK':
+            response = User.check_one_admin(data)
         return response
 
     @staticmethod
@@ -102,16 +127,10 @@ class User(BaseHandler):
         return response
 
     @staticmethod
-    def check_user(user, role, tipo_operazione):
+    def check_user(user):
         response = {}
         if user is not None:
-            if tipo_operazione in ('add', 'delete'):
-                if role != 'ADMIN':
-                    response['output'] = get_string(26)
-                else:
-                    response['output'] = 'OK'
-            else:
-                response['output'] = 'OK'
+            response['output'] = 'OK'
         else:
             response['output'] = get_string(25)
         return response
@@ -130,11 +149,14 @@ class User(BaseHandler):
         return response
 
     @staticmethod
-    def check_username_not_exist(data):
+    def check_username_not_exist_not_empty(data):
         response = {}
         username_list = [d['username'] for d in DbManager.select_tb_user()]
         if 'username' in data and data['username'] not in username_list:
-            response['output'] = 'OK'
+            if data['username'] != '':
+                response['output'] = 'OK'
+            else:
+                response['output'] = get_string(42)
         else:
             if 'username' in data:
                 response['output'] = get_string(28)
@@ -251,9 +273,24 @@ class User(BaseHandler):
         return response
 
     @staticmethod
-    def user_update(username, password, role):
-        DbManager.update_tb_user(username, password, role)
-        if password is not None:
-            update_user(username, password)
+    def user_update(list_user):
+        for usr in list_user:
+            if 'to_add' in usr:
+                DbManager.insert_tb_user(usr['username'], usr['password'], usr['role'])
+                add_user(usr['username'], usr['password'])
+            else:
+                if 'to_delete' in usr:
+                    DbManager.delete_tb_user(usr['username'])
+                    delete_user(usr['username'])
+                else:
+                    password = None
+                    role = None
+                    if 'password' in usr:
+                        password = usr['password']
+                    if 'role' in usr:
+                        role = usr['role']
+                    DbManager.update_tb_user(usr['username'], password, role)
+                    if password is not None:
+                        update_user(usr['username'], password)
         response = {'output': 'OK'}
         return response

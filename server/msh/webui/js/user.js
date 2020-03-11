@@ -117,6 +117,7 @@ function user(type_op){
     };
     if (list_up_user.length > 0)
         body['list_up_user'] = list_up_user;
+    $.blockUI();
     $.ajax({
         url: "/api/user",
         type: 'POST',
@@ -124,6 +125,7 @@ function user(type_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
+            $.unblockUI();
             if (json["output"].search("OK") == 0){
                 if (type_op == 'list'){
                     var page_number = Math.floor(json['users'].length / numero_user_pagina);
