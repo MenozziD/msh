@@ -130,7 +130,7 @@ function net(type_op){
             body['dispositivo'] = dispositivo;
         if (comando != null)
             body['comando'] = comando;
-        if (list_up_device != [])
+        if (list_up_device.length > 0)
             body['list_up_device'] = list_up_device;
         $.blockUI();
         $.ajax({
@@ -169,6 +169,7 @@ function net(type_op){
                         createTable(json);
                     }
                     if (type_op == 'command'){
+                        console.log("dfsfsd");
                         var commands = json["commands"]
                         var command_template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
                         $('#drop_command').html(command_template(commands));
@@ -176,7 +177,7 @@ function net(type_op){
                             $("#drop_command li").click(function(){
                               $('#command').text($(this).text());
                               $("#command").val($(this).text());
-                              abilInvia();
+                              abilButtonTooltip("invia");
                            });
                         }
                     }
@@ -221,20 +222,13 @@ function selectAllD(){
 }
 
 function abilButton(){
+    var mex = "È necessario modificare almeno un valore per attivare questa funzione";
     if (JSON.stringify(table_device['devices']) != JSON.stringify(new_device_net_list)){
-        $("#reset").prop("disabled", false);
-        $("#reset").removeAttr("style");
-        $("#salva").prop("disabled", false);
-        $("#salva").removeAttr("style");
-        $("#tooltip_reset").removeAttr("data-original-title");
-        $("#tooltip_salva").removeAttr("data-original-title");
+        abilButtonTooltip("reset");
+        abilButtonTooltip("salva");
     } else {
-        $("#reset").prop("disabled", true);
-        $("#reset").attr("style", "pointer-events: none;");
-        $("#salva").prop("disabled", true);
-        $("#salva").attr("style", "pointer-events: none;");
-        $("#tooltip_reset").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
-        $("#tooltip_salva").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
+        disabilButtonTooltip("reset", mex);
+        disabilButtonTooltip("salva", mex);
     }
 }
 
@@ -297,20 +291,11 @@ function device_net_code(){
 }
 
 function abilCommand(){
-    $("#invia").prop("disabled", true);
-    $("#invia").attr("style", "pointer-events: none;");
-    $("#tooltip_invia").attr("data-original-title", "Campi mancanti: <ul><li>COMANDO</li></ul>");
+    var mex = "Campi mancanti: <ul><li>COMANDO</li></ul>";
+    disabilButtonTooltip("invia", mex);
     $("#command").val("");
     $("#command").text("");
-    $("#command").prop("disabled", false);
-    $("#command").removeAttr("style");
-    $("#tooltip_comando").removeAttr("data-original-title");
-}
-
-function abilInvia(){
-    $("#invia").prop("disabled", false);
-    $("#invia").removeAttr("style");
-    $("#tooltip_invia").removeAttr("data-original-title");
+    abilButtonTooltip("command");
 }
 
 function net_reset(){
