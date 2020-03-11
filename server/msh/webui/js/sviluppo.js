@@ -1,7 +1,5 @@
 var cores_list = []
 var script_list = []
-var core_set = false;
-var script_set = false;
 
 function view_drop_device(){
     var device_template = Handlebars.compile($("#drop_device_arduino-template")[0].innerHTML);
@@ -10,8 +8,7 @@ function view_drop_device(){
         $("#drop_device_arduino li").click(function(){
           $('#device_arduino').text($(this).text());
           $("#device_arduino").val($(this).text());
-          core_set = true;
-          changeTooltip();
+          cambioValSvil();
        });
     }
 }
@@ -23,8 +20,7 @@ function view_drop_command(){
         $("#drop_tipo_arduino li").click(function(){
           $('#tipo_arduino').text($(this).text());
           $("#tipo_arduino").val($(this).text());
-          script_set = true;
-          changeTooltip();
+          cambioValSvil();
        });
     }
 }
@@ -101,27 +97,29 @@ function upload_arduino(tipo_op){
     }
 }
 
-function changeTooltip(){
-    if (!script_set){
-        $("#tooltip_compila").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
-        $("#tooltip_upload").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
-        $("#tooltip_compila_upload").attr("data-original-title", "Campi mancanti: <ul><li>TIPOLOGIA</li></ul>");
-
-    }
-    if (!core_set){
-        $("#tooltip_compila").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
-        $("#tooltip_upload").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
-        $("#tooltip_compila_upload").attr("data-original-title", "Campi mancanti: <ul><li>DISPOSITIVO</li></ul>");
-    }
+function cambioValSvil(){
+    var core_set = false;
+    var script_set = false;
+    var core = $("#device_arduino")[0].value;
+    var script = $("#tipo_arduino")[0].value;
+    var mex = "Campi mancanti: <ul>";
+    if (core != "")
+        core_set = true;
+    else
+        mex = mex + "<li>DISPOSITIVO</li>";
+    if (script != "")
+        script_set = true;
+    else
+        mex = mex + "<li>TIPOLOGIA</li>";
+    mex = mex + "</ul>"
     if (core_set && script_set){
-        $("#compila").prop("disabled", false);
-        $("#compila").removeAttr("style");
-        $("#tooltip_compila").removeAttr("data-original-title");
-        $("#upload").prop("disabled", false);
-        $("#upload").removeAttr("style");
-        $("#tooltip_upload").removeAttr("data-original-title");
-        $("#compila_upload").prop("disabled", false);
-        $("#compila_upload").removeAttr("style");
-        $("#tooltip_compila_upload").removeAttr("data-original-title");
+        abilButtonTooltip("compila");
+        abilButtonTooltip("upload");
+        abilButtonTooltip("compila_upload");
+    } else {
+        disabilButtonTooltip("compila", mex);
+        disabilButtonTooltip("upload", mex);
+        disabilButtonTooltip("compila_upload", mex);
+
     }
 }
