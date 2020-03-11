@@ -203,3 +203,11 @@ th {
 .col-ruolo {
     width: 25%;
 }
+
+.btn-circle {
+    border-radius: 100%;
+}
+
+.card-opaca {
+    opacity: 0.65;
+}
