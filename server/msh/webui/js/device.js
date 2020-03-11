@@ -120,86 +120,84 @@ function net(type_op){
         dispositivo = $('#device')[0].value;
         comando = $('#command')[0].value;
     }
-    if ( (type_op == 'cmd' && dispositivo != "" && comando != "") || (type_op == 'type' && tipologie.length == 0) || (type_op != 'cmd' && type_op != 'type')){
-        var body = {
-            "tipo_operazione": type_op
-        };
-        if (type != null)
-            body['net_type'] = type;
-        if (dispositivo != null)
-            body['dispositivo'] = dispositivo;
-        if (comando != null)
-            body['comando'] = comando;
-        if (list_up_device.length > 0)
-            body['list_up_device'] = list_up_device;
-        $.blockUI();
-        $.ajax({
-            url: "/api/net",
-            type: 'POST',
-            contentType: "application/json",
-            data : JSON.stringify(body),
-            success: function(response){
-                var json = $.parseJSON(JSON.stringify(response));
-                $.unblockUI();
-                if (json["output"].search("OK") == 0){
-                    if (type_op == 'scan'){
-                        $('#found')[0].value = json["find_device"];
-                        $('#new')[0].value = json["new_device"];
-                        $('#update')[0].value = json["updated_device"];
-                        net('list');
+    var body = {
+        "tipo_operazione": type_op
+    };
+    if (type != null)
+        body['net_type'] = type;
+    if (dispositivo != null)
+        body['dispositivo'] = dispositivo;
+    if (comando != null)
+        body['comando'] = comando;
+    if (list_up_device.length > 0)
+        body['list_up_device'] = list_up_device;
+    $.blockUI();
+    $.ajax({
+        url: "/api/net",
+        type: 'POST',
+        contentType: "application/json",
+        data : JSON.stringify(body),
+        success: function(response){
+            var json = $.parseJSON(JSON.stringify(response));
+            $.unblockUI();
+            if (json["output"].search("OK") == 0){
+                if (type_op == 'scan'){
+                    $('#found')[0].value = json["find_device"];
+                    $('#new')[0].value = json["new_device"];
+                    $('#update')[0].value = json["updated_device"];
+                    net('list');
+                }
+                if (type_op == 'type'){
+                    tipologie = json["types"]
+                }
+                if (type_op == 'list'){
+                    var funzioni_bar_template = Handlebars.compile($("#funzioni-bar-template")[0].innerHTML);
+                    $('#funzioni_bar').html(funzioni_bar_template(json));
+                    var page_number = Math.floor(json['devices'].length / numero_device_pagina);
+                    var resto = json['devices'].length % numero_device_pagina;
+                    if (resto > 0)
+                        page_number = page_number + 1;
+                    json['pages'] = page_number;
+                    json['current_page'] = 1;
+                    for (i = 0; i < json['devices'].length; i++){
+                        json['devices'][i]['to_delete'] = false;
                     }
-                    if (type_op == 'type'){
-                        tipologie = json["types"]
-                    }
-                    if (type_op == 'list'){
-                        var funzioni_bar_template = Handlebars.compile($("#funzioni-bar-template")[0].innerHTML);
-                        $('#funzioni_bar').html(funzioni_bar_template(json));
-                        var page_number = Math.floor(json['devices'].length / numero_device_pagina);
-                        var resto = json['devices'].length % numero_device_pagina;
-                        if (resto > 0)
-                            page_number = page_number + 1;
-                        json['pages'] = page_number;
-                        json['current_page'] = 1;
-                        for (i = 0; i < json['devices'].length; i++){
-                            json['devices'][i]['to_delete'] = false;
-                        }
-                        table_device = Object.assign({}, json);
-                        new_device_net_list = $.extend(true, [], table_device["devices"]);
-                        json['devices'] = json['devices'].slice(0, numero_device_pagina);
-                        createTable(json);
-                    }
-                    if (type_op == 'command'){
-                        console.log("dfsfsd");
-                        var commands = json["commands"]
-                        var command_template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
-                        $('#drop_command').html(command_template(commands));
-                        for(var k = 0; k < commands.length; k++) {
-                            $("#drop_command li").click(function(){
-                              $('#command').text($(this).text());
-                              $("#command").val($(this).text());
-                              abilButtonTooltip("invia");
-                           });
-                        }
-                    }
-                    if (type_op == 'update'){
-                        net('list');
-                    }
-                    if (type_op == 'cmd'){
-                        $('#cmd_result')[0].value = json["result"];
-                    }
-                } else {
-                    $("#error_modal").modal();
-                    $('#errore').text(json["output"]);
-                    if (type_op == 'cmd'){
-                        $('#errore_title').text(json["result"]);
-                        $('#cmd_result')[0].value = json["result"];
+                    table_device = Object.assign({}, json);
+                    new_device_net_list = $.extend(true, [], table_device["devices"]);
+                    json['devices'] = json['devices'].slice(0, numero_device_pagina);
+                    createTable(json);
+                }
+                if (type_op == 'command'){
+                    console.log("dfsfsd");
+                    var commands = json["commands"]
+                    var command_template = Handlebars.compile($("#drop_command-template")[0].innerHTML);
+                    $('#drop_command').html(command_template(commands));
+                    for(var k = 0; k < commands.length; k++) {
+                        $("#drop_command li").click(function(){
+                          $('#command').text($(this).text());
+                          $("#command").val($(this).text());
+                          abilButtonTooltip("invia");
+                       });
                     }
                 }
-            },
-            error: function(xhr){
+                if (type_op == 'update'){
+                    net('list');
+                }
+                if (type_op == 'cmd'){
+                    $('#cmd_result')[0].value = json["result"];
+                }
+            } else {
+                $("#error_modal").modal();
+                $('#errore').text(json["output"]);
+                if (type_op == 'cmd'){
+                    $('#errore_title').text(json["result"]);
+                    $('#cmd_result')[0].value = json["result"];
+                }
             }
-        });
-    }
+        },
+        error: function(xhr){
+        }
+    });
 }
 
 function selectAllD(){

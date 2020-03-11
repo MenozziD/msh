@@ -396,12 +396,16 @@
                                             <td class="my-text-table">
                                                 <form>
                                                   <div class="custom-control custom-checkbox">
-                                                      {{#if to_delete}}
-                                                      <input type="checkbox" onchange="cambioValUser({{@index}})" checked class="custom-control-input" id="checkbox_user{{@index}}">
+                                                      {{#if to_add}}
+                                                      <input type="checkbox" readonly onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
                                                       {{else}}
-                                                      <input type="checkbox" onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        {{#if to_delete}}
+                                                        <input type="checkbox" onchange="cambioValUser({{@index}})" checked class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        {{else}}
+                                                        <input type="checkbox" onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        {{/if}}
+                                                        <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
                                                       {{/if}}
-                                                      <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
                                                   </div>
                                                 </form>
                                             </td>

@@ -112,48 +112,46 @@ function user(type_op){
             }
         }
     }
-    if (type_op != 'add' || (user != "" && password != "" && role != "")){
-        var body = {
-            "tipo_operazione": type_op
-        };
-        if (list_up_user.length > 0)
-            body['list_up_user'] = list_up_user;
-        $.ajax({
-            url: "/api/user",
-            type: 'POST',
-            contentType: "application/json",
-            data : JSON.stringify(body),
-            success: function(response){
-                var json = $.parseJSON(JSON.stringify(response));
-                if (json["output"].search("OK") == 0){
-                    if (type_op == 'list'){
-                        var page_number = Math.floor(json['users'].length / numero_user_pagina);
-                        var resto = json['users'].length % numero_user_pagina;
-                        if (resto > 0)
-		                    page_number = page_number + 1;
-		                json['pages'] = page_number;
-	                    json['current_page'] = 1;
-	                    for (i = 0; i < json['users'].length; i++){
-		                    json['users'][i]['to_delete'] = false;
-		                    json['users'][i]['to_add'] = false;
-	                    }
-	                    user_table = Object.assign({}, json);
-	                    new_user_list = $.extend(true, [], user_table["users"]);
-	                    json['users'] = json['users'].slice(0, numero_user_pagina);
-	                    createTableUser(json);
+    var body = {
+        "tipo_operazione": type_op
+    };
+    if (list_up_user.length > 0)
+        body['list_up_user'] = list_up_user;
+    $.ajax({
+        url: "/api/user",
+        type: 'POST',
+        contentType: "application/json",
+        data : JSON.stringify(body),
+        success: function(response){
+            var json = $.parseJSON(JSON.stringify(response));
+            if (json["output"].search("OK") == 0){
+                if (type_op == 'list'){
+                    var page_number = Math.floor(json['users'].length / numero_user_pagina);
+                    var resto = json['users'].length % numero_user_pagina;
+                    if (resto > 0)
+                        page_number = page_number + 1;
+                    json['pages'] = page_number;
+                    json['current_page'] = 1;
+                    for (i = 0; i < json['users'].length; i++){
+                        json['users'][i]['to_delete'] = false;
+                        json['users'][i]['to_add'] = false;
                     }
-                    if (type_op == 'update'){
-                        user('list');
-                    }
-                } else {
-                    $("#error_modal").modal();
-                    $('#errore').text(json["output"]);
+                    user_table = Object.assign({}, json);
+                    new_user_list = $.extend(true, [], user_table["users"]);
+                    json['users'] = json['users'].slice(0, numero_user_pagina);
+                    createTableUser(json);
                 }
-            },
-            error: function(xhr){
+                if (type_op == 'update'){
+                    user('list');
+                }
+            } else {
+                $("#error_modal").modal();
+                $('#errore').text(json["output"]);
             }
-        });
-    }
+        },
+        error: function(xhr){
+        }
+    });
 }
 
 function selectAllU(){
@@ -168,8 +166,10 @@ function selectAllU(){
         value = true;
     else
         value = false;
-    for (var i = 0; i < ind_final - ind; i++)
-        $("#checkbox_user" + i).prop("checked", value);
+    for (var i = 0; i < ind_final - ind; i++){
+        if (! new_user_list[ind + i]['to_add'])
+            $("#checkbox_user" + i).prop("checked", value);
+    }
     for(var j = ind; j < ind_final; j++)
         cambioValUser(j);
     select_all_u = value;
