@@ -15,6 +15,8 @@ function view_user_role(id){
         $("#role_user" + id).val($(this).text());
         if (id != 'add')
             cambioValUser(id);
+        else
+            cambioValAddUser();
     });
 }
 
@@ -64,16 +66,20 @@ function check_change_user(indice, chiave, nome){
 
 function getRiepilogoUser() {
     var message = "";
-    for (var i = 0; i < user_table['users'].length; i++){
+    for (var i = 0; i < new_user_list.length; i++){
         if (JSON.stringify(user_table['users'][i]) != JSON.stringify(new_user_list[i])){
             if (check_change_user(i, 'to_delete', "") != ""){
                 message = message + "- L'utente con username " + user_table['users'][i]['username'] + " verra eliminato\n";
             } else {
-                message = message + "- Modificato utente con username " + user_table['users'][i]['username'] + "\n";
-                message = message + check_change_user(i, 'password', "PASSWORD");
-                message = message + check_change_user(i, 'role', "RUOLO");
+                if (check_change_user(i, 'to_add', "") != ""){
+                    message = message + "- L'utente con username " + user_table['users'][i]['username'] + " verrà aggiunto con il ruolo di " + new_user_list[i]['role'] + "\n";
+                } else {
+                    message = message + "- Modificato utente con username " + user_table['users'][i]['username'] + "\n";
+                    message = message + check_change_user(i, 'password', "PASSWORD");
+                    message = message + check_change_user(i, 'role', "RUOLO");
+                }
             }
-            message = message + "\n"
+            message = message + "\n";
         }
     }
     $('#recap_user').text(message);
@@ -81,20 +87,28 @@ function getRiepilogoUser() {
 }
 
 function user(type_op){
-    var user = null;
-    var password = null;
-    var role = null;
-    var id = null;
-    if (type_op.search('update') >= 0){
-        id = type_op.replace('update','');
-        type_op = 'update';
-        user = $("#username" + id).text();
-        for (var i = 0; i < user_list.length; i++){
-            if (user_list[i]['username'] == user){
-                if ($("#psw_user" + id)[0].value != user_list[i]['password'])
-                    password = $("#psw_user" + id)[0].value;
-                if ($("#role_user" + id)[0].value != user_list[i]['role'])
-                    role = $("#role_user" + id)[0].value;
+    var list_up_user = [];
+    if (type_op == 'update'){
+        for (var i = 0; i < new_user_list.length; i++){
+            if (JSON.stringify(user_table['users'][i]) != JSON.stringify(new_user_list[i])){
+                var usr= {
+                    'username': user_table['users'][i]['username']
+                }
+                if (check_change_user(i, 'to_delete', "") != ""){
+                    usr['to_delete'] = true;
+                } else {
+                    if (check_change_user(i, 'to_add', "") != ""){
+                        usr['to_add'] = true;
+                        usr['password'] = new_user_list[i]['password'];
+                        usr['role'] = new_user_list[i]['role'];
+                    } else {
+                        if (check_change_user(i, 'password', "PASSWORD") != "")
+                            usr['password'] = new_user_list[i]['password']
+                        if (check_change_user(i, 'role', "RUOLO") != "")
+                            usr['role'] = new_user_list[i]['role']
+                    }
+                }
+                list_up_user.push(usr);
             }
         }
     }
@@ -102,12 +116,8 @@ function user(type_op){
         var body = {
             "tipo_operazione": type_op
         };
-        if (role != null)
-            body['role'] = role
-        if (user != null)
-            body['username'] = user
-        if (password != null)
-            body['password'] = password
+        if (list_up_user.length > 0)
+            body['list_up_user'] = list_up_user;
         $.ajax({
             url: "/api/user",
             type: 'POST',
@@ -125,13 +135,14 @@ function user(type_op){
 	                    json['current_page'] = 1;
 	                    for (i = 0; i < json['users'].length; i++){
 		                    json['users'][i]['to_delete'] = false;
+		                    json['users'][i]['to_add'] = false;
 	                    }
 	                    user_table = Object.assign({}, json);
 	                    new_user_list = $.extend(true, [], user_table["users"]);
 	                    json['users'] = json['users'].slice(0, numero_user_pagina);
 	                    createTableUser(json);
                     }
-                    if (type_op == 'update' || type_op == 'delete' || type_op == 'add'){
+                    if (type_op == 'update'){
                         user('list');
                     }
                 } else {
@@ -165,20 +176,13 @@ function selectAllU(){
 }
 
 function abilButtonUser(){
+    var mex = "È necessario modificare almeno un valore per attivare questa funzione";
     if (JSON.stringify(user_table['users']) != JSON.stringify(new_user_list)){
-        $("#reset_user").prop("disabled", false);
-        $("#reset_user").removeAttr("style");
-        $("#salva_user").prop("disabled", false);
-        $("#salva_user").removeAttr("style");
-        $("#tooltip_reset_user").removeAttr("data-original-title");
-        $("#tooltip_salva_user").removeAttr("data-original-title");
+        abilButtonTooltip("reset_user");
+        abilButtonTooltip("salva_user");
     } else {
-        $("#reset_user").prop("disabled", true);
-        $("#reset_user").attr("style", "pointer-events: none;");
-        $("#salva_user").prop("disabled", true);
-        $("#salva_user").attr("style", "pointer-events: none;");
-        $("#tooltip_reset_user").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
-        $("#tooltip_salva_user").attr("data-original-title", "È necessario modificare almeno un valore per attivare questa funzione");
+        disabilButtonTooltip("reset_user", mex);
+        disabilButtonTooltip("salva_user", mex);
     }
 }
 
@@ -189,7 +193,7 @@ function change_page_u(pagina){
         user_table['current_page'] = pagina;
         var tmp_list = Object.assign({}, user_table);
         tmp_list['users'] = $.extend(true, [], new_user_list);
-        tmp_list['users'] = tmp_list['devices'].slice((pagina-1)*numero_user_pagina, pagina*numero_user_pagina);
+        tmp_list['users'] = tmp_list['users'].slice((pagina-1)*numero_user_pagina, pagina*numero_user_pagina);
         createTableUser(tmp_list);
         select_all_u = false;
         if (page_down_u+page_up_u > 4){
@@ -213,6 +217,50 @@ function change_page_u(pagina){
     }
 }
 
+function user_exists(username){
+    var trovato = false;
+    for (var i = 0; i < new_user_list.length; i++){
+        if (new_user_list[i]['username'] == username){
+            trovato = true;
+            break;
+        }
+    }
+    return trovato;
+}
+
+function cambioValAddUser(){
+    var user_set = false;
+    var pass_set = false;
+    var role_set = false;
+    var username = $("#username_add")[0].value;
+    var password = $("#password_add")[0].value;
+    var ruolo = $("#role_useradd")[0].value;
+    var mex = "Campi mancanti: <ul>";
+    if (username != ""){
+        if (!user_exists(username))
+            user_set = true;
+        else
+           mex = mex + "<li>USERNAME GIA ESISTENTE</li>";
+    } else
+        mex = mex + "<li>USERNAME</li>";
+    if (password != ""){
+        if (password.length >= 4)
+            pass_set = true;
+        else
+            mex = mex + "<li>PASSWORD MINORE DI 4 CARATTERI</li>";
+    } else
+        mex = mex + "<li>PASSWORD</li>";
+    if (ruolo != "")
+        role_set = true;
+    else
+        mex = mex + "<li>TIPOLOGIA</li>";
+    mex = mex + "</ul>"
+    if (user_set && pass_set && role_set)
+        abilButtonTooltip("add_user");
+    else
+        disabilButtonTooltip("add_user", mex);
+}
+
 function cambioValUser(id){
     var ind = ((user_table['current_page']-1)*numero_user_pagina) + parseInt(id);
     var password = $("#psw_user" + id)[0].value;
@@ -225,8 +273,51 @@ function cambioValUser(id){
 }
 
 function user_reset(){
+    for (var i = new_user_list.length; i--;){
+        if (new_user_list[i]['to_add'] == true){
+            user_table["users"].splice(i, 1);
+        }
+    }
     new_user_list = $.extend(true, [], user_table["users"]);
     var tmp_list = Object.assign({}, user_table);
+    tmp_list['users'] = tmp_list['users'].slice((user_table['current_page']-1)*numero_user_pagina, user_table['current_page']*numero_user_pagina);
+    createTableUser(tmp_list);
+}
+
+function user_clear_add(close){
+    $("#username_add").val("");
+    $("#username_add").text("");
+    $("#password_add").val("");
+    $("#password_add").text("");
+    $("#role_useradd").val("");
+    $("#role_useradd").text("");
+    cambioValAddUser();
+}
+
+function user_add(){
+    var username = $("#username_add")[0].value;
+    var password = $("#password_add")[0].value;
+    var ruolo = $("#role_useradd")[0].value;
+    var add_user = {
+        'password': password,
+        'role': ruolo,
+        'username': username,
+        'to_delete': false,
+        'to_add': true
+    };
+    new_user_list.push(add_user);
+    var add_user_new = $.extend(true, {}, add_user);
+    add_user_new['to_add'] = false;
+    user_table['users'].push(add_user_new);
+    $('#modal_add_user').modal('toggle');
+    user_clear_add();
+    var page_number = Math.floor(user_table['users'].length / numero_user_pagina);
+    var resto = user_table['users'].length % numero_user_pagina;
+    if (resto > 0)
+        page_number = page_number + 1;
+    user_table['pages'] = page_number;
+    var tmp_list = Object.assign({}, user_table);
+    tmp_list['users'] = $.extend(true, [], new_user_list);
     tmp_list['users'] = tmp_list['users'].slice((user_table['current_page']-1)*numero_user_pagina, user_table['current_page']*numero_user_pagina);
     createTableUser(tmp_list);
 }
