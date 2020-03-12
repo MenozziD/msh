@@ -211,3 +211,7 @@ th {
 .card-opaca {
     opacity: 0.65;
 }
+
+.button-del-add {
+    padding: 0;
+}
