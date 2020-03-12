@@ -131,7 +131,8 @@ function net(type_op){
         body['comando'] = comando;
     if (list_up_device.length > 0)
         body['list_up_device'] = list_up_device;
-    $.blockUI();
+    if (['scan', 'update', 'cmd', 'command'].indexOf(type_op) >= 0)
+        $.blockUI();
     $.ajax({
         url: "/api/net",
         type: 'POST',
@@ -139,7 +140,8 @@ function net(type_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            $.unblockUI();
+            if (['scan', 'update', 'cmd', 'command'].indexOf(type_op) >= 0)
+                $.unblockUI();
             if (json["output"].search("OK") == 0){
                 if (type_op == 'scan'){
                     $('#found')[0].value = json["find_device"];
@@ -212,10 +214,10 @@ function selectAllD(){
         value = true;
     else
         value = false;
-    for (var i = 0; i < ind_final - ind; i++)
-        $("#checkbox_device" + i).prop("checked", value);
-    for(var j = ind; j < ind_final; j++)
-        cambioVal(j);
+    for (var i = 0; i < ind_final - ind; i++) {
+        ("#checkbox_device" + i).prop("checked", value);
+        cambioVal(i);
+    }
     select_all = value;
 }
 
