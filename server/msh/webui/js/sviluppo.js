@@ -44,7 +44,8 @@ function upload_arduino(tipo_op){
         body['core'] = core
     if (tipologia != null)
         body['tipologia'] = tipologia
-    $.blockUI();
+    if (['upload', 'compile'].indexOf(tipo_op) >= 0)
+        $.blockUI();
     $.ajax({
         url: "/api/upload_arduino",
         type: 'POST',
@@ -52,7 +53,8 @@ function upload_arduino(tipo_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            $.unblockUI();
+            if (['upload', 'compile', 'tipo'].indexOf(tipo_op) >= 0)
+                $.unblockUI();
             if (json["output"].search("OK") == 0){
                 if (tipo_op == 'core'){
                     cores_list = json["cores"]
