@@ -5,6 +5,7 @@ function carica(){
     $.blockUI.defaults.css.border = '';
     $.blockUI.defaults.baseZ = 2000;
     $.blockUI.defaults.message = '<div class="spinner-border text-light" role="status" style=""><span class="sr-only">Loading...</span></div>';
+    $.blockUI();
     Handlebars.registerHelper('if_eq', function(a, b, opts) {
         if (a == b) {
             return opts.fn(this);
@@ -49,9 +50,9 @@ function carica(){
     });
     net('list');
     net('type');
+    user('list');
     upload_arduino('core');
     upload_arduino('tipo');
-    user('list');
     $('#modal_user').on('shown.bs.modal', function (e) {
         var cw = $("#tooltip_plus_user").height();
         $('#tooltip_plus_user').css({'width':cw+'px'});
