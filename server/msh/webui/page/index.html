@@ -27,7 +27,7 @@
 	</head>
 	<body onload="carica()">
 		<div class="container">
-            <div class="row mb-3 mt-3 remove-margin">
+            <div class="row mb-3 mt-3">
                 <div class="first-margin"></div>
                 <div class="col-titolo">
                     <div class="card">
@@ -384,9 +384,9 @@
                                         {{#if_eq user_role "ADMIN"}}
                                             <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAllU()"></i></th>
                                         {{/if_eq}}
-                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                        <th class="my-text-table"><a class="make-cursor" onclick="sortTableUser('role')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-username"><a class="make-cursor" onclick="sortTableUser('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-password-us"><a class="make-cursor" onclick="sortTableUser('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-ruolo"><a class="make-cursor" onclick="sortTableUser('role')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -394,26 +394,26 @@
                                         <tr>
                                             {{#if_eq ../user_role "ADMIN"}}
                                             <td class="my-text-table">
+                                              {{#if to_add}}
+                                              <button id="checkbox_user{{@index}}" class="btn btn-danger btn-circle font-weight-bold button-del-add" type="button" onclick="user_remove({{@index}});"></button>
+                                              {{else}}
                                                 <form>
-                                                  <div class="custom-control custom-checkbox">
-                                                      {{#if to_add}}
-                                                      <input type="checkbox" readonly onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
-                                                      {{else}}
-                                                        {{#if to_delete}}
+                                                    <div class="custom-control custom-checkbox">
+                                                    {{#if to_delete}}
                                                         <input type="checkbox" onchange="cambioValUser({{@index}})" checked class="custom-control-input" id="checkbox_user{{@index}}">
-                                                        {{else}}
+                                                    {{else}}
                                                         <input type="checkbox" onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
-                                                        {{/if}}
+                                                    {{/if}}
                                                         <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
-                                                      {{/if}}
-                                                  </div>
+                                                    </div>
                                                 </form>
+                                              {{/if}}
                                             </td>
                                             {{/if_eq}}
-                                            <td class="my-text-table col-username">
+                                            <td class="my-text-table">
                                                 <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
                                             </td>
-                                            <td class="my-text-table col-password-us">
+                                            <td class="my-text-table">
                                                 <div class="input-group">
                                                     {{#if_eq username ../user_username}}
                                                     <input class="form-control font-weight-bold" onchange="cambioValUser({{@index}})" id="psw_user{{@index}}" value="{{password}}" type="password">
@@ -427,7 +427,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="my-text-table col-ruolo">
+                                            <td class="my-text-table">
                                                 <div class="dropdown{{@index}}">
                                                     {{#if_eq ../user_role "ADMIN"}}
                                                         <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}" onclick="view_user_role('{{@index}}')">{{role}}</button>
