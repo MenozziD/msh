@@ -21,9 +21,12 @@ function view_user_role(id){
 }
 
 function createTableUser(struttura){
+    var cw = parseInt($(".custom-control-input").height()) + 3;
     var user_template = Handlebars.compile($("#table-user-template")[0].innerHTML);
     $('#table-user').html(user_template(struttura));
     $('[data-toggle="tooltip"]').tooltip({html: true});
+    $('.button-del-add').css('width', cw+'px');
+    $('.button-del-add').css('height', cw+'px');
     abilButtonUser();
 }
 
@@ -117,7 +120,8 @@ function user(type_op){
     };
     if (list_up_user.length > 0)
         body['list_up_user'] = list_up_user;
-    $.blockUI();
+    if (['update'].indexOf(type_op) >= 0)
+        $.blockUI();
     $.ajax({
         url: "/api/user",
         type: 'POST',
@@ -125,7 +129,8 @@ function user(type_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            $.unblockUI();
+            if (['update'].indexOf(type_op) >= 0)
+                $.unblockUI();
             if (json["output"].search("OK") == 0){
                 if (type_op == 'list'){
                     var page_number = Math.floor(json['users'].length / numero_user_pagina);
@@ -171,9 +176,8 @@ function selectAllU(){
     for (var i = 0; i < ind_final - ind; i++){
         if (! new_user_list[ind + i]['to_add'])
             $("#checkbox_user" + i).prop("checked", value);
+        cambioValUser(i);
     }
-    for(var j = ind; j < ind_final; j++)
-        cambioValUser(j);
     select_all_u = value;
 }
 
@@ -264,10 +268,15 @@ function cambioValAddUser(){
 }
 
 function cambioValUser(id){
-    var ind = ((user_table['current_page']-1)*numero_user_pagina) + parseInt(id);
+    console.log(id);
+    var ind = null;
+    ind = ((user_table['current_page']-1)*numero_user_pagina) + parseInt(id);
+    console.log(ind);
     var password = $("#psw_user" + id)[0].value;
     var ruolo = $("#role_user" + id)[0].value;
     var to_del = $("#checkbox_user" + id).prop("checked");
+    if (typeof to_del === "undefined")
+        to_del = $("#checkbox_user" + id)[0].value;
     new_user_list[ind]['password'] = password;
     new_user_list[ind]['role'] = ruolo;
     new_user_list[ind]['to_delete'] = to_del;
@@ -317,7 +326,25 @@ function user_add(){
     var resto = user_table['users'].length % numero_user_pagina;
     if (resto > 0)
         page_number = page_number + 1;
+    if (user_table['pages'] < page_number)
+        user_table['current_page'] = page_number;
     user_table['pages'] = page_number;
+    var tmp_list = Object.assign({}, user_table);
+    tmp_list['users'] = $.extend(true, [], new_user_list);
+    tmp_list['users'] = tmp_list['users'].slice((user_table['current_page']-1)*numero_user_pagina, user_table['current_page']*numero_user_pagina);
+    createTableUser(tmp_list);
+}
+
+function user_remove(ind){
+    new_user_list.splice(ind, 1);
+    user_table["users"].splice(ind, 1);
+    var page_number = Math.floor(user_table['users'].length / numero_user_pagina);
+    var resto = user_table['users'].length % numero_user_pagina;
+    if (resto > 0)
+        page_number = page_number + 1;
+    user_table['pages'] = page_number;
+    if (user_table['current_page'] > page_number)
+        user_table['current_page'] = page_number;
     var tmp_list = Object.assign({}, user_table);
     tmp_list['users'] = $.extend(true, [], new_user_list);
     tmp_list['users'] = tmp_list['users'].slice((user_table['current_page']-1)*numero_user_pagina, user_table['current_page']*numero_user_pagina);
