@@ -69,7 +69,60 @@ function carica(){
     $('#modal_add_user').on('hide.bs.modal', function () {
         user_clear_add();
     })
- }
+    $('#modal_user').on('hide.bs.modal', function () {
+        user_reset();
+    })
+    $('#modal_search').on('hide.bs.modal', function () {
+        search_clear();
+    })
+    $('#modal_exec_cmd').on('hide.bs.modal', function () {
+        exec_cmd_clear();
+    })
+    $('#modal_compile').on('hide.bs.modal', function () {
+        compile_clear();
+    })
+}
+
+function compile_clear(){
+    $("#device_arduino").val("");
+    $("#device_arduino").text("");
+    $("#tipo_arduino").val("");
+    $("#tipo_arduino").text("");
+    $('#esito_upload').val("");
+    $('#program_bytes_used').val("");
+    $('#program_percentual_used').val("");
+    $('#program_bytes_total').val("");
+    $('#memory_bytes_used').val("");
+    $('#memory_percentual_used').val("");
+    $('#memory_bytes_free').val("");
+    $('#memory_bytes_total').val("");
+    $('#porta_seriale').val("");
+    $('#chip').val("");
+    $('#mac_addres').val("");
+    $('#byte_write').val("");
+    $('#byte_write_compressed').val("");
+    $('#time').val("");
+    cambioValSvil();
+}
+
+function search_clear(){
+    $('#found').val("");
+    $('#new').val("");
+    $('#update').val("");
+}
+
+function exec_cmd_clear(){
+    $('#device').val("");
+    $('#device').text("");
+    $('#command').val("");
+    $('#command').text("");
+    $('#cmd_result').text("");
+    $('#cmd_result').val("");
+    var mex = "Campi mancanti: <ul><li>DISPOSITIVO</li><li>COMANDO</li></ul>";
+    disabilButtonTooltip("invia", mex);
+    mex = "Scegliere il DISPOSITIVO";
+    disabilButtonTooltip("command", mex);
+}
 
 function logout(){
     $.ajax({
