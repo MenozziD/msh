@@ -291,3 +291,66 @@ def upload_arduino(core, tipologia):
         result['output'] = str(e)
     finally:
         return result
+
+
+def wifi_ap_info(ip, usr, psw, router):
+    result = {}
+    try:
+        response = execute_ssh_cmd(ip, usr, psw, "cat /etc/config/wireless")
+        if response['output'] == 'OK':
+            wifi_ap = []
+            wifi_info = {
+                'router': router,
+                'psw_type': 'WPA/PSK2'
+            }
+            if response['cmd_out'].find("No such file or directory") > 0:
+                response = execute_ssh_cmd(ip, usr, psw, "cd /etc/Wireless && cd `ls` && cat `ls`")
+                if response['output'] == 'OK':
+                    cmd_out = response['cmd_out'].replace("\\t", "").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                    rows = cmd_out.split('\n')
+                    for row in rows:
+                        wifi_info = get_field_asus(row, wifi_info, 'SSID', 'ssid', 5)
+                        wifi_info = get_field_asus(row, wifi_info, 'WPAPSK', 'wpa_psk_key', 7)
+                        if 'ssid' in wifi_info and 'wpa_psk_key' in wifi_info:
+                            wifi_ap.append(wifi_info)
+                            wifi_info = {
+                                'router': router,
+                                'psw_type': 'WPA/PSK2'
+                            }
+                else:
+                    raise Exception(response['output'])
+            else:
+                cmd_out = response['cmd_out'].replace("\\t", "").replace("\\n", "\n").replace("\\r", "")
+                rows = cmd_out.split('config')
+                for row in rows:
+                    wifi_info = get_field(row, wifi_info, 'ssid')
+                    wifi_info = get_field(row, wifi_info, 'wpa_psk_key')
+                    if 'ssid' in wifi_info and 'wpa_psk_key' in wifi_info:
+                        wifi_ap.append(wifi_info)
+                        wifi_info = {
+                            'router': router,
+                            'psw_type': 'WPA/PSK2'
+                        }
+            result['result'] = wifi_ap
+            result['output'] = "OK"
+        else:
+            raise Exception(response['output'])
+    except Exception as e:
+        exception("Exception")
+        result['result'] = get_string(42)
+        result['output'] = str(e)
+    finally:
+        return result
+
+
+def get_field(row, wifi_info, field):
+    if row.find('option ' + field + ' \'') > -1:
+        wifi_info[field] = row.split('option ' + field + ' \'')[1].split("\'")[0]
+    return wifi_info
+
+
+def get_field_asus(row, wifi_info, field, tag, size):
+    if row.find(field) > -1:
+        if len(row.split('=')) == 2 and len(row.split('=')[0]) == size and row.split('=')[1] != "":
+            wifi_info[tag] = row.split('=')[1]
+    return wifi_info

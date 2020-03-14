@@ -53,7 +53,7 @@ function upload_arduino(tipo_op){
         data : JSON.stringify(body),
         success: function(response){
             var json = $.parseJSON(JSON.stringify(response));
-            if (['upload', 'compile', 'tipo'].indexOf(tipo_op) >= 0)
+            if (['upload', 'compile'].indexOf(tipo_op) >= 0)
                 $.unblockUI();
             if (json["output"].search("OK") == 0){
                 if (tipo_op == 'core'){

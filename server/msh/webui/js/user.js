@@ -207,7 +207,7 @@ function change_page_u(pagina){
                 for (var i=page_up_u; i > 2; i--){
                     $("#u" + (pagina+i))[0].classList.add("d-none");
                 }
-                for (var i=page_down; i > 2; i--){
+                for (var i=page_down_u; i > 2; i--){
                     $("#u" + (pagina-i))[0].classList.add("d-none");
                 }
             }
@@ -268,10 +268,8 @@ function cambioValAddUser(){
 }
 
 function cambioValUser(id){
-    console.log(id);
     var ind = null;
     ind = ((user_table['current_page']-1)*numero_user_pagina) + parseInt(id);
-    console.log(ind);
     var password = $("#psw_user" + id)[0].value;
     var ruolo = $("#role_user" + id)[0].value;
     var to_del = $("#checkbox_user" + id).prop("checked");

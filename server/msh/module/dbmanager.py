@@ -50,7 +50,7 @@ class DbManager:
             raise
 
     @staticmethod
-    def select_tb_net_device(net_mac='', net_code=''):
+    def select_tb_net_device(net_mac='', net_code='', net_type=''):
         query = 'SELECT * ' \
                 'FROM TB_NET_DEVICE'
         if net_mac != '':
@@ -59,7 +59,10 @@ class DbManager:
             if net_code != '':
                 query = query + ' WHERE NET_CODE = \'%s\';' % net_code
             else:
-                query = query + ';'
+                if net_type != '':
+                    query = query + ' WHERE NET_TYPE = \'%s\';' % net_type
+                else:
+                    query = query + ';'
         net_devices = DbManager.select(query)
         devices = []
         for net_device in net_devices:
@@ -251,5 +254,31 @@ class DbManager:
     @staticmethod
     def delete_tb_net_device(mac):
         query = 'DELETE FROM TB_NET_DEVICE WHERE NET_MAC = \'%s\';' % mac
+        DbManager.insert_or_update(query)
+        return
+
+    @staticmethod
+    def select_tb_wifi():
+        query = "SELECT * FROM TB_WIFI;"
+        wifis = DbManager.select(query)
+        ret_wifi = []
+        for wifi in wifis:
+            tb_wifi = {
+                'ssid': str(wifi[0]),
+                'psw': str(wifi[1])
+            }
+            ret_wifi.append(tb_wifi)
+        return ret_wifi
+
+    @staticmethod
+    def insert_tb_wifi(ssid, password):
+        query = 'INSERT INTO TB_WIFI (SSID,PASSWORD) ' \
+                'VALUES (\'%s\',\'%s\');' % (ssid, password)
+        DbManager.insert_or_update(query)
+        return
+
+    @staticmethod
+    def delete_tb_wifi():
+        query = 'DELETE FROM TB_WIFI;'
         DbManager.insert_or_update(query)
         return

@@ -215,7 +215,7 @@ function selectAllD(){
     else
         value = false;
     for (var i = 0; i < ind_final - ind; i++) {
-        ("#checkbox_device" + i).prop("checked", value);
+        $("#checkbox_device" + i).prop("checked", value);
         cambioVal(i);
     }
     select_all = value;

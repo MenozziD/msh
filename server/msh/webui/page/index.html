@@ -22,6 +22,7 @@
         <script src="/static/js/device.js"></script>
         <script src="/static/js/sviluppo.js"></script>
         <script src="/static/js/user.js"></script>
+        <script src="/static/js/wifi.js"></script>
 
 		<title>Home</title>
 	</head>
@@ -100,6 +101,27 @@
                                         <div class="row remove-margin">
                                             <img src="/static/image/esp.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
                                             <h4 class="font-weight-bold text-center comando">SVILUPPO</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/if_eq}}
+                            </div>
+                            <div class="panel-col">
+                                {{#if_eq user_role "ADMIN"}}
+                                <div class="card">
+                                    <div class="card-body make-cursor my-panel-icon" onclick="$('#modal_wifi').modal();">
+                                        <div class="row remove-margin">
+                                            <img src="/static/image/wifiset.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
+                                            <h4 class="font-weight-bold text-center comando">WIFI INFO</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{else}}
+                                <div class="card card-opaca">
+                                    <div class="card-body my-panel-icon" data-toggle="tooltip" data-placement="top" title="Funzione disponibile solo per gli ADMIN">
+                                        <div class="row remove-margin">
+                                            <img src="/static/image/wifiset.png" class="img-fluid my-auto icona-panel" alt="Icona di google home">
+                                            <h4 class="font-weight-bold text-center comando">WIFI INFO</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -228,29 +250,29 @@
                                 <span class="sr-only">Previous</span>
                               </a>
                             </li>
-                        {{#if_mag current_page 4 pages 'release'}}
+                        {{#if_mag current_page 4 pages 'device'}}
                             <li id="{{dif current_page 4}}"><a class="page-link" onclick="change_page({{dif current_page 4}})">{{dif current_page 4}}</a></li>
                         {{/if_mag}}
-                          {{#if_mag current_page 3 pages 'release'}}
+                          {{#if_mag current_page 3 pages 'device'}}
                             <li id="{{dif current_page 3}}"><a class="page-link" onclick="change_page({{dif current_page 3}})">{{dif current_page 3}}</a></li>
                         {{/if_mag}}
-                        {{#if_mag current_page 2 pages 'release'}}
+                        {{#if_mag current_page 2 pages 'device'}}
                         <li id="{{dif current_page 2}}"><a class="page-link" onclick="change_page({{dif current_page 2}})">{{dif current_page 2}}</a></li>
                         {{/if_mag}}
-                        {{#if_mag current_page 1 pages 'release'}}
+                        {{#if_mag current_page 1 pages 'device'}}
                           <li id="{{dif current_page 1}}"><a class="page-link" onclick="change_page({{dif current_page 1}})">{{dif current_page 1}}</a></li>
                         {{/if_mag}}
                           <li id="{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
-                        {{#if_min current_page 1 pages 'release'}}
+                        {{#if_min current_page 1 pages 'device'}}
                           <li id="{{sum current_page 1}}"><a class="page-link" onclick="change_page({{sum current_page 1}})">{{sum current_page 1}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 2 pages 'release'}}
+                          {{#if_min current_page 2 pages 'device'}}
                           <li id="{{sum current_page 2}}"><a class="page-link" onclick="change_page({{sum current_page 2}})">{{sum current_page 2}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 3 pages 'release'}}
+                          {{#if_min current_page 3 pages 'device'}}
                           <li id="{{sum current_page 3}}"><a class="page-link" onclick="change_page({{sum current_page 3}})">{{sum current_page 3}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 4 pages 'release'}}
+                          {{#if_min current_page 4 pages 'device'}}
                           <li id="{{sum current_page 4}}"><a class="page-link" onclick="change_page({{sum current_page 4}})">{{sum current_page 4}}</a></li>
                         {{/if_min}}
                           <li>
@@ -465,29 +487,29 @@
                                     <span class="sr-only">Previous</span>
                                   </a>
                                 </li>
-                            {{#if_mag current_page 4 pages 'release'}}
+                            {{#if_mag current_page 4 pages 'user'}}
                                 <li id="u{{dif current_page 4}}"><a class="page-link" onclick="change_page_u({{dif current_page 4}})">{{dif current_page 4}}</a></li>
                             {{/if_mag}}
-                              {{#if_mag current_page 3 pages 'release'}}
+                              {{#if_mag current_page 3 pages 'user'}}
                                 <li id="u{{dif current_page 3}}"><a class="page-link" onclick="change_page_u({{dif current_page 3}})">{{dif current_page 3}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 2 pages 'release'}}
+                            {{#if_mag current_page 2 pages 'user'}}
                             <li id="u{{dif current_page 2}}"><a class="page-link" onclick="change_page_u({{dif current_page 2}})">{{dif current_page 2}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 1 pages 'release'}}
+                            {{#if_mag current_page 1 pages 'user'}}
                               <li id="u{{dif current_page 1}}"><a class="page-link" onclick="change_page_u({{dif current_page 1}})">{{dif current_page 1}}</a></li>
                             {{/if_mag}}
                               <li id="u{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
-                            {{#if_min current_page 1 pages 'release'}}
+                            {{#if_min current_page 1 pages 'user'}}
                               <li id="u{{sum current_page 1}}"><a class="page-link" onclick="change_page_u({{sum current_page 1}})">{{sum current_page 1}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 2 pages 'release'}}
+                              {{#if_min current_page 2 pages 'user'}}
                               <li id="u{{sum current_page 2}}"><a class="page-link" onclick="change_page_u({{sum current_page 2}})">{{sum current_page 2}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 3 pages 'release'}}
+                              {{#if_min current_page 3 pages 'user'}}
                               <li id="u{{sum current_page 3}}"><a class="page-link" onclick="change_page_u({{sum current_page 3}})">{{sum current_page 3}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 4 pages 'release'}}
+                              {{#if_min current_page 4 pages 'user'}}
                               <li id="u{{sum current_page 4}}"><a class="page-link" onclick="change_page_u({{sum current_page 4}})">{{sum current_page 4}}</a></li>
                             {{/if_min}}
                               <li>
@@ -511,6 +533,118 @@
                     <li class="dropdown-item font-weight-bold">{{this}}</li>
                 {{/each}}
               </script>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="modal_wifi">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" id="table-wifi"></div>
+                 <script id="table-wifi-template" type="text/x-handlebars-template">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            WIFI INFO
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th class="my-text-table col-check"><i class="fas fa-save" aria-hidden="true"></i></th>
+                                            <th class="my-text-table col-route"><a class="make-cursor" onclick="sortTableWifi('router')">ROUTER <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-ssid"><a class="make-cursor" onclick="sortTableWifi('ssid')">SSID <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-ssid-psw"><a class="make-cursor" onclick="sortTableWifi('wpa_psk_key')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-frq"><a class="make-cursor" onclick="sortTableWifi('psw_type')">FREQUENZA <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                             </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each wifi_ap}}
+                                            <tr>
+                                                <td class="my-text-table">
+                                                    <form>
+                                                      <div class="custom-control custom-checkbox">
+                                                        {{#if to_set}}
+                                                          <input type="checkbox" onchange="cambioValWifi({{@index}})" checked class="custom-control-input" id="checkbox_wifi{{@index}}">
+                                                        {{else}}
+                                                          <input type="checkbox" onchange="cambioValWifi({{@index}})" class="custom-control-input" id="checkbox_wifi{{@index}}">
+                                                        {{/if}}
+                                                        <label class="custom-control-label" for="checkbox_wifi{{@index}}"></label>
+                                                      </div>
+                                                    </form>
+                                                </td>
+                                                <td class="my-text-table font-weight-bold">{{router}}</td>
+                                                <td class="my-text-table font-weight-bold">{{ssid}}</td>
+                                                <td class="my-text-table font-weight-bold">{{wpa_psk_key}}</td>
+                                                <td class="my-text-table font-weight-bold">{{psw_type}}</td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                {{#if_eq default_ap ""}}
+                                <h6 class="font-weight-bold">Non è impostato nessuno AP di default</h6>
+                                {{else}}
+                                <h6 class="font-weight-bold">L'AP di default è: {{default_ap.ssid}} con password {{default_ap.psw}}</h6>
+                                {{/if_eq}}
+                            </div>
+                        </div>
+                  </div>
+                  <div class="modal-footer">
+                      <div id="tooltip_reset_wifi" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                          <button id="reset_wifi" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="wifi_reset()">RESET</button>
+                      </div>
+                      <div class="col-md-6">
+                        <nav class="font-weight-bold">
+                          <ul class="pagination justify-content-center mb-0">
+                              <li><a class="page-link" onclick="change_page_u(1)">PRIMA</a></li>
+                              <li>
+                                  <a class="page-link" aria-label="Previous" onclick="change_page_w({{dif current_page 1}})">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                            {{#if_mag current_page 4 pages 'wifi'}}
+                                <li id="w{{dif current_page 4}}"><a class="page-link" onclick="change_page_w({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                            {{/if_mag}}
+                              {{#if_mag current_page 3 pages 'wifi'}}
+                                <li id="w{{dif current_page 3}}"><a class="page-link" onclick="change_page_w({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                            {{/if_mag}}
+                            {{#if_mag current_page 2 pages 'wifi'}}
+                            <li id="w{{dif current_page 2}}"><a class="page-link" onclick="change_page_w({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                            {{/if_mag}}
+                            {{#if_mag current_page 1 pages 'wifi'}}
+                              <li id="w{{dif current_page 1}}"><a class="page-link" onclick="change_page_w({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                            {{/if_mag}}
+                              <li id="w{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
+                            {{#if_min current_page 1 pages 'wifi'}}
+                              <li id="w{{sum current_page 1}}"><a class="page-link" onclick="change_page_w({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 2 pages 'wifi'}}
+                              <li id="w{{sum current_page 2}}"><a class="page-link" onclick="change_page_w({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 3 pages 'wifi'}}
+                              <li id="w{{sum current_page 3}}"><a class="page-link" onclick="change_page_w({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                            {{/if_min}}
+                              {{#if_min current_page 4 pages 'wifi'}}
+                              <li id="w{{sum current_page 4}}"><a class="page-link" onclick="change_page_w({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                            {{/if_min}}
+                              <li>
+                              <a class="page-link" aria-label="Next" onclick="change_page_w({{sum current_page 1}})">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                              </a>
+                            </li>
+                            <li><a class="page-link" onclick="change_page_w({{pages}})">ULTIMA</a></li>
+                          </ul>
+                        </nav>
+                      </div>
+                      <div id="tooltip_salva_wifi" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                            <button id="salva_wifi" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogoWiFi()">SALVA</button>
+                      </div>
+                  </div>
+                 </script>
             </div>
         </div>
         <div class="modal fade bd-example-modal-lg" id="modal_compile">
@@ -651,6 +785,31 @@
                       </div>
                       <div class="col-md-4">
                         <button type="button" class="btn btn-success btn-lg btn-block" onclick="user('update')" data-dismiss="modal">CONFERMA</button>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal bd-example-modal-lg" id="modal_recap_change_wifi">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            RIEPILOGO MODIFICHE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="recap_wifi" class="col-12" style="white-space: pre-wrap"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="wifi('update')" data-dismiss="modal">CONFERMA</button>
                       </div>
                       <div class="col-md-2"></div>
                   </div>

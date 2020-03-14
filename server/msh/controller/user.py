@@ -156,7 +156,7 @@ class User(BaseHandler):
             if data['username'] != '':
                 response['output'] = 'OK'
             else:
-                response['output'] = get_string(42)
+                response['output'] = get_string(34, da_sostituire="username")
         else:
             if 'username' in data:
                 response['output'] = get_string(28)

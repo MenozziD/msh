@@ -141,7 +141,7 @@ th {
 }
 
 .panel-col {
-    width: 20%;
+    width: 16.66%;
     padding-right: 0.5%;
     padding-left: 0.5%;
 }
@@ -214,4 +214,20 @@ th {
 
 .button-del-add {
     padding: 0;
+}
+
+.col-route {
+    width: 23%;
+}
+
+.col-ssid {
+    width: 25%;
+}
+
+.col-ssid-psw{
+    width: 35%;
+}
+
+.col-frq {
+    width: 25%;
 }

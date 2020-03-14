@@ -68,7 +68,7 @@ class Net(BaseHandler):
         response = {}
         if body != "" and validate_format(request):
             data = request.json
-            if 'tipo_operazione' in data and data['tipo_operazione'] in ('scan', 'list', 'type', 'command', 'update', 'cmd'):
+            if 'tipo_operazione' in data and data['tipo_operazione'] in Net.tipo_operazione:
                 response = Net.check_user(user, role, data['tipo_operazione'])
                 response = Net.check_operation_param(response, data)
             else:
@@ -184,7 +184,7 @@ class Net(BaseHandler):
                 if data['net_code'] != to_update['net_code']:
                     response = Net.check_code_exist(data, devices)
             else:
-                response['output'] = get_string(34)
+                response['output'] = get_string(34, da_sostiuire="net_code")
         return response
 
     @staticmethod

@@ -24,8 +24,12 @@ function carica(){
         if (a+b <= c) {
             if (d == 'device')
                 page_up = page_up + 1;
-            else
-                page_up_u = page_up_u + 1;
+            else {
+                if (d == 'user')
+                    page_up_u = page_up_u + 1;
+               else
+                    page_up_w = page_up_w +1;
+            }
             return opts.fn(this);
         } else {
             return opts.inverse(this);
@@ -35,8 +39,12 @@ function carica(){
         if (a-b > 0) {
             if (d == 'device')
                 page_down = page_down + 1;
-            else
-                page_down_u = page_down_u + 1;
+            else {
+                if (d == 'user')
+                    page_down_u = page_down_u + 1;
+               else
+                    page_down_w = page_down_w + 1;
+            }
             return opts.fn(this);
         } else {
             return opts.inverse(this);
@@ -53,6 +61,7 @@ function carica(){
     user('list');
     upload_arduino('core');
     upload_arduino('tipo');
+    wifi('list');
     $('#modal_user').on('shown.bs.modal', function (e) {
         var cw = $("#tooltip_plus_user").height();
         $('#tooltip_plus_user').css({'width':cw+'px'});
