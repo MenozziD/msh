@@ -1,7 +1,7 @@
 from logging import info, exception
 from json import loads
 from time import sleep
-from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, get_string
+from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, get_string, DbManager
 
 
 def cmd_ping(ip, pacchetti=1):
@@ -232,6 +232,7 @@ def compile_arduino(core, tipologia):
         cmd = 'curl %s/%s.ino --output %s/%s.ino' % (url_repo_device, tipologia, tipologia, tipologia)
         execute_os_cmd(cmd)
         execute_os_cmd('curl %s/index.h --output %s/index.h' % (url_repo_device, tipologia))
+        set_arduino_wifi_set(tipologia) #menoz
         fqbn = execute_os_cmd("arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'", check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
         response = execute_os_cmd('sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia))
         if response['cmd_err'] == '':
@@ -258,6 +259,24 @@ def compile_arduino(core, tipologia):
         result['output'] = str(e)
     finally:
         return result
+
+def set_arduino_wifi_set(tipologia):
+    try:
+        ret_wifi=DbManager.select_tb_wifi()
+        file_name="%s/%s.ino" % (tipologia,tipologia)
+        f = open(file_name, "r")
+        source_code=f.read()
+        f.close()
+        source_code=source_code.replace("#define STASSID \"\"", "#define STASSID \"%s\"" % ret_wifi[0]['ssid'])
+        source_code=source_code.replace("#define STAPSK \"\"", "#define STAPSK \"%s\"" % ret_wifi[0]['psw'])
+        f = open(file_name, "w")
+        f.write(source_code)
+        f.close()
+
+    except Exception as e:
+        exception("Exception")
+
+
 
 
 def upload_arduino(core, tipologia):

@@ -14,7 +14,7 @@
 
 #ifndef STASSID
 #define STASSID ""
-#define STAPSK  ""
+#define STAPSK ""
 #endif
 
 const char* ssid = STASSID;
