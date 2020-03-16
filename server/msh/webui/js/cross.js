@@ -69,7 +69,7 @@ function carica(){
         $("#colonna-table-user").css({'height':h_col});
     })
     $('#modal_wifi').on('shown.bs.modal', function (e) {
-        if ( ! typeof $("#colonna-table-wifi") === "undefined"){
+        if ( ! (typeof $("#colonna-table-wifi") === "undefined")){
             var h_col = ($("#colonna-table-wifi")[0].rows[1].offsetHeight * numero_wifi_pagina) + $("#colonna-table-wifi")[0].rows[0].offsetHeight + 2;
             $("#colonna-table-wifi").css({'height':h_col});
         }
