@@ -21,6 +21,10 @@ function createTable(struttura){
     var device_template = Handlebars.compile($("#table-device-template")[0].innerHTML);
     $('#table-device').html(device_template(struttura));
     $('[data-toggle="tooltip"]').tooltip({html: true});
+    if ( ! typeof $(".my-table-device") === "undefined"){
+        var h_col = ($(".my-table-device")[0].rows[1].offsetHeight * numero_device_pagina) + $(".my-table-device")[0].rows[0].offsetHeight + 2;
+        $(".my-table-device").css({'height':h_col});
+    }
     abilButton();
 }
 
