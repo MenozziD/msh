@@ -65,6 +65,14 @@ function carica(){
     $('#modal_user').on('shown.bs.modal', function (e) {
         var cw = $("#tooltip_plus_user").height();
         $('#tooltip_plus_user').css({'width':cw+'px'});
+        var h_col = ($("#colonna-table-user")[0].rows[1].offsetHeight * numero_user_pagina) + $("#colonna-table-user")[0].rows[0].offsetHeight + 2;
+        $("#colonna-table-user").css({'height':h_col});
+    })
+    $('#modal_wifi').on('shown.bs.modal', function (e) {
+        if ( ! typeof $("#colonna-table-wifi") === "undefined"){
+            var h_col = ($("#colonna-table-wifi")[0].rows[1].offsetHeight * numero_wifi_pagina) + $("#colonna-table-wifi")[0].rows[0].offsetHeight + 2;
+            $("#colonna-table-wifi").css({'height':h_col});
+        }
     })
     $('#modal_add_user').on('hide.bs.modal', function () {
         user_clear_add();
