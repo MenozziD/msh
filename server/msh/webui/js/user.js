@@ -25,6 +25,8 @@ function createTableUser(struttura){
     var user_template = Handlebars.compile($("#table-user-template")[0].innerHTML);
     $('#table-user').html(user_template(struttura));
     $('[data-toggle="tooltip"]').tooltip({html: true});
+    var h_col = ($("#colonna-table-user")[0].rows[1].offsetHeight * numero_user_pagina) + $("#colonna-table-user")[0].rows[0].offsetHeight + 2;
+    $("#colonna-table-user").css({'height':h_col});
     $('.button-del-add').css('width', cw+'px');
     $('.button-del-add').css('height', cw+'px');
     abilButtonUser();
@@ -287,6 +289,12 @@ function user_reset(){
             user_table["users"].splice(i, 1);
         }
     }
+    var page_number = Math.floor(user_table['users'].length / numero_user_pagina);
+    var resto = user_table['users'].length % numero_user_pagina;
+    if (resto > 0)
+        page_number = page_number + 1;
+    user_table['current_page'] = 1;
+    user_table['pages'] = page_number;
     new_user_list = $.extend(true, [], user_table["users"]);
     var tmp_list = Object.assign({}, user_table);
     tmp_list['users'] = tmp_list['users'].slice((user_table['current_page']-1)*numero_user_pagina, user_table['current_page']*numero_user_pagina);
