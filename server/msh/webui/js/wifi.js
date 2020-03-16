@@ -9,7 +9,7 @@ function createTableWifi(struttura){
     var wifi_template = Handlebars.compile($("#table-wifi-template")[0].innerHTML);
     $('#table-wifi').html(wifi_template(struttura));
     $('[data-toggle="tooltip"]').tooltip({html: true});
-    if ( ! typeof $("#colonna-table-wifi") === "undefined"){
+    if ( ! (typeof $("#colonna-table-wifi") === "undefined")){
         var h_col = ($("#colonna-table-wifi")[0].rows[1].offsetHeight * numero_wifi_pagina) + $("#colonna-table-wifi")[0].rows[0].offsetHeight + 2;
         $("#colonna-table-wifi").css({'height':h_col});
     }
