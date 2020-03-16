@@ -155,6 +155,9 @@
             <div id="table-device" class="row"></div>
             <script id="table-device-template" type="text/x-handlebars-template">
                 <div class="col-md-12">
+                    {{#if_eq devices.length 0}}
+                    <h6 class="font-weight-bold text-center mb-3">Non sono presenti device!</h6>
+                    {{else}}
                     <table class="table table-responsive my-table-device">
                         <thead>
                             <tr>
@@ -232,6 +235,7 @@
                             {{/each}}
                         </tbody>
                     </table>
+                    {{/if_eq}}
                 </div>
                 {{#if_eq user_role "ADMIN"}}
                 <div id="tooltip_reset" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
@@ -400,7 +404,7 @@
                   <div class="modal-body">
                       <div class="row mb-3">
                         <div class="col-md-12">
-                            <table class="table table-responsive">
+                            <table id="colonna-table-user" class="table table-responsive">
                                 <thead>
                                     <tr>
                                         {{#if_eq user_role "ADMIN"}}
@@ -548,7 +552,10 @@
                   <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-responsive">
+                                {{#if_eq wifi_ap.length 0}}
+                                <h6 class="font-weight-bold text-center">Non sono presenti AP!</h6>
+                                {{else}}
+                                <table id="colonna-table-wifi" class="table table-responsive">
                                     <thead>
                                         <tr>
                                             <th class="my-text-table col-check"><i class="fas fa-save" aria-hidden="true"></i></th>
@@ -581,6 +588,7 @@
                                         {{/each}}
                                     </tbody>
                                 </table>
+                                {{/if_eq}}
                             </div>
                             <div class="col-md-12 text-center">
                                 {{#if_eq default_ap ""}}
