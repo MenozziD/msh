@@ -101,7 +101,7 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     result = {}
     try:
         # user%psw
-        response = execute_os_cmd('net rcp -I %s -U %s' % (ip, usr + '%' + psw))
+        response = execute_os_cmd('net rcp shutdown -I %s -U %s' % (ip, usr + '%' + psw))
         if response['cmd_err'] == "":
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
             if cmd_out.find('succeeded') > 0:

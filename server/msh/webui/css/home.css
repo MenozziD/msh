@@ -40,7 +40,7 @@
 }
 
 body, .form-control, .card, .modal-content, .scrollable-menu, .page-link, .tooltip-inner {
-    background-color: #fff2d1 !important;
+    background-color: #31a6bd8c !important;
 }
 
 input, .tooltip-inner, .page-link, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {

@@ -84,7 +84,7 @@ class DbManager:
     def select_tb_net_device_and_google_info(net_mac=''):
         query = 'SELECT NET_CODE, NET_TYPE, NET_IP, NET_MAC, NET_USER, NET_PSW, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
                 'FROM TB_NET_DEVICE, TB_NET_DEVICE_TYPE ' \
-                'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE'
+                'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE AND TB_NET_DEVICE.NET_TYPE <> \'NET\''
         if net_mac != '':
             query = query + ' AND NET_MAC = \'%s\';' % net_mac
         else:
