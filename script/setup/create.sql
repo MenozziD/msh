@@ -82,7 +82,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCWIN","PC Windows", "2",
 "{  
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
+   ""type"":""action.devices.types.TV"",
    ""traits"":[  
       ""action.devices.traits.OnOff""
    ],
@@ -112,7 +112,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
             ""on"":""cmd_ping(dev['net_ip'])['result']"",
-            ""online"":""cmd_ping(dev['net_ip'])['result'])""
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
          }
       }
    }
@@ -154,7 +154,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible", "3",
 "{  
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
+   ""type"":""action.devices.types.SETTOP"",
    ""traits"":[  
       ""action.devices.traits.OnOff""
    ],
@@ -226,27 +226,27 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_RELE","ESP8266 con software per rele", "4",
 "{  
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
-   ""traits"":[  
+   ""type"":""action.devices.types.OUTLET"",
+   ""traits"":[
       ""action.devices.traits.OnOff""
    ],
-   ""name"":{  
-      ""defaultNames"":[  
+   ""name"":{
+      ""defaultNames"":[
          ""ESP8266 con software per rele""
       ],
       ""name"":""dev['net_code']"",
-      ""nicknames"":[  
+      ""nicknames"":[
 
       ]
    },
    ""willReportState"":true,
-   ""deviceInfo"":{  
+   ""deviceInfo"":{
       ""manufacturer"":""MSH"",
       ""model"":""1"",
       ""hwVersion"":""1.0"",
       ""swVersion"":""1.0""
    },
-   ""customData"":{  
+   ""customData"":{
       ""mshType"":""dev['net_type']""
    }
 }",
@@ -450,6 +450,233 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
+
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_SWITCH","ESP8266 con software per esecuzione CMD", "4",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""ESP8266 con software per esecuzione CMD""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""on"":""cmd_esp(dev['net_ip'], 'stato')['result']"",
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
+         }
+      }
+   }
+}",
+"{
+   ""on"":""cmd_esp(dev['net_ip'], 'toggle')""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+               ""on"": ""cmd_esp(dev['net_ip'], 'stato')['result']"",
+			   ""online"": ""cmd_ping(dev['net_ip'])['result']""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_SMOKE","ESP8266 con software per temperatura", "4",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SMOKE_DETECTOR"",
+   ""traits"":[
+      ""action.devices.traits.TemperatureSetting""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""Smoke Detector""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+        ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+			""thermostatMode"": ""heat"",
+			""thermostatTemperatureSetpoint"": 23,
+            ""online"":""cmd_ping(dev['net_ip'])['result']"",
+			""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
+			""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
+        }
+      }
+   }
+}",
+"{
+   ""temperature"":""{'output': 'OK'}""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+				""thermostatMode"": ""heat"",
+				""thermostatTemperatureSetpoint"": 23,
+				""online"":""cmd_ping(dev['net_ip'])['result']"",
+				""thermostatTemperatureAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[0][:-1])"",
+				""thermostatHumidityAmbient"": ""float(cmd_esp(dev['net_ip'], 'stato')['result'].split('C;')[1].replace('%', ''))""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+
+
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_LIGHT","ESP8266 con software per LED", "4",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.LIGHT"",
+   ""traits"":[
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""ESP8266 con software per LED""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""on"":""cmd_esp(dev['net_ip'], 'stato')['result']"",
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
+         }
+      }
+   }
+}",
+"{
+   ""on"":""cmd_esp(dev['net_ip'], 'toggle')""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+               ""on"": ""cmd_esp(dev['net_ip'], 'stato')['result']"",
+			   ""online"": ""cmd_ping(dev['net_ip'])['result']""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+
+
+--DELETE FROM TB_NET_DEVICE_TYPE WHERE TYPE_CODE like 'ESP_RELE';
 -- POPOLO TB_NET_DIZ_CMD
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("online","NET");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","PCWIN");
@@ -461,7 +688,12 @@ INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_RELE");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_TEMP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("read_dht","ESP_TEMP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_SWITCH");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("read_mq2","ESP_SMOKE");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_LIGHT");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_LIGHT");
+
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","1","OFF");
