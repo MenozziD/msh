@@ -1,4 +1,5 @@
 /.idea/*
+/support/system.db
 /server/msh/db/*
 /server/msh/.idea/*
 /server/msh/.pytest_cache/*

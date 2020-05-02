@@ -675,6 +675,78 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }");
 
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_LOCK","ESP8266 con software per LOCK", "4",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.LOCK"",
+   ""traits"":[
+      ""action.devices.traits.LockUnlock""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""ESP8266 con software per LOCK""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+			""isLocked"": ""cmd_esp(dev['net_ip'], 'stato')['result']"",
+			""isJammed"": false,
+            ""online"":""cmd_ping(dev['net_ip'])['result']""
+         }
+      }
+   }
+}",
+"{
+   ""lock"":""cmd_esp(dev['net_ip'], 'toggle')""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+				""isLocked"": ""cmd_esp(dev['net_ip'], 'stato')['result']"",
+				""isJammed"": false,
+				""online"": ""cmd_ping(dev['net_ip'])['result']""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
 
 --DELETE FROM TB_NET_DEVICE_TYPE WHERE TYPE_CODE like 'ESP_RELE';
 -- POPOLO TB_NET_DIZ_CMD
