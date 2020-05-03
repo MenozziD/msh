@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_pcwin
+from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_pcwin, cmd_ps4
 from netifaces import AF_INET, ifaddresses
 
 
@@ -376,12 +376,14 @@ class Net(BaseHandler):
             '1': cmd_ping,
             '2': cmd_pcwin,
             '3': cmd_radio,
-            '4': cmd_esp
+            '4': cmd_esp,
+            '5': cmd_ps4
         }
         parametri = {
             '1': [device_command['net_ip']],
             '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
             '3': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']],
-            '4': [device_command['net_ip'], comando]
+            '4': [device_command['net_ip'], comando],
+            '5': [comando]
         }
         return funzioni[device_command['function_code']](*parametri[device_command['function_code']])

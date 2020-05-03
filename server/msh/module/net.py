@@ -232,7 +232,7 @@ def compile_arduino(core, tipologia):
         cmd = 'curl %s/%s.ino --output %s/%s.ino' % (url_repo_device, tipologia, tipologia, tipologia)
         execute_os_cmd(cmd)
         execute_os_cmd('curl %s/index.h --output %s/index.h' % (url_repo_device, tipologia))
-        set_arduino_wifi_set(tipologia) #menoz
+        set_arduino_wifi_set(tipologia)
         fqbn = execute_os_cmd("arduino-cli board listall | grep \"" + core + "\" | awk '{print $NF}'", check_out=True)['cmd_out'].replace("\n", "").replace("\t", "")
         response = execute_os_cmd('sudo arduino-cli compile --fqbn %s %s' % (fqbn, tipologia))
         if response['cmd_err'] == '':
@@ -260,23 +260,21 @@ def compile_arduino(core, tipologia):
     finally:
         return result
 
+
 def set_arduino_wifi_set(tipologia):
     try:
-        ret_wifi=DbManager.select_tb_wifi()
-        file_name="%s/%s.ino" % (tipologia,tipologia)
+        ret_wifi = DbManager.select_tb_wifi()
+        file_name = "%s/%s.ino" % (tipologia, tipologia)
         f = open(file_name, "r")
-        source_code=f.read()
+        source_code = f.read()
         f.close()
-        source_code=source_code.replace("#define STASSID \"\"", "#define STASSID \"%s\"" % ret_wifi[0]['ssid'])
-        source_code=source_code.replace("#define STAPSK \"\"", "#define STAPSK \"%s\"" % ret_wifi[0]['psw'])
+        source_code = source_code.replace("#define STASSID \"\"", "#define STASSID \"%s\"" % ret_wifi[0]['ssid'])
+        source_code = source_code.replace("#define STAPSK \"\"", "#define STAPSK \"%s\"" % ret_wifi[0]['psw'])
         f = open(file_name, "w")
         f.write(source_code)
         f.close()
-
     except Exception as e:
         exception("Exception")
-
-
 
 
 def upload_arduino(core, tipologia):
@@ -373,3 +371,36 @@ def get_field_asus(row, wifi_info, field, tag, size):
         if len(row.split('=')) == 2 and len(row.split('=')[0]) == size and row.split('=')[1] != "":
             wifi_info[tag] = row.split('=')[1]
     return wifi_info
+
+
+def cmd_ps4(cmd):
+    result = {}
+    base = "sudo ps4-waker"
+    try:
+        response = execute_os_cmd(base + " check")
+        if response['cmd_err'] == '':
+            ps4_check = loads(response['cmd_out'])
+            if cmd == 'toggle':
+                if ps4_check['status'] == 'Standby':
+                    response = execute_os_cmd(base)
+                else:
+                    response = execute_os_cmd(base + " standby")
+                result['result'] = "Comando ps4-waker OK!"
+                if response['cmd_err'] == '':
+                    result['output'] = "OK"
+                else:
+                    raise Exception(response['cmd_err'])
+            else:
+                if ps4_check['status'] == 'Standby':
+                    result['result'] = 'OFF'
+                else:
+                    result['result'] = 'ON'
+                result['output'] = "OK"
+        else:
+            raise Exception(response['cmd_err'])
+    except Exception as e:
+        exception("Exception")
+        result['result'] = "Comando ps4-waker KO!"
+        result['output'] = str(e)
+    finally:
+        return result

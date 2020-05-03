@@ -40,7 +40,7 @@
 }
 
 body, .form-control, .card, .modal-content, .scrollable-menu, .page-link, .tooltip-inner {
-    background-color: #31a6bd8c !important;
+    background-color: #adebeb !important;
 }
 
 input, .tooltip-inner, .page-link, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
@@ -49,11 +49,11 @@ input, .tooltip-inner, .page-link, .dropdown-toggle, .card, .modal-content, .scr
 
 .custom-control-input:checked~.custom-control-label::before, .dropdown-item:hover {
     background-color: #2c53a2 !important;
-    color: #fff2d1 !important;
+    color: #adebeb !important;
 }
 
 .custom-control-label::before {
-    background-color: #fff2d1 !important;
+    background-color: #adebeb !important;
 }
 
 .pagination>li>a {

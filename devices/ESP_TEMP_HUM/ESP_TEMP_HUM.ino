@@ -49,7 +49,6 @@ void handle_CMD() {
   String jsonOut = "";
   bool ok = false;
   int chk;
-  float temp, humi;
   jsonBuffer.clear();
   for (uint8_t i = 0; i < server.args(); i++) {
     if (server.argName(i) == "n") 
@@ -61,11 +60,10 @@ void handle_CMD() {
   if (ok)
   {
     chk = DHT.read(GPIO_DHT11, &temperature, &humidity, NULL);  // Legge il sensore dht11
+    delay(10);
     switch (chk){
       case DHTLIB_OK:  
-                temp =float(temperature);
-                humi =float(humidity);
-                jsonBuffer["output"] = String(temp)+"°C;"+String(humi)+"%";
+                jsonBuffer["output"] = String(temperature)+"°C;"+String(humidity)+"%";
                 break;
       case DHTLIB_ERROR_CHECKSUM:
                 jsonBuffer["output"] ="ERR Checksum error";  
@@ -80,7 +78,6 @@ void handle_CMD() {
                 jsonBuffer["output"] ="ERR " + String(chk) + " error"; 
                 break;
     }
-    Serial.println(chk);
   }  
   else
     jsonBuffer["output"] = "ERR";    //Comando non valido

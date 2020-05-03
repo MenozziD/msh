@@ -41,11 +41,11 @@ def execute_os_cmd_with_run(cmd):
     cmd_exec = run(cmd.split(" "), stdout=PIPE, stderr=PIPE)
     cmd_out = str(cmd_exec.stdout)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
     cmd_err = str(cmd_exec.stderr)[2:-1].replace("\\t", "\t").replace("\\n", "\n").replace("\\r", "\r")
+    if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1 and cmd.find("ps4-waker check") == -1:
+        cmd_err = cmd_out
     info("Return Code: %s", cmd_exec.returncode)
     info("Output: %s", cmd_out)
     info("Error: %s", cmd_err)
-    if cmd_err == "" and cmd_exec.returncode != 0 and cmd.find("ping") == -1:
-        cmd_err = cmd_out
     response = {
         'return_code': cmd_exec.returncode,
         'cmd_out': cmd_out,
@@ -130,7 +130,7 @@ def validate_format(request_validate):
 
 
 def evaluate(command, data=None, dev=None, result=None, parametri=None):
-    from module import cmd_ping, cmd_pcwin, cmd_radio, cmd_esp
+    from module import cmd_ping, cmd_pcwin, cmd_radio, cmd_esp, cmd_ps4
     info("ESEGUO CON EVALUATE: %s", command)
     return eval(command)
 

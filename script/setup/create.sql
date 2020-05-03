@@ -410,14 +410,14 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""on"":""cmd_ps4('stato')['result']"",
             ""online"":""cmd_ping(dev['net_ip'])['result']""
          }
       }
    }
 }",
 "{  
-   ""on"":""{'output': 'OK'}""
+   ""on"":""cmd_ps4('toggle')""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -429,7 +429,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ],
             ""status"":""SUCCESS"",
             ""states"":{  
-               ""on"":""cmd_ping(dev['net_ip'])['result']"",
+               ""on"":""cmd_ps4('stato')['result']"",
                ""online"":""cmd_ping(dev['net_ip'])['result']""
             }
          }
@@ -450,7 +450,6 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_SWITCH","ESP8266 con software per esecuzione CMD", "4",
 "{
    ""id"":""dev['net_mac']"",
@@ -523,7 +522,6 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_SMOKE","ESP8266 con software per temperatura", "4",
 "{
    ""id"":""dev['net_mac']"",
@@ -602,8 +600,6 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-
-
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_LIGHT","ESP8266 con software per LED", "4",
 "{
    ""id"":""dev['net_mac']"",
@@ -674,7 +670,6 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("ESP_LOCK","ESP8266 con software per LOCK", "4",
 "{
    ""id"":""dev['net_mac']"",
@@ -765,6 +760,10 @@ INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_SWITCH")
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("read_mq2","ESP_SMOKE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_LIGHT");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_LIGHT");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","PS4");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","PS4");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_LOCK");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_LOCK");
 
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");
