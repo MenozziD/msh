@@ -385,7 +385,7 @@ def cmd_ps4(cmd):
                     response = execute_os_cmd(base)
                 else:
                     response = execute_os_cmd(base + " standby")
-                result['result'] = "Comando ps4-waker OK!"
+                result['result'] = get_string(43)
                 if response['cmd_err'] == '':
                     result['output'] = "OK"
                 else:
@@ -400,7 +400,7 @@ def cmd_ps4(cmd):
             raise Exception(response['cmd_err'])
     except Exception as e:
         exception("Exception")
-        result['result'] = "Comando ps4-waker KO!"
+        result['result'] = get_string(44)
         result['output'] = str(e)
     finally:
         return result
