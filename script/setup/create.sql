@@ -131,7 +131,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
             ""status"":""SUCCESS"",
             ""states"":{  
                ""on"":""cmd_ping(dev['net_ip'])['result']"",
-               ""online"":""cmd_ping(dev['net_ip'])['result']""
+               ""online"":""True""
             }
          }
       ]
@@ -183,8 +183,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""payload"":{  
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""cmd_radio(dev['net_ip'], 'stato', dev['net_usr'], dev['net_psw'])['result']"",
-            ""online"":""cmd_ping(dev['net_ip'])['result']""
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""True""
          }
       }
    }
@@ -381,7 +381,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PS4","Sony Playstation 4", "5",
 "{  
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SWITCH"",
+   ""type"":""action.devices.types.SETTOP"",
    ""traits"":[  
       ""action.devices.traits.OnOff""
    ],
@@ -742,6 +742,79 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCMAC","Sony PC Apple", "6",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.TV"",
+   ""traits"":[
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""PC Windows""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}"",
+""{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""True""
+         }
+      }
+   }
+}"",
+""{
+   ""on"":""cmd_pcmac('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pcmac('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+}"",
+""{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+               ""on"":""cmd_ping(dev['net_ip'])['result']"",
+               ""online"":""True""
+            }
+         }
+      ]
+   }
+}"",
+""{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+
 
 --DELETE FROM TB_NET_DEVICE_TYPE WHERE TYPE_CODE like 'ESP_RELE';
 -- POPOLO TB_NET_DIZ_CMD

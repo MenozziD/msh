@@ -33,6 +33,8 @@ def cmd_ping(ip, pacchetti=1):
 def cmd_radio(ip, comando, usr, psw):
     result = {}
     try:
+        #if comando == 'off':
+            #execute_ssh_cmd(ip, usr, psw, "reboot")
         result = cmd_radio_stato(ip, usr, psw)
         if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
             execute_ssh_cmd(ip, usr, psw, "ifconfig %s %s" % (result['interface'], comando))
@@ -96,6 +98,12 @@ def cmd_pcwin(comando, mac=None, ip=None, usr=None, psw=None):
         result = cmd_pcwin_shutdown(ip, usr, psw)
     return result
 
+def cmd_pcmac(comando, mac=None, ip=None, usr=None, psw=None):
+    if comando == 'on':
+        result = cmd_wakeonlan(mac)
+    else:
+        result = cmd_pcmac_shutdown(ip, usr, psw)
+    return result
 
 def cmd_pcwin_shutdown(ip, usr, psw):
     result = {}
@@ -118,6 +126,26 @@ def cmd_pcwin_shutdown(ip, usr, psw):
     finally:
         return result
 
+def cmd_pcmac_shutdown(ip, usr, psw):
+    result = {}
+    try:
+        # user%psw
+        response = execute_ssh_cmd(ip, usr, psw, "shutdown -s now")
+        if response['cmd_err'] == "":
+            cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
+            if cmd_out.find('succeeded') > 0:
+                result['result'] = get_string(6)
+            else:
+                result['result'] = get_string(7)
+            result['output'] = 'OK'
+        else:
+            raise Exception(response['cmd_err'])
+    except Exception as e:
+        exception("Exception")
+        result['result'] = get_string(8)
+        result['output'] = str(e)
+    finally:
+        return result
 
 def cmd_wakeonlan(mac):
     result = {}
