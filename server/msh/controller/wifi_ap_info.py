@@ -1,6 +1,7 @@
 from json import loads
 from controller import BaseHandler
 from logging import info, exception
+from controller import Net
 from module import DbManager, add_user, delete_user, update_user, set_api_response, validate_format, get_string, wifi_ap_info
 
 
@@ -100,10 +101,26 @@ class WiFiInfo(BaseHandler):
     def wifi_list():
         response = {}
         ap_list = DbManager.select_tb_net_device(net_type='AP')
+        db_devices = DbManager.select_tb_net_device()
         wifi_ap_all_list = []
         for ap in ap_list:
             wifi_info = wifi_ap_info(ap['net_ip'], ap['net_usr'], ap['net_psw'], ap['net_code'])
             if wifi_info['output'] == 'OK':
+                for wifi in wifi_info['result']:
+                    trovato = False
+                    for db_device in db_devices:
+                        if wifi['ssid'] == db_device['net_mac']:
+                            DbManager.update_tb_net_device(wifi['ssid'], net_ip=ap['net_ip'], net_user=ap['net_usr'], net_psw=ap['net_psw'])
+                            trovato = True
+                            break
+                    if not trovato:
+                        wifi['net_code'] = wifi['ssid']
+                        wifi['net_mac_info'] = ap['net_mac']
+                        trovato = Net.found_duplicate_code(wifi)
+                        if trovato:
+                            wifi['net_code'] = "SSID duplicato"
+                        DbManager.insert_tb_net_device(wifi['ssid'], ap['net_ip'], wifi['ssid'],
+                                                       wifi['net_mac_info'], net_usr=ap['net_usr'], net_psw=ap['net_psw'])
                 wifi_ap_all_list = wifi_ap_all_list + wifi_info['result']
         response['wifi_ap'] = wifi_ap_all_list
         wifi = DbManager.select_tb_wifi()

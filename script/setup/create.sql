@@ -112,7 +112,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ""devices"":{  
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
             ""on"":""cmd_ping(dev['net_ip'])['result']"",
-            ""online"":""cmd_ping(dev['net_ip'])['result']""
+            ""online"":""True""
          }
       }
    }
@@ -151,57 +151,129 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible", "3",
-"{  
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("WIFI","Rete Wi-Fi", "3",
+"{
    ""id"":""dev['net_mac']"",
-   ""type"":""action.devices.types.SETTOP"",
-   ""traits"":[  
+   ""type"":""action.devices.types.SWITCH"",
+   ""traits"":[
       ""action.devices.traits.OnOff""
    ],
-   ""name"":{  
-      ""defaultNames"":[  
-         ""Access Point UNIX based SSH Compatible""
+   ""name"":{
+      ""defaultNames"":[
+         ""Rete Wi-Fi""
       ],
       ""name"":""dev['net_code']"",
-      ""nicknames"":[  
+      ""nicknames"":[
 
       ]
    },
    ""willReportState"":true,
-   ""deviceInfo"":{  
+   ""deviceInfo"":{
       ""manufacturer"":""MSH"",
       ""model"":""1"",
       ""hwVersion"":""1.0"",
       ""swVersion"":""1.0""
    },
-   ""customData"":{  
+   ""customData"":{
       ""mshType"":""dev['net_type']""
    }
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""devices"":{  
-         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
-            ""on"":""cmd_ping(dev['net_ip'])['result']"",
-            ""online"":""True""
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""online"":""cmd_ping(dev['net_ip'])['result']"",
+            ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_usr'],  dev['net_psw'])['result']""
          }
       }
    }
 }",
-"{  
-   ""on"":""cmd_radio(dev['net_ip'], 'up', dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_radio(dev['net_ip'], 'down', dev['net_usr'], dev['net_psw']))""
+"{
+   ""on"":""cmd_radio(dev['net_ip'], 'up', dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_radio(dev['net_ip'], 'down', dev['net_usr'], dev['net_psw'])""
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""SUCCESS"",
-            ""states"":{  
+            ""states"":{
+               ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_usr'], dev['net_psw'])['result']"",
+               ""online"":""cmd_ping(dev['net_ip'])['result']""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("AP","Access Point UNIX based SSH Compatible", "7",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.SETTOP"",
+   ""traits"":[
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""Access Point UNIX based SSH Compatible""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""true""
+         }
+      }
+   }
+}",
+"{
+   ""on"":""cmd_reboot(dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
                ""on"":""cmd_radio(dev['net_ip'], 'stato', dev['net_usr'], dev['net_psw'])['result']"",
                ""online"":""cmd_ping(dev['net_ip'])['result']""
             }
@@ -209,12 +281,12 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""ERROR"",
@@ -751,7 +823,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ],
    ""name"":{
       ""defaultNames"":[
-         ""PC Windows""
+         ""PC Mac""
       ],
       ""name"":""dev['net_code']"",
       ""nicknames"":[
@@ -768,8 +840,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    ""customData"":{
       ""mshType"":""dev['net_type']""
    }
-}"",
-""{
+}",
+"{
    ""requestId"":""data['requestId']"",
    ""payload"":{
       ""devices"":{
@@ -779,11 +851,11 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
          }
       }
    }
-}"",
-""{
+}",
+"{
    ""on"":""cmd_pcmac('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pcmac('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
-}"",
-""{
+}",
+"{
    ""requestId"":""data['requestId']"",
    ""payload"":{
       ""commands"":[
@@ -799,8 +871,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
          }
       ]
    }
-}"",
-""{
+}",
+"{
    ""requestId"":""data['requestId']"",
    ""payload"":{
       ""commands"":[
@@ -821,9 +893,11 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("online","NET");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","PCWIN");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","PCWIN");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","WIFI");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("up","WIFI");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("down","WIFI");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","AP");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("up","AP");
-INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("down","AP");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("reboot","AP");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","ESP_RELE");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_RELE");

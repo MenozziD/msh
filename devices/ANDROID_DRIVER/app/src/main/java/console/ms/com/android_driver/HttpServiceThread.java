@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
 
@@ -140,7 +141,6 @@ public class HttpServiceThread extends Thread {
         @Override
         public void handle(HttpRequest request, HttpResponse response,
                            HttpContext httpContext) throws HttpException, IOException {
-
             HttpEntity httpEntity = new EntityTemplate(
                     new ContentProducer() {
 
@@ -149,17 +149,18 @@ public class HttpServiceThread extends Thread {
 
                             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
                                     outstream, "UTF-8");
-                            String response=Home();
-                            outputStreamWriter.write(response);
+                            String path = FileManager.getAbsWebuiPath();
+                            System.out.println("PATH: " + path);
+                            //String resp=FileManager.ReadFile_Text(path,FileManager.webui_file_name);
+                            String resp = "sdfasfd";
+                            outputStreamWriter.write(resp);
+                            System.out.println("RESPONSE: " + resp);
                             outputStreamWriter.flush();
                             outputStreamWriter.close();
                         }
                     });
             response.setHeader("Content-Type", "text/html");
             response.setEntity(httpEntity);
-        }
-        public String Home(){
-            return FileManager.ReadFile_Text(FileManager.getAbsWebuiPath(),FileManager.webui_file_name);
         }
 
     }

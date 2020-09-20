@@ -117,8 +117,11 @@ class Home(BaseHandler):
         "on": true
         """
         dev = DbManager.select_tb_net_device_and_google_info(net_mac=data["inputs"][0]["payload"]["commands"][0]["devices"][0]["id"])[0]
-        google_params = data["inputs"][0]["payload"]["commands"][0]["execution"][0]["params"]
-        google_params = loads(dumps(google_params, indent=4, sort_keys=True).replace("true", "\"ON\"").replace("false", "\"OFF\""))
+        google_params = data["inputs"][0]["payload"]["commands"][0]["execution"][0]
+        if 'params' in google_params and len(google_params["params"]) > 0:
+            google_params = loads(dumps(google_params["params"], indent=4, sort_keys=True).replace("true", "\"ON\"").replace("false", "\"OFF\""))
+        else:
+            google_params = dev['execute_request']
         result = {}
         for key in google_params.keys():
             result = evaluate(dev['execute_request'][key], dev=dev, parametri=google_params)

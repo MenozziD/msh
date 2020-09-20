@@ -28,7 +28,7 @@ public class FileManager {
     final static String main_dir_name="ADTW";
     final static String log_dir_name="log";
     final static String stream_dir_name="stream";
-    final static String webui_dir_name="webui";
+    final static String webui_dir_name="raw";
     final static String webui_file_name="index.html";
     final static String config_file_name="config.xml";
     final static String stream_file_name="foto.jpg";
