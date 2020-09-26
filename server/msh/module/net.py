@@ -1,6 +1,7 @@
 from logging import info, exception
 from json import loads
 from time import sleep
+from fritzconnection import FritzConnection
 from module import execute_os_cmd, execute_ssh_cmd, execute_request_http, get_string, DbManager
 
 
@@ -344,46 +345,58 @@ def upload_arduino(core, tipologia):
 
 def wifi_ap_info(ip, usr, psw, router):
     result = {}
+    wifi_ap = []
     try:
-        response = execute_ssh_cmd(ip, usr, psw, "cat /etc/config/wireless")
-        if response['output'] == 'OK':
-            wifi_ap = []
-            wifi_info = {
-                'router': router,
-                'psw_type': 'WPA/PSK2'
-            }
-            if response['cmd_out'].find("No such file or directory") > 0:
-                response = execute_ssh_cmd(ip, usr, psw, "cd /etc/Wireless && cd `ls` && cat `ls`")
-                if response['output'] == 'OK':
-                    cmd_out = response['cmd_out'].replace("\\t", "").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
-                    rows = cmd_out.split('\n')
+        if usr != '':
+            response = execute_ssh_cmd(ip, usr, psw, "cat /etc/config/wireless")
+            if response['output'] == 'OK':
+                wifi_info = {
+                    'router': router,
+                    'psw_type': 'WPA/PSK2'
+                }
+                if response['cmd_out'].find("No such file or directory") > 0:
+                    response = execute_ssh_cmd(ip, usr, psw, "cd /etc/Wireless && cd `ls` && cat `ls`")
+                    if response['output'] == 'OK':
+                        cmd_out = response['cmd_out'].replace("\\t", "").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                        rows = cmd_out.split('\n')
+                        for row in rows:
+                            wifi_info = get_field_asus(row, wifi_info, 'SSID', 'ssid', 5)
+                            wifi_info = get_field_asus(row, wifi_info, 'WPAPSK', 'wpa_psk_key', 7)
+                            if 'ssid' in wifi_info and 'wpa_psk_key' in wifi_info:
+                                wifi_ap.append(wifi_info)
+                                wifi_info = {
+                                    'router': router,
+                                    'psw_type': 'WPA/PSK2'
+                                }
+                    else:
+                        raise Exception(response['output'])
+                else:
+                    cmd_out = response['cmd_out'].replace("\\t", "").replace("\\n", "\n").replace("\\r", "")
+                    rows = cmd_out.split('config')
                     for row in rows:
-                        wifi_info = get_field_asus(row, wifi_info, 'SSID', 'ssid', 5)
-                        wifi_info = get_field_asus(row, wifi_info, 'WPAPSK', 'wpa_psk_key', 7)
+                        wifi_info = get_field(row, wifi_info, 'ssid')
+                        wifi_info = get_field(row, wifi_info, 'wpa_psk_key')
                         if 'ssid' in wifi_info and 'wpa_psk_key' in wifi_info:
                             wifi_ap.append(wifi_info)
                             wifi_info = {
                                 'router': router,
                                 'psw_type': 'WPA/PSK2'
                             }
-                else:
-                    raise Exception(response['output'])
             else:
-                cmd_out = response['cmd_out'].replace("\\t", "").replace("\\n", "\n").replace("\\r", "")
-                rows = cmd_out.split('config')
-                for row in rows:
-                    wifi_info = get_field(row, wifi_info, 'ssid')
-                    wifi_info = get_field(row, wifi_info, 'wpa_psk_key')
-                    if 'ssid' in wifi_info and 'wpa_psk_key' in wifi_info:
-                        wifi_ap.append(wifi_info)
-                        wifi_info = {
-                            'router': router,
-                            'psw_type': 'WPA/PSK2'
-                        }
-            result['result'] = wifi_ap
-            result['output'] = "OK"
+                raise Exception(response['output'])
         else:
-            raise Exception(response['output'])
+            fc = FritzConnection(address=ip, password=psw)
+            info(fc.call_action('WLANConfiguration1', 'GetInfo')['NewSSID'])
+            wifi_info = {
+                'router': router,
+                'psw_type': 'WPA/PSK2',
+                'ssid': fc.call_action('WLANConfiguration1', 'GetInfo')['NewSSID'],
+                'wpa_psk_key': ''
+            }
+            wifi_ap.append(wifi_info)
+        result['result'] = wifi_ap
+        info(wifi_ap)
+        result['output'] = "OK"
     except Exception as e:
         exception("Exception")
         result['result'] = get_string(42)

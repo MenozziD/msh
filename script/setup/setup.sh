@@ -159,7 +159,11 @@ sudo pip3 install --trusted-host pypi.python.org pexpect 1>/dev/null
 echo "Eseguo pip3 install netifaces" 
 sudo pip3 install --trusted-host pypi.python.org netifaces 1>/dev/null 
 echo "Eseguo pip3 install python-crontab" 
-sudo pip3 install --trusted-host pypi.python.org python-crontab 1>/dev/null 
+sudo pip3 install --trusted-host pypi.python.org python-crontab 1>/dev/null
+echo "Eseguo pip3 install fritzconnection"
+sudo pip3 install --trusted-host pypi.python.org fritzconnection 1>/dev/null
+echo "Eseguo pip3 install requests"
+sudo pip3 install --trusted-host pypi.python.org requests 1>/dev/null
 # SQLITE
 echo "Eseguo apt-get install sqlite3 libsqlite3-dev"
 sudo apt-get install sqlite3 libsqlite3-dev -y 1>/dev/null 
