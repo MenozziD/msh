@@ -23,6 +23,7 @@
         <script src="/static/js/sviluppo.js"></script>
         <script src="/static/js/user.js"></script>
         <script src="/static/js/wifi.js"></script>
+        <script src="/static/js/table.js"></script>
 
 		<title>Home</title>
 	</head>
@@ -158,22 +159,22 @@
                     {{#if_eq devices.length 0}}
                     <h6 class="font-weight-bold text-center mb-3">Non sono presenti device!</h6>
                     {{else}}
-                    <table class="table table-responsive my-table-device">
+                    <table class="table table-responsive my-table-device" id="colonna-table-device">
                         <thead>
                             <tr>
                                 {{#if_eq user_role "ADMIN"}}
-                                    <th class="my-text-table col-check"><i class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAllD()"></i></th>
+                                    <th class="my-text-table col-check"><i class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAll(device_tabella)"></i></th>
                                 {{/if_eq}}
-                                <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code')">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type')">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                <th class="my-text-table col-ip"><a class="make-cursor" onclick="sortTable('net_ip')">IP <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                <th class="my-text-table col-mac"><a class="make-cursor" onclick="sortTable('net_mac')">MAC <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                <th class="my-text-table col-mac-info"><a class="make-cursor" onclick="sortTable('net_mac_info')">MAC INFO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code', device_tabella)">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type', device_tabella)">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-ip"><a class="make-cursor" onclick="sortTable('net_ip', device_tabella)">IP <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-mac"><a class="make-cursor" onclick="sortTable('net_mac', device_tabella)">MAC <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-mac-info"><a class="make-cursor" onclick="sortTable('net_mac_info', device_tabella)">MAC INFO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                 {{#if_eq user_role "ADMIN"}}
                                     <th class="my-text-table col-user">USER SSH</th>
                                     <th class="my-text-table col-password">PASSWORD SSH</th>
                                 {{/if_eq}}
-                                <th class="my-text-table col-ultimo"><a class="make-cursor" onclick="sortTable('net_last_update')">AGGIORNAMENTO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                <th class="my-text-table col-ultimo"><a class="make-cursor" onclick="sortTable('net_last_update', device_tabella)">AGGIORNAMENTO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -184,9 +185,9 @@
                                             <form>
                                               <div class="custom-control custom-checkbox">
                                                 {{#if to_delete}}
-                                                  <input type="checkbox" onchange="cambioVal({{@index}})" checked class="custom-control-input" id="checkbox_device{{@index}}">
+                                                  <input type="checkbox" onchange="cambioVal({{@index}}, device_tabella)" checked class="custom-control-input" id="checkbox_device{{@index}}">
                                                 {{else}}
-                                                  <input type="checkbox" onchange="cambioVal({{@index}})" class="custom-control-input" id="checkbox_device{{@index}}">
+                                                  <input type="checkbox" onchange="cambioVal({{@index}}, device_tabella)" class="custom-control-input" id="checkbox_device{{@index}}">
                                                 {{/if}}
                                                 <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
                                               </div>
@@ -195,7 +196,7 @@
                                     {{/if_eq}}
                                     <td class="my-text-table">
                                         {{#if_eq ../user_role "ADMIN"}}
-                                            <input class="form-control font-weight-bold" onchange="cambioVal({{@index}})" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
+                                            <input class="form-control font-weight-bold" onchange="cambioVal({{@index}}, device_tabella)" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">
                                         {{else}}
                                             <span class="font-weight-bold" id="code{{@index}}">{{net_code}}</span>
                                         {{/if_eq}}
@@ -203,9 +204,9 @@
                                     <td class="my-text-table">
                                         <div class="dropdown{{@index}}">
                                             {{#if_eq ../user_role "ADMIN"}}
-                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type{{@index}}" onclick="view_drop('{{@index}}')" value="{{net_type}}">{{net_type}}</button>
+                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type_device{{@index}}" onclick="viewDrop('{{@index}}', device_tabella)" value="{{net_type}}">{{net_type}}</button>
                                             {{else}}
-                                                <span class="font-weight-bold" id="type{{@index}}">{{net_type}}</span>
+                                                <span class="font-weight-bold" id="type_device{{@index}}">{{net_type}}</span>
                                             {{/if_eq}}
                                             <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
                                         </div>
@@ -217,14 +218,14 @@
                                     <td class="font-weight-bold my-text-table">{{net_mac_info}}</td>
                                     {{#if_eq ../user_role "ADMIN"}}
                                         <td class="my-text-table">
-                                            <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}" onchange="cambioVal({{@index}})">
+                                            <input class="form-control font-weight-bold" style="float: left" type="text" id="usr{{@index}}" value="{{net_usr}}" onchange="cambioVal({{@index}}, device_tabella)">
                                         </td>
                                         <td class="my-text-table">
                                             <div class="input-group">
-                                                <input class="form-control font-weight-bold" id="psw{{@index}}" value="{{net_psw}}" type="password" onchange="cambioVal({{@index}})">
+                                                <input class="form-control font-weight-bold" id="psw_device{{@index}}" value="{{net_psw}}" type="password" onchange="cambioVal({{@index}}, device_tabella)">
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-primary input-group-button btn-pass" onclick="view_password({{@index}})">
-                                                        <i id="psw_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                    <button class="btn btn-primary input-group-button btn-pass" onclick="viewPassword({{@index}}, device_tabella)">
+                                                        <i id="psw_device_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -239,7 +240,7 @@
                 </div>
                 {{#if_eq user_role "ADMIN"}}
                 <div id="tooltip_reset" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                    <button id="reset" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="net_reset()">RESET</button>
+                    <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
                 </div>
                 {{else}}
                 <div class="col-md-3"></div>
@@ -247,57 +248,57 @@
                 <div class="col-md-6">
                     <nav class="font-weight-bold">
                       <ul class="pagination justify-content-center mb-0">
-                          <li><a class="page-link" onclick="change_page(1)">PRIMA</a></li>
+                          <li><a class="page-link" onclick="changePage(1)">PRIMA</a></li>
                           <li>
-                              <a class="page-link" aria-label="Previous" onclick="change_page({{dif current_page 1}})">
+                              <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, device_tabella)">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                               </a>
                             </li>
                         {{#if_mag current_page 4 pages 'device'}}
-                            <li id="{{dif current_page 4}}"><a class="page-link" onclick="change_page({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                            <li id="d{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, device_tabella)">{{dif current_page 4}}</a></li>
                         {{/if_mag}}
                           {{#if_mag current_page 3 pages 'device'}}
-                            <li id="{{dif current_page 3}}"><a class="page-link" onclick="change_page({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                            <li id="d{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, device_tabella)">{{dif current_page 3}}</a></li>
                         {{/if_mag}}
                         {{#if_mag current_page 2 pages 'device'}}
-                        <li id="{{dif current_page 2}}"><a class="page-link" onclick="change_page({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                        <li id="d{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, device_tabella)">{{dif current_page 2}}</a></li>
                         {{/if_mag}}
                         {{#if_mag current_page 1 pages 'device'}}
-                          <li id="{{dif current_page 1}}"><a class="page-link" onclick="change_page({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                          <li id="d{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, device_tabella)">{{dif current_page 1}}</a></li>
                         {{/if_mag}}
-                          <li id="{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
+                          <li id="d{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
                         {{#if_min current_page 1 pages 'device'}}
-                          <li id="{{sum current_page 1}}"><a class="page-link" onclick="change_page({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                          <li id="d{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, device_tabella)">{{sum current_page 1}}</a></li>
                         {{/if_min}}
                           {{#if_min current_page 2 pages 'device'}}
-                          <li id="{{sum current_page 2}}"><a class="page-link" onclick="change_page({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                          <li id="d{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, device_tabella)">{{sum current_page 2}}</a></li>
                         {{/if_min}}
                           {{#if_min current_page 3 pages 'device'}}
-                          <li id="{{sum current_page 3}}"><a class="page-link" onclick="change_page({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                          <li id="d{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, device_tabella)">{{sum current_page 3}}</a></li>
                         {{/if_min}}
                           {{#if_min current_page 4 pages 'device'}}
-                          <li id="{{sum current_page 4}}"><a class="page-link" onclick="change_page({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                          <li id="d{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, device_tabella)">{{sum current_page 4}}</a></li>
                         {{/if_min}}
                           <li>
-                          <a class="page-link" aria-label="Next" onclick="change_page({{sum current_page 1}})">
+                          <a class="page-link" aria-label="Next" onclick="changePage({{sum current_page 1}}, device_tabella)">
                             <span aria-hidden="true">&raquo;</span>
                             <span class="sr-only">Next</span>
                           </a>
                         </li>
-                        <li><a class="page-link" onclick="change_page({{pages}})">ULTIMA</a></li>
+                        <li><a class="page-link" onclick="changePage({{pages}}, device_tabella)">ULTIMA</a></li>
                       </ul>
                     </nav>
                 </div>
                 {{#if_eq user_role "ADMIN"}}
                 <div id="tooltip_salva" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                    <button id="salva" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo()">SALVA</button>
+                    <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
                 </div>
                 {{else}}
                 <div class="col-md-3"></div>
                 {{/if_eq}}
             </script>
-            <script id="drop_type-template" type="text/x-handlebars-template">
+            <script id="drop_types_device-template" type="text/x-handlebars-template">
                 {{#each this}}
                     <li class="dropdown-item font-weight-bold">{{type_code}}</li>
                 {{/each}}
@@ -559,10 +560,10 @@
                                     <thead>
                                         <tr>
                                             <th class="my-text-table col-check"><i class="fas fa-save" aria-hidden="true"></i></th>
-                                            <th class="my-text-table col-route"><a class="make-cursor" onclick="sortTableWifi('router')">ROUTER <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <th class="my-text-table col-ssid"><a class="make-cursor" onclick="sortTableWifi('ssid')">SSID <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <th class="my-text-table col-ssid-psw"><a class="make-cursor" onclick="sortTableWifi('wpa_psk_key')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                            <th class="my-text-table col-frq"><a class="make-cursor" onclick="sortTableWifi('psw_type')">FREQUENZA <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-route"><a class="make-cursor" onclick="sortTable('router', wifi_tabella)">ROUTER <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-ssid"><a class="make-cursor" onclick="sortTable('ssid', wifi_tabella)">SSID <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-ssid-psw"><a class="make-cursor" onclick="sortTable('wpa_psk_key', wifi_tabella)">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                            <th class="my-text-table col-frq"><a class="make-cursor" onclick="sortTable('psw_type', wifi_tabella)">FREQUENZA <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                              </tr>
                                     </thead>
                                     <tbody>
@@ -572,9 +573,9 @@
                                                     <form>
                                                       <div class="custom-control custom-checkbox">
                                                         {{#if to_set}}
-                                                          <input type="checkbox" onchange="cambioValWifi({{@index}})" checked class="custom-control-input" id="checkbox_wifi{{@index}}">
+                                                          <input type="checkbox" onchange="cambioVal({{@index}}, wifi_tabella)" checked class="custom-control-input" id="checkbox_wifi{{@index}}">
                                                         {{else}}
-                                                          <input type="checkbox" onchange="cambioValWifi({{@index}})" class="custom-control-input" id="checkbox_wifi{{@index}}">
+                                                          <input type="checkbox" onchange="cambioVal({{@index}}, wifi_tabella)" class="custom-control-input" id="checkbox_wifi{{@index}}">
                                                         {{/if}}
                                                         <label class="custom-control-label" for="checkbox_wifi{{@index}}"></label>
                                                       </div>
@@ -601,55 +602,55 @@
                   </div>
                   <div class="modal-footer">
                       <div id="tooltip_reset_wifi" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                          <button id="reset_wifi" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="wifi_reset()">RESET</button>
+                          <button id="reset_wifi" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="reset(wifi_tabella)">RESET</button>
                       </div>
                       <div class="col-md-6">
                         <nav class="font-weight-bold">
                           <ul class="pagination justify-content-center mb-0">
-                              <li><a class="page-link" onclick="change_page_u(1)">PRIMA</a></li>
+                              <li><a class="page-link" onclick="changePage(1, wifi_tabella)">PRIMA</a></li>
                               <li>
-                                  <a class="page-link" aria-label="Previous" onclick="change_page_w({{dif current_page 1}})">
+                                  <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, wifi_tabella)">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Previous</span>
                                   </a>
                                 </li>
                             {{#if_mag current_page 4 pages 'wifi'}}
-                                <li id="w{{dif current_page 4}}"><a class="page-link" onclick="change_page_w({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                                <li id="w{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, wifi_tabella)">{{dif current_page 4}}</a></li>
                             {{/if_mag}}
                               {{#if_mag current_page 3 pages 'wifi'}}
-                                <li id="w{{dif current_page 3}}"><a class="page-link" onclick="change_page_w({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                                <li id="w{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, wifi_tabella)">{{dif current_page 3}}</a></li>
                             {{/if_mag}}
                             {{#if_mag current_page 2 pages 'wifi'}}
-                            <li id="w{{dif current_page 2}}"><a class="page-link" onclick="change_page_w({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                            <li id="w{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, wifi_tabella)">{{dif current_page 2}}</a></li>
                             {{/if_mag}}
                             {{#if_mag current_page 1 pages 'wifi'}}
-                              <li id="w{{dif current_page 1}}"><a class="page-link" onclick="change_page_w({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                              <li id="w{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, wifi_tabella)">{{dif current_page 1}}</a></li>
                             {{/if_mag}}
                               <li id="w{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
                             {{#if_min current_page 1 pages 'wifi'}}
-                              <li id="w{{sum current_page 1}}"><a class="page-link" onclick="change_page_w({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                              <li id="w{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, wifi_tabella)">{{sum current_page 1}}</a></li>
                             {{/if_min}}
                               {{#if_min current_page 2 pages 'wifi'}}
-                              <li id="w{{sum current_page 2}}"><a class="page-link" onclick="change_page_w({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                              <li id="w{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, wifi_tabella)">{{sum current_page 2}}</a></li>
                             {{/if_min}}
                               {{#if_min current_page 3 pages 'wifi'}}
-                              <li id="w{{sum current_page 3}}"><a class="page-link" onclick="change_page_w({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                              <li id="w{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, wifi_tabella)">{{sum current_page 3}}</a></li>
                             {{/if_min}}
                               {{#if_min current_page 4 pages 'wifi'}}
-                              <li id="w{{sum current_page 4}}"><a class="page-link" onclick="change_page_w({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                              <li id="w{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, wifi_tabella)">{{sum current_page 4}}</a></li>
                             {{/if_min}}
                               <li>
-                              <a class="page-link" aria-label="Next" onclick="change_page_w({{sum current_page 1}})">
+                              <a class="page-link" aria-label="Next" onclick="changePage({{sum current_page 1}}, wifi_tabella)">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                               </a>
                             </li>
-                            <li><a class="page-link" onclick="change_page_w({{pages}})">ULTIMA</a></li>
+                            <li><a class="page-link" onclick="changePage({{pages}}, wifi_tabella)">ULTIMA</a></li>
                           </ul>
                         </nav>
                       </div>
                       <div id="tooltip_salva_wifi" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                            <button id="salva_wifi" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogoWiFi()">SALVA</button>
+                            <button id="salva_wifi" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogo(wifi_tabella)">SALVA</button>
                       </div>
                   </div>
                  </script>
@@ -824,7 +825,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal bd-example-modal-lg" id="modal_recap_change">
+        <div class="modal bd-example-modal-lg" id="modal_recap_change_device">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -834,7 +835,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
                   <div class="modal-body">
-                    <h5 id="recap" class="col-12" style="white-space: pre-wrap"></h5>
+                    <h5 id="recap_device" class="col-12" style="white-space: pre-wrap"></h5>
                   </div>
                   <div class="modal-footer">
                       <div class="col-md-2"></div>
@@ -895,8 +896,8 @@
                         </div>
                         <div class="col-md-4">
                             <div class="dropdown_add">
-                                <label class="font-weight-bold" for="role_useradd">RUOLO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_useradd" onclick="view_user_role('add')"></button>
+                                <label class="font-weight-bold" for="role_user_add">RUOLO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user_add" onclick="view_user_role('add')"></button>
                                 <ul id="drop_roleadd" class="dropdown-menu scrollable-menu">
                                 </ul>
                             </div>

@@ -23,12 +23,12 @@ function carica(){
     Handlebars.registerHelper('if_min', function(a, b, c, d, opts) {
         if (a+b <= c) {
             if (d == 'device')
-                page_up = page_up + 1;
+                device_tabella["page_up"] = device_tabella["page_up"] + 1;
             else {
                 if (d == 'user')
                     page_up_u = page_up_u + 1;
                else
-                    page_up_w = page_up_w +1;
+                    wifi_tabella["page_up"] = wifi_tabella["page_up"] + 1;
             }
             return opts.fn(this);
         } else {
@@ -38,12 +38,12 @@ function carica(){
     Handlebars.registerHelper('if_mag', function(a, b, c, d, opts) {
         if (a-b > 0) {
             if (d == 'device')
-                page_down = page_down + 1;
+                device_tabella["page_down"] = device_tabella["page_down"] + 1;
             else {
                 if (d == 'user')
                     page_down_u = page_down_u + 1;
                else
-                    page_down_w = page_down_w + 1;
+                    wifi_tabella["page_down"] = wifi_tabella["page_down"] + 1;
             }
             return opts.fn(this);
         } else {
@@ -70,7 +70,7 @@ function carica(){
     })
     $('#modal_wifi').on('shown.bs.modal', function (e) {
         if ( ! (typeof $("#colonna-table-wifi") === "undefined")){
-            var h_col = ($("#colonna-table-wifi")[0].rows[1].offsetHeight * numero_wifi_pagina) + $("#colonna-table-wifi")[0].rows[0].offsetHeight + 2;
+            var h_col = ($("#colonna-table-wifi")[0].rows[1].offsetHeight * wifi_tabella["record_per_pagina"]) + $("#colonna-table-wifi")[0].rows[0].offsetHeight + 2;
             $("#colonna-table-wifi").css({'height':h_col});
         }
     })

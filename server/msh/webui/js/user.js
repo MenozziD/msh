@@ -7,6 +7,83 @@ var page_down_u = 0;
 var select_all_u = false;
 var last_sort_u = true;
 
+let user_tabella = {
+    "id": "user",
+    "id_char": "u",
+    "record_per_pagina": 5,
+    "page_up": 0,
+    "page_down": 0,
+    "table": {},
+    "table_key": "users",
+    "primary_key": "username",
+	"new_list": [],
+    "last_sort": true,
+	"select_all": false,
+	"tipologie": {'role': ['ADMIN', 'USER']},
+    "mex_add": {
+        "static": "- L'utente con username %1 verrà aggiunto con il ruolo di %2 \n",
+        "param": ["struct_tabella['users'][i]['username']", "struct_tabella['new_list'][i]['role']"]
+    },
+    "mex_set": {},
+    "mex_del": {
+		"static": "- L'utente con username %1 verra eliminato\n",
+		"param": ["struct_tabella['users'][i]['username']"]
+	},
+    "mex_up": {
+		"static": "- Modificato utente con username %1 \n",
+		"param": ["struct_tabella['users'][i]['username']"]
+	},
+    "editable": [
+		{
+			'key': 'password',
+			'name': "PASSWORD",
+			'id_frontend': 'psw_user'
+		},
+		{
+			'key': 'role',
+			'name': "RUOLO",
+			'id_frontend': 'role_user'
+		}
+    ],
+    "checkbox_action": "to_delete",
+    "field_add": ["username", "password", "role_user"],
+    'method_add': "checkUserAdd()"
+};
+
+function checkUserAdd(){
+    let user_set = false;
+    let pass_set = false;
+    let role_set = false;
+    let username = $("#username_add")[0].value;
+    let password = $("#password_add")[0].value;
+    let ruolo = $("#role_user_add")[0].value;
+    let mex = "Campi mancanti: <ul>";
+    if (username !== ""){
+        if (!checkExists(username, TABELLA))
+            user_set = true;
+        else
+           mex = mex + "<li>USERNAME GIA ESISTENTE</li>";
+    } else
+        mex = mex + "<li>USERNAME</li>";
+    if (password !== ""){
+        if (password.length >= 4)
+            pass_set = true;
+        else
+            mex = mex + "<li>PASSWORD MINORE DI 4 CARATTERI</li>";
+    } else
+        mex = mex + "<li>PASSWORD</li>";
+    if (ruolo !== "")
+        role_set = true;
+    else
+        mex = mex + "<li>TIPOLOGIA</li>";
+    mex = mex + "</ul>";
+    if (user_set && pass_set && role_set)
+        abilButtonTooltip("add_user");
+    else
+        disabilButtonTooltip("add_user", mex);
+    return mex
+}
+
 function view_user_role(id){
     var template = Handlebars.compile($("#drop_type_user-template")[0].innerHTML);
     $('#drop_role' + id).html(template(tipologie_user));
