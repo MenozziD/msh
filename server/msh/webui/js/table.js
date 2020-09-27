@@ -1,15 +1,15 @@
 function generateString(struct_tabella, mex_tipe, indice){
-    let mex = "";
+    let mex = struct_tabella[mex_tipe]['static'];
     for (let i=0; i < struct_tabella[mex_tipe]['param'].length; i++)
-        mex = mex + struct_tabella[mex_tipe]['static'].replace("%" + (i+1), eval(struct_tabella[mex_tipe]['param'][i]));
+        mex = mex.replace("%" + (i+1), eval(struct_tabella[mex_tipe]['param'][i]));
     return mex;
 }
 
 function abilButton(struct_tabella){
-    var mex = "È necessario modificare almeno un valore per attivare questa funzione";
+    let mex = "È necessario modificare almeno un valore per attivare questa funzione";
     if (JSON.stringify(struct_tabella['table'][struct_tabella['table_key']]) !== JSON.stringify(struct_tabella['new_list'])) {
         abilButtonTooltip("reset_" + struct_tabella['id']);
-        abilButtonTooltip("salva_" +  + struct_tabella['id']);
+        abilButtonTooltip("salva_" + struct_tabella['id']);
     } else {
         disabilButtonTooltip("reset_" + struct_tabella['id'], mex);
         disabilButtonTooltip("salva_" + struct_tabella['id'], mex);
@@ -22,7 +22,7 @@ function createTable(struttura, struct_tabella){
     $('[data-toggle="tooltip"]').tooltip({html: true});
     let colonna_tabella = $("#colonna-table-" + struct_tabella['id']);
     if ( ! (typeof colonna_tabella === "undefined")) {
-        let h_col = (colonna_tabella[0].rows[1].offsetHeight * struct_tabella['record_per_pagina']) + colonna_tabella[0].rows[0].offsetHeight + 2;
+        let h_col = ((colonna_tabella[0].rows[1].offsetHeight + 3) * struct_tabella['record_per_pagina']) + colonna_tabella[0].rows[0].offsetHeight + 2;
         colonna_tabella.css({'height': h_col});
         if (struct_tabella['id'] === "user") {
             let cw = parseInt($(".custom-control-input").height()) + 3;
@@ -49,7 +49,7 @@ function sortTable(attribute, struct_tabella){
     let tmp = [];
     for (let i=0; i < struct_tabella['new_list'].length; i++){
         for (let j=0; j < struct_tabella['new_list'].length; j++){
-            if (struct_tabella['new_list'][i][struct_tabella['primary_key']] === struct_tabella['table'][struct_tabella['table_key']][j]['primary_key']){
+            if (struct_tabella['new_list'][i][struct_tabella['primary_key']] === struct_tabella['table'][struct_tabella['table_key']][j][struct_tabella['primary_key']]){
                 tmp.push(struct_tabella['table'][struct_tabella['table_key']][j]);
                 break;
             }
@@ -90,11 +90,8 @@ function getRiepilogo(struct_tabella) {
             }
             if (! found){
                 message = message + generateString(struct_tabella, "mex_up", i);
-                for (let j=0; j < struct_tabella["editable"].length; j++) {
-                    let key = "";
-                    for(let k in struct_tabella["editable"][j]) key = k;
-                    message = message + checkChange(i, key, struct_tabella["editable"][j][key], struct_tabella);
-                }
+                for (let j=0; j < struct_tabella["editable"].length; j++)
+                    message = message + checkChange(i, struct_tabella["editable"][j]['key'], struct_tabella["editable"][j]['name'], struct_tabella);
             }
             message = message + "\n"
         }
@@ -138,7 +135,7 @@ function cambioVal(id, struct_tabella){
     let ind = ((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"]) + parseInt(id);
     for (let i=0; i < struct_tabella["editable"].length; i++) {
         let element = struct_tabella["editable"][i];
-        struct_tabella['new_list'][ind][element['key']] = $(element["id_frontend"] + id)[0].value;
+        struct_tabella['new_list'][ind][element['key']] = $('#' + element["id_frontend"] + id)[0].value;
     }
     struct_tabella['new_list'][ind][struct_tabella['checkbox_action']] = $("#checkbox_" + struct_tabella['id'] + id).prop("checked");
     if (struct_tabella['checkbox_action'] === "to_set"){
@@ -170,21 +167,6 @@ function reset(struct_tabella){
     let tmp_list = Object.assign({}, struct_tabella['table']);
     tmp_list[struct_tabella['table_key']] = tmp_list[struct_tabella['table_key']].slice((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"], struct_tabella['table']['current_page']*struct_tabella["record_per_pagina"]);
     createTable(tmp_list, struct_tabella);
-}
-
-function viewDrop(id, struct_tabella){
-    let key = "";
-    for (let k in struct_tabella["tipologie"]) key = k;
-    let template = Handlebars.compile($("#drop_" + key + "_" + struct_tabella['id'] + "-template")[0].innerHTML);
-    $('#drop_' + key + id).html(template(struct_tabella["tipologie"]));
-    $('#drop_' + key + id + ' li').click(function() {
-        $('#' + key + "_" + struct_tabella['id'] + id).text($(this).text());
-        $("#" + key + "_" + struct_tabella['id'] + id).val($(this).text());
-        if (id !== 'add')
-            cambioVal(id, struct_tabella);
-        else
-            eval(struct_tabella["method_add"]);
-    });
 }
 
 function selectAll(struct_tabella){
@@ -221,7 +203,7 @@ function viewPassword(i, struct_tabella){
 function checkExists(valore, struct_tabella){
     let trovato = false;
     for (let i = 0; i < struct_tabella["new_list"].length; i++){
-        if (struct_tabella["new_list"][i][struct_tabella['table_key']] === valore){
+        if (struct_tabella["new_list"][i][struct_tabella['primary_key']] === valore){
             trovato = true;
             break;
         }
@@ -231,7 +213,7 @@ function checkExists(valore, struct_tabella){
 
 function clearAdd(struct_tabella){
     for (let i=0; i<struct_tabella['field_add'].length; i++) {
-        let element = $("#" + struct_tabella['field_add'][i] + "_add");
+        let element = $("#" + struct_tabella['field_add'][i]['id_frontend']);
         element.val("");
         element.text("");
     }
@@ -244,13 +226,13 @@ function addElement(struct_tabella){
         'to_add': true
     };
     for (let i=0; i<struct_tabella['field_add'].length; i++)
-        add[struct_tabella['field_add'][i]] = $("#" + struct_tabella['field_add'][i] + "_add")[0].value;
+        add[struct_tabella['field_add'][i]['key']] = $("#" + struct_tabella['field_add'][i]['id_frontend'])[0].value;
     struct_tabella["new_list"].push(add);
     let add_new = $.extend(true, {}, add);
     add_new['to_add'] = false;
     struct_tabella['table'][struct_tabella['table_key']].push(add_new);
     $('#modal_add_' + struct_tabella['id']).modal('toggle');
-    clearAdd();
+    clearAdd(struct_tabella);
     let page_number = Math.floor(struct_tabella['table'][struct_tabella['table_key']].length / struct_tabella['record_per_pagina']);
     let resto = struct_tabella['table'][struct_tabella['table_key']].length % struct_tabella['record_per_pagina'];
     if (resto > 0)
@@ -264,7 +246,7 @@ function addElement(struct_tabella){
     createTable(tmp_list, struct_tabella);
 }
 
-function remove(ind, struct_tabella){
+function removeElement(ind, struct_tabella){
     struct_tabella['new_list'].splice(ind, 1);
     struct_tabella['table'][struct_tabella['table_key']].splice(ind, 1);
     let page_number = Math.floor(struct_tabella['table'][struct_tabella['table_key']].length / struct_tabella['record_per_pagina']);

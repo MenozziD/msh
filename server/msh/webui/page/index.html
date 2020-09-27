@@ -19,10 +19,8 @@
 
 		<link rel="stylesheet" href="/static/css/home.css">
         <script src="/static/js/cross.js"></script>
-        <script src="/static/js/device.js"></script>
-        <script src="/static/js/sviluppo.js"></script>
-        <script src="/static/js/user.js"></script>
-        <script src="/static/js/wifi.js"></script>
+        <script src="/static/js/api.js"></script>
+        <script src="/static/js/strutture.js"></script>
         <script src="/static/js/table.js"></script>
 
 		<title>Home</title>
@@ -204,11 +202,11 @@
                                     <td class="my-text-table">
                                         <div class="dropdown{{@index}}">
                                             {{#if_eq ../user_role "ADMIN"}}
-                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="type_device{{@index}}" onclick="viewDrop('{{@index}}', device_tabella)" value="{{net_type}}">{{net_type}}</button>
+                                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="types_device{{@index}}" onclick="viewDrop('{{@index}}', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="{{net_type}}">{{net_type}}</button>
                                             {{else}}
-                                                <span class="font-weight-bold" id="type_device{{@index}}">{{net_type}}</span>
+                                                <span class="font-weight-bold" id="types_device{{@index}}">{{net_type}}</span>
                                             {{/if_eq}}
-                                            <ul class="dropdown-menu scrollable-menu" id="drop_type{{@index}}"></ul>
+                                            <ul class="dropdown-menu scrollable-menu" id="drop_types_device{{@index}}"></ul>
                                         </div>
                                     </td>
                                     <td class="font-weight-bold my-text-table">{{net_ip}}</td>
@@ -225,7 +223,7 @@
                                                 <input class="form-control font-weight-bold" id="psw_device{{@index}}" value="{{net_psw}}" type="password" onchange="cambioVal({{@index}}, device_tabella)">
                                                 <div class="input-group-append">
                                                     <button class="btn btn-primary input-group-button btn-pass" onclick="viewPassword({{@index}}, device_tabella)">
-                                                        <i id="psw_device_icon{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                                        <i id="psw_icon_device{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -239,7 +237,7 @@
                     {{/if_eq}}
                 </div>
                 {{#if_eq user_role "ADMIN"}}
-                <div id="tooltip_reset" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                <div id="tooltip_reset_device" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
                     <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
                 </div>
                 {{else}}
@@ -248,36 +246,36 @@
                 <div class="col-md-6">
                     <nav class="font-weight-bold">
                       <ul class="pagination justify-content-center mb-0">
-                          <li><a class="page-link" onclick="changePage(1)">PRIMA</a></li>
+                          <li><a class="page-link" onclick="changePage(1, device_tabella)">PRIMA</a></li>
                           <li>
                               <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, device_tabella)">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                               </a>
                             </li>
-                        {{#if_mag current_page 4 pages 'device'}}
+                        {{#if_mag current_page 4 pages 'device_tabella'}}
                             <li id="d{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, device_tabella)">{{dif current_page 4}}</a></li>
                         {{/if_mag}}
-                          {{#if_mag current_page 3 pages 'device'}}
+                          {{#if_mag current_page 3 pages 'device_tabella'}}
                             <li id="d{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, device_tabella)">{{dif current_page 3}}</a></li>
                         {{/if_mag}}
-                        {{#if_mag current_page 2 pages 'device'}}
+                        {{#if_mag current_page 2 pages 'device_tabella'}}
                         <li id="d{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, device_tabella)">{{dif current_page 2}}</a></li>
                         {{/if_mag}}
-                        {{#if_mag current_page 1 pages 'device'}}
+                        {{#if_mag current_page 1 pages 'device_tabella'}}
                           <li id="d{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, device_tabella)">{{dif current_page 1}}</a></li>
                         {{/if_mag}}
                           <li id="d{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
-                        {{#if_min current_page 1 pages 'device'}}
+                        {{#if_min current_page 1 pages 'device_tabella'}}
                           <li id="d{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, device_tabella)">{{sum current_page 1}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 2 pages 'device'}}
+                          {{#if_min current_page 2 pages 'device_tabella'}}
                           <li id="d{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, device_tabella)">{{sum current_page 2}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 3 pages 'device'}}
+                          {{#if_min current_page 3 pages 'device_tabella'}}
                           <li id="d{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, device_tabella)">{{sum current_page 3}}</a></li>
                         {{/if_min}}
-                          {{#if_min current_page 4 pages 'device'}}
+                          {{#if_min current_page 4 pages 'device_tabella'}}
                           <li id="d{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, device_tabella)">{{sum current_page 4}}</a></li>
                         {{/if_min}}
                           <li>
@@ -291,17 +289,12 @@
                     </nav>
                 </div>
                 {{#if_eq user_role "ADMIN"}}
-                <div id="tooltip_salva" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                <div id="tooltip_salva_device" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
                     <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
                 </div>
                 {{else}}
                 <div class="col-md-3"></div>
                 {{/if_eq}}
-            </script>
-            <script id="drop_types_device-template" type="text/x-handlebars-template">
-                {{#each this}}
-                    <li class="dropdown-item font-weight-bold">{{type_code}}</li>
-                {{/each}}
             </script>
         </div>
         <div class="modal fade" id="modal_search">
@@ -352,29 +345,19 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="dropdown">
-                                <label class="font-weight-bold" for="device">DISPOSITIVO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device" onclick="device_net_code()"></button>
-                                <ul class="dropdown-menu scrollable-menu" id="drop_device">
+                                <label class="font-weight-bold" for="device_device">DISPOSITIVO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_device" onclick="viewDrop('', 'device', device_tabella, 'checkCommandExecutable()')"></button>
+                                <ul class="dropdown-menu scrollable-menu" id="drop_device_device">
                                 </ul>
                             </div>
-                            <script id="drop_device-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{net_code}}</li>
-                                {{/each}}
-                            </script>
                         </div>
                         <div class="col-md-4">
-                            <label class="font-weight-bold" for="command">COMANDO</label>
-                            <div class="dropdown" id="tooltip_command" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
-                                <button id="command" disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" onclick="net('command')"></button>
-                                <ul class="dropdown-menu scrollable-menu" id="drop_command">
+                            <label class="font-weight-bold" for="command_device">COMANDO</label>
+                            <div class="dropdown" id="tooltip_command_device" data-toggle="tooltip" data-placement="top" data-original-title="Scegliere il DISPOSITIVO">
+                                <button id="command_device" disabled class="btn btn-sm btn-block dropdown-toggle font-weight-bold" style="pointer-events: none;" type="button" data-toggle="dropdown" onclick="net('command')"></button>
+                                <ul class="dropdown-menu scrollable-menu" id="drop_command_device">
                                 </ul>
                             </div>
-                            <script id="drop_command-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{cmd_str}}</li>
-                                {{/each}}
-                            </script>
                         </div>
                         <div class="col-md-4">
                             <label class="font-weight-bold" for="cmd_result">ESITO</label>
@@ -409,11 +392,11 @@
                                 <thead>
                                     <tr>
                                         {{#if_eq user_role "ADMIN"}}
-                                            <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAllU()"></i></th>
+                                            <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAll(user_tabella)"></i></th>
                                         {{/if_eq}}
-                                        <th class="my-text-table col-username"><a class="make-cursor" onclick="sortTableUser('username')">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                        <th class="my-text-table col-password-us"><a class="make-cursor" onclick="sortTableUser('password')">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
-                                        <th class="my-text-table col-ruolo"><a class="make-cursor" onclick="sortTableUser('role')">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-username"><a class="make-cursor" onclick="sortTable('username', user_tabella)">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-password-us"><a class="make-cursor" onclick="sortTable('password', user_tabella)">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-ruolo"><a class="make-cursor" onclick="sortTable('role', user_tabella)">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -422,14 +405,14 @@
                                             {{#if_eq ../user_role "ADMIN"}}
                                             <td class="my-text-table">
                                               {{#if to_add}}
-                                              <button id="checkbox_user{{@index}}" class="btn btn-danger btn-circle font-weight-bold button-del-add" type="button" onclick="user_remove({{@index}});"></button>
+                                              <button id="checkbox_user{{@index}}" class="btn btn-danger btn-circle font-weight-bold button-del-add" type="button" onclick="removeElement({{@index}}, user_tabella);"></button>
                                               {{else}}
                                                 <form>
                                                     <div class="custom-control custom-checkbox">
                                                     {{#if to_delete}}
-                                                        <input type="checkbox" onchange="cambioValUser({{@index}})" checked class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        <input type="checkbox" onchange="cambioVal({{@index}}, user_tabella)" checked class="custom-control-input" id="checkbox_user{{@index}}">
                                                     {{else}}
-                                                        <input type="checkbox" onchange="cambioValUser({{@index}})" class="custom-control-input" id="checkbox_user{{@index}}">
+                                                        <input type="checkbox" onchange="cambioVal({{@index}}, user_tabella)" class="custom-control-input" id="checkbox_user{{@index}}">
                                                     {{/if}}
                                                         <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
                                                     </div>
@@ -443,12 +426,12 @@
                                             <td class="my-text-table">
                                                 <div class="input-group">
                                                     {{#if_eq username ../user_username}}
-                                                    <input class="form-control font-weight-bold" onchange="cambioValUser({{@index}})" id="psw_user{{@index}}" value="{{password}}" type="password">
+                                                    <input class="form-control font-weight-bold" onchange="cambioVal({{@index}}, user_tabella)" id="psw_user{{@index}}" value="{{password}}" type="password">
                                                     {{else}}
                                                     <input class="form-control font-weight-bold" readonly id="psw_user{{@index}}" value="{{password}}" type="password">
                                                     {{/if_eq}}
                                                     <div class="input-group-append">
-                                                        <button class="btn btn-primary input-group-button btn-pass" onclick="view_password_user({{@index}})">
+                                                        <button class="btn btn-primary input-group-button btn-pass" onclick="viewPassword({{@index}}, user_tabella)">
                                                             <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
                                                         </button>
                                                     </div>
@@ -457,11 +440,11 @@
                                             <td class="my-text-table">
                                                 <div class="dropdown{{@index}}">
                                                     {{#if_eq ../user_role "ADMIN"}}
-                                                        <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}" onclick="view_user_role('{{@index}}')">{{role}}</button>
+                                                        <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}" onclick="viewDrop('{{@index}}', 'role', user_tabella, 'cambioVal(id, struct_tabella)')">{{role}}</button>
                                                     {{else}}
                                                         <span class="font-weight-bold" id="role_user{{@index}}">{{role}}</span>
                                                     {{/if_eq}}
-                                                    <ul class="dropdown-menu scrollable-menu" id="drop_role{{@index}}">
+                                                    <ul class="dropdown-menu scrollable-menu" id="drop_role_user{{@index}}">
                                                     </ul>
                                                 </div>
                                             </td>
@@ -480,63 +463,58 @@
                   </div>
                   <div class="modal-footer">
                       <div id="tooltip_reset_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                          <button id="reset_user" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="user_reset()">RESET</button>
+                          <button id="reset_user" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="reset(user_tabella)">RESET</button>
                       </div>
                       <div class="col-md-6">
                         <nav class="font-weight-bold">
                           <ul class="pagination justify-content-center mb-0">
-                              <li><a class="page-link" onclick="change_page_u(1)">PRIMA</a></li>
+                              <li><a class="page-link" onclick="changePage(1, user_tabella)">PRIMA</a></li>
                               <li>
-                                  <a class="page-link" aria-label="Previous" onclick="change_page_u({{dif current_page 1}})">
+                                  <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, user_tabella)">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Previous</span>
                                   </a>
                                 </li>
-                            {{#if_mag current_page 4 pages 'user'}}
-                                <li id="u{{dif current_page 4}}"><a class="page-link" onclick="change_page_u({{dif current_page 4}})">{{dif current_page 4}}</a></li>
+                            {{#if_mag current_page 4 pages 'user_tabella'}}
+                                <li id="u{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, user_tabella)">{{dif current_page 4}}</a></li>
                             {{/if_mag}}
-                              {{#if_mag current_page 3 pages 'user'}}
-                                <li id="u{{dif current_page 3}}"><a class="page-link" onclick="change_page_u({{dif current_page 3}})">{{dif current_page 3}}</a></li>
+                              {{#if_mag current_page 3 pages 'user_tabella'}}
+                                <li id="u{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, user_tabella)">{{dif current_page 3}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 2 pages 'user'}}
-                            <li id="u{{dif current_page 2}}"><a class="page-link" onclick="change_page_u({{dif current_page 2}})">{{dif current_page 2}}</a></li>
+                            {{#if_mag current_page 2 pages 'user_tabella'}}
+                            <li id="u{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, user_tabella)">{{dif current_page 2}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 1 pages 'user'}}
-                              <li id="u{{dif current_page 1}}"><a class="page-link" onclick="change_page_u({{dif current_page 1}})">{{dif current_page 1}}</a></li>
+                            {{#if_mag current_page 1 pages 'user_tabella'}}
+                              <li id="u{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, user_tabella)">{{dif current_page 1}}</a></li>
                             {{/if_mag}}
                               <li id="u{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
-                            {{#if_min current_page 1 pages 'user'}}
-                              <li id="u{{sum current_page 1}}"><a class="page-link" onclick="change_page_u({{sum current_page 1}})">{{sum current_page 1}}</a></li>
+                            {{#if_min current_page 1 pages 'user_tabella'}}
+                              <li id="u{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, user_tabella)">{{sum current_page 1}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 2 pages 'user'}}
-                              <li id="u{{sum current_page 2}}"><a class="page-link" onclick="change_page_u({{sum current_page 2}})">{{sum current_page 2}}</a></li>
+                              {{#if_min current_page 2 pages 'user_tabella'}}
+                              <li id="u{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, user_tabella)">{{sum current_page 2}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 3 pages 'user'}}
-                              <li id="u{{sum current_page 3}}"><a class="page-link" onclick="change_page_u({{sum current_page 3}})">{{sum current_page 3}}</a></li>
+                              {{#if_min current_page 3 pages 'user_tabella'}}
+                              <li id="u{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, user_tabella)">{{sum current_page 3}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 4 pages 'user'}}
-                              <li id="u{{sum current_page 4}}"><a class="page-link" onclick="change_page_u({{sum current_page 4}})">{{sum current_page 4}}</a></li>
+                              {{#if_min current_page 4 pages 'user_tabella'}}
+                              <li id="u{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, user_tabella)">{{sum current_page 4}}</a></li>
                             {{/if_min}}
                               <li>
-                              <a class="page-link" aria-label="Next" onclick="change_page_u({{sum current_page 1}})">
+                              <a class="page-link" aria-label="Next" onclick="changePage({{sum current_page 1}}, user_tabella)">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                               </a>
                             </li>
-                            <li><a class="page-link" onclick="change_page_u({{pages}})">ULTIMA</a></li>
+                            <li><a class="page-link" onclick="changePage({{pages}}, user_tabella)">ULTIMA</a></li>
                           </ul>
                         </nav>
                       </div>
                       <div id="tooltip_salva_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                            <button id="salva_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogoUser()">SALVA</button>
+                            <button id="salva_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogo(user_tabella)">SALVA</button>
                       </div>
                   </div>
                 </div>
-              </script>
-              <script id="drop_type_user-template" type="text/x-handlebars-template">
-                {{#each role}}
-                    <li class="dropdown-item font-weight-bold">{{this}}</li>
-                {{/each}}
               </script>
             </div>
         </div>
@@ -614,29 +592,29 @@
                                     <span class="sr-only">Previous</span>
                                   </a>
                                 </li>
-                            {{#if_mag current_page 4 pages 'wifi'}}
+                            {{#if_mag current_page 4 pages 'wifi_tabella'}}
                                 <li id="w{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, wifi_tabella)">{{dif current_page 4}}</a></li>
                             {{/if_mag}}
-                              {{#if_mag current_page 3 pages 'wifi'}}
+                              {{#if_mag current_page 3 pages 'wifi_tabella'}}
                                 <li id="w{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, wifi_tabella)">{{dif current_page 3}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 2 pages 'wifi'}}
+                            {{#if_mag current_page 2 pages 'wifi_tabella'}}
                             <li id="w{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, wifi_tabella)">{{dif current_page 2}}</a></li>
                             {{/if_mag}}
-                            {{#if_mag current_page 1 pages 'wifi'}}
+                            {{#if_mag current_page 1 pages 'wifi_tabella'}}
                               <li id="w{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, wifi_tabella)">{{dif current_page 1}}</a></li>
                             {{/if_mag}}
                               <li id="w{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
-                            {{#if_min current_page 1 pages 'wifi'}}
+                            {{#if_min current_page 1 pages 'wifi_tabella'}}
                               <li id="w{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, wifi_tabella)">{{sum current_page 1}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 2 pages 'wifi'}}
+                              {{#if_min current_page 2 pages 'wifi_tabella'}}
                               <li id="w{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, wifi_tabella)">{{sum current_page 2}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 3 pages 'wifi'}}
+                              {{#if_min current_page 3 pages 'wifi_tabella'}}
                               <li id="w{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, wifi_tabella)">{{sum current_page 3}}</a></li>
                             {{/if_min}}
-                              {{#if_min current_page 4 pages 'wifi'}}
+                              {{#if_min current_page 4 pages 'wifi_tabella'}}
                               <li id="w{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, wifi_tabella)">{{sum current_page 4}}</a></li>
                             {{/if_min}}
                               <li>
@@ -670,28 +648,18 @@
                         <div class="col-md-5">
                             <div class="dropdown">
                                 <label for="device_arduino" class="font-weight-bold">DISPOSITIVO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="view_drop_device()"></button>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="device_arduino" onclick="viewDrop('', 'device', arduino_tabella, 'checkActionExecutable()')"></button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_device_arduino">
                                 </ul>
                             </div>
-                            <script id="drop_device_arduino-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{this}}</li>
-                                {{/each}}
-                            </script>
                         </div>
                         <div class="col-md-5">
                             <div class="dropdown">
                                 <label for="tipo_arduino" class="font-weight-bold">TIPOLOGIA</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="view_drop_command()"></button>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="tipo_arduino" onclick="viewDrop('', 'tipo', arduino_tabella, 'checkActionExecutable()')"></button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_tipo_arduino">
                                 </ul>
                             </div>
-                            <script id="drop_tipo_arduino-template" type="text/x-handlebars-template">
-                                {{#each this}}
-                                    <li class="dropdown-item font-weight-bold">{{this}}</li>
-                                {{/each}}
-                            </script>
                         </div>
                         <div class="col-md-2">
                             <label for="esito_upload" class="font-weight-bold">ESITO</label>
@@ -888,17 +856,17 @@
                       <div class="row">
                         <div class="col-md-4">
                             <label class="font-weight-bold" for="username_add">USERNAME</label>
-                            <input type="text" class="form-control font-weight-bold" id="username_add" onchange="cambioValAddUser()">
+                            <input type="text" class="form-control font-weight-bold" id="username_add" onchange="checkUserAdd()">
                         </div>
                         <div class="col-md-4">
                             <label class="font-weight-bold" for="password_add">PASSWORD</label>
-                            <input type="text" class="form-control font-weight-bold" id="password_add" onchange="cambioValAddUser()">
+                            <input type="text" class="form-control font-weight-bold" id="password_add" onchange="checkUserAdd()">
                         </div>
                         <div class="col-md-4">
                             <div class="dropdown_add">
-                                <label class="font-weight-bold" for="role_user_add">RUOLO</label>
-                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user_add" onclick="view_user_role('add')"></button>
-                                <ul id="drop_roleadd" class="dropdown-menu scrollable-menu">
+                                <label class="font-weight-bold" for="role_useradd">RUOLO</label>
+                                <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_useradd" onclick="viewDrop('add', 'role' , user_tabella, 'eval(struct_tabella[\'method_add\'])')"></button>
+                                <ul id="drop_role_useradd" class="dropdown-menu scrollable-menu">
                                 </ul>
                             </div>
                         </div>
@@ -911,7 +879,7 @@
                       </div>
                       <div class="col-md-4">
                         <div id="tooltip_add_user" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>USERNAME</li><li>PASSWORD</li><li>TIPOLOGIA</li></ul>">
-                            <button id="add_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="user_add()">AGGIUNGI</button>
+                            <button id="add_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="addElement(user_tabella)">AGGIUNGI</button>
                         </div>
                       </div>
                       <div class="col-md-2"></div>
@@ -941,5 +909,10 @@
                 </div>
             </div>
         </div>
+        <script id="drop-template" type="text/x-handlebars-template">
+            {{#each this}}
+                <li class="dropdown-item font-weight-bold">{{this}}</li>
+            {{/each}}
+        </script>
 	</body>
 </html>
