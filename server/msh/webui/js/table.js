@@ -247,8 +247,8 @@ function addElement(struct_tabella){
 }
 
 function removeElement(ind, struct_tabella){
-    struct_tabella['new_list'].splice(ind, 1);
-    struct_tabella['table'][struct_tabella['table_key']].splice(ind, 1);
+    struct_tabella['new_list'].splice(((struct_tabella['table']['current_page']-1)*struct_tabella['record_per_pagina']) + ind, 1);
+    struct_tabella['table'][struct_tabella['table_key']].splice(((struct_tabella['table']['current_page']-1)*struct_tabella['record_per_pagina']) + ind, 1);
     let page_number = Math.floor(struct_tabella['table'][struct_tabella['table_key']].length / struct_tabella['record_per_pagina']);
     let resto = struct_tabella['table'][struct_tabella['table_key']].length % struct_tabella['record_per_pagina'];
     if (resto > 0)

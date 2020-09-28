@@ -814,7 +814,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
       ]
    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCMAC","Sony PC Apple", "6",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCMAC","PC Apple", "6",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.TV"",
@@ -956,6 +956,79 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }");
 
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO) VALUES ("PCLINUX","PC Linux", "9",
+"{
+   ""id"":""dev['net_mac']"",
+   ""type"":""action.devices.types.TV"",
+   ""traits"":[
+      ""action.devices.traits.OnOff""
+   ],
+   ""name"":{
+      ""defaultNames"":[
+         ""PC Mac""
+      ],
+      ""name"":""dev['net_code']"",
+      ""nicknames"":[
+
+      ]
+   },
+   ""willReportState"":true,
+   ""deviceInfo"":{
+      ""manufacturer"":""MSH"",
+      ""model"":""1"",
+      ""hwVersion"":""1.0"",
+      ""swVersion"":""1.0""
+   },
+   ""customData"":{
+      ""mshType"":""dev['net_type']""
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
+            ""on"":""cmd_ping(dev['net_ip'])['result']"",
+            ""online"":""True""
+         }
+      }
+   }
+}",
+"{
+   ""on"":""cmd_pclinux('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pclinux('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""SUCCESS"",
+            ""states"":{
+               ""on"":""cmd_ping(dev['net_ip'])['result']"",
+               ""online"":""True""
+            }
+         }
+      ]
+   }
+}",
+"{
+   ""requestId"":""data['requestId']"",
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
+               ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
+            ],
+            ""status"":""ERROR"",
+            ""errorCode"":""result['output']""
+         }
+      ]
+   }
+}");
+
 --DELETE FROM TB_NET_DEVICE_TYPE WHERE TYPE_CODE like 'ESP_RELE';
 -- POPOLO TB_NET_DIZ_CMD
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("online","NET");
@@ -979,6 +1052,10 @@ INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","PS4");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","PS4");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("toggle","ESP_LOCK");
 INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("stato","ESP_LOCK");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","PCMAC");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","PCMAC");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("on","PCLINUX");
+INSERT INTO TB_NET_DIZ_CMD (CMD_STR,CMD_NET_TYPE) VALUES ("off","PCLINUX");
 
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");

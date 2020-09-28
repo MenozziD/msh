@@ -69,8 +69,10 @@ def execute_ssh_cmd(ip, usr, psw, cmd):
             response['cmd_out'] = str(ss.before)[2:-1].replace("\\r\\n", '\r\n')
             info("Output: %s", response['cmd_out'])
             response['output'] = 'OK'
+            response['cmd_err'] = ''
         except Exception as e:
             exception("Exception")
+            response['cmd_err'] = str(e)
             if str(e) == "password refused":
                 response['output'] = get_string(13)
             else:

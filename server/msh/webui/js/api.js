@@ -89,6 +89,7 @@ function net(type_op){
                     createTable(json, device_tabella);
                 }
                 if (type_op === 'command'){
+                    device_tabella["tipologie"]["command"] = [];
                     for (let i=0; i<json["commands"].length; i++)
                         device_tabella["tipologie"]["command"].push(json["commands"][i]["cmd_str"]);
                     viewDrop("", "command", device_tabella, "abilButtonTooltip('invia')");
