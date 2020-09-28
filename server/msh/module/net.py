@@ -92,80 +92,22 @@ def read_mac(row, result):
     return result
 
 
-def cmd_pcwin(comando, mac=None, ip=None, usr=None, psw=None):
+def cmd_pc(comando, mac=None, ip=None, usr=None, psw=None, cmd_str="", ok_str=""):
     if comando == 'on':
         result = cmd_wakeonlan(mac)
     else:
-        result = cmd_pcwin_shutdown(ip, usr, psw)
+        result = cmd_shutdown(ip, usr, psw, cmd_str, ok_str)
     return result
 
 
-def cmd_pcmac(comando, mac=None, ip=None, usr=None, psw=None):
-    if comando == 'on':
-        result = cmd_wakeonlan(mac)
-    else:
-        result = cmd_pcmac_shutdown(ip, usr, psw)
-    return result
-
-def cmd_pclinux(comando, mac=None, ip=None, usr=None, psw=None):
-    if comando == 'on':
-        result = cmd_wakeonlan(mac)
-    else:
-        result = cmd_pclinux_shutdown(ip, usr, psw)
-    return result
-
-
-def cmd_pcwin_shutdown(ip, usr, psw):
+def cmd_shutdown(ip, usr, psw, cmd_str, ok_str):
     result = {}
     try:
         # user%psw
-        response = execute_os_cmd('net rpc shutdown -I %s -U %s' % (ip, usr + '%' + psw))
+        response = execute_ssh_cmd(ip, usr, psw, cmd_str)
         if response['cmd_err'] == "":
             cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
-            if cmd_out.find('succeeded') > 0:
-                result['result'] = get_string(6)
-            else:
-                result['result'] = get_string(7)
-            result['output'] = 'OK'
-        else:
-            raise Exception(response['cmd_err'])
-    except Exception as e:
-        exception("Exception")
-        result['result'] = get_string(8)
-        result['output'] = str(e)
-    finally:
-        return result
-
-
-def cmd_pcmac_shutdown(ip, usr, psw):
-    result = {}
-    try:
-        # user%psw
-        response = execute_ssh_cmd(ip, usr, psw, "shutdown -s now")
-        if response['cmd_err'] == "":
-            cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
-            if cmd_out.find('Shutdown NOW!') >= 0:
-                result['result'] = get_string(6)
-            else:
-                result['result'] = get_string(7)
-            result['output'] = 'OK'
-        else:
-            raise Exception(response['cmd_err'])
-    except Exception as e:
-        exception("Exception")
-        result['result'] = get_string(8)
-        result['output'] = str(e)
-    finally:
-        return result
-
-def cmd_pclinux_shutdown(ip, usr, psw):
-    result = {}
-    try:
-        # user%psw
-        response = execute_ssh_cmd(ip, usr, psw, "shutdown -h now")
-        if response['cmd_err'] == "":
-            cmd_out = response['cmd_out'].replace("\t", "").replace("\n", "").strip()
-            if cmd_out.find('ORA') > 0:
+            if cmd_out.find(ok_str) >= 0:
                 result['result'] = get_string(6)
             else:
                 result['result'] = get_string(7)

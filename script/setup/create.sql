@@ -118,7 +118,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }",
 "{  
-   ""on"":""cmd_pcwin('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pcwin('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_usr'] + '%' + dev['net_psw'], 'succeeded')""
 }",
 "{  
    ""requestId"":""data['requestId']"",
@@ -853,7 +853,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }",
 "{
-   ""on"":""cmd_pcmac('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pcmac('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -s now', 'Shutdown NOW!')""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -995,7 +995,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,FUNCTION_CODE,SYNC_RE
    }
 }",
 "{
-   ""on"":""cmd_pclinux('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pclinux('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -h now', 'ORA')""
 }",
 "{
    ""requestId"":""data['requestId']"",

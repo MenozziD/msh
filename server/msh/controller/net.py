@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_pcwin, cmd_ps4, cmd_pcmac, cmd_reboot,cmd_pclinux
+from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_ps4, cmd_reboot, cmd_pc
 from netifaces import AF_INET, ifaddresses
 
 
@@ -374,24 +374,24 @@ class Net(BaseHandler):
         device_command = DbManager.select_device_and_function_code_from_code_and_cmd(dispositivo, comando)
         funzioni = {
             '1': cmd_ping,
-            '2': cmd_pcwin,
+            '2': cmd_pc,
             '3': cmd_radio,
             '4': cmd_esp,
             '5': cmd_ps4,
-            '6': cmd_pcmac,
+            '6': cmd_pc,
             '7': cmd_reboot,
-            '9': cmd_pclinux
+            '9': cmd_pc
         }
         parametri = {
             '1': [device_command['net_ip']],
-            '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
+            '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw'], 'net rpc shutdown -I ' + device_command['net_ip'] + ' -U ' + device_command['net_usr'] + '%' + device_command['net_psw'], 'succeeded'],
             '3': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']],
             '4': [device_command['net_ip'], comando],
             '5': [comando],
             '6': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'],
-                  device_command['net_psw']],
+                  device_command['net_psw'], "shutdown -s now", "Shutdown NOW!"],
             '7': [device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
             '9': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'],
-                  device_command['net_psw']],
+                  device_command['net_psw'], "shutdown -h now", "ORA"],
         }
         return funzioni[device_command['function_code']](*parametri[device_command['function_code']])
