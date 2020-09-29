@@ -33,15 +33,30 @@ def cmd_ping(ip, pacchetti=1):
 
 def cmd_radio(ip, comando, usr, psw):
     result = {}
+    res=''
     try:
         result = cmd_radio_stato(ip, usr, psw)
-        if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
-            execute_ssh_cmd(ip, usr, psw, "ifconfig %s %s" % (result['interface'], comando))
-            result['result'] = get_string(9)
-            result['output'] = 'OK'
+        if usr != '':
+            if comando != 'stato' and result['output'] == 'OK' and 'interface' in result and 'mac' in result:
+                execute_ssh_cmd(ip, usr, psw, "ifconfig %s %s" % (result['interface'], comando))
+                result['result'] = get_string(9)
+                result['output'] = 'OK'
+            else:
+                if result['output'] != 'OK':
+                    raise Exception(result['output'])
         else:
-            if result['output'] != 'OK':
-                raise Exception(result['output'])
+            if comando != 'stato' and result['output'] == 'OK' :
+                fc = FritzConnection(address=ip, password=psw)
+                res = fc.call_action('WLANConfiguration1', 'SetEnable', NewEnable=True if comando == "up" else False)
+                if res == {}:
+                    result['result'] = get_string(9)
+                    result['output'] = 'OK'
+                else:
+                    raise Exception(str(res))
+            else:
+                if result['output'] != 'OK':
+                    raise Exception(result['output'])
+
     except Exception as e:
         exception("Exception")
         result['result'] = get_string(14)
@@ -53,19 +68,25 @@ def cmd_radio(ip, comando, usr, psw):
 def cmd_radio_stato(ip, usr, psw):
     result = {}
     try:
-        response = execute_ssh_cmd(ip, usr, psw, "iwconfig")
-        if response['output'] == 'OK':
-            cmd_out = response['cmd_out'].split("\r\n")
-            for row in cmd_out:
-                result = read_essid(row, result)
-                result = read_mac(row, result)
-            if 'mac' in result:
-                info("INTERFACE: %s MAC: %s", result['interface'], result['mac'])
+        if usr != '':
+            response = execute_ssh_cmd(ip, usr, psw, "iwconfig")
+            if response['output'] == 'OK':
+                cmd_out = response['cmd_out'].split("\r\n")
+                for row in cmd_out:
+                    result = read_essid(row, result)
+                    result = read_mac(row, result)
+                if 'mac' in result:
+                    info("INTERFACE: %s MAC: %s", result['interface'], result['mac'])
+                else:
+                    raise Exception(get_string(12))
+                result['output'] = 'OK'
             else:
-                raise Exception(get_string(12))
-            result['output'] = 'OK'
+                raise Exception(response['output'])
         else:
-            raise Exception(response['output'])
+            fc = FritzConnection(address=ip, password=psw)
+            info(fc.call_action('WLANConfiguration1', 'GetInfo')['NewEnable'])
+            result['result'] =  get_string(int(not(fc.call_action('WLANConfiguration1', 'GetInfo')['NewEnable'])))  #0=ON 1=OFF
+            result['output'] = "OK"
     except Exception as e:
         exception("Exception")
         result['result'] = get_string(14)
