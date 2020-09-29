@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<settings>
-    <frontend_info>
-        <devicename value="Smartphone" />
-        <autoupdate value="true" />
-        <timeupdate value ="30000" />
-    </frontend_info>
-</settings>

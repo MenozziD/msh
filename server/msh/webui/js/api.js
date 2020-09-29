@@ -67,6 +67,7 @@ function net(type_op){
                     net('list');
                 }
                 if (type_op === 'type'){
+                    device_tabella["tipologie"]["types"] = [];
                     for (let i=0; i<json["types"].length; i++)
                         device_tabella["tipologie"]["types"].push(json["types"][i]["type_code"]);
                 }
@@ -79,6 +80,7 @@ function net(type_op){
                         page_number = page_number + 1;
                     json['pages'] = page_number;
                     json['current_page'] = 1;
+                    device_tabella["tipologie"]["device"] = [];
                     for (let i = 0; i < json[device_tabella["table_key"]].length; i++){
                         json[device_tabella["table_key"]][i]['to_delete'] = false;
                         device_tabella["tipologie"]["device"].push(json[device_tabella["table_key"]][i]['net_code']);
