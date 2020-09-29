@@ -1,0 +1,328 @@
+<resources>
+    <string name="app_name">ADTW</string>
+    <string name="app_dir_main_name">ADTW</string>
+    <string name="app_dir_log_name">log</string>
+    <string name="app_title">Android Device To Web Server (API)</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="content">content</string>
+    <string name="vwSensor_titolo">Sensori</string>
+    <string name="vwLog_titolo">Log</string>
+    <string name="vwInfo_titolo">Info</string>
+    <string name="vwServer_titolo">Server</string>
+    <string name="vwSet_titolo">Impostazioni Server</string>
+    <string name="mex_LOG_ERR">ERR: NO WRITE PERMISSION !</string>
+    <string name="mex_LOG_OK">OK</string>
+    <string name="mex_Log_Type_Info">Info</string>
+    <string name="mex_Log_Type_Error">Error</string>
+    <string name="mex_SensorOnBoard_OFF">"SensorOnBoard OFF</string>
+    <string name="mex_PermissionManager">"PermissionManager OK</string>
+    <string name="mex_WebServer_OFF">"WebServer OFF</string>
+    <string name="mex_SensorOnBoard_ON">"SensorOnBoard ON</string>
+    <string name="mex_WebServer_ON">"WebServer ON</string>
+    <string name="mex_Service_ON">"Servizio Background ON</string>
+    <string name="mex_Service_OFF">"Servizio Background OFF</string>
+    <string name="mex_Alt">E\' necessario accettare tutti i permessi !! </string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+
+    <string-array name="sh_reserved_words">
+        <item>case</item>
+        <item>do</item>
+        <item>done</item>
+        <item>elif</item>
+        <item>else</item>
+        <item>esac</item>
+        <item>fi</item>
+        <item>for</item>
+        <item>function</item>
+        <item>if</item>
+        <item>in</item>
+        <item>select</item>
+        <item>then</item>
+        <item>time</item>
+        <item>until</item>
+        <item>while</item>
+    </string-array>
+
+
+    <string name="html_index">
+               <![CDATA[
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+                    <!-- Bootstrap CSS -->
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+                    <!-- Font CSS -->
+                    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+                    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
+                    <title>ADTW-Home</title>
+                </head>
+                <script type="text/javascript">
+                    var array_sensors=[];
+                    var firstTime=1;
+                    var array_settings=[];
+                    var autoupdate="false";
+                    var timeupdate=30000;
+                    init();
+                    //var myVar = setInterval(read_all, timeupdate);
+
+                    $( document ).ready(read_all);
+
+                    function init(){
+                        read_settings();
+                        read_sensor_active();
+                    }
+
+                    function save_settings(){
+                        for (var i = 0; i < array_settings.length; i++) {
+                            var id="#"+array_settings[i];
+                            save_setting(array_settings[i],$(id).val());
+                        }
+                    }
+
+
+                    function save_setting(str_set,str_val){
+                        $.ajax({
+                            url: "settings",
+                            type: "GET",
+                            data: {setting:str_set,cmd:"set",value:str_val},
+                            success: function(response,str_set){
+                                read_set(str_set);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
+                    function sensor_cmd(str_cmd){
+                        $.ajax({
+                            url: "sensor",
+                            type: "GET",
+                            data: {type:str_cmd},
+                            success: function(response,str_cmd){
+                                var json = jQuery.parseJSON(response);
+                                var res=json["response"];
+                                var jsonSensor = jQuery.parseJSON(res);
+                                var valSensor=jsonSensor["actualValue"];
+                                var req=json["request"].split("=");
+                                req[1]="#".concat(req[1]);
+                                $(req[1]).val(valSensor);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
+                    function read_sensor_active(){
+                        $.ajax({
+                            url: "sensor",
+                            type: "GET",
+                            data: {list:"install"},
+                            success: function(response)
+                            {
+                                var jsonSensor = response;
+                                var listSensor=jsonSensor["sensors"].substr(1, jsonSensor["sensors"].length-2);
+                                array_sensors=listSensor.split(", ");
+                                var template=$("#sensor-template").html();
+                                var templateScript=Handlebars.compile(template);
+                                var result=[{SensorsList:[]}];
+                                for (var i = 0; i < array_sensors.length; i++) {
+                                    var context = { "sensor_name" : array_sensors[i]};
+                                    result[0]["SensorsList"][i]=context;
+                                }
+                                var html = templateScript(result);
+                                $("#container_sensor").html(html);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
+                    function read_set(str_s){
+                        $.ajax({
+                            url: "settings",
+                            type: "GET",
+                            data: {setting:str_s,cmd:"get"},
+                            success: function(response){
+                                var jsonSetting = response;
+                                var element ="#"+str_s;
+                                if (jsonSetting[str_s]!=null)
+                                    $(element).val(jsonSetting[str_s]);
+                                if (jsonSetting["devicename"]!=null)
+                                {
+                                    $("#devicename").val(jsonSetting["devicename"]);
+                                    $("#h1").text(jsonSetting["devicename"]);
+                                }
+                                if (jsonSetting["autoupdate"]!=null)
+                                {
+                                    $("#autoupdate").val(jsonSetting["autoupdate"]);
+                                    autoupdate=jsonSetting["autoupdate"];
+                                }
+                                if (jsonSetting["timeupdate"]!=null)
+                                {
+                                    $("#timeupdate").val(jsonSetting["timeupdate"]);
+                                    timeupdate=parseInt(jsonSetting["timeupdate"]);
+                                    myVar = setInterval(read_all, timeupdate);
+                                }
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
+                    function read_settings(){
+                        $.ajax({
+                            url: "settings",
+                            type: "GET",
+                            data: {list:"all"},
+                            success: function(response)
+                            {
+                                var jsonSettings = response;
+                                var listSettings=jsonSettings["settings"].substr(1, jsonSettings["settings"].length-2);
+                                array_settings=listSettings.split(", ");
+                                var template=$("#settings-template").html();
+                                var templateScript=Handlebars.compile(template);
+                                var result=[{SettingsList:[]}];
+                                for (var i = 0; i < array_settings.length; i++) {
+                                    var context = { "setting_name" : array_settings[i]};
+                                    result[0]["SettingsList"][i]=context;
+                                }
+                                var html = templateScript(result);
+                                $("#container_settings").html(html);
+                            },
+                            error: function(xhr){
+                            }
+                        });
+                    }
+
+                    function read_all()
+                    {
+                        if (autoupdate=="true")
+                        {
+                            for (var i = 0; i < array_sensors.length; i++) {
+                                sensor_cmd(array_sensors[i]);
+                            }
+                        }
+                        if (firstTime==1 && array_settings.length > 0)
+                        {
+                            for (var i = 0; i < array_settings.length; i++) {
+                                read_set(array_settings[i]);
+                            }
+                            firstTime=0
+                        }
+                    }
+
+                </script>
+                <body>
+                    <div class="container">
+                        <div class="row">
+                            <div class="py-5 col-md-12 text-center">
+                                <div class="error-template">
+                                    <h1><p id="h1"> </p></h1>
+                                    <h2><p> Sensori </p></h2>
+                                    <div id ="container_sensor">
+                                        <script id="sensor-template" type="text/x-handlebars-template">
+                                            {{#each this}}
+                                            {{#SensorsList}}
+                                            <div class="form-row justify-content-center">
+                                                <div class="py-3 input-group col-md-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text mb-2">{{sensor_name}}</span>
+                                                    </div>
+                                                    <input id ="{{sensor_name}}" type="text" class="form-control"  aria-describedby="inputGroup-sizing-sm" readonly>
+                                                </div>
+                                            </div>
+                                            {{/SensorsList}}
+                                            {{/each}}
+                                        </script>
+                                    </div>
+
+                                    <h2><p> Impostazioni </p></h2>
+                                    <div id ="container_settings">
+                                        <script id="settings-template" type="text/x-handlebars-template">
+                                            {{#each this}}
+                                            {{#SettingsList}}
+                                            <div class="form-row justify-content-center">
+                                                <div class="py-3 input-group col-md-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text mb-2">{{setting_name}}</span>
+                                                    </div>
+                                                    <input id ="{{setting_name}}" type="text" class="form-control"  aria-describedby="inputGroup-sizing-sm" >
+                                                </div>
+                                            </div>
+                                            {{/SettingsList}}
+                                            {{/each}}
+                                        </script>
+                                    </div>
+                                    <div class="error-actions py-4">
+                                        <button id="btnSet"  class="btn btn-primary btn-lg" onclick="save_settings()">
+                                            <span class="ui-button-text">Save</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        ]]>
+
+</string>
+
+
+    <string name="html_404">
+        <![CDATA[
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+                    <!-- Bootstrap CSS -->
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+                    <!-- Font CSS -->
+                    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+                    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+                    <title>Not Found</title>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="row">
+                            <div class="py-5 col-md-12 text-center">
+                                <div class="error-template">
+                                    <h1>404</h1>
+                                    <h2>NOT FOUND</h2>
+                                    <div class="error-actions py-4">
+                                        <a href="/" class="btn btn-primary btn-lg">
+                                            Home
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        ]]>
+    </string>
+
+</resources>
+
