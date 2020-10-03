@@ -129,6 +129,15 @@ function viewDrop(id, key, struct_tabella, funzione){
     });
 }
 
+function viewDropCommand() {
+    device_tabella["tipologie"]["command"] = [];
+    for (let i = 0; i < device_tabella['table'][device_tabella['table_key']].length; i++) {
+        if (device_tabella["table"][device_tabella["table_key"]][i]['net_code'] === $('#device_device')[0].value)
+            device_tabella["tipologie"]["command"] = device_tabella["table"][device_tabella["table_key"]][i]['commands'];
+    }
+    viewDrop("", "command", device_tabella, "abilButtonTooltip('invia')");
+}
+
 function checkCommandExecutable(){
     let mex = "Campi mancanti: <ul><li>COMANDO</li></ul>";
     cleanFields(['command_device', 'cmd_result']);

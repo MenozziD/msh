@@ -25,14 +25,6 @@ function net(type_op){
             }
         }
     }
-    if (type_op === 'command'){
-        for(let l = 0; l < device_tabella["table"][device_tabella["table_key"]].length; l++) {
-            if (device_tabella["table"][device_tabella["table_key"]][l]['net_code'] === $('#device_device')[0].value){
-                type = device_tabella["table"][device_tabella["table_key"]][l]['net_type'];
-                break;
-            }
-        }
-    }
     if (type_op === "cmd"){
         dispositivo = $('#device_device')[0].value;
         comando = $('#command_device')[0].value;
@@ -40,8 +32,6 @@ function net(type_op){
     let body = {
         "tipo_operazione": type_op
     };
-    if (type != null)
-        body['net_type'] = type;
     if (dispositivo != null)
         body['dispositivo'] = dispositivo;
     if (comando != null)
@@ -89,12 +79,6 @@ function net(type_op){
                     device_tabella["new_list"] = $.extend(true, [], device_tabella["table"][device_tabella["table_key"]]);
                     json[device_tabella["table_key"]] = json[device_tabella["table_key"]].slice(0, device_tabella["record_per_pagina"]);
                     createTable(json, device_tabella);
-                }
-                if (type_op === 'command'){
-                    device_tabella["tipologie"]["command"] = [];
-                    for (let i=0; i<json["commands"].length; i++)
-                        device_tabella["tipologie"]["command"].push(json["commands"][i]["cmd_str"]);
-                    viewDrop("", "command", device_tabella, "abilButtonTooltip('invia')");
                 }
                 if (type_op === 'update'){
                     net('list');

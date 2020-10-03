@@ -50,17 +50,38 @@ class DbManager:
             raise
 
     @staticmethod
-    def select_tb_net_device(net_mac='', net_code='', net_type=''):
+    def select_tb_net_device_type(net_type=None):
         query = 'SELECT * ' \
-                'FROM TB_NET_DEVICE'
+                'FROM TB_NET_DEVICE_TYPE '
+        if net_type is not None:
+            query = query + ' WHERE TYPE_CODE = \'%s\';' % net_type
+        else:
+            query = query + ';'
+        net_devices_type = DbManager.select(query)
+        devices_types = []
+        for net_device_type in net_devices_type:
+            tb_net_device_type = {
+                'type_code': str(net_device_type[0]),
+                'type_description': str(net_device_type[1]),
+                'type_commands': list(loads(str(net_device_type[7])).keys()),
+                'type_function': loads(str(net_device_type[7]))
+            }
+            devices_types.append(tb_net_device_type)
+        return devices_types
+
+    @staticmethod
+    def select_tb_net_device_and_msh_info(net_mac='', net_code='', net_type=''):
+        query = 'SELECT DEV.*, MSH_COMMANDS ' \
+                'FROM TB_NET_DEVICE DEV, TB_NET_DEVICE_TYPE TYP ' \
+                'WHERE DEV.NET_TYPE = TYP.TYPE_CODE'
         if net_mac != '':
-            query = query + ' WHERE NET_MAC = \'%s\';' % net_mac
+            query = query + ' AND NET_MAC = \'%s\';' % net_mac
         else:
             if net_code != '':
-                query = query + ' WHERE NET_CODE = \'%s\';' % net_code
+                query = query + ' AND NET_CODE = \'%s\';' % net_code
             else:
                 if net_type != '':
-                    query = query + ' WHERE NET_TYPE = \'%s\';' % net_type
+                    query = query + ' AND NET_TYPE = \'%s\';' % net_type
                 else:
                     query = query + ';'
         net_devices = DbManager.select(query)
@@ -75,7 +96,8 @@ class DbManager:
                 'net_mac': str(net_device[5]),
                 'net_usr': str(net_device[6]),
                 'net_psw': str(net_device[7]),
-                'net_mac_info': str(net_device[8])
+                'net_mac_info': str(net_device[8]),
+                'commands': list(loads(str(net_device[9])).keys())
             }
             devices.append(tb_net_device)
         return devices
@@ -109,66 +131,6 @@ class DbManager:
         return devices
 
     @staticmethod
-    def select_tb_net_device_type():
-        query = 'SELECT * ' \
-                'FROM TB_NET_DEVICE_TYPE;'
-        net_devices_type = DbManager.select(query)
-        devices_types = []
-        for net_device_type in net_devices_type:
-            tb_net_device_type = {
-                'type_code': str(net_device_type[0]),
-                'type_description': str(net_device_type[1])
-            }
-            devices_types.append(tb_net_device_type)
-        return devices_types
-
-    @staticmethod
-    def select_tb_net_command_from_type(net_type):
-        query = 'SELECT * ' \
-                'FROM TB_NET_DIZ_CMD ' \
-                'WHERE CMD_NET_TYPE = \'%s\' OR CMD_NET_TYPE = \'NET\';' % net_type
-        net_diz_cmd = DbManager.select(query)
-        diz_cmd = []
-        for net_cmd in net_diz_cmd:
-            tb_net_diz_cmd = {
-                'cmd_str': str(net_cmd[0]),
-                'cmd_net_type': str(net_cmd[1])
-            }
-            diz_cmd.append(tb_net_diz_cmd)
-        return diz_cmd
-
-    @staticmethod
-    def select_tb_string_from_lang_value(language, value):
-        query = 'SELECT TB_STRING.RESULT ' \
-                'FROM TB_STRING ' \
-                'WHERE LANGUAGE = \'%s\' ' \
-                'AND VALUE = \'%s\';' % (language, value)
-        stringhe = DbManager.select(query)
-        list_stringhe = []
-        for stringa in stringhe:
-            list_stringhe.append(str(stringa[0]))
-        return list_stringhe[0]
-
-    @staticmethod
-    def select_device_and_function_code_from_code_and_cmd(net_code, cmd_str):
-        query = 'SELECT NET_TYPE, NET_IP, NET_MAC, NET_USER, NET_PSW ' \
-                'FROM TB_NET_DEVICE ' \
-                'WHERE NET_CODE = \'%s\';' % net_code
-        device = DbManager.select(query)[0]
-        query = 'SELECT TYP.FUNCTION_CODE ' \
-                'FROM TB_NET_DEVICE_TYPE AS TYP INNER JOIN TB_NET_DIZ_CMD AS DIZ ON TYP.TYPE_CODE = DIZ.CMD_NET_TYPE ' \
-                'WHERE TYP.TYPE_CODE IN (\'%s\', \'NET\') ' \
-                'AND DIZ.CMD_STR = \'%s\';' % (device[0], cmd_str)
-        net_device = {
-            'function_code': str(DbManager.select(query)[0][0]),
-            'net_ip': str(device[1]),
-            'net_mac': str(device[2]),
-            'net_usr': str(device[3]),
-            'net_psw': str(device[4])
-        }
-        return net_device
-
-    @staticmethod
     def update_tb_net_device(net_mac, net_code=None, net_type=None, net_ip=None, net_user=None, net_psw=None, net_mac_info=None):
         query = 'UPDATE TB_NET_DEVICE SET NET_LASTUPDATE = \'%s\',' % datetime.now().strftime(XmlReader.settings['timestamp'])
         fields = {
@@ -192,6 +154,12 @@ class DbManager:
                 query = query + fields[key]
         query = query[:-1]
         query = query + ' WHERE NET_MAC = \'%s\';' % net_mac
+        DbManager.insert_or_update(query)
+        return
+
+    @staticmethod
+    def delete_tb_net_device(mac):
+        query = 'DELETE FROM TB_NET_DEVICE WHERE NET_MAC = \'%s\';' % mac
         DbManager.insert_or_update(query)
         return
 
@@ -252,12 +220,6 @@ class DbManager:
         DbManager.insert_or_update(query)
 
     @staticmethod
-    def delete_tb_net_device(mac):
-        query = 'DELETE FROM TB_NET_DEVICE WHERE NET_MAC = \'%s\';' % mac
-        DbManager.insert_or_update(query)
-        return
-
-    @staticmethod
     def select_tb_wifi():
         query = "SELECT * FROM TB_WIFI;"
         wifis = DbManager.select(query)
@@ -282,3 +244,15 @@ class DbManager:
         query = 'DELETE FROM TB_WIFI;'
         DbManager.insert_or_update(query)
         return
+
+    @staticmethod
+    def select_tb_string_from_lang_value(language, value):
+        query = 'SELECT TB_STRING.RESULT ' \
+                'FROM TB_STRING ' \
+                'WHERE LANGUAGE = \'%s\' ' \
+                'AND VALUE = \'%s\';' % (language, value)
+        stringhe = DbManager.select(query)
+        list_stringhe = []
+        for stringa in stringhe:
+            list_stringhe.append(str(stringa[0]))
+        return list_stringhe[0]

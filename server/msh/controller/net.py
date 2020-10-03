@@ -1,12 +1,12 @@
 from controller import BaseHandler
 from logging import info, exception
-from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_ps4, cmd_reboot, cmd_pc
+from module import cmd_ping, cmd_radio, cmd_esp, cmd_netscan, DbManager, set_api_response, validate_format, get_string, get_gateway, cmd_ps4, cmd_reboot, cmd_pc, evaluate
 from netifaces import AF_INET, ifaddresses
 
 
 class Net(BaseHandler):
 
-    tipo_operazione = ['scan', 'list', 'type', 'command', 'update', 'cmd']
+    tipo_operazione = ['scan', 'list', 'type', 'update', 'cmd']
     campi_aggiornabili = ['to_delete', 'net_code', 'net_type', 'net_usr', 'net_psw']
 
     def post(self):
@@ -24,7 +24,6 @@ class Net(BaseHandler):
                     'scan': Net.device_scan,
                     'list': Net.device_list,
                     'type': Net.device_type,
-                    'command': Net.device_command,
                     'update': Net.device_update,
                     'cmd': Net.device_cmd
                 }
@@ -32,7 +31,6 @@ class Net(BaseHandler):
                     'scan': [],
                     'list': [self.session.get('role')],
                     'type': [],
-                    'command': [param['net_type']],
                     'update': [param['list_up_device']],
                     'cmd': [param['dispositivo'], param['comando']]
                 }
@@ -86,8 +84,6 @@ class Net(BaseHandler):
     @staticmethod
     def check_operation_param(response, data):
         if response['output'] == 'OK':
-            if data['tipo_operazione'] == 'command':
-                response = Net.check_tipo(data)
             if data['tipo_operazione'] == 'update':
                 response = Net.check_update(data)
             if data['tipo_operazione'] == 'cmd':
@@ -163,7 +159,7 @@ class Net(BaseHandler):
     @staticmethod
     def check_mac(data):
         response = {}
-        mac_list = [d['net_mac'] for d in DbManager.select_tb_net_device()]
+        mac_list = [d['net_mac'] for d in DbManager.select_tb_net_device_and_msh_info()]
         if 'net_mac' in data and data['net_mac'] in mac_list:
             response['output'] = 'OK'
         else:
@@ -176,8 +172,8 @@ class Net(BaseHandler):
     @staticmethod
     def check_code(data):
         response = {}
-        devices = DbManager.select_tb_net_device()
-        to_update = DbManager.select_tb_net_device(data['net_mac'])[0]
+        devices = DbManager.select_tb_net_device_and_msh_info()
+        to_update = DbManager.select_tb_net_device_and_msh_info(data['net_mac'])[0]
         response['output'] = "OK"
         if 'net_code' in data:
             if data['net_code'] != "":
@@ -219,7 +215,7 @@ class Net(BaseHandler):
     @staticmethod
     def check_device(data):
         response = {}
-        code_list = [d['net_code'] for d in DbManager.select_tb_net_device()]
+        code_list = [d['net_code'] for d in DbManager.select_tb_net_device_and_msh_info()]
         if 'dispositivo' in data and data['dispositivo'] in code_list:
             response['output'] = 'OK'
         else:
@@ -232,8 +228,8 @@ class Net(BaseHandler):
     @staticmethod
     def check_command(data):
         response = {}
-        tipo = DbManager.select_tb_net_device(net_code=data['dispositivo'])[0]
-        command_list = [d['cmd_str'] for d in DbManager.select_tb_net_command_from_type(tipo['net_type'])]
+        tipo = DbManager.select_tb_net_device_and_msh_info(net_code=data['dispositivo'])[0]
+        command_list = DbManager.select_tb_net_device_type(tipo['net_type'])[0]['type_commands']
         if 'comando' in data and data['comando'] in command_list:
             response['output'] = 'OK'
         else:
@@ -254,7 +250,7 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_list(role):
-        devices = DbManager.select_tb_net_device()
+        devices = DbManager.select_tb_net_device_and_msh_info()
         if role != 'ADMIN':
             for device in devices:
                 device['net_usr'] = ''
@@ -268,16 +264,11 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_type():
+        types = DbManager.select_tb_net_device_type()
+        for typo in types:
+            del typo['type_function']
         response = {
-            'types': DbManager.select_tb_net_device_type(),
-            'output': 'OK'
-        }
-        return response
-
-    @staticmethod
-    def device_command(tipo):
-        response = {
-            'commands': DbManager.select_tb_net_command_from_type(tipo),
+            'types': types,
             'output': 'OK'
         }
         return response
@@ -321,7 +312,7 @@ class Net(BaseHandler):
     def insert_update_device(response):
         inseriti = 0
         aggiornati = 0
-        db_devices = DbManager.select_tb_net_device()
+        db_devices = DbManager.select_tb_net_device_and_msh_info()
         for device in response['devices']:
             trovato = False
             for db_device in db_devices:
@@ -344,7 +335,7 @@ class Net(BaseHandler):
     @staticmethod
     def found_duplicate_code(device):
         trovato = False
-        db_devices = DbManager.select_tb_net_device()
+        db_devices = DbManager.select_tb_net_device_and_msh_info()
         for db_device in db_devices:
             if db_device['net_code'] == device['net_code']:
                 trovato = True
@@ -371,27 +362,6 @@ class Net(BaseHandler):
 
     @staticmethod
     def device_cmd(dispositivo, comando):
-        device_command = DbManager.select_device_and_function_code_from_code_and_cmd(dispositivo, comando)
-        funzioni = {
-            '1': cmd_ping,
-            '2': cmd_pc,
-            '3': cmd_radio,
-            '4': cmd_esp,
-            '5': cmd_ps4,
-            '6': cmd_pc,
-            '7': cmd_reboot,
-            '9': cmd_pc
-        }
-        parametri = {
-            '1': [device_command['net_ip']],
-            '2': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'], device_command['net_psw'], 'net rpc shutdown -I ' + device_command['net_ip'] + ' -U ' + device_command['net_usr'] + '%' + device_command['net_psw'], 'succeeded'],
-            '3': [device_command['net_ip'], comando, device_command['net_usr'], device_command['net_psw']],
-            '4': [device_command['net_ip'], comando],
-            '5': [comando],
-            '6': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'],
-                  device_command['net_psw'], "shutdown -s now", "Shutdown NOW!"],
-            '7': [device_command['net_ip'], device_command['net_usr'], device_command['net_psw']],
-            '9': [comando, device_command['net_mac'], device_command['net_ip'], device_command['net_usr'],
-                  device_command['net_psw'], "shutdown -h now", "ORA"],
-        }
-        return funzioni[device_command['function_code']](*parametri[device_command['function_code']])
+        device = DbManager.select_tb_net_device_and_msh_info(net_code=dispositivo)[0]
+        info(DbManager.select_tb_net_device_type(device['net_type']))
+        return evaluate(DbManager.select_tb_net_device_type(device['net_type'])[0]['type_function'][comando], dev=device)

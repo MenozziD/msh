@@ -100,8 +100,8 @@ class WiFiInfo(BaseHandler):
     @staticmethod
     def wifi_list():
         response = {}
-        ap_list = DbManager.select_tb_net_device(net_type='AP')
-        db_devices = DbManager.select_tb_net_device()
+        ap_list = DbManager.select_tb_net_device_and_msh_info(net_type='AP')
+        db_devices = DbManager.select_tb_net_device_and_msh_info()
         wifi_ap_all_list = []
         for ap in ap_list:
             wifi_info = wifi_ap_info(ap['net_ip'], ap['net_usr'], ap['net_psw'], ap['net_code'])
