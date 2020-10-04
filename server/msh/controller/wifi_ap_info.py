@@ -28,7 +28,7 @@ class WiFiInfo(BaseHandler):
                 }
                 parametri = {
                     'list': [],
-                    'update': [wifi],
+                    'update': [wifi]
                 }
                 response = funzioni[tipo_operazione](*parametri[tipo_operazione])
             else:

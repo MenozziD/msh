@@ -140,3 +140,9 @@ let arduino_tabella = {
         'tipo': []
     }
 };
+let settings_data = {
+    "id": "settings",
+    "settings": {},
+    "new_settings": {},
+    "diff_settings": {}
+};

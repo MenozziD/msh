@@ -42,6 +42,14 @@
                 <div class="second-margin"></div>
                 <div class="col-logout">
                     <div class="card">
+                        <div class="card-body make-cursor my-panel-icon text-center" onclick="$('#modal_settings').modal();">
+                            <img src="/static/image/logout.png" class="img-fluid my-auto" alt="Icona di google home">
+                            <p class="font-weight-bold mb-0">IMPOSTAZIONI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-logout">
+                    <div class="card">
                         <div class="card-body make-cursor my-panel-icon text-center" onclick="logout()">
                             <img src="/static/image/logout.png" class="img-fluid my-auto" alt="Icona di google home">
                             <p class="font-weight-bold mb-0">ESCI</p>
@@ -739,6 +747,83 @@
                       <div class="col-md-4" id="tooltip_compila_upload" data-toggle="tooltip" data-placement="top" data-original-title="Campi mancanti: <ul><li>DISPOSITIVO</li><li>TIPOLOGIA</li></ul>">
                         <button id="compila_upload" disabled class="btn btn-success btn-lg btn-block" type="button" style="pointer-events: none;" onclick="upload_arduino('compile_upload')">COMPILA & UPLOAD</button>
                       </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <script id="setting-element-template" type="text/x-handlebars-template">
+            {{#each settings}}
+                {{#if_object this}}
+                    {{#each this}}
+                        {{#if_object this}}
+                            {{#each this}}
+                            <div class="col-md-4">
+                                <label for="settings_{{@../../key}}__{{@../key}}__{{@key}}" class="font-weight-bold">{{@../../key}}.{{@../key}}.{{@key}}</label>
+                                <input onchange='cambioValSettings("{{@../../key}}__{{@../key}}__{{@key}}")' type="text" class="form-control" id="settings_{{@../../key}}__{{@../key}}__{{@key}}" value="{{this}}">
+                            </div>
+                            {{/each}}
+                        {{else}}
+                        <div class="col-md-4">
+                            <label for="settings_{{@../key}}__{{@key}}" class="font-weight-bold">{{@../key}}.{{@key}}</label>
+                            <input onchange='cambioValSettings("{{@../key}}__{{@key}}")' type="text" class="form-control" id="settings_{{@../key}}__{{@key}}" value="{{this}}">
+                        </div>
+                        {{/if_object}}
+                    {{/each}}
+                {{else}}
+                <div class="col-md-4">
+                    <label for="settings_{{@key}}" class="font-weight-bold">{{@key}}</label>
+                    <input onchange='cambioValSettings("{{@key}}")' type="text" class="form-control" id="settings_{{@key}}" value="{{this}}">
+                </div>
+                {{/if_object}}
+            {{/each}}
+        </script>
+        <div class="modal fade bd-example-modal-lg" id="modal_settings">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            IMPOSTAZIONI
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div id="settings-element" class="row mb-3"></div>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div id="tooltip_reset_settings" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                          <button id="reset_settings" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="resetSettings()">RESET</button>
+                      </div>
+                      <div class="col-md-2"></div>
+                      <div id="tooltip_salva_settings" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                            <button id="salva_settings" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogoSettings()">SALVA</button>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal bd-example-modal-lg" id="modal_recap_change_settings">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            RIEPILOGO MODIFICHE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="recap_settings" class="col-12" style="white-space: pre-wrap"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="settings('update')" data-dismiss="modal">CONFERMA</button>
+                      </div>
+                      <div class="col-md-2"></div>
                   </div>
                 </div>
             </div>

@@ -24,6 +24,7 @@ class Msh:
         ('/api/upload_arduino', 'controller.UploadArduino'),
         ('/api/update_last_version', 'controller.UpdateLastVersion'),
         ('/logout', 'controller.Logout'),
+        ('/api/settings', 'controller.Settings'),
         ('/favicon.ico', 'controller.Icon'),
         ('/', 'controller.Index'),
         (r'/static/(.*)', 'controller.Static'),
@@ -44,9 +45,9 @@ class Msh:
         porta = '65177'
         Msh.start_service('oauth')
         if Msh.check_server_connection("http://www.google.com", 15, 5):
-            for servizio in XmlReader.settings['dns']:
-                if servizio['abil'] == 's':
-                    Msh.start_dns_service(servizio)
+            for (key, value) in XmlReader.settings['dns'].items():
+                if value['abil'] == 's':
+                    Msh.start_dns_service(key, value)
         if len(Msh.service_avaiable) == 0:
             info("Avvio solo in locale")
             XmlReader.settings['protocol'] = 'http://'
@@ -63,13 +64,13 @@ class Msh:
         DbManager.close_db()
 
     @staticmethod
-    def start_dns_service(servizio):
+    def start_dns_service(nome, servizio):
         if Msh.check_server_connection(servizio['test_url'], 2, 2):
-            Msh.start_service(servizio['name'])
+            Msh.start_service(nome)
             oauth_url = "https://" + servizio['subdomain_oauth'] + servizio['domain']
             webapp_url = "https://" + servizio['subdomain_webapp'] + servizio['domain']
-            if not Msh.final_check(servizio['name'], oauth_url):
-                Msh.service_avaiable.append(servizio['name'])
+            if not Msh.final_check(nome, oauth_url):
+                Msh.service_avaiable.append(nome)
                 Msh.oauth_urls.append(oauth_url)
                 Msh.webapp_urls.append(webapp_url)
 

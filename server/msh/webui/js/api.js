@@ -1,5 +1,4 @@
 function net(type_op){
-    let type = null;
     let dispositivo = null;
     let comando = null;
     let list_up_device = [];
@@ -294,6 +293,46 @@ function upload_arduino(tipo_op){
                     $('#errore_title').text(json["result"]);
                     $('#esito_upload')[0].value = json["result"];
                 }
+            }
+        },
+        error: function(xhr){
+        }
+    });
+}
+
+function settings(tipo_op){
+    let sett = null;
+    if (tipo_op === "update"){
+        sett = settings_data['diff_settings'];
+    }
+    let body = {
+        "tipo_operazione": tipo_op
+    };
+    if (sett != null)
+        body['settings'] = sett;
+    $.blockUI();
+    $.ajax({
+        url: "/api/settings",
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify(body),
+        success: function (response) {
+            let json = $.parseJSON(JSON.stringify(response));
+            $.unblockUI();
+            if (json["output"].search("OK") === 0) {
+                if (tipo_op === 'list') {
+                    settings_data['settings'] = Object.assign({}, json['settings']);
+                    settings_data['new_settings'] = $.extend(true, {}, settings_data['settings']);
+                    createSettings();
+                }
+                if (tipo_op === 'update') {
+                    settings('list');
+                }
+            } else {
+                $("#error_modal").modal();
+                $('#errore').text(json["output"]);
+                $('#errore_title').text(json["result"]);
+                $('#esito_upload')[0].value = json["result"];
             }
         },
         error: function(xhr){

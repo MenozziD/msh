@@ -13,6 +13,13 @@ function carica(){
             return opts.inverse(this);
         }
     });
+    Handlebars.registerHelper('if_object', function(a, opts) {
+        if (typeof a == "object") {
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
     Handlebars.registerHelper('if_not_eq', function(a, b, opts) {
         if (a === b) {
             return opts.inverse(this);
@@ -47,6 +54,7 @@ function carica(){
     user('list');
     upload_arduino('core');
     upload_arduino('tipo');
+    settings('list');
     wifi('list');
     let modal_user = $('#modal_user');
     let modal_wifi = $('#modal_wifi');
@@ -79,6 +87,9 @@ function carica(){
     $('#modal_search').on('hide.bs.modal', function () {
         let field_list = ['found', 'new', 'update'];
         cleanFields(field_list);
+    });
+    $('#modal_settings').on('hide.bs.modal', function () {
+        resetSettings();
     });
     $('#modal_exec_cmd').on('hide.bs.modal', function () {
         let field_list = ['device_device', 'command_device', 'cmd_result'];
@@ -203,4 +214,101 @@ function checkActionExecutable(){
         disabilButtonTooltip("compila_upload", mex);
 
     }
+}
+
+function cambioValSettings(key){
+    if (key.search("__") > 0){
+        let keys = key.split("__");
+        if (keys.length === 2){
+            settings_data['new_settings'][keys[0]][keys[1]] = $('#' + settings_data['id'] + "_" + keys[0] + "__" + keys[1])[0].value;
+        }
+        if (keys.length === 3){
+            settings_data['new_settings'][keys[0]][keys[1]][keys[2]] = $('#' + settings_data['id'] + "_" + keys[0] + "__" + keys[1] + "__" + keys[2])[0].value;
+        }
+    } else {
+        settings_data['new_settings'][key] = $('#' + settings_data['id'] + "_" + key)[0].value;
+    }
+    abilButtonSettings();
+}
+
+function abilButtonSettings(){
+    let mex = "È necessario modificare almeno un valore per attivare questa funzione";
+    if (JSON.stringify(settings_data['settings']) !== JSON.stringify(settings_data['new_settings'])) {
+        abilButtonTooltip("reset_" + settings_data['id']);
+        abilButtonTooltip("salva_" + settings_data['id']);
+    } else {
+        disabilButtonTooltip("reset_" + settings_data['id'], mex);
+        disabilButtonTooltip("salva_" + settings_data['id'], mex);
+    }
+}
+
+function resetSettings(){
+    settings_data["new_settings"] = $.extend(true, {}, settings_data['settings']);
+    createSettings();
+}
+
+function createSettings(){
+    let template = Handlebars.compile($('#setting-element-template')[0].innerHTML);
+    $('#settings-element').html(template(settings_data));
+    $('[data-toggle="tooltip"]').tooltip({html: true});
+    abilButtonSettings();
+}
+
+function checkChangeSettings(key){
+    let mex = "";
+    if (key.search("__") > 0) {
+        let keys = key.split("__");
+        if (keys.length === 2) {
+            if (settings_data['settings'][keys[0]][keys[1]] !== settings_data['new_settings'][keys[0]][keys[1]]) {
+                mex = "\t# Cambiata impostazione " + keys[0] + "." + keys[1] + " da " + settings_data['settings'][keys[0]][keys[1]] + " a " + settings_data['new_settings'][keys[0]][keys[1]] + "\n";
+                if (typeof settings_data['diff_settings'][keys[0]] === 'undefined')
+                    settings_data['diff_settings'][keys[0]] = {};
+                settings_data['diff_settings'][keys[0]][keys[1]] = settings_data['new_settings'][keys[0]][keys[1]];
+            }
+        }
+        if (keys.length === 3) {
+            if (settings_data['settings'][keys[0]][keys[1]][keys[2]] !== settings_data['new_settings'][keys[0]][keys[1]][keys[2]]) {
+                mex = "\t# Cambiata impostazione " + keys[0] + "." + keys[1] + "." + keys[2] + " da " + settings_data['settings'][keys[0]][keys[1]][keys[2]] + " a " + settings_data['new_settings'][keys[0]][keys[1]][keys[2]] + "\n";
+                if (typeof settings_data['diff_settings'][keys[0]] === 'undefined')
+                    settings_data['diff_settings'][keys[0]] = {};
+                if (typeof settings_data['diff_settings'][keys[0]][keys[1]] === 'undefined')
+                    settings_data['diff_settings'][keys[0]][keys[1]] = {};
+                settings_data['diff_settings'][keys[0]][keys[1]][keys[2]] = settings_data['new_settings'][keys[0]][keys[1]][keys[2]];
+            }
+        }
+    } else {
+        if (settings_data['settings'][key] !== settings_data['new_settings'][key]) {
+            mex = "\t# Cambiata impostazione " + key + " da " + settings_data['settings'][key] + " a " + settings_data['new_settings'][key] + "\n";
+            settings_data['diff_settings'][key] = settings_data['new_settings'][key];
+        }
+    }
+    return mex;
+}
+
+function getRiepilogoSettings(){
+    let message = "Modificate impostazioni: \n";
+    settings_data['diff_settings'] = {};
+    if (JSON.stringify(settings_data['settings']) !== JSON.stringify(settings_data['new_settings'])){
+        let keys = Object.keys(settings_data['settings']);
+        for (let i=0; i < keys.length; i++) {
+            if (typeof settings_data['settings'][keys[i]] == "object"){
+                let keys1 = Object.keys(settings_data['settings'][keys[i]]);
+                for (let j=0; j < keys1.length; j++) {
+                    if (typeof settings_data['settings'][keys[i]][keys1[j]] == "object"){
+                        let keys2 = Object.keys(settings_data['settings'][keys[i]][keys1[j]]);
+                        for (let k=0; k < keys2.length; k++) {
+                            message = message + checkChangeSettings(keys[i] + "__" + keys1[j] + "__" + keys2[k]);
+                        }
+                    } else {
+                        message = message + checkChangeSettings(keys[i] + "__" + keys1[j]);
+                    }
+                }
+            } else {
+                message = message + checkChangeSettings(keys[i]);
+            }
+        }
+        message = message + "\n"
+    }
+    $('#recap_' + settings_data['id']).text(message);
+    $('#modal_recap_change_' + settings_data['id']).modal();
 }

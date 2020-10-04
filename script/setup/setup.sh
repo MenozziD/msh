@@ -441,6 +441,14 @@ sudo echo "<settings>
 	<path_datastore>../oauth/datastore.js</path_datastore>
 	<timestamp>%Y-%m-%d %H:%M:%S</timestamp>
 	<project_id_google_actions>$1</project_id_google_actions>
+	<wifi_default>
+	  <ssid></ssid>
+	  <password></password>
+	</wifi_default>
+	<!-- n/s -->
+	<net_on_google>n</net_on_google>
+	<!-- n/s -->
+	<wifi_on_google>n</wifi_on_google>
 	<dns>
 		<serveo>
 			<!-- n/s -->
