@@ -7,14 +7,14 @@ from module import XmlReader
 class Index(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        self.redirect(XmlReader.settings['protocol'] + self.request.url.split("//")[1].split("/")[0] + '/static/page/index.html')
+        self.redirect(XmlReader.settings['protocol'] + self.request.url.split("//")[1].split("/")[0] + '/static/page/test.html')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 
 class Icon(BaseHandler):
     def get(self):
         info("%s %s", self.request.method, self.request.url)
-        self.redirect(XmlReader.settings['protocol'] + self.request.url.split("//")[1].split("/")[0] + '/static/image/hub.png')
+        self.redirect(XmlReader.settings['protocol'] + self.request.url.split("//")[1].split("/")[0] + '/static/image/logo.png')
         info("RESPONSE CODE: %s to %s", self.response.status, self.response.headers['Location'])
 
 

@@ -21,27 +21,31 @@
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 
     <!-- Custom styles for this template -->
-    <link href="C:\Progetti\msh\server\msh\webui\css\test.css" rel="stylesheet">
-    <script src="C:\Progetti\msh\server\msh\webui\js\test.js"></script>
+    <link rel="stylesheet" href="/static/css/home_test.css">
+
+    <script src="/static/js/api_test.js"></script>
+    <script src="/static/js/cross_test.js"></script>
+    <script src="/static/js/table_test.js"></script>
+    <script src="/static/js/strutture.js"></script>
 
   </head>
 
-  <body onload="feather.replace();carica_pag('home')">
+  <body onload="feather.replace();carica()" class="zoomed">
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
-        <img src="file:///C:/Progetti/msh/server/msh/webui/image/logo.png" class="" style="width: 12%;">
+        <img src="/static/image/logo.png" class="icona-titolo">
         MSHub
       </a>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Logout</a>
+          <a class="nav-link" onclick="logout()">Logout</a>
         </li>
       </ul>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar" >
+      <div class="row mt-6 mr-0">
+        <!-- MENU SINISTRA -->
+        <nav class="col-md-2 d-md-block bg-light sidebar" style="margin-top: 3%;">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
@@ -78,72 +82,326 @@
           </div>
         </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-          <div class="container" id="form-main"></div>
-          <script id="form_home" type="text/x-handlebars-template">
+        <!-- FORM PRINCIPALE -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="container" id="form-main"></div>
+            <div id="table-device" class="row d-none"></div>
+            <script id="table-home-template" type="text/x-handlebars-template">
               {{#if visibility}}
-              <h2 id="title_home">Home</h2>
-              <div class="card">
-                <div class="card-body">
-                  <div class="row align-items-center">
-                    <div class="col">
-
-                      <!-- Title -->
-                      <h6 class="text-uppercase text-muted mb-2">
-                        Value
-                      </h6>
-
-                      <!-- Heading -->
-                      <span class="h2 mb-0">
-                        $24,500
-                      </span>
-
-                      <!-- Badge -->
-                      <span class="badge badge-soft-success mt-n1">
-                        +3.5%
-                      </span>
+              <h2 id="title_home" class="mt-2">Home</h2>
+              <div class="row" >
+                <div class="col-md-3 card" >
+                  <div class="card-body">
+                    <div class="row align-items-center">
+                      <div class="col">
+                        <!-- Title -->
+                        <h6 class="text-uppercase text-muted mb-2">
+                          Tempo di Atività:
+                        </h6>
+                        <!-- Heading -->
+                        <span class="h2 mb-0">
+                          <div class="card-text"> 01:25:32 ore </div>
+                        </span>
+                      </div>
                     </div>
-                    <div class="col-auto">
-
-                      <!-- Icon -->
-                      <span class="h2 fe fe-dollar-sign text-muted mb-0"></span>
-
+                  </div>
+                </div>
+                <div class="col-md-3 card" >
+                  <div class="card-body">
+                    <div class="row align-items-center">
+                      <div class="col">
+                        <!-- Title -->
+                        <h6 class="text-uppercase text-muted mb-2">
+                          Dispositivi Online:
+                        </h6>
+                        <!-- Heading -->
+                        <span class="h2 mb-0">
+                          <div class ="card-text"> 7 dispositivi </div>
+                        </span>
+                      </div>
                     </div>
-                  </div> <!-- / .row -->
+                  </div>
                 </div>
               </div>
               {{/if}}
         </script>
-          <script id="form_device" type="text/x-handlebars-template">
-              <h2 id="title_device">Dispositivi</h2>
-              <div class="table-responsive">
-                <table class="table table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>CODICE</th>
-                      <th>TIPO</th>
-                      <th>IP</th>
-                      <th>MAC</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {{#each devices}}
-                    <tr>
-                      <td>#</td>
-                      <td>{{net_code}}</td>
-                      <td>{{net_type}}</td>
-                      <td>{{net_ip}}</td>
-                      <td>{{net_mac}}</td>
-                    </tr>
-                  {{/each}}
-                  </tbody>
-                </table>
+            <script id="table-device-template" type="text/x-handlebars-template">
+                <h2 class="col-md-12 mt-2">Dispositivi</h2>
+                <div class="col-md-5">
+                    <div class="my-3 p-2 bg-border rounded shadow-sm row" >
+                            {{#if_eq devices.length 0}}
+                            <h6 class="col-md-12 font-weight-bold text-center mb-3">Non sono presenti device!</h6>
+                            {{else}}
+                            <table class="col-md-12 table table-sm table-responsive my-table-device bg-card-body" id="colonna-table-device">
+                                <thead>
+                                    <tr>
+                                        {{#if_eq user_role "ADMIN"}}
+                                        <th class="my-text-table col-check"></th>
+                                        {{/if_eq}}
+                                        <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code', device_tabella)">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type', device_tabella)">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                                        <th class="my-text-table col-exec"></th>
+                                        <th class="my-text-table col-info"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {{#each devices}}
+                                    <tr>
+                                        {{#if_eq ../user_role "ADMIN"}}
+                                        <td class="my-text-table">
+                                                <form>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <div class="input-group input-group-sm mb-3">
+                                                        {{#if to_delete}}
+                                                            <input type="checkbox" onchange="cambioVal({{@index}}, device_tabella)" checked class="custom-control-input" id="checkbox_device{{@index}}">
+                                                        {{else}}
+                                                            <input type="checkbox" onchange="cambioVal({{@index}}, device_tabella)" class="custom-control-input" id="checkbox_device{{@index}}">
+                                                        {{/if}}
+                                                            <label class="custom-control-label" for="checkbox_device{{@index}}"></label>
+                                                        </div>
+                                                  </div>
+                                                </form>
+                                            </td>
+                                        {{/if_eq}}
+                                        <td class="my-text-table">
+                                            {{#if_eq ../user_role "ADMIN"}}
+                                                <input type="text" class="form-control form-control-sm form-control-tb font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">
+                                                <!--<input class="form-control font-weight-bold" onchange="cambioVal({{@index}}, device_tabella)" style="float: left" type="text" id="code{{@index}}" value="{{net_code}}">-->
+                                            {{else}}
+                                                <span class="font-weight-bold" id="code{{@index}}">{{net_code}}</span>
+                                            {{/if_eq}}
+                                        </td>
+                                        <td class="my-text-table">
+                                            <div class="dropdown{{@index}} ">
+                                                {{#if_eq ../user_role "ADMIN"}}
+                                                 <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device{{@index}}" onclick="viewDrop('{{@index}}', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="{{net_type}}">{{net_type}}</button>
+                                                {{else}}
+                                                 <span class="font-weight-bold" id="types_device{{@index}}">{{net_type}}</span>
+                                                {{/if_eq}}
+                                                <ul class="dropdown-menu scrollable-menu" id="drop_types_device{{@index}}"></ul>
+                                            </div>
+                                        </td>
+                                        <td class="my-text-table"><button type="button" class="btn btn-info btn-block btn-tb-sm">e</button></td>
+                                        <td class="my-text-table"><button type="button" class="btn btn-info btn-block btn-tb-sm">...</button> </td>
+                                    </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                            <div class="col-md-12">
+                                <nav class="font-weight-bold">
+                                    <ul class="pagination justify-content-center mb-0" style="color: white;">
+                                        <li><a class="page-link page-link-i"  onclick="changePage(1, device_tabella)">PRIMA</a></li>
+                                        <li>
+                                          <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, device_tabella)">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                          </a>
+                                        </li>
+                                        {{#if_mag current_page 4 pages 'device_tabella'}}
+                                        <li id="d{{dif current_page 4}}"><a class="page-link"  onclick="changePage({{dif current_page 4}}, device_tabella)">{{dif current_page 4}}</a></li>
+                                        {{/if_mag}}
+                                        {{#if_mag current_page 3 pages 'device_tabella'}}
+                                        <li id="d{{dif current_page 3}}"><a class="page-link"  onclick="changePage({{dif current_page 3}}, device_tabella)">{{dif current_page 3}}</a></li>
+                                        {{/if_mag}}
+                                        {{#if_mag current_page 2 pages 'device_tabella'}}
+                                        <li id="d{{dif current_page 2}}"><a class="page-link"  onclick="changePage({{dif current_page 2}}, device_tabella)">{{dif current_page 2}}</a></li>
+                                        {{/if_mag}}
+                                        {{#if_mag current_page 1 pages 'device_tabella'}}
+                                        <li id="d{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, device_tabella)">{{dif current_page 1}}</a></li>
+                                        {{/if_mag}}
+                                        <li id="d{{current_page}}" class="active"><a class="page-link" >{{current_page}}</a></li>
+                                        {{#if_min current_page 1 pages 'device_tabella'}}
+                                        <li id="d{{sum current_page 1}}"><a class="page-link"  onclick="changePage({{sum current_page 1}}, device_tabella)">{{sum current_page 1}}</a></li>
+                                        {{/if_min}}
+                                        {{#if_min current_page 2 pages 'device_tabella'}}
+                                        <li id="d{{sum current_page 2}}"><a class="page-link"  onclick="changePage({{sum current_page 2}}, device_tabella)">{{sum current_page 2}}</a></li>
+                                        {{/if_min}}
+                                        {{#if_min current_page 3 pages 'device_tabella'}}
+                                        <li id="d{{sum current_page 3}}"><a class="page-link"  onclick="changePage({{sum current_page 3}}, device_tabella)">{{sum current_page 3}}</a></li>
+                                        {{/if_min}}
+                                        {{#if_min current_page 4 pages 'device_tabella'}}
+                                        <li id="d{{sum current_page 4}}"><a class="page-link"  onclick="changePage({{sum current_page 4}}, device_tabella)">{{sum current_page 4}}</a></li>
+                                        {{/if_min}}
+                                        <li>
+                                            <a class="page-link" aria-label="Next" onclick="changePage({{sum current_page 1}}, device_tabella)">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                        <li><a class="page-link page-link-f"  onclick="changePage({{pages}}, device_tabella)">ULTIMA</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            {{/if_eq}}
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="my-3 p-2 bg-border rounded shadow-sm" >
+                            <h2>Dispositivo</h2>
+                            <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_reset_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
+                </div>
+                {{else}}
+                <div class="col-md-1"></div>
+                {{/if_eq}}
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_salva_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
+                </div>
+                {{else}}
+                <div class="col-md-1"></div>
+                {{/if_eq}}
+            </script>
+            <script id="table-user-template" type="text/x-handlebars-template">
+              <h2 id="title_user" class="mt-2">Utenti</h2>
+              <div class="col-md-12">
+                  <table id="colonna-table-user" class="table table-responsive">
+                      <thead>
+                          <tr>
+                              {{#if_eq user_role "ADMIN"}}
+                                  <th class="my-text-table col-check"><i id="trash_user" class="fa fa-trash make-cursor" aria-hidden="true" onclick="selectAll(user_tabella)"></i></th>
+                              {{/if_eq}}
+                              <th class="my-text-table col-username"><a class="make-cursor" onclick="sortTable('username', user_tabella)">USERNAME <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                              <th class="my-text-table col-password-us"><a class="make-cursor" onclick="sortTable('password', user_tabella)">PASSWORD <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                              <th class="my-text-table col-ruolo"><a class="make-cursor" onclick="sortTable('role', user_tabella)">RUOLO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {{#each users}}
+                              <tr>
+                                  {{#if_eq ../user_role "ADMIN"}}
+                                  <td class="my-text-table">
+                                    {{#if to_add}}
+                                    <button id="checkbox_user{{@index}}" class="btn btn-danger btn-circle font-weight-bold button-del-add" type="button" onclick="removeElement({{@index}}, user_tabella);"></button>
+                                    {{else}}
+                                    <form>
+                                      <div class="custom-control custom-checkbox">
+                                      {{#if to_delete}}
+                                          <input type="checkbox" onchange="cambioVal({{@index}}, user_tabella)" checked class="custom-control-input" id="checkbox_user{{@index}}">
+                                      {{else}}
+                                          <input type="checkbox" onchange="cambioVal({{@index}}, user_tabella)" class="custom-control-input" id="checkbox_user{{@index}}">
+                                      {{/if}}
+                                          <label class="custom-control-label" for="checkbox_user{{@index}}"></label>
+                                      </div>
+                                    </form>
+                                    {{/if}}
+                                  </td>
+                                  {{/if_eq}}
+                                  <td class="my-text-table">
+                                      <span id="username{{@index}}" class="font-weight-bold">{{username}}</span>
+                                  </td>
+                                  <td class="my-text-table">
+                                      <div class="input-group">
+                                          {{#if_eq username ../user_username}}
+                                          <input class="form-control font-weight-bold" onchange="cambioVal({{@index}}, user_tabella)" id="psw_user{{@index}}" value="{{password}}" type="password">
+                                          {{else}}
+                                          <input class="form-control font-weight-bold" readonly id="psw_user{{@index}}" value="{{password}}" type="password">
+                                          {{/if_eq}}
+                                          <div class="input-group-append">
+                                              <button class="btn btn-primary input-group-button btn-pass" onclick="viewPassword({{@index}}, user_tabella)">
+                                                  <i id="psw_icon_user{{@index}}" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </td>
+                                  <td class="my-text-table">
+                                      <div class="dropdown{{@index}}">
+                                          {{#if_eq ../user_role "ADMIN"}}
+                                              <button class="btn btn-sm btn-block dropdown-toggle font-weight-bold" type="button" data-toggle="dropdown" id="role_user{{@index}}" value="{{role}}" onclick="viewDrop('{{@index}}', 'role', user_tabella, 'cambioVal(id, struct_tabella)')">{{role}}</button>
+                                          {{else}}
+                                              <span class="font-weight-bold" id="role_user{{@index}}">{{role}}</span>
+                                          {{/if_eq}}
+                                          <ul class="dropdown-menu scrollable-menu" id="drop_role_user{{@index}}">
+                                          </ul>
+                                      </div>
+                                  </td>
+                              </tr>
+                          {{/each}}
+                      </tbody>
+                  </table>
+              </div>
+              {{#if_eq user_role "ADMIN"}}
+                <div class="col-md-6"></div>
+                <div id="tooltip_plus_user">
+                  <button id="plus_user" class="btn btn-success btn-lg btn-block btn-circle font-weight-bold" type="button" onclick="$('#modal_add_user').modal();">+</button>
+                </div>
+                <div class="col-md-5"></div>
+              {{/if_eq}}
+              <div id="tooltip_reset_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                  <button id="reset_user" disabled style="pointer-events: none;" class="btn btn-warning btn-lg btn-block" type="button" onclick="reset(user_tabella)">RESET</button>
+              </div>
+              <div class="col-md-6">
+                <nav class="font-weight-bold">
+                  <ul class="pagination justify-content-center mb-0">
+                      <li><a class="page-link" onclick="changePage(1, user_tabella)">PRIMA</a></li>
+                      <li>
+                          <a class="page-link" aria-label="Previous" onclick="changePage({{dif current_page 1}}, user_tabella)">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                    {{#if_mag current_page 4 pages 'user_tabella'}}
+                        <li id="u{{dif current_page 4}}"><a class="page-link" onclick="changePage({{dif current_page 4}}, user_tabella)">{{dif current_page 4}}</a></li>
+                    {{/if_mag}}
+                      {{#if_mag current_page 3 pages 'user_tabella'}}
+                        <li id="u{{dif current_page 3}}"><a class="page-link" onclick="changePage({{dif current_page 3}}, user_tabella)">{{dif current_page 3}}</a></li>
+                    {{/if_mag}}
+                    {{#if_mag current_page 2 pages 'user_tabella'}}
+                    <li id="u{{dif current_page 2}}"><a class="page-link" onclick="changePage({{dif current_page 2}}, user_tabella)">{{dif current_page 2}}</a></li>
+                    {{/if_mag}}
+                    {{#if_mag current_page 1 pages 'user_tabella'}}
+                      <li id="u{{dif current_page 1}}"><a class="page-link" onclick="changePage({{dif current_page 1}}, user_tabella)">{{dif current_page 1}}</a></li>
+                    {{/if_mag}}
+                      <li id="u{{current_page}}" class="active"><a class="page-link">{{current_page}}</a></li>
+                    {{#if_min current_page 1 pages 'user_tabella'}}
+                      <li id="u{{sum current_page 1}}"><a class="page-link" onclick="changePage({{sum current_page 1}}, user_tabella)">{{sum current_page 1}}</a></li>
+                    {{/if_min}}
+                      {{#if_min current_page 2 pages 'user_tabella'}}
+                      <li id="u{{sum current_page 2}}"><a class="page-link" onclick="changePage({{sum current_page 2}}, user_tabella)">{{sum current_page 2}}</a></li>
+                    {{/if_min}}
+                      {{#if_min current_page 3 pages 'user_tabella'}}
+                      <li id="u{{sum current_page 3}}"><a class="page-link" onclick="changePage({{sum current_page 3}}, user_tabella)">{{sum current_page 3}}</a></li>
+                    {{/if_min}}
+                      {{#if_min current_page 4 pages 'user_tabella'}}
+                      <li id="u{{sum current_page 4}}"><a class="page-link" onclick="changePage({{sum current_page 4}}, user_tabella)">{{sum current_page 4}}</a></li>
+                    {{/if_min}}
+                      <li>
+                      <a class="page-link" aria-label="Next" onclick="changePage({{sum current_page 1}}, user_tabella)">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    <li><a class="page-link" onclick="changePage({{pages}}, user_tabella)">ULTIMA</a></li>
+                  </ul>
+                </nav>
+              </div>
+              <div id="tooltip_salva_user" class="col-md-3" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="salva_user" disabled style="pointer-events: none;" class="btn btn-success btn-lg btn-block" type="button" onclick="getRiepilogo(user_tabella)">SALVA</button>
               </div>
             </script>
-          <script id="form_user" type="text/x-handlebars-template">
+            <script id="table-dev-template" type="text/x-handlebars-template">
               {{#if visibility}}
-              <h2 id="title_user">Utenti</h2>
+              <h2 id="title_dev" class="mt-2">Sviluppo</h2>
               <div class="my-3 p-3 bg-white rounded shadow-sm"  >
                 <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"></rect><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
                 <h6 class="border-bottom border-gray pb-2 mb-0">DNS</h6>
@@ -169,67 +427,161 @@
                 </div>
               </div>
               {{/if}}
-        </script>
-          <script id="form_dev" type="text/x-handlebars-template">
-              {{#if visibility}}
-              <h2 id="title_dev">Sviluppo</h2>
-              <div class="my-3 p-3 bg-white rounded shadow-sm"  >
-                <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"></rect><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
-                <h6 class="border-bottom border-gray pb-2 mb-0">DNS</h6>
-                <div class="media text-muted pt-3">
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.abil</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
-                <div class="media text-muted pt-3">
-                  <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#e83e8c"></rect><text x="50%" y="50%" fill="#e83e8c" dy=".3em">32x32</text></svg>
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.subdomain_oauth</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
-                <div class="media text-muted pt-3">
-                  <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#6f42c1"></rect><text x="50%" y="50%" fill="#6f42c1" dy=".3em">32x32</text></svg>
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.subdomain_oauth</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
+            </script>
+            <script id="table-set-template" type="text/x-handlebars-template">
+            {{#if visibility}}
+            <h2 id="title_set" class="mt-2">Impostazioni</h2>
+            <div class="my-3 p-3 bg-white rounded shadow-sm" id="set_DNS" >
+              <h6 class="border-bottom border-gray pb-2 mb-0 ml-1">DNS</h6>
+              <div class="media text-muted pt-1">
+                  <div class="row h-100 border-bottom border-gray ml-1" style="width: 100%" >
+                    <div class="col-sm-3 my-auto" >
+                      <strong class="d-block text-gray-dark">dns.pagekite.abil</strong>
+                    </div>
+                    <div class="col-sm-4 pb-1 my-auto" >
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                          Yes
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#">Action</a>
+                          <a class="dropdown-item" href="#">Another action</a>
+                          <a class="dropdown-item" href="#">Something else here</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">Separated link</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col sm-5 my-auto" >
+                      <p class="media-body pb-1 mb-0 small lh-125">
+                        Donec id elit non mi porta gravida at eget metus.
+                      </p>
+                    </div>
+                  </div>
               </div>
-              {{/if}}
-        </script>
-          <script id="form_set" type="text/x-handlebars-template">
-              {{#if visibility}}
-              <h2 id="title_set">Impostazioni</h2>
-              <div class="my-3 p-3 bg-white rounded shadow-sm" id="settings" >
-                <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#007bff"></rect><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
-                <h6 class="border-bottom border-gray pb-2 mb-0">DNS</h6>
-                <div class="media text-muted pt-3">
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.abil</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
-                <div class="media text-muted pt-3">
-                  <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#e83e8c"></rect><text x="50%" y="50%" fill="#e83e8c" dy=".3em">32x32</text></svg>
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.subdomain_oauth</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
-                <div class="media text-muted pt-3">
-                  <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 32x32"><title>Placeholder</title><rect width="100%" height="100%" fill="#6f42c1"></rect><text x="50%" y="50%" fill="#6f42c1" dy=".3em">32x32</text></svg>
-                  <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <strong class="d-block text-gray-dark">dns.pagekite.subdomain_oauth</strong>
-                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-                  </p>
-                </div>
+              <div class="media text-muted pt-1">
+                  <div class="row h-100 border-bottom border-gray ml-1" style="width: 100%" >
+                    <div class="col-sm-3 my-auto" >
+                      <strong class="d-block text-gray-dark">dns.pagekite.subdomain_oauth</strong>
+                    </div>
+                    <div class="col-sm-4 pb-1 my-auto" >
+                      <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                      </div>
+                    </div>
+                    <div class="col-sm-5 my-auto" >
+                      <p class="media-body pb-1 mb-0 small lh-125">
+                        Donec id elit non mi porta gravida at eget metus.
+                      </p>
+                    </div>
+                  </div>
               </div>
-              {{/if}}
-        </script>
+              <div class="media text-muted pt-1">
+                  <div class="row h-100 border-bottom border-gray ml-1" style="width: 100%" >
+                    <div class="col-sm-3 my-auto" >
+                      <strong class="d-block text-gray-dark">dns.pagekite.subdomain_webapp</strong>
+                    </div>
+                    <div class="col-sm-4 pb-1 my-auto" >
+                      <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                      </div>
+                    </div>
+                    <div class="col-sm-5 my-auto" >
+                      <p class="media-body pb-1 mb-0 small lh-125">
+                        Donec id elit non mi porta gravida at eget metus.
+                      </p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="my-3 p-3 bg-white rounded shadow-sm" id="set_GOOGLE" >
+              <h6 class="border-bottom border-gray pb-2 mb-0">DNS</h6>
+              <div class="media text-muted pt-1">
+                  <div class="row h-100 border-bottom border-gray" style="width: 100%" >
+                    <div class="col md-1 my-auto" >
+                      <strong class="d-block text-gray-dark">dns.pagekite.abil</strong>
+                    </div>
+                    <div class="col-md-2 pb-1 my-auto" >
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                          Yes
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#">Action</a>
+                          <a class="dropdown-item" href="#">Another action</a>
+                          <a class="dropdown-item" href="#">Something else here</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">Separated link</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col sm-6 my-auto" >
+                      <p class="media-body pb-1 mb-0 small lh-125">
+                        Donec id elit non mi porta gravida at eget metus.
+                      </p>
+                    </div>
+                  </div>
+              </div>
+              <div class="media text-muted pt-1">
+                  <div class="row h-100 border-bottom border-gray" style="width: 100%" >
+                    <div class="col md-1 my-auto" >
+                      <strong class="d-block text-gray-dark">dns.pagekite.abil</strong>
+                    </div>
+                    <div class="col-md-2 pb-1 my-auto" >
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                          Yes
+                        </button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#">Action</a>
+                          <a class="dropdown-item" href="#">Another action</a>
+                          <a class="dropdown-item" href="#">Something else here</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">Separated link</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col sm-6 my-auto" >
+                      <p class="media-body pb-1 mb-0 small lh-125">
+                        Donec id elit non mi porta gravida at eget metus.
+                      </p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            {{/if}}
+            </script>
         </main>
       </div>
-    </div>
+          <div class="modal bd-example-modal-lg" id="modal_recap_change_device">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="col-11 modal-title text-center">
+                            RIEPILOGO MODIFICHE
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <h5 id="recap_device" class="col-12" style="white-space: pre-wrap"></h5>
+                  </div>
+                  <div class="modal-footer">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                      </div>
+                      <div class="col-md-4">
+                        <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('update')" data-dismiss="modal">CONFERMA</button>
+                      </div>
+                      <div class="col-md-2"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+          <script id="drop-template" type="text/x-handlebars-template">
+            {{#each this}}
+                <li class="dropdown-item font-weight-bold">{{this}}</li>
+            {{/each}}
+        </script>
   </body>
 </html>
