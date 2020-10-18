@@ -67,7 +67,9 @@ function carica_pag(lnk_pag){
 
     //Attivo Colorazione Selezionato su Target
     $('#lnk_'.concat(lnk_pag)).attr('class', 'nav-link active');
+
     if(lnk_pag==='device') {
+        $('#title').html('Dispositivi');
         net('list');
         $('#table-device').removeClass("d-none");
     }
