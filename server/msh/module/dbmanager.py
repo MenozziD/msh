@@ -2,7 +2,7 @@ from sqlite3 import Error, connect
 from logging import info
 from module import XmlReader
 from datetime import datetime
-from json import loads
+from json import loads, dumps
 
 
 class DbManager:
@@ -60,11 +60,13 @@ class DbManager:
         net_devices_type = DbManager.select(query)
         devices_types = []
         for net_device_type in net_devices_type:
+            info(str(net_device_type[0]))
             tb_net_device_type = {
                 'type_code': str(net_device_type[0]),
                 'type_description': str(net_device_type[1]),
                 'type_commands': list(loads(str(net_device_type[7])).keys()),
-                'type_function': loads(str(net_device_type[7]))
+                'type_function': loads(str(net_device_type[7])),
+                'type_config': loads(str(net_device_type[8])),
             }
             devices_types.append(tb_net_device_type)
         return devices_types
@@ -89,22 +91,21 @@ class DbManager:
         for net_device in net_devices:
             tb_net_device = {
                 'net_code': str(net_device[0]),
-                'net_desc': str(net_device[1]),
-                'net_type': str(net_device[2]),
-                'net_last_update': str(net_device[3]),
-                'net_ip': str(net_device[4]),
-                'net_mac': str(net_device[5]),
-                'net_usr': str(net_device[6]),
-                'net_psw': str(net_device[7]),
-                'net_mac_info': str(net_device[8]),
-                'commands': list(loads(str(net_device[9])).keys())
+                'net_type': str(net_device[1]),
+                'net_last_update': str(net_device[2]),
+                'net_ip': str(net_device[3]),
+                'net_mac': str(net_device[4]),
+                'net_mac_info': str(net_device[5]),
+                'net_config_keys': list(loads(str(net_device[6])).keys()),
+                'net_config': loads(str(net_device[6])),
+                'commands': list(loads(str(net_device[7])).keys())
             }
             devices.append(tb_net_device)
         return devices
 
     @staticmethod
     def select_tb_net_device_and_google_info(net_mac=''):
-        query = 'SELECT NET_CODE, NET_TYPE, NET_IP, NET_MAC, NET_USER, NET_PSW, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
+        query = 'SELECT NET_CODE, NET_TYPE, NET_IP, NET_MAC, SYNC_RESPONSE, QUERY_RESPONSE, EXECUTE_REQUEST, EXECUTE_RESPONSE_OK, EXECUTE_RESPONSE_KO ' \
                 'FROM TB_NET_DEVICE, TB_NET_DEVICE_TYPE ' \
                 'WHERE TB_NET_DEVICE.NET_TYPE = TB_NET_DEVICE_TYPE.TYPE_CODE AND TB_NET_DEVICE.NET_TYPE <> \'NET\''
         if net_mac != '':
@@ -119,35 +120,31 @@ class DbManager:
                 'net_type': str(net_device[1]),
                 'net_ip': str(net_device[2]),
                 'net_mac': str(net_device[3]),
-                'net_usr': str(net_device[4]),
-                'net_psw': str(net_device[5]),
-                'sync_response': loads(str(net_device[6])),
-                'query_response': loads(str(net_device[7])),
-                'execute_request': loads(str(net_device[8])),
-                'execute_response_ok': loads(str(net_device[9])),
-                'execute_response_ko': loads(str(net_device[10]))
+                'sync_response': loads(str(net_device[4])),
+                'query_response': loads(str(net_device[5])),
+                'execute_request': loads(str(net_device[6])),
+                'execute_response_ok': loads(str(net_device[7])),
+                'execute_response_ko': loads(str(net_device[8]))
             }
             devices.append(tb_net_device)
         return devices
 
     @staticmethod
-    def update_tb_net_device(net_mac, net_code=None, net_type=None, net_ip=None, net_user=None, net_psw=None, net_mac_info=None):
+    def update_tb_net_device(net_mac, net_code=None, net_type=None, net_ip=None, net_mac_info=None, net_config=None):
         query = 'UPDATE TB_NET_DEVICE SET NET_LASTUPDATE = \'%s\',' % datetime.now().strftime(XmlReader.settings['timestamp'])
         fields = {
             'net_code': 'NET_CODE = \'%s\',' % net_code,
             'net_type': 'NET_TYPE = \'%s\',' % net_type,
             'net_ip': 'NET_IP = \'%s\',' % net_ip,
-            'net_user': 'NET_USER = \'%s\',' % net_user,
-            'net_psw': 'NET_PSW = \'%s\',' % net_psw,
-            'net_mac_info': 'NET_MAC_INFO = \'%s\',' % net_mac_info
+            'net_mac_info': 'NET_MAC_INFO = \'%s\',' % net_mac_info,
+            'net_config': 'NET_CONFIG = \'%s\',' % dumps(net_config),
         }
         device = {
             'net_code': net_code,
             'net_type': net_type,
             'net_ip': net_ip,
-            'net_user': net_user,
-            'net_psw': net_psw,
-            'net_mac_info': net_mac_info
+            'net_mac_info': net_mac_info,
+            'net_config': net_config
         }
         for key, value in device.items():
             if value is not None:
@@ -164,9 +161,9 @@ class DbManager:
         return
 
     @staticmethod
-    def insert_tb_net_device(net_code, net_ip, net_mac, net_mac_info, net_usr='', net_psw=''):
-        query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_LASTUPDATE,NET_IP,NET_USER,NET_PSW,NET_MAC,NET_MAC_INFO) ' \
-                'VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (net_code, 'NET', datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, net_usr, net_psw, net_mac, net_mac_info)
+    def insert_tb_net_device(net_code, net_ip, net_mac, net_mac_info):
+        query = 'INSERT INTO TB_NET_DEVICE (NET_CODE,NET_TYPE,NET_LASTUPDATE,NET_IP,NET_MAC,NET_MAC_INFO,NET_CONFIG) ' \
+                'VALUES (\'%s\',\'NET\',\'%s\',\'%s\',\'%s\',\'%s\',\'{}\');' % (net_code, datetime.now().strftime(XmlReader.settings['timestamp']), net_ip, net_mac, net_mac_info)
         DbManager.insert_or_update(query)
 
     @staticmethod

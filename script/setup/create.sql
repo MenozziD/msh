@@ -1,12 +1,12 @@
 BEGIN TRANSACTION;
 -- CREAZIONE TABELLE
-CREATE TABLE "TB_NET_DEVICE_TYPE" ( `TYPE_CODE` TEXT NOT NULL UNIQUE, `TYPE_DESCRIPTION` TEXT DEFAULT '-', `SYNC_RESPONSE` TEXT DEFAULT '' NOT NULL, `QUERY_RESPONSE` TEXT DEFAULT '' NOT NULL, `EXECUTE_REQUEST` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_OK` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_KO` TEXT DEFAULT '' NOT NULL, `MSH_COMMANDS` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`TYPE_CODE`) );
-CREATE TABLE "TB_NET_DEVICE" ( `NET_CODE` TEXT NOT NULL, `NET_DESC` TEXT, `NET_TYPE` TEXT NOT NULL, `NET_LASTUPDATE` TEXT DEFAULT (datetime('now','localtime')), `NET_IP` TEXT DEFAULT '', `NET_MAC` TEXT NOT NULL DEFAULT '' UNIQUE, `NET_USER` TEXT, `NET_PSW` TEXT, `NET_MAC_INFO` TEXT DEFAULT '', PRIMARY KEY(`NET_MAC`) );
+CREATE TABLE "TB_NET_DEVICE_TYPE" ( `TYPE_CODE` TEXT NOT NULL UNIQUE, `TYPE_DESCRIPTION` TEXT DEFAULT '-', `SYNC_RESPONSE` TEXT DEFAULT '' NOT NULL, `QUERY_RESPONSE` TEXT DEFAULT '' NOT NULL, `EXECUTE_REQUEST` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_OK` TEXT DEFAULT '' NOT NULL, `EXECUTE_RESPONSE_KO` TEXT DEFAULT '' NOT NULL, `MSH_COMMANDS` TEXT DEFAULT '' NOT NULL, `CONFIG` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`TYPE_CODE`) );
+CREATE TABLE "TB_NET_DEVICE" ( `NET_CODE` TEXT NOT NULL, `NET_TYPE` TEXT NOT NULL, `NET_LASTUPDATE` TEXT DEFAULT (datetime('now','localtime')), `NET_IP` TEXT DEFAULT '', `NET_MAC` TEXT NOT NULL DEFAULT '' UNIQUE, `NET_MAC_INFO` TEXT DEFAULT '', `NET_CONFIG` TEXT DEFAULT '' NOT NULL, PRIMARY KEY(`NET_MAC`) );
 CREATE TABLE "TB_STRING" ( `LANGUAGE` TEXT NOT NULL, `VALUE` TEXT NOT NULL, `RESULT` TEXT NOT NULL, PRIMARY KEY(`LANGUAGE`,`VALUE`) );
 CREATE TABLE "TB_USER" ( `USERNAME` TEXT NOT NULL, `PASSWORD` TEXT, `ROLE` TEXT, PRIMARY KEY(`USERNAME`));
 CREATE TABLE "TB_WIFI" ( `SSID` TEXT NOT NULL, `PASSWORD` TEXT, PRIMARY KEY(`SSID`));
 -- POPOLO TB_NET_DEVICE_TYPE
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("NET","Generic Device",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("NET","Generic Device",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -80,8 +80,9 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("PCWIN","PC Windows",
+}",
+"{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("PCWIN","PC Windows",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.TV"",
@@ -157,8 +158,20 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
     ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_usr'] + '%' + dev['net_psw'], 'succeeded')""
+}",
+"{
+    ""user"":{
+        ""desc"": ""username per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""password"":{
+        ""desc"": ""password per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("WIFI","Rete Wi-Fi",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("WIFI","Rete Wi-Fi",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -235,8 +248,20 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""stato"": ""cmd_radio_stato(dev['net_ip'], dev['net_usr'],  dev['net_psw'])"",
     ""up"": ""cmd_radio(dev['net_ip'], 'up', dev['net_usr'], dev['net_psw'])"",
     ""down"": ""cmd_radio(dev['net_ip'], 'down', dev['net_usr'], dev['net_psw'])""
+}",
+"{
+    ""user"":{
+        ""desc"": ""username per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""password"":{
+        ""desc"": ""password per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("AP","Access Point UNIX based SSH Compatible",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("AP","Access Point UNIX based SSH Compatible",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SETTOP"",
@@ -311,8 +336,20 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""reboot"": ""cmd_reboot(dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+}",
+"{
+    ""user"":{
+        ""desc"": ""username per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""password"":{
+        ""desc"": ""password per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    }
 }");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_RELE","ESP8266 con software per rele",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_RELE","ESP8266 con software per rele",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.OUTLET"",
@@ -390,8 +427,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""on"": ""cmd_esp(dev['net_ip'], 'toggle')"",
     ""off"": ""cmd_esp(dev['net_ip'], 'toggle')"",
     ""toggle"": ""cmd_esp(dev['net_ip'], 'toggle')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_TEMP","ESP8266 con software per temperatura",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_TEMP","ESP8266 con software per temperatura",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.THERMOSTAT"",
@@ -477,8 +514,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""read_dht"": ""cmd_esp(dev['net_ip'], 'read_dht')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("PS4","Sony Playstation 4",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("PS4","Sony Playstation 4",
 "{  
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SETTOP"",
@@ -554,8 +591,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""stato"": ""cmd_ps4('stato')"",
     ""toggle"": ""cmd_ps4('toggle')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_SWITCH","ESP8266 con software per esecuzione CMD",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_SWITCH","ESP8266 con software per esecuzione CMD",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SWITCH"",
@@ -631,8 +668,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""stato"": ""cmd_esp(dev['net_ip'], 'stato')"",
     ""toggle"": ""cmd_esp(dev['net_ip'], 'toggle')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_SMOKE","ESP8266 con software per temperatura",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_SMOKE","ESP8266 con software per temperatura",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SMOKE_DETECTOR"",
@@ -713,8 +750,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""read_mq2"": ""cmd_esp(dev['net_ip'], 'stato')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_LIGHT","ESP8266 con software per LED",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_LIGHT","ESP8266 con software per LED",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.LIGHT"",
@@ -788,8 +825,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""stato"": ""cmd_esp(dev['net_ip'], 'stato')"",
     ""toggle"": ""cmd_esp(dev['net_ip'], 'toggle')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("ESP_LOCK","ESP8266 con software per LOCK",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("ESP_LOCK","ESP8266 con software per LOCK",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.LOCK"",
@@ -865,8 +902,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""stato"": ""cmd_esp(dev['net_ip'], 'stato')"",
     ""toggle"": ""cmd_esp(dev['net_ip'], 'toggle')""
-}");
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("PCMAC","PC Apple",
+}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("PCMAC","PC Apple",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.TV"",
@@ -942,9 +979,20 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
     ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -s now', 'Shutdown NOW!')""
+}",
+"{
+    ""user"":{
+        ""desc"": ""username per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""password"":{
+        ""desc"": ""password per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    }
 }");
-
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("SCENA","Tipo Scena",
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("SCENA","Tipo Scena",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.SCENE"",
@@ -1012,9 +1060,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ]
    }
 }",
-"{}");
-
-INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS) VALUES ("PCLINUX","PC Linux",
+"{}","{}");
+INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("PCLINUX","PC Linux",
 "{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.TV"",
@@ -1090,6 +1137,33 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
     ""online"": ""cmd_ping(dev['net_ip'])"",
     ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
     ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -h now', 'ORA')""
+}",
+"{
+    ""user"":{
+        ""desc"": ""username per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""password"":{
+        ""desc"": ""password per login"",
+        ""value"": ""string"",
+        ""editable"": true
+    },
+    ""os_system"": {
+        ""value"": [""Linux"", ""Windows"", ""MacOS""],
+        ""desc"": ""Sistema Operativo"",
+        ""editable"": true
+    },
+    ""vmware_path"": {
+        ""value"": ""string"",
+        ""desc"": ""VmWare Path"",
+        ""editable"": true
+    },
+    ""vm_path"": {
+        ""value"": ""string"",
+        ""desc"": ""VM Path"",
+        ""editable"": true
+    }
 }");
 -- POPOLO TB_STRING
 INSERT INTO TB_STRING (LANGUAGE,VALUE,RESULT) VALUES ("IT","0","ON");

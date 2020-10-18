@@ -108,9 +108,13 @@ class WiFiInfo(BaseHandler):
             if wifi_info['output'] == 'OK':
                 for wifi in wifi_info['result']:
                     trovato = False
+                    net_config = {
+                        "user": ap['net_usr'],
+                        "password": ap['net_psw']
+                    }
                     for db_device in db_devices:
                         if wifi['ssid'] == db_device['net_mac']:
-                            DbManager.update_tb_net_device(wifi['ssid'], net_ip=ap['net_ip'], net_user=ap['net_usr'], net_psw=ap['net_psw'])
+                            DbManager.update_tb_net_device(wifi['ssid'], net_ip=ap['net_ip'], net_config=net_config)
                             trovato = True
                             break
                     if not trovato:
@@ -120,7 +124,7 @@ class WiFiInfo(BaseHandler):
                         if trovato:
                             wifi['net_code'] = "SSID duplicato"
                         DbManager.insert_tb_net_device(wifi['ssid'], ap['net_ip'], wifi['ssid'],
-                                                       wifi['net_mac_info'], net_usr=ap['net_usr'], net_psw=ap['net_psw'])
+                                                       wifi['net_mac_info'],  net_config=net_config)
                 wifi_ap_all_list = wifi_ap_all_list + wifi_info['result']
         response['wifi_ap'] = wifi_ap_all_list
         wifi = DbManager.select_tb_wifi()

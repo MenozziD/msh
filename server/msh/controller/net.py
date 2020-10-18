@@ -7,7 +7,7 @@ from netifaces import AF_INET, ifaddresses
 class Net(BaseHandler):
 
     tipo_operazione = ['scan', 'list', 'type', 'update', 'cmd']
-    campi_aggiornabili = ['to_delete', 'net_code', 'net_type', 'net_usr', 'net_psw']
+    campi_aggiornabili = ['to_delete', 'net_code', 'net_type', 'net_config']
 
     def post(self):
         body = str(self.request.body)[2:-1]
@@ -242,7 +242,7 @@ class Net(BaseHandler):
     @staticmethod
     def check_any_to_update(data):
         response = {}
-        if 'net_code' in data or 'net_type' in data or 'net_usr' in data or 'net_psw' in data or 'to_delete' in data:
+        if 'net_code' in data or 'net_type' in data or 'net_config' in data or 'to_delete' in data:
             response['output'] = 'OK'
         else:
             response['output'] = get_string(33, da_aggiungere=', '.join(Net.campi_aggiornabili))
@@ -281,17 +281,19 @@ class Net(BaseHandler):
             else:
                 codice = None
                 tipo = None
-                user = None
-                password = None
+                config = None
                 if 'net_code' in device:
                     codice = device['net_code']
                 if 'net_type' in device:
                     tipo = device['net_type']
-                if 'net_usr' in device:
-                    user = device['net_usr']
-                if 'net_psw' in device:
-                    password = device['net_psw']
-                DbManager.update_tb_net_device(device['net_mac'], net_code=codice, net_type=tipo, net_user=user, net_psw=password)
+                if 'net_config' in device:
+                    config = device['net_config']
+                if tipo is not None and config is None:
+                    config = {}
+                    device_type = DbManager.select_tb_net_device_type(net_type=tipo)[0]
+                    for key in list(device_type['type_config'].keys()):
+                        config[key] = device_type['type_config'][key]['desc']
+                DbManager.update_tb_net_device(device['net_mac'], net_code=codice, net_type=tipo, net_config=config)
         response = {
             'output': 'OK'
         }
