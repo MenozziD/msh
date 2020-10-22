@@ -13,6 +13,13 @@ function carica(){
             return opts.inverse(this);
         }
     });
+    Handlebars.registerHelper('eval', function(a, b, opts) {
+        if (a === b) {
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
     Handlebars.registerHelper('if_object', function(a, opts) {
         if (typeof a == "object") {
             return opts.fn(this);
@@ -69,11 +76,27 @@ function carica_pag(lnk_pag){
     $('#lnk_'.concat(lnk_pag)).attr('class', 'nav-link active');
 
     if(lnk_pag==='device') {
-        $('#title').html('Dispositivi');
+        $('#title').html('ELENCO DISPOSITIVI');
         net('list');
         $('#table-device').removeClass("d-none");
+        $('#detail-device').removeClass("d-none");
     }
 
+}
+
+function carica_detail(index) {
+    console.log(index);
+    let idevice=parseInt(device_tabella['record_per_pagina']*(device_tabella['table']['current_page']-1)+index);
+    console.log(idevice);
+    let template = Handlebars.compile($('#detail-device-template')[0].innerHTML);
+    let device_user = {
+        'device': device_tabella['table'][device_tabella['table_key']][idevice],
+        'user_role': device_tabella['table']['user_role']
+    };
+    $('#detail-device').html(template(device_user));
+    /*let device = device_tabella['table'][device_tabella['table_key']][index];
+    $("#code").val(device['net_code']);
+    $("#code").text(device['net_code']);*/
 }
 
 function cleanFields(field_list){

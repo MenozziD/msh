@@ -76,6 +76,7 @@ function net(type_op){
                     device_tabella["new_list"] = $.extend(true, [], device_tabella["table"][device_tabella["table_key"]]);
                     json[device_tabella["table_key"]] = json[device_tabella["table_key"]].slice(0, device_tabella["record_per_pagina"]);
                     createTable(json, device_tabella);
+                    createDetail(json, device_tabella);
                 }
                 if (type_op === 'update'){
                     net('list');
@@ -364,7 +365,7 @@ function logout(){
         url: "/logout",
         type: 'GET',
         success: function(){
-            $(window.location).attr('href', '/');
+            $(window.location).attr('href', '/static/page/login.html');
         },
         error: function(xhr){
         }

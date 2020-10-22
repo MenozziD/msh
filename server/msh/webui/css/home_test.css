@@ -54,6 +54,7 @@
         font-size:.775rem;
         padding-bottom: 2%;
         padding-top: 2%;
+        margin-right: 3%;
 }
 
 input, .btn, .tooltip-inner, .dropdown-toggle, .card, .modal-content, .scrollable-menu, .custom-control-input:checked~.custom-control-label::before, .custom-control-label::before {
@@ -251,8 +252,8 @@ th {
     width: 25%;
 }
 .zoomed {
-    zoom: 1.30;
-    -moz-transform: scale(1.30);
+    zoom: 1.35;
+    -moz-transform: scale(1.35);
     -moz-transform-origin: 0 0;
 }
 
@@ -336,10 +337,29 @@ body {
   border-radius: 0;
 }
 
-.form-control-tb {
-    font-size:.775rem;
+.form-control-tb .form-control-dt{
+    /* font-size:.775rem;*/
+    font-size: medium;
     padding-bottom: 2%;
     padding-top: 2%;
+
+}
+
+
+.h2-dt{
+    padding-left: 0%;
+}
+
+
+
+hr.dt {
+    border-top: 2px solid #137685;
+    border-bottom: 2px solid #ffffff7a;
+    background-color: #ffffff7a;
+    box-sizing: border-box;
+    border-left: 0px solid #137685;
+    border-bottom-right-radius: 50%;
+    border-right: 0px solid #137685;
 }
 
 .form-control-dark {
@@ -368,6 +388,7 @@ CSS - https://getbootstrap.com/docs/4.5/examples/offcanvas/
  */
 
 .text-white-50 { color: rgba(255, 255, 255, .5); }
+.text-label { color: #137685 }
 .bg-purple { background-color: #6f42c1; }
 
 .lh-100 { line-height: 1; }
@@ -424,7 +445,7 @@ CSS - Classi Menoz
     color: white;
 }
 
-.page-link-i{
+.page-link-i {
     border-top-left-radius: 10%;
     border-bottom-left-radius: 10%;
     border-left-width: 1px ;
@@ -435,3 +456,18 @@ CSS - Classi Menoz
     border-bottom-right-radius: 10%;
     border-right-width: 1px ;
 }
+
+.th-i{
+    border-top-left-radius: 10%;
+}
+
+.th-f{
+    border-top-right-radius: 10%;
+}
+
+.lbl-dt{
+    font-size: medium;
+    font-weight: 600;
+    margin-bottom: 0%;
+}
+

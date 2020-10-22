@@ -21,20 +21,21 @@
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 
     <!-- Custom styles for this template
-    <link rel="stylesheet" href="/static/css/home_test.css">
-    -->
     <link rel="stylesheet" href=file:///C:/Progetti/msh/server/msh/webui/css/home_test.css">
+    -->
+    <link rel="stylesheet" href="/static/css/home_test.css">
 
-    <!--
     <script src="/static/js/api_test.js"></script>
     <script src="/static/js/cross_test.js"></script>
     <script src="/static/js/table_test.js"></script>
     <script src="/static/js/strutture.js"></script>
-    -->
+
+    <!--
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/api_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/cross_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/table_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/strutture.js"></script>
+    -->
 
   </head>
 
@@ -96,27 +97,8 @@
                 <div id="l_head" class="col-md-12">
                     <h2 id="title" class="col-md-12 mt-2"></h2>
                 </div>
-                <div id="table-device" class="col-md-5 d-none"></div>
-                <div id="detail-device" class="col-md-7 d-none">
-                    <div class="my-3 p-2 bg-border rounded shadow-sm row" >
-                        <h2 class="col-md-12">Dispositivo</h2>
-                        <input type="text" class="form-control form-control-sm form-control-tb font-weight-bold col-md-7" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">
-                        <div class="dropdown{{@index}} col-md-5">
-                            {{#if_eq ../user_role "ADMIN"}}
-                             <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device{{@index}}" onclick="viewDrop('{{@index}}', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="{{net_type}}">{{net_type}}</button>
-                            {{else}}
-                             <span class="font-weight-bold" id="types_device{{@index}}">{{net_type}}</span>
-                            {{/if_eq}}
-                            <div class="dropdown0 ">
-                                <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device0" onclick="viewDrop('0', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="AP">AP</button>
-                                <ul class="dropdown-menu scrollable-menu" id="drop_types_device0"></ul>
-                            </div>
-                        </div>
-                        <br>
-                        <br>
-                        <br>
-                    </div>
-                </div>
+                <div id="table-device" class="col-md-6 d-none"></div>
+                <div id="detail-device" class="col-md-6 d-none" style="padding-left: 2.5%;">
             </div>
 
             <script id="table-device-template" type="text/x-handlebars-template">
@@ -128,12 +110,12 @@
                         <thead>
                             <tr>
                                 {{#if_eq user_role "ADMIN"}}
-                                <th class="my-text-table col-check"></th>
+                                <th class="my-text-table col-check th-i"></th>
                                 {{/if_eq}}
                                 <th class="my-text-table col-codice"><a class="make-cursor" onclick="sortTable('net_code', device_tabella)">CODICE <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                 <th class="my-text-table col-tipo"><a class="make-cursor" onclick="sortTable('net_type', device_tabella)">TIPO <img src="/static/image/up-down.png" class="img-fluid order-icon" alt="Ordina"></a></th>
                                 <th class="my-text-table col-exec"></th>
-                                <th class="my-text-table col-info"></th>
+                                <th class="my-text-table col-info th-f"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,7 +156,7 @@
                                     </div>
                                 </td>
                                 <td class="my-text-table"><button type="button" class="btn btn-info btn-block btn-tb-sm">e</button></td>
-                                <td class="my-text-table"><button type="button" class="btn btn-info btn-block btn-tb-sm">...</button> </td>
+                                <td class="my-text-table"><button type="button" class="btn btn-info btn-block btn-tb-sm" onclick="carica_detail('{{@index}}')">...</button> </td>
                             </tr>
                         {{/each}}
                         </tbody>
@@ -228,41 +210,75 @@
                 </div>
             </script>
             <script id="detail-device-template" type="text/x-handlebars-template">
-                            <div class="col-md-7">
-                                <div class="my-3 p-2 bg-border rounded shadow-sm row" >
-                                    <h2 class="col-md-12">Dispositivo</h2>
-                                    <input type="text" class="form-control form-control-sm form-control-tb font-weight-bold col-md-7" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">
-                                    <div class="dropdown{{@index}} col-md-5">
-                                        {{#if_eq ../user_role "ADMIN"}}
-                                         <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device{{@index}}" onclick="viewDrop('{{@index}}', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="{{net_type}}">{{net_type}}</button>
-                                        {{else}}
-                                         <span class="font-weight-bold" id="types_device{{@index}}">{{net_type}}</span>
-                                        {{/if_eq}}
-                                        <div class="dropdown0 ">
-                                            <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device0" onclick="viewDrop('0', 'types', device_tabella, 'cambioVal(id, struct_tabella)')" value="AP">AP</button>
-                                            <ul class="dropdown-menu scrollable-menu" id="drop_types_device0"></ul>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <br>
-                                    <br>
-                                </div>
-                            </div>
+                <div class="my-3 p-2 bg-border rounded shadow-sm row" >
+                    <h2 class="col-md-12 h2-dt">DETTAGLIO</h2>
+                    <hr class="col-md-12 dt">
+                    <div class="col-md-8">
+                        <label class="text-label lbl-dt"> CODICE</label>
+                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
+                        {{#if_eq user_role "ADMIN"}}
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code" value="{{device.net_code}}">
+                        {{else}}
+                        <br><span class="font-weight-bold" id="types_device">{{device.net_code}}</span>
+                        {{/if_eq}}
+                    </div> <!-- CODE -->
+                    <div class="col-md-4">
+                        <label class="text-label lbl-dt"> TIPO</label>
+                        <div class="dropdown">
                             {{#if_eq user_role "ADMIN"}}
-                            <div id="tooltip_reset_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                                <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
+                            <div class="dropdown0 ">
+                                <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device" onclick="/*viewDrop('0', 'types', device_tabella, 'cambioVal(id, struct_tabella)')*/" value="{{device.net_type}}">{{device.net_type}}</button>
+                                <ul class="dropdown-menu scrollable-menu" id="drop_types_device"></ul>
                             </div>
                             {{else}}
-                            <div class="col-md-1"></div>
+                            <br><span class="font-weight-bold" id="types_device">{{device.net_type}}</span>
                             {{/if_eq}}
-                            {{#if_eq user_role "ADMIN"}}
-                            <div id="tooltip_salva_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                                <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
-                            </div>
-                            {{else}}
-                            <div class="col-md-1"></div>
-                            {{/if_eq}}
-                        </script>
+                        </div>
+                    </div> <!-- TIPO -->
+                    <hr class="col-md-12 dt">
+                    <div class="col-md-3">
+                        <label class="text-label lbl-dt"> IP</label>
+                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="ip" value="{{device.net_ip}}">
+                    </div> <!-- IP -->
+                    <div class="col-md-6">
+                        <label class="text-label lbl-dt"> MAC</label>
+                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac" value="{{device.net_mac}}">
+                    </div> <!-- MAC -->
+                    <div class="col-md-12">
+                        <label class="text-label lbl-dt"> MAC INFO</label>
+                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac_info" value="{{device.net_mac_info}}">
+                    </div> <!-- MAC INFO -->
+                    <hr class="col-md-12 dt">
+                    {{#each device.net_config}}
+                        <label class="text-label lbl-dt">{{@key}}</label>
+                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
+                        {{#if_eq ../user_role "ADMIN"}}
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="{{@key}}" value="{{this}}">
+                        {{else}}
+                        <br><span class="font-weight-bold" id="{{@key}}">{{this}}</span>
+                        {{/if_eq}}
+                    {{/each}}
+                    <br>
+                    <br>
+                </div>
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_reset_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
+                </div>
+                {{else}}
+                <div class="col-md-1"></div>
+                {{/if_eq}}
+                {{#if_eq user_role "ADMIN"}}
+                <div id="tooltip_salva_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
+                    <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
+                </div>
+                {{else}}
+                <div class="col-md-1"></div>
+                {{/if_eq}}
+            </script>
             <script id="table-home-template" type="text/x-handlebars-template">
               {{#if visibility}}
               <h2 id="title_home" class="mt-2">Home</h2>
