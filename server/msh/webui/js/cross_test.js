@@ -79,14 +79,14 @@ function carica_pag(lnk_pag){
         $('#title').html('ELENCO DISPOSITIVI');
         net('list');
         $('#table-device').removeClass("d-none");
-        $('#detail-device').removeClass("d-none");
     }
 
 }
 
 function carica_detail(index) {
     console.log(index);
-    let idevice=parseInt(device_tabella['record_per_pagina']*(device_tabella['table']['current_page']-1)+index);
+    index=parseInt(index);
+    let idevice=device_tabella['record_per_pagina']*(device_tabella['table']['current_page']-1)+index;
     console.log(idevice);
     let template = Handlebars.compile($('#detail-device-template')[0].innerHTML);
     let device_user = {
@@ -94,10 +94,12 @@ function carica_detail(index) {
         'user_role': device_tabella['table']['user_role']
     };
     $('#detail-device').html(template(device_user));
+    $('#detail-device').removeClass("d-none");
     /*let device = device_tabella['table'][device_tabella['table_key']][index];
     $("#code").val(device['net_code']);
     $("#code").text(device['net_code']);*/
 }
+
 
 function cleanFields(field_list){
     for (let i=0; i<field_list.length; i++) {
@@ -123,12 +125,23 @@ function disabilButtonTooltip(name, mex){
 
 function viewDrop(id, key, struct_tabella, funzione){
     let template = Handlebars.compile($("#drop-template")[0].innerHTML);
-    $('#drop_' + key + "_" + struct_tabella['id'] + id).html(template(struct_tabella["tipologie"][key]));
-    $('#drop_' + key + "_" + struct_tabella['id'] + id + ' li').click(function() {
-        $('#' + key + "_" + struct_tabella['id'] + id).text($(this).text());
-        $("#" + key + "_" + struct_tabella['id'] + id).val($(this).text());
-        eval(funzione);
-    });
+    console.log(id);
+    if (id !== '') {
+        $('#drop_' + key + "_" + struct_tabella['id'] + id).html(template(device_tabella['table'][device_tabella['table_key']][parseInt(id)][key]));
+        $('#drop_' + key + "_" + struct_tabella['id'] + id + ' li').click(function() {
+            device_tabella['cmd_exec']['command'] = $(this).text();
+            device_tabella['cmd_exec']['device'] = device_tabella['table'][device_tabella['table_key']][parseInt(id)]['net_code'];
+            $('#confirm_string').text("Confermi di voler eseguire il comando " + device_tabella['cmd_exec']['command'] + " sul device " + device_tabella['cmd_exec']['device'] + "?");
+            $('#modal_confirm').modal();
+        });
+    } else  {
+        $('#drop_' + key + "_" + struct_tabella['id'] + id).html(template(struct_tabella["tipologie"][key]));
+        $('#drop_' + key + "_" + struct_tabella['id'] + id + ' li').click(function() {
+            $('#' + key + "_" + struct_tabella['id'] + id).text($(this).text());
+            $("#" + key + "_" + struct_tabella['id'] + id).val($(this).text());
+            eval(funzione);
+        });
+    }
 }
 
 function viewDropCommand() {

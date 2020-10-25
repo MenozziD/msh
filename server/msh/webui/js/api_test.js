@@ -25,8 +25,8 @@ function net(type_op){
         }
     }
     if (type_op === "cmd"){
-        dispositivo = $('#device_device')[0].value;
-        comando = $('#command_device')[0].value;
+        dispositivo = device_tabella['cmd_exec']['device'];
+        comando = device_tabella['cmd_exec']['command'];
     }
     let body = {
         "tipo_operazione": type_op
@@ -50,9 +50,7 @@ function net(type_op){
                 $.unblockUI();
             if (json["output"].search("OK") === 0){
                 if (type_op === 'scan'){
-                    $('#found')[0].value = json["find_device"];
-                    $('#new')[0].value = json["new_device"];
-                    $('#update')[0].value = json["updated_device"];
+                    $('#scan-result').text("NUOVI DEVICE TROVATI: " + json["new_device"]);
                     net('list');
                 }
                 if (type_op === 'type'){
@@ -76,20 +74,19 @@ function net(type_op){
                     device_tabella["new_list"] = $.extend(true, [], device_tabella["table"][device_tabella["table_key"]]);
                     json[device_tabella["table_key"]] = json[device_tabella["table_key"]].slice(0, device_tabella["record_per_pagina"]);
                     createTable(json, device_tabella);
-                    createDetail(json, device_tabella);
+                    //createDetail(json, device_tabella);
                 }
                 if (type_op === 'update'){
                     net('list');
                 }
                 if (type_op === 'cmd'){
-                    $('#cmd_result')[0].value = json["result"];
+                    $('#scan-result').text("ESECUZIONE COMANDO: " + json["output"] + " - ESITO COMANDO: " + json["result"]);
                 }
             } else {
                 $("#error_modal").modal();
                 $('#errore').text(json["output"]);
                 if (type_op === 'cmd'){
                     $('#errore_title').text(json["result"]);
-                    $('#cmd_result')[0].value = json["result"];
                 }
             }
         },

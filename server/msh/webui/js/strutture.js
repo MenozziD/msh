@@ -12,7 +12,6 @@ let device_tabella = {
 	"select_all": false,
 	"tipologie": {
         "types": [],
-        "command": [],
         "device": []
     },
     "mex_add": {},
@@ -47,6 +46,10 @@ let device_tabella = {
 			'id_frontend': 'psw_device'
 		}
     ],
+    "cmd_exec": {
+        "device": "",
+        "command": ""
+    },
     "checkbox_action": "to_delete",
     "field_add": [],
     'method_add': ""

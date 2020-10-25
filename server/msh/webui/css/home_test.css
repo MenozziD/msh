@@ -116,8 +116,18 @@ th {
 }
 
 .icona-panel{
-    width: 22%;
+    width: 12%;
     height: 100%;
+}
+
+.btn-ricerca{
+    margin-top: 4%;
+    font-weight: 700;
+}
+
+.icona-info{
+    width: 30%;
+    height: 30%;
 }
 
 .titolo{
@@ -176,19 +186,13 @@ th {
 }
 
 .col-codice {
-    width: 75%;
+    width: 77%;
     color: #ffffff;
     background-color: #117a8b;
 }
 
 .col-tipo {
-    width: 15%;
-    color: #ffffff;
-    background-color: #117a8b;
-}
-
-.col-exec {
-    width: 4%;
+    width: 17%;
     color: #ffffff;
     background-color: #117a8b;
 }
@@ -259,7 +263,7 @@ th {
 
 body {
   font-size: .775rem;
-  background-color: #adebeb8a;
+  background-color: #e6e7e740;
 }
 
 .feather {
@@ -292,6 +296,7 @@ body {
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #adebeb8a;
 }
 
 .sidebar .nav-link {
@@ -306,7 +311,7 @@ body {
 }
 
 .sidebar .nav-link.active {
-  color: #96d2cb;
+  color: #117a8b;
 }
 
 .sidebar .nav-link:hover .feather,
@@ -346,8 +351,14 @@ body {
 }
 
 
+h2
+{
+    font-size: 1.93rem;
+}
+
 .h2-dt{
     padding-left: 0%;
+    margin-bottom: 0px;
 }
 
 
@@ -430,7 +441,7 @@ CSS - Classi Menoz
     background-color: #ace4de90;
 }
 .bg-card-body{
-    background-color: #bcebe7;
+    background-color: #cdede9;
 }
 
 .btn-tb-sm

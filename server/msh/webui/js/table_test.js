@@ -34,12 +34,6 @@ function createTable(struttura, struct_tabella){
      abilButton(struct_tabella);
 }
 
-function createDetail(struttura, struct_tabella){
-    let template = Handlebars.compile($('#detail-' + struct_tabella['id'] + '-template')[0].innerHTML);
-    $('#detail-' + struct_tabella['id']).html(template(struttura));
-
-}
-
 function sortTable(attribute, struct_tabella){
     // a.data.localeCompare(b.data); crescente
     // b.data.localeCompare(a.data); decrescente
