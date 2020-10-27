@@ -50,7 +50,9 @@ function net(type_op){
                 $.unblockUI();
             if (json["output"].search("OK") === 0){
                 if (type_op === 'scan'){
-                    $('#scan-result').text("NUOVI DEVICE TROVATI: " + json["new_device"]);
+                    $('#scan-result-text').text("NUOVI DEVICE TROVATI: " + json["new_device"]);
+                    $('#scan-result').removeClass("d-none");
+                    //$('#scan-result').attr('class', 'col-md-6 p-1 bg-border rounded shadow-sm card-advise row');
                     net('list');
                 }
                 if (type_op === 'type'){

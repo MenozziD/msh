@@ -152,6 +152,8 @@ function cambioVal(id, struct_tabella){
 }
 
 function reset(struct_tabella){
+
+/*
     for (let i = struct_tabella['new_list'].length; i--;){
         if (struct_tabella['new_list'][i]['to_add'] === true){
             struct_tabella['table'][struct_tabella['table_key']].splice(i, 1);
@@ -167,6 +169,14 @@ function reset(struct_tabella){
     let tmp_list = Object.assign({}, struct_tabella['table']);
     tmp_list[struct_tabella['table_key']] = tmp_list[struct_tabella['table_key']].slice((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"], struct_tabella['table']['current_page']*struct_tabella["record_per_pagina"]);
     createTable(tmp_list, struct_tabella);
+ */
+    $('#types_device').css('color', 'white');
+    $('#detail-device input').each(function() {
+        if ( !$(this).is('[readonly]') )
+        {
+            $(this).css('background-color', 'white');
+        }
+    });
 }
 
 function selectAll(struct_tabella){
