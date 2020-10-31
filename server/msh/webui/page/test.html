@@ -70,12 +70,6 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a id="lnk_user" class="nav-link" onclick="carica_pag('user')">
-                      <span data-feather="users"></span>
-                      Utenti
-                    </a>
-                  </li>
-                  <li class="nav-item">
                     <a id="lnk_dev" class="nav-link" onclick="carica_pag('dev')">
                       <span data-feather="hash"></span>
                       Sviluppo
@@ -103,7 +97,7 @@
                     </div>
                     <div id="scan-result" class="col-md-6 p-1 bg-border rounded shadow-sm card-advise row d-none">
                         <h6 id="scan-result-text" class="col-md-11 mb-4"></h6>
-                        <button type="button" onclick="$('#detail-device').attr('class', 'd-none');" class="close col-md-1">&times;</button>
+                        <button type="button" onclick="$('#scan-result').attr('class', 'd-none');" class="close col-md-1">&times;</button>
                     </div>
                  </div>
                 <div id="table-device" class="col-md-6 d-none"></div>
@@ -111,9 +105,9 @@
             </div>
 
             <script id="table-device-template" type="text/x-handlebars-template">
-                <div class="p-1 bg-border rounded shadow-sm row card-mod" >
-                    <h6 id="scan-result-text" class="col-md-11 mb-4"></h6>
-                    <button type="button" onclick="$('#detail-device').attr('class', 'd-none');" class="close col-md-1">&times;</button>
+                <div id="cmd-result" class="p-1 bg-border rounded shadow-sm row card-mod d-none" >
+                    <h6 id="cmd-result-text" class="col-md-11 mb-4"></h6>
+                    <button type="button" onclick="$('#cmd-result').attr('class', 'd-none');" class="close col-md-1">&times;</button>
                 </div>
                 <div class="p-2 bg-border rounded shadow-sm row" >
                     {{#if_eq devices.length 0}}
@@ -205,13 +199,13 @@
                 </div>
             </script>
             <script id="detail-device-template" type="text/x-handlebars-template">
-                <div class="p-1 bg-border rounded shadow-sm row card-mod" >
-                    <h6 class="col-md-5 mb-0">Modifiche in Sospeso!!</h6>
+                <div id="change-alert" class="p-1 bg-border rounded shadow-sm row card-mod" >
+                    <h6 class="col-md-7 mb-0">Modifiche in corso...</h6>
                     <button type="button" class="btn col-md-2 btn-success btn-block btn-tb-sm btn-card">
                         <img src="/static/image/check.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                         SALVA
                     </button>
-                    <h6 class="col-md-2"> oppure </h6>
+                    <div class="col-md-1"></div>
                     <button type="button" onclick="reset();" class="btn col-md-2 btn-danger btn-block btn-tb-sm btn-card">
                         <img src="/static/image/undo.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                         RESET
@@ -643,25 +637,25 @@
         </div>
     </div>
     </div>
-    <div class="modal bd-example-modal-lg" id="modal_confirm">
-        <div class="modal-dialog modal-lg">
+    <div class="modal bd-example-modal-md" id="modal_confirm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
               <div class="modal-header">
-                <h4 class="col-11 modal-title text-center">
+                <h6 class="col-11 modal-title text-center">
                         ESECUZIONE COMANDO
-                </h4>
+                </h6>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
               <div class="modal-body">
-                <h5 id="confirm_string" class="col-12" style="white-space: pre-wrap"></h5>
+                <p id="confirm_string" class="col-12" style="white-space: pre-wrap"></p>
               </div>
               <div class="modal-footer">
                   <div class="col-md-2"></div>
                   <div class="col-md-4">
-                    <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-block" data-dismiss="modal">ANNULLA</button>
                   </div>
                   <div class="col-md-4">
-                    <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('cmd')" data-dismiss="modal">CONFERMA</button>
+                    <button type="button" class="btn btn-success btn-sm btn-block" onclick="net('cmd')" data-dismiss="modal">CONFERMA</button>
                   </div>
                   <div class="col-md-2"></div>
               </div>

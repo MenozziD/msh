@@ -177,7 +177,10 @@ function reset(struct_tabella){
             $(this).css('background-color', 'white');
         }
     });
+
 }
+
+
 
 function selectAll(struct_tabella){
     let ind = ((struct_tabella['table']['current_page']-1)*struct_tabella['record_per_pagina']);

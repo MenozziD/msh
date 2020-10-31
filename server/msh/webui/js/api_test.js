@@ -82,7 +82,8 @@ function net(type_op){
                     net('list');
                 }
                 if (type_op === 'cmd'){
-                    $('#scan-result').text("ESECUZIONE COMANDO: " + json["output"] + " - ESITO COMANDO: " + json["result"]);
+                    $('#cmd-result-text').text("ESECUZIONE COMANDO: " + json["output"] + " - ESITO COMANDO: " + json["result"]);
+                    $('#cmd-result').removeClass("d-none");
                 }
             } else {
                 $("#error_modal").modal();
