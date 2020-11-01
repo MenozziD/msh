@@ -131,7 +131,7 @@ function viewDrop(id, key, struct_tabella, funzione){
         $('#drop_' + key + "_" + struct_tabella['id'] + id + ' li').click(function() {
             device_tabella['cmd_exec']['command'] = $(this).text();
             device_tabella['cmd_exec']['device'] = device_tabella['table'][device_tabella['table_key']][parseInt(id)]['net_code'];
-            $('#confirm_string').text("Eeseguire il comando " + device_tabella['cmd_exec']['command'] + " su " + device_tabella['cmd_exec']['device'] + "?");
+            $('#confirm_string').html("Eseguire il comando <b>" + device_tabella['cmd_exec']['command'] + "</b> su <b>" + device_tabella['cmd_exec']['device'] + "</b>?");
             $('#modal_confirm').modal();
         });
     } else  {
