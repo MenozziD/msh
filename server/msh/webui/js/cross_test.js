@@ -84,17 +84,17 @@ function carica_pag(lnk_pag){
 }
 
 function carica_detail(index) {
-    console.log(index);
     index=parseInt(index);
     let idevice=device_tabella['record_per_pagina']*(device_tabella['table']['current_page']-1)+index;
-    console.log(idevice);
     let template = Handlebars.compile($('#detail-device-template')[0].innerHTML);
     let device_user = {
-        'device': device_tabella['table'][device_tabella['table_key']][idevice],
+        'device': device_tabella['new_list'][idevice],
+        'indice': idevice,
         'user_role': device_tabella['table']['user_role']
     };
     $('#detail-device').html(template(device_user));
     $('#detail-device').removeClass("d-none");
+    abilButton(device_tabella);
     /*let device = device_tabella['table'][device_tabella['table_key']][index];
     $("#code").val(device['net_code']);
     $("#code").text(device['net_code']);*/

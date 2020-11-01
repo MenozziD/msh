@@ -3,26 +3,7 @@ function net(type_op){
     let comando = null;
     let list_up_device = [];
     if (type_op === 'update'){
-        for (let i = 0; i < device_tabella["table"][device_tabella["table_key"]].length; i++){
-            if (JSON.stringify(device_tabella["table"][device_tabella["table_key"]][i]) !== JSON.stringify(device_tabella["new_list"][i])){
-                let dev = {
-                    'net_mac': device_tabella["table"][device_tabella["table_key"]][i]['net_mac']
-                };
-                if (checkChange(i, 'to_delete', "", device_tabella) !== ""){
-                    dev['to_delete'] = true;
-                } else {
-                    if (checkChange(i, 'net_code', "CODICE", device_tabella) !== "")
-                        dev['net_code'] = device_tabella["new_list"][i]['net_code'];
-                    if (checkChange(i, 'net_type', "TIPO", device_tabella) !== "")
-                        dev['net_type'] = device_tabella["new_list"][i]['net_type'];
-                    if (checkChange(i, 'net_usr', "USER SSH", device_tabella) !== "")
-                        dev['net_usr'] = device_tabella["new_list"][i]['net_usr'];
-                    if (checkChange(i, 'net_psw', "PASSWORD SSH", device_tabella) !== "")
-                        dev['net_psw'] = device_tabella["new_list"][i]['net_psw'];
-                }
-                list_up_device.push(dev);
-            }
-        }
+        list_up_device = device_tabella['to_update'];
     }
     if (type_op === "cmd"){
         dispositivo = device_tabella['cmd_exec']['device'];
@@ -57,6 +38,7 @@ function net(type_op){
                 }
                 if (type_op === 'type'){
                     device_tabella["tipologie"]["types"] = [];
+                    device_types = json["types"];
                     for (let i=0; i<json["types"].length; i++)
                         device_tabella["tipologie"]["types"].push(json["types"][i]["type_code"]);
                 }
@@ -76,10 +58,10 @@ function net(type_op){
                     device_tabella["new_list"] = $.extend(true, [], device_tabella["table"][device_tabella["table_key"]]);
                     json[device_tabella["table_key"]] = json[device_tabella["table_key"]].slice(0, device_tabella["record_per_pagina"]);
                     createTable(json, device_tabella);
-                    //createDetail(json, device_tabella);
                 }
                 if (type_op === 'update'){
                     net('list');
+                    $('#detail-device').addClass('d-none');
                 }
                 if (type_op === 'cmd'){
                     $('#cmd-result-text').text("ESECUZIONE COMANDO: " + json["output"] + " - ESITO COMANDO: " + json["result"]);

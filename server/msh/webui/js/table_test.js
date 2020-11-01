@@ -6,14 +6,10 @@ function generateString(struct_tabella, mex_tipe, indice){
 }
 
 function abilButton(struct_tabella){
-    let mex = "È necessario modificare almeno un valore per attivare questa funzione";
-    if (JSON.stringify(struct_tabella['table'][struct_tabella['table_key']]) !== JSON.stringify(struct_tabella['new_list'])) {
-        abilButtonTooltip("reset_" + struct_tabella['id']);
-        abilButtonTooltip("salva_" + struct_tabella['id']);
-    } else {
-        disabilButtonTooltip("reset_" + struct_tabella['id'], mex);
-        disabilButtonTooltip("salva_" + struct_tabella['id'], mex);
-    }
+    if (JSON.stringify(struct_tabella['table'][struct_tabella['table_key']]) !== JSON.stringify(struct_tabella['new_list']))
+        $('#' + struct_tabella['id'] + '-alert').removeClass("d-none");
+    else
+        $('#' + struct_tabella['id'] + '-alert').addClass("d-none");
 }
 
 function createTable(struttura, struct_tabella){
@@ -64,40 +60,166 @@ function sortTable(attribute, struct_tabella){
     struct_tabella['last_sort'] = !struct_tabella['last_sort'];
 }
 
-function checkChange(indice, chiave, nome, struct_tabella){
+function checkChange(ind, editable_obj, struct_tabella){
     let mex = "";
-    if (struct_tabella['table'][struct_tabella['table_key']][indice][chiave] !== struct_tabella['new_list'][indice][chiave])
-        mex = "\t# Cambiato il " +  nome + " da " + struct_tabella['table'][struct_tabella['table_key']][indice][chiave] + " a " + struct_tabella['new_list'][indice][chiave] + "\n";
+    if (editable_obj['key'] === 'net_config') {
+        if (struct_tabella['new_list'][ind][editable_obj['key']][editable_obj['name']] !== struct_tabella['table'][struct_tabella['table_key']][ind][editable_obj['key']][editable_obj['name']]) {
+            mex = "\t# Cambiato il " + editable_obj['name'] + " da " + struct_tabella['table'][struct_tabella['table_key']][ind][editable_obj['key']][editable_obj['name']] + " a " + struct_tabella['new_list'][ind][editable_obj['key']][editable_obj['name']] + "\n";
+        }
+    } else {
+        if (struct_tabella['table'][struct_tabella['table_key']][ind][editable_obj['key']] !== struct_tabella['new_list'][ind][editable_obj['key']])
+            mex = "\t# Cambiato il " + editable_obj['name'] + " da " + struct_tabella['table'][struct_tabella['table_key']][ind][editable_obj['key']] + " a " + struct_tabella['new_list'][ind][editable_obj['key']] + "\n";
+    }
     return mex;
 }
 
 function getRiepilogo(struct_tabella) {
     let message = "";
+    struct_tabella['to_update'] = [];
     for (let i = 0; i < struct_tabella['table'][struct_tabella['table_key']].length; i++){
         if (JSON.stringify(struct_tabella['table'][struct_tabella['table_key']][i]) !== JSON.stringify(struct_tabella['new_list'][i])){
             let found = false;
-            if (checkChange(i, 'to_delete', "", struct_tabella) !== "" && ! found) {
+            let element = {};
+            element[struct_tabella['primary_key']] = struct_tabella["table"][struct_tabella["table_key"]][i][struct_tabella['primary_key']];
+            if (checkChange(i, {'key':'to_delete', 'name': ''}, struct_tabella) !== "" && ! found) {
                 message = message + generateString(struct_tabella, "mex_del", i);
+                element['to_delete'] = true;
                 found = true;
             }
-            if (checkChange(i, 'to_set', "", struct_tabella) !== "" && ! found){
+            if (checkChange(i, {'key':'to_set', 'name': ''}, struct_tabella) !== "" && ! found){
                 message = message + generateString(struct_tabella, "mex_set", i);
+                element['to_set'] = true;
                 found = true;
             }
-            if (checkChange(i, 'to_add', "", struct_tabella) !== "" && ! found){
+            if (checkChange(i, {'key':'to_add', 'name': ''}, struct_tabella) !== "" && ! found){
                 message = message + generateString(struct_tabella, "mex_add", i);
                 found = true;
+                element['to_add'] = true;
             }
             if (! found){
                 message = message + generateString(struct_tabella, "mex_up", i);
-                for (let j=0; j < struct_tabella["editable"].length; j++)
-                    message = message + checkChange(i, struct_tabella["editable"][j]['key'], struct_tabella["editable"][j]['name'], struct_tabella);
+                let editables = getEditables(i, struct_tabella)
+                for (let j=0; j < editables.length; j++) {
+                    let mex = checkChange(i, editables[j], struct_tabella)
+                    if (mex !== "") {
+                        message = message + mex;
+                        if (editables[j]['key'] === 'net_config'){
+                            if (element[editables[j]['key']] === undefined)
+                               element[editables[j]['key']] = {};
+                            element[editables[j]['key']][editables[j]['name']] = struct_tabella['new_list'][i][editables[j]['key']][editables[j]['name']];
+                        } else
+                            element[editables[j]['key']] = struct_tabella['new_list'][i][editables[j]['key']];
+                    }
+                }
             }
             message = message + "\n"
+            struct_tabella['to_update'].push(element);
         }
     }
     $('#recap_' + struct_tabella['id']).text(message);
     $('#modal_recap_change_' + struct_tabella['id']).modal();
+}
+
+function getEditables(ind, struct_tabella) {
+    let editables = [];
+    for (let i=0; i<struct_tabella['new_list'][ind]['net_config_keys'].length; i++) {
+        let element = struct_tabella['new_list'][ind]['net_config_keys'][i];
+        let editable = {
+            'key': 'net_config',
+            'name': element,
+            'id_frontend': element
+        };
+        editables.push(editable);
+    }
+    for (let i=0; i < struct_tabella["editable"].length; i++)
+        editables.push(struct_tabella["editable"][i]);
+    return editables;
+}
+
+function cambioVal(ind, struct_tabella, key){
+    let editables = getEditables(ind, struct_tabella);
+    let found = false;
+    let i, name;
+    if (key.includes(":")){
+        let params = key.split(":");
+        key = params[0];
+        name = params[1];
+    }
+    for (i=0; i < editables.length && !found; i++) {
+        if (key === 'net_config'){
+            if (editables[i]['key'] === key && editables[i]['name'] === name)
+                found = true;
+        } else {
+            if (editables[i]['key'] === key)
+                found = true;
+        }
+    }
+    i = i -1;
+    let new_value = $('#' + editables[i]["id_frontend"])[0].value;
+    if (key !== 'net_config' && struct_tabella['new_list'][ind][key] !== new_value) {
+        struct_tabella['new_list'][ind][key] = new_value;
+        if (key === 'net_type') {
+            let found = false;
+            let j;
+            for (j = 0; j < device_types.length && !found; j++) {
+                if (device_types[j]['type_code'] === struct_tabella['new_list'][ind][key])
+                    found = true;
+            }
+            j = j - 1;
+            let net_config = {};
+            let net_config_keys = [];
+            for (let key_config in device_types[j]['type_config']) {
+                net_config[key_config] = device_types[j]['type_config'][key_config]['desc'];
+                net_config_keys.push(key_config);
+            }
+            struct_tabella['new_list'][ind]['net_config_keys'] = net_config_keys;
+            struct_tabella['new_list'][ind]['net_config'] = Object.assign({}, net_config);
+            carica_detail(ind);
+        }
+    } else {
+        if (Object.keys(struct_tabella['new_list'][ind][key]).length > 0 && struct_tabella['new_list'][ind][key][editables[i]['name']] !== new_value) {
+            console.log(key);
+            console.log(ind);
+            console.log(editables[i]['name']);
+            struct_tabella['new_list'][ind][key][editables[i]['name']] = new_value;
+        }
+    }
+    if (struct_tabella['checkbox_action'] === "to_set"){
+        for (let i=0; i < struct_tabella['new_list'].length; i++){
+            if (i !== ind)
+                struct_tabella['new_list'][i]['to_set'] = false;
+        }
+        for (let i=0; i < struct_tabella["record_per_pagina"]; i++){
+            if (i !== id)
+                $("#checkbox_" + struct_tabella['id'] + i).prop("checked", false);
+        }
+    }
+    abilButton(struct_tabella);
+}
+
+function setDelete(ind, struct_tabella){
+    struct_tabella['new_list'][ind]['to_delete'] = true;
+    abilButton(struct_tabella);
+}
+
+function reset(struct_tabella){
+    for (let i = struct_tabella['new_list'].length; i--;){
+        if (struct_tabella['new_list'][i]['to_add'] === true){
+            struct_tabella['table'][struct_tabella['table_key']].splice(i, 1);
+        }
+    }
+    let page_number = Math.floor(struct_tabella['table'][struct_tabella['table_key']].length / struct_tabella["record_per_pagina"]);
+    let resto = struct_tabella['table'][struct_tabella['table_key']].length % struct_tabella["record_per_pagina"];
+    if (resto > 0)
+        page_number = page_number + 1;
+    struct_tabella['table']['current_page'] = 1;
+    struct_tabella['table']['pages'] = page_number;
+    struct_tabella["new_list"] = $.extend(true, [], struct_tabella['table'][struct_tabella['table_key']]);
+    let tmp_list = Object.assign({}, struct_tabella['table']);
+    tmp_list[struct_tabella['table_key']] = tmp_list[struct_tabella['table_key']].slice((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"], struct_tabella['table']['current_page']*struct_tabella["record_per_pagina"]);
+    struct_tabella['to_update'] = [];
+    createTable(tmp_list, struct_tabella);
+    $('#detail-device').addClass('d-none');
 }
 
 function changePage(pagina, struct_tabella){
@@ -130,56 +252,6 @@ function changePage(pagina, struct_tabella){
         }
     }
 }
-
-function cambioVal(id, struct_tabella){
-    let ind = ((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"]) + parseInt(id);
-    for (let i=0; i < struct_tabella["editable"].length; i++) {
-        let element = struct_tabella["editable"][i];
-        struct_tabella['new_list'][ind][element['key']] = $('#' + element["id_frontend"] + id)[0].value;
-    }
-    struct_tabella['new_list'][ind][struct_tabella['checkbox_action']] = $("#checkbox_" + struct_tabella['id'] + id).prop("checked");
-    if (struct_tabella['checkbox_action'] === "to_set"){
-        for (let i=0; i < struct_tabella['new_list'].length; i++){
-            if (i !== ind)
-                struct_tabella['new_list'][i]['to_set'] = false;
-        }
-        for (let i=0; i < struct_tabella["record_per_pagina"]; i++){
-            if (i !== id)
-                $("#checkbox_" + struct_tabella['id'] + i).prop("checked", false);
-        }
-    }
-    abilButton(struct_tabella);
-}
-
-function reset(struct_tabella){
-
-/*
-    for (let i = struct_tabella['new_list'].length; i--;){
-        if (struct_tabella['new_list'][i]['to_add'] === true){
-            struct_tabella['table'][struct_tabella['table_key']].splice(i, 1);
-        }
-    }
-    let page_number = Math.floor(struct_tabella['table'][struct_tabella['table_key']].length / struct_tabella["record_per_pagina"]);
-    let resto = struct_tabella['table'][struct_tabella['table_key']].length % struct_tabella["record_per_pagina"];
-    if (resto > 0)
-        page_number = page_number + 1;
-    struct_tabella['table']['current_page'] = 1;
-    struct_tabella['table']['pages'] = page_number;
-    struct_tabella["new_list"] = $.extend(true, [], struct_tabella['table'][struct_tabella['table_key']]);
-    let tmp_list = Object.assign({}, struct_tabella['table']);
-    tmp_list[struct_tabella['table_key']] = tmp_list[struct_tabella['table_key']].slice((struct_tabella['table']['current_page']-1)*struct_tabella["record_per_pagina"], struct_tabella['table']['current_page']*struct_tabella["record_per_pagina"]);
-    createTable(tmp_list, struct_tabella);
- */
-    $('#types_device').css('color', 'white');
-    $('#detail-device input').each(function() {
-        if ( !$(this).is('[readonly]') )
-        {
-            $(this).css('background-color', 'white');
-        }
-    });
-
-}
-
 
 
 function selectAll(struct_tabella){

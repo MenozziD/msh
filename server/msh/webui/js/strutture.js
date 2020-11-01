@@ -34,18 +34,9 @@ let device_tabella = {
 			'key': 'net_type',
 			'name': "TIPO",
 			'id_frontend': 'types_device'
-		},
-		{
-			'key': 'net_usr',
-			'name': "USER SSH",
-			'id_frontend': 'usr'
-		},
-		{
-			'key': 'net_psw',
-			'name': "PASSWORD SSH",
-			'id_frontend': 'psw_device'
 		}
     ],
+    'to_update': [],
     "cmd_exec": {
         "device": "",
         "command": ""
@@ -54,6 +45,7 @@ let device_tabella = {
     "field_add": [],
     'method_add': ""
 };
+let device_types = [];
 let user_tabella = {
     "id": "user",
     "id_char": "u",
@@ -94,6 +86,7 @@ let user_tabella = {
 			'id_frontend': 'role_user'
 		}
     ],
+    'to_update': [],
     "checkbox_action": "to_delete",
     "field_add": [
         {
@@ -132,6 +125,7 @@ let wifi_tabella = {
     "mex_del": {},
     "mex_up": {},
     "editable": [],
+    'to_update': [],
     "checkbox_action": "to_set",
     "field_add": [],
     'method_add': ""

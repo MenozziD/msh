@@ -293,6 +293,15 @@ class Net(BaseHandler):
                     device_type = DbManager.select_tb_net_device_type(net_type=tipo)[0]
                     for key in list(device_type['type_config'].keys()):
                         config[key] = device_type['type_config'][key]['desc']
+                if config is not None:
+                    device_old = DbManager.select_tb_net_device_and_msh_info(net_mac=device['net_mac'])[0]
+                    if tipo is not None:
+                        device_type = DbManager.select_tb_net_device_type(net_type=tipo)[0]
+                    else:
+                        device_type = DbManager.select_tb_net_device_type(net_type=device_old['net_type'])[0]
+                    for key in list(device_type['type_config'].keys()):
+                        if key not in list(config.keys()):
+                            config[key] = device_old['net_config'][key]
                 DbManager.update_tb_net_device(device['net_mac'], net_code=codice, net_type=tipo, net_config=config)
         response = {
             'output': 'OK'

@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <title>MSHub-Home</title>
-    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/"> -->
-
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
     <!-- jQuery first, then Popper.js, then Bootstrap JS, Handlebars -->
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -19,26 +15,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-
-    <!-- Custom styles for this template
-    <link rel="stylesheet" href=file:///C:/Progetti/msh/server/msh/webui/css/home_test.css">
-    -->
+    <!-- <link rel="stylesheet" href=file:///C:/Progetti/msh/server/msh/webui/css/home_test.css"> -->
     <link rel="stylesheet" href="/static/css/home_test.css">
-
     <script src="/static/js/api_test.js"></script>
     <script src="/static/js/cross_test.js"></script>
     <script src="/static/js/table_test.js"></script>
     <script src="/static/js/strutture.js"></script>
-
     <!--
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/api_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/cross_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/table_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/strutture.js"></script>
     -->
-
   </head>
-
   <body onload="feather.replace();carica()" class="zoomed">
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
@@ -51,7 +40,6 @@
         </li>
       </ul>
     </nav>
-
     <div class="row mt-6 mr-0">
         <!-- MENU SINISTRA -->
         <nav class="col-md-2 d-md-block bg-light sidebar" style="margin-top: 3%;">
@@ -103,7 +91,6 @@
                 <div id="table-device" class="col-md-6 d-none"></div>
                 <div id="detail-device" class="col-md-6 d-none" style="padding-left: 2.5%;"></div>
             </div>
-
             <script id="table-device-template" type="text/x-handlebars-template">
                 <div id="cmd-result" class="p-1 bg-border rounded shadow-sm row card-mod d-none" >
                     <h6 id="cmd-result-text" class="col-md-11 mb-4"></h6>
@@ -199,97 +186,79 @@
                 </div>
             </script>
             <script id="detail-device-template" type="text/x-handlebars-template">
-                <div id="change-alert" class="p-1 bg-border rounded shadow-sm row card-mod" >
+                <div id="device-alert" class="p-1 bg-border rounded shadow-sm row card-mod d-none" >
                     <h6 class="col-md-7 mb-0">Modifiche in corso...</h6>
-                    <button type="button" class="btn col-md-2 btn-success btn-block btn-tb-sm btn-card">
+                    <button type="button" class="btn col-md-2 btn-success btn-block btn-tb-sm btn-card" onclick="getRiepilogo(device_tabella)">
                         <img src="/static/image/check.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                         SALVA
                     </button>
                     <div class="col-md-1"></div>
-                    <button type="button" onclick="reset();" class="btn col-md-2 btn-danger btn-block btn-tb-sm btn-card">
+                    <button type="button" onclick="reset(device_tabella);" class="btn col-md-2 btn-danger btn-block btn-tb-sm btn-card">
                         <img src="/static/image/undo.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                         RESET
                     </button>
                 </div>
-                <div class="p-2 bg-border rounded shadow-sm row " >
+                <div id="detail-device-card" class="p-2 bg-border rounded shadow-sm row" >
                     <h2 class="col-md-5 h2-dt">DETTAGLIO</h2>
                     <div  class="col-md-3 mt-1">
-                        <button type="button" class="btn btn-danger btn-block btn-tb-sm btn-del">
+                        <button type="button" class="btn btn-danger btn-block btn-tb-sm btn-del" onclick="setDelete('{{indice}}', device_tabella)">
                             <img src="/static/image/trash.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                             ELIMINA
                         </button>
                     </div>
                     <div  class="col-md-3"></div>
-                    <button type="button" onclick="$('#detail-device').attr('class', 'col-md-6 d-none');" class="close col-md-1">&times;</button>
+                    <button type="button" onclick="$('#detail-device-card').addClass('d-none');" class="close col-md-1">&times;</button>
                     <hr class="col-md-12 dt">
                     <div class="col-md-8">
                         <label class="text-label lbl-dt"> CODICE</label>
-                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
                         {{#if_eq user_role "ADMIN"}}
-                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" onchange="$(this).css('background-color', 'yellow');" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code" value="{{device.net_code}}">
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" onchange="cambioVal('{{indice}}', device_tabella, 'net_code')" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code" value="{{device.net_code}}">
                         {{else}}
-                        <br><span class="font-weight-bold" id="types_device">{{device.net_code}}</span>
+                        <br><span class="font-weight-bold">{{device.net_code}}</span>
                         {{/if_eq}}
-                    </div> <!-- CODE -->
+                    </div>
                     <div class="col-md-4">
                         <label class="text-label lbl-dt"> TIPO</label>
                         <div class="dropdown">
                             {{#if_eq user_role "ADMIN"}}
                             <div class="dropdown0 ">
-                                <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device" onclick="viewDrop('', 'types', device_tabella, '')" onchange="$(this).css('background-color','#fbfb0a94')" value="{{device.net_type}}">{{device.net_type}}</button>
+                                <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="types_device" onclick="viewDrop('', 'types', device_tabella, 'cambioVal({{indice}}, device_tabella, \'net_type\')')" value="{{device.net_type}}">{{device.net_type}}</button>
                                 <ul class="dropdown-menu scrollable-menu" id="drop_types_device"  ></ul>
                             </div>
                             {{else}}
-                            <br><span class="font-weight-bold" id="types_device">{{device.net_type}}</span>
+                            <br><span class="font-weight-bold">{{device.net_type}}</span>
                             {{/if_eq}}
                         </div>
-                    </div> <!-- TIPO -->
-                    <hr class="col-md-12 dt">
-                    <div class="col-md-4">
-                        <label class="text-label lbl-dt"> IP</label>
-                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
-                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="ip" value="{{device.net_ip}}">
-                    </div> <!-- IP -->
-                    <div class="col-md-5">
-                        <label class="text-label lbl-dt"> MAC</label>
-                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
-                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac" value="{{device.net_mac}}">
-                    </div> <!-- MAC -->
-                    <div class="col-md-9 mt-2">
-                        <label class="text-label lbl-dt"> MAC INFO</label>
-                        <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
-                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac_info" value="{{device.net_mac_info}}">
-                    </div> <!-- MAC INFO -->
+                    </div>
+                    {{#if_not_eq device.net_config_keys.length 0}}
                     <hr class="col-md-12 dt">
                     {{#each device.net_config}}
                         <div class="col-md-6" >
                             <label class="text-label lbl-dt text-uppercase">{{@key}}</label>
-                            <!--<input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="code{{@index}}" value="{{net_code}}" onchange="cambioVal({{@index}}, device_tabella)">-->
                             {{#if_eq ../user_role "ADMIN"}}
-                            <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" onchange="$(this).css('background-color', 'yellow');" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="{{@key}}" value="{{this}}">
+                            <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" onchange="cambioVal('{{../indice}}', device_tabella, 'net_config:{{@key}}')" aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="{{@key}}" value="{{this}}">
                             {{else}}
-                            <br><span class="font-weight-bold" id="{{@key}}">{{this}}</span>
+                            <br><span class="font-weight-bold">{{this}}</span>
                             {{/if_eq}}
                         </div>
                     {{/each}}
+                    {{/if_not_eq}}
+                    <hr class="col-md-12 dt">
+                    <div class="col-md-4">
+                        <label class="text-label lbl-dt"> IP</label>
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="ip" value="{{device.net_ip}}">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="text-label lbl-dt"> MAC</label>
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac" value="{{device.net_mac}}">
+                    </div>
+                    <div class="col-md-9 mt-2">
+                        <label class="text-label lbl-dt"> MAC INFO</label>
+                        <input type="text" class="form-control form-control-sm form-control-dt font-weight-bold" readonly aria-label="Small" aria-describedby="inputGroup-sizing-sm" id="mac_info" value="{{device.net_mac_info}}">
+                    </div>
                     <br>
                     <br>
                 </div>
-                <!--
-                {{#if_eq user_role "ADMIN"}}
-                <div id="tooltip_reset_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                    <button id="reset_device" disabled class="btn btn-warning btn-lg btn-block" style="pointer-events: none;" type="button" onclick="reset(device_tabella)">RESET</button>
-                </div>
-                {{else}}
-                <div class="col-md-1"></div>
-                {{/if_eq}}
-                {{#if_eq user_role "ADMIN"}}
-                <div id="tooltip_salva_device" class="col-md-1" data-toggle="tooltip" data-placement="top" data-original-title="È necessario modificare almeno un valore per attivare questa funzione">
-                    <button id="salva_device" disabled class="btn btn-success btn-lg btn-block" style="pointer-events: none;" type="button" onclick="getRiepilogo(device_tabella)">SALVA</button>
-                </div>
-                {{else}}
-                <div class="col-md-1"></div>
-                {{/if_eq}}-->
             </script>
             <script id="table-home-template" type="text/x-handlebars-template">
               {{#if visibility}}
@@ -611,7 +580,6 @@
             </script>
         </main>
     </div>
-
     <div class="modal bd-example-modal-lg" id="modal_recap_change_device">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
