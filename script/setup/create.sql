@@ -83,56 +83,56 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{}");
 INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_RESPONSE,EXECUTE_REQUEST,EXECUTE_RESPONSE_OK,EXECUTE_RESPONSE_KO,MSH_COMMANDS,CONFIG) VALUES ("PCWIN","PC Windows",
-"{  
+"{
    ""id"":""dev['net_mac']"",
    ""type"":""action.devices.types.TV"",
-   ""traits"":[  
+   ""traits"":[
       ""action.devices.traits.OnOff""
    ],
-   ""name"":{  
-      ""defaultNames"":[  
+   ""name"":{
+      ""defaultNames"":[
          ""PC Windows""
       ],
       ""name"":""dev['net_code']"",
-      ""nicknames"":[  
+      ""nicknames"":[
 
       ]
    },
    ""willReportState"":true,
-   ""deviceInfo"":{  
+   ""deviceInfo"":{
       ""manufacturer"":""MSH"",
       ""model"":""1"",
       ""hwVersion"":""1.0"",
       ""swVersion"":""1.0""
    },
-   ""customData"":{  
+   ""customData"":{
       ""mshType"":""dev['net_type']""
    }
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""devices"":{  
-         ""data['inputs'][0]['payload']['devices'][0]['id']"":{  
+   ""payload"":{
+      ""devices"":{
+         ""data['inputs'][0]['payload']['devices'][0]['id']"":{
             ""on"":""cmd_ping(dev['net_ip'])['result']"",
             ""online"":""True""
          }
       }
    }
 }",
-"{  
-   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_usr'] + '%' + dev['net_psw'], 'succeeded')""
+"{
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_config']['user'] + '%' + dev['net_config']['password'], 'succeeded')""
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""SUCCESS"",
-            ""states"":{  
+            ""states"":{
                ""on"":""cmd_ping(dev['net_ip'])['result']"",
                ""online"":""True""
             }
@@ -140,12 +140,12 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ]
    }
 }",
-"{  
+"{
    ""requestId"":""data['requestId']"",
-   ""payload"":{  
-      ""commands"":[  
-         {  
-            ""ids"":[  
+   ""payload"":{
+      ""commands"":[
+         {
+            ""ids"":[
                ""data['inputs'][0]['payload']['commands'][0]['devices'][0]['id']""
             ],
             ""status"":""ERROR"",
@@ -156,8 +156,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
-    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
-    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_usr'] + '%' + dev['net_psw'], 'succeeded')""
+    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])"",
+    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'],dev['net_config']['user'], dev['net_config']['password'], 'net rpc shutdown -I ' + dev['net_ip'] + ' -U ' + dev['net_config']['user'] + '%' + dev['net_config']['password'], 'succeeded')""
 }",
 "{
     ""user"":{
