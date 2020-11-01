@@ -109,7 +109,7 @@ def get_gateway():
     gateway = ''
     for path, node in traverse(gateways()):
         if isinstance(node, tuple) and node[0].find('192.168') == 0 and ('default' in path or gateway == ''):
-                gateway = node[1]
+            gateway = node[1]
     return gateway
 
 
@@ -137,10 +137,10 @@ def evaluate(command, data=None, dev=None, result=None, parametri=None):
     return eval(command)
 
 
-def get_string(indice, da_sostiuire=None, da_aggiungere=None):
+def get_string(indice, da_sostituire=None, da_aggiungere=None):
     to_return = DbManager.select_tb_string_from_lang_value(XmlReader.settings['lingua'], indice)
-    if da_sostiuire is not None:
-        to_return = to_return.replace("%s", da_sostiuire)
+    if da_sostituire is not None:
+        to_return = to_return.replace("%s", da_sostituire)
     if da_aggiungere is not None:
         to_return = to_return + da_aggiungere
     return to_return

@@ -49,9 +49,9 @@ class User(BaseHandler):
                     response = User.check_delete_add_update(data, user, role)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(User.tipo_operazione))
+                    response['output'] = get_string(24, da_sostituire="tipo_operazione", da_aggiungere=', '.join(User.tipo_operazione))
                 else:
-                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
+                    response['output'] = get_string(23, da_sostituire="tipo_operazione")
         else:
             if body != "":
                 response['output'] = get_string(22)
@@ -96,7 +96,7 @@ class User(BaseHandler):
                 response = get_string(26)
         else:
             if my_key in data:
-                response['output'] = get_string(24, da_sostiuire=my_key, da_aggiungere='true, false')
+                response['output'] = get_string(24, da_sostituire=my_key, da_aggiungere='true, false')
         return response
 
     @staticmethod
@@ -143,7 +143,7 @@ class User(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'username' in data:
-                response['output'] = get_string(24, da_sostiuire="username", da_aggiungere=', '.join(username_list))
+                response['output'] = get_string(24, da_sostituire="username", da_aggiungere=', '.join(username_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="username")
         return response
@@ -189,7 +189,7 @@ class User(BaseHandler):
                 response = User.check_user_for_role(data, session_role)
         else:
             if 'role' in data:
-                response['output'] = get_string(24, da_sostiuire="role", da_aggiungere=', '.join(role_list))
+                response['output'] = get_string(24, da_sostituire="role", da_aggiungere=', '.join(role_list))
             else:
                 if required:
                     response['output'] = get_string(27, da_aggiungere="role")

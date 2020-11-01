@@ -1,6 +1,6 @@
 from controller import BaseHandler
 from logging import info
-from module import execute_os_cmd, set_api_response, get_string, DbManager
+from module import execute_os_cmd, set_api_response, get_string
 
 
 class UpdateLastVersion(BaseHandler):

@@ -33,7 +33,6 @@ def cmd_ping(ip, pacchetti=1):
 
 def cmd_radio(ip, comando, usr, psw):
     result = {}
-    res=''
     try:
         result = cmd_radio_stato(ip, usr, psw)
         if usr != '':
@@ -45,7 +44,7 @@ def cmd_radio(ip, comando, usr, psw):
                 if result['output'] != 'OK':
                     raise Exception(result['output'])
         else:
-            if comando != 'stato' and result['output'] == 'OK' :
+            if comando != 'stato' and result['output'] == 'OK':
                 fc = FritzConnection(address=ip, password=psw)
                 res = fc.call_action('WLANConfiguration1', 'SetEnable', NewEnable=True if comando == "up" else False)
                 if res == {}:
@@ -85,7 +84,7 @@ def cmd_radio_stato(ip, usr, psw):
         else:
             fc = FritzConnection(address=ip, password=psw)
             info(fc.call_action('WLANConfiguration1', 'GetInfo')['NewEnable'])
-            result['result'] =  get_string(int(not(fc.call_action('WLANConfiguration1', 'GetInfo')['NewEnable'])))  #0=ON 1=OFF
+            result['result'] = get_string(int(not(fc.call_action('WLANConfiguration1', 'GetInfo')['NewEnable'])))
             result['output'] = "OK"
     except Exception as e:
         exception("Exception")
