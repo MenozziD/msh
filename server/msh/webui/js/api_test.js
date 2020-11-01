@@ -64,14 +64,17 @@ function net(type_op){
                     $('#detail-device').addClass('d-none');
                 }
                 if (type_op === 'cmd'){
-                    $('#cmd-result-text').text("ESECUZIONE COMANDO: " + json["output"] + " - ESITO COMANDO: " + json["result"]);
+                    $('#cmd-result-ico').html("<img src=\"/static/image/ok.png\" class=\"my-auto icona-result \" alt=\"ico\">");
+                    $('#cmd-result-text').text("Esito Comando: "+json["result"]);
                     $('#cmd-result').removeClass("d-none");
                 }
             } else {
                 $("#error_modal").modal();
                 $('#errore').text(json["output"]);
                 if (type_op === 'cmd'){
-                    $('#errore_title').text(json["result"]);
+                    $('#cmd-result-ico').html("<img src=\"/static/image/err.png\" class=\"my-auto icona-result \" alt=\"ico\">");
+                    $('#cmd-result-text').text("Esito Comando: "+json["result"]);
+                    $('#cmd-result').removeClass("d-none");
                 }
             }
         },
