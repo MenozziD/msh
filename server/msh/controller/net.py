@@ -71,9 +71,9 @@ class Net(BaseHandler):
                 response = Net.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(Net.tipo_operazione))
+                    response['output'] = get_string(24, da_sostituire="tipo_operazione", da_aggiungere=', '.join(Net.tipo_operazione))
                 else:
-                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
+                    response['output'] = get_string(23, da_sostituire="tipo_operazione")
         else:
             if body != "":
                 response['output'] = get_string(22)
@@ -123,7 +123,7 @@ class Net(BaseHandler):
                     break
         else:
             if 'list_up_device' in data:
-                response['output'] = get_string(24, da_sostiuire="list_up_device", da_aggiungere='non lista vuota')
+                response['output'] = get_string(24, da_sostituire="list_up_device", da_aggiungere='non lista vuota')
             else:
                 response['output'] = get_string(27, da_aggiungere="list_up_device")
         return response
@@ -137,7 +137,7 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'to_delete' in data:
-                response['output'] = get_string(24, da_sostiuire="to_delete", da_aggiungere='true, false')
+                response['output'] = get_string(24, da_sostituire="to_delete", da_aggiungere='true, false')
         return response
 
     @staticmethod
@@ -148,7 +148,7 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'net_type' in data:
-                response['output'] = get_string(24, da_sostiuire="net_type", da_aggiungere=', '.join(type_list))
+                response['output'] = get_string(24, da_sostituire="net_type", da_aggiungere=', '.join(type_list))
             else:
                 if required:
                     response['output'] = get_string(27, da_aggiungere="net_type")
@@ -164,7 +164,7 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'net_mac' in data:
-                response['output'] = get_string(24, da_sostiuire="net_mac", da_aggiungere=', '.join(mac_list))
+                response['output'] = get_string(24, da_sostituire="net_mac", da_aggiungere=', '.join(mac_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="net_mac")
         return response
@@ -180,7 +180,7 @@ class Net(BaseHandler):
                 if data['net_code'] != to_update['net_code']:
                     response = Net.check_code_exist(data, devices)
             else:
-                response['output'] = get_string(34, da_sostiuire="net_code")
+                response['output'] = get_string(34, da_sostituire="net_code")
         return response
 
     @staticmethod
@@ -220,7 +220,7 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'dispositivo' in data:
-                response['output'] = get_string(24, da_sostiuire="dispositivo", da_aggiungere=', '.join(code_list))
+                response['output'] = get_string(24, da_sostituire="dispositivo", da_aggiungere=', '.join(code_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="dispositivo")
         return response
@@ -234,7 +234,7 @@ class Net(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'comando' in data:
-                response['output'] = get_string(24, da_sostiuire="comando", da_aggiungere=', '.join(command_list))
+                response['output'] = get_string(24, da_sostituire="comando", da_aggiungere=', '.join(command_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="comando")
         return response
@@ -374,5 +374,4 @@ class Net(BaseHandler):
     @staticmethod
     def device_cmd(dispositivo, comando):
         device = DbManager.select_tb_net_device_and_msh_info(net_code=dispositivo)[0]
-        info(DbManager.select_tb_net_device_type(device['net_type']))
         return evaluate(DbManager.select_tb_net_device_type(device['net_type'])[0]['type_function'][comando], dev=device)

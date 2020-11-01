@@ -21,13 +21,13 @@ class Icon(BaseHandler):
 class Static(BaseHandler):
     def get(self, filename):
         info("%s %s", self.request.method, self.request.url)
-        if self.session.get('user') is not None or filename.find("login") > 0 or filename.find("hub.png") > 0:
+        if self.session.get('user') is not None or filename.find("login") > 0 or filename.find("logo.png") > 0:
             path_ui = 'webui/'
             f = open(path_ui + filename, 'rb')
             self.response.body = f.read()
             f.close()
             self.response.headers['Content-Type'] = MimeTypes().guess_type(filename)[0]
-            if filename.find("index.html") == -1:
+            if filename.find("index.html") == -1 and filename.find("test.html") == -1:
                 self.response.headers['Cache-Control'] = "max-age=3600"
             info("RESPONSE CODE: %s", self.response.status)
             info("RESPONSE PAYLOAD: %s%s", path_ui, filename)

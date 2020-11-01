@@ -55,9 +55,9 @@ class UploadArduino(BaseHandler):
                 response = UploadArduino.check_upload_compile(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(UploadArduino.tipo_operazione))
+                    response['output'] = get_string(24, da_sostituire="tipo_operazione", da_aggiungere=', '.join(UploadArduino.tipo_operazione))
                 else:
-                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
+                    response['output'] = get_string(23, da_sostituire="tipo_operazione")
         else:
             if body != "":
                 response['output'] = get_string(22)
@@ -99,7 +99,7 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'core' in data:
-                response['output'] = get_string(24, da_sostiuire="core", da_aggiungere=', '.join(core_list))
+                response['output'] = get_string(24, da_sostituire="core", da_aggiungere=', '.join(core_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="core")
         return response
@@ -116,7 +116,7 @@ class UploadArduino(BaseHandler):
             response['output'] = 'OK'
         else:
             if 'tipologia' in data:
-                response['output'] = get_string(24, da_sostiuire="tipologia", da_aggiungere=', '.join(tipologia_list))
+                response['output'] = get_string(24, da_sostituire="tipologia", da_aggiungere=', '.join(tipologia_list))
             else:
                 response['output'] = get_string(27, da_aggiungere="tipologia")
         return response

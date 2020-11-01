@@ -51,7 +51,7 @@ class Home(BaseHandler):
             if headers_list['Authorization'].find("Bearer ") == 0:
                 response['output'] = get_string(41)
             else:
-                response['output'] = get_string(40, da_sostiuire="Authorization", da_aggiungere="Bearer Token")
+                response['output'] = get_string(40, da_sostituire="Authorization", da_aggiungere="Bearer Token")
         else:
             response['output'] = get_string(39, da_aggiungere="Authorization")
         return response

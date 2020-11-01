@@ -53,7 +53,7 @@ class Login(BaseHandler):
             if 'user' in data:
                 response['output'] = get_string(36)
             else:
-                response['output'] = get_string(23, da_sostiuire="user")
+                response['output'] = get_string(23, da_sostituire="user")
         return response
 
     @staticmethod
@@ -66,7 +66,7 @@ class Login(BaseHandler):
             if 'password' in data:
                 response['output'] = get_string(37)
             else:
-                response['output'] = get_string(23, da_sostiuire="password")
+                response['output'] = get_string(23, da_sostituire="password")
         return response
 
 

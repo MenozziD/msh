@@ -204,13 +204,13 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
       ""devices"":{
          ""data['inputs'][0]['payload']['devices'][0]['id']"":{
             ""online"":""cmd_ping(dev['net_ip'])['result']"",
-            ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_usr'],  dev['net_psw'])['result']""
+            ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_config']['user'],  dev['net_config']['password'])['result']""
          }
       }
    }
 }",
 "{
-   ""on"":""cmd_radio(dev['net_ip'], 'up', dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_radio(dev['net_ip'], 'down', dev['net_usr'], dev['net_psw'])""
+   ""on"":""cmd_radio(dev['net_ip'], 'up', dev['net_config']['user'], dev['net_config']['password']) if parametri['on'] == 'ON' else cmd_radio(dev['net_ip'], 'down', dev['net_config']['user'], dev['net_config']['password'])""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -222,7 +222,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
             ],
             ""status"":""SUCCESS"",
             ""states"":{
-               ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_usr'], dev['net_psw'])['result']"",
+               ""on"":""cmd_radio_stato(dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])['result']"",
                ""online"":""cmd_ping(dev['net_ip'])['result']""
             }
          }
@@ -245,9 +245,9 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
-    ""stato"": ""cmd_radio_stato(dev['net_ip'], dev['net_usr'],  dev['net_psw'])"",
-    ""up"": ""cmd_radio(dev['net_ip'], 'up', dev['net_usr'], dev['net_psw'])"",
-    ""down"": ""cmd_radio(dev['net_ip'], 'down', dev['net_usr'], dev['net_psw'])""
+    ""stato"": ""cmd_radio_stato(dev['net_ip'], dev['net_config']['user'],  dev['net_config']['password'])"",
+    ""up"": ""cmd_radio(dev['net_ip'], 'up', dev['net_config']['user'], dev['net_config']['password'])"",
+    ""down"": ""cmd_radio(dev['net_ip'], 'down', dev['net_config']['user'], dev['net_config']['password'])""
 }",
 "{
     ""user"":{
@@ -300,7 +300,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    }
 }",
 "{
-   ""on"":""cmd_reboot(dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+   ""on"":""cmd_reboot(dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -335,7 +335,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
-    ""reboot"": ""cmd_reboot(dev['net_ip'], dev['net_usr'], dev['net_psw'])""
+    ""reboot"": ""cmd_reboot(dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])""
 }",
 "{
     ""user"":{
@@ -942,7 +942,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    }
 }",
 "{
-   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -s now', 'Shutdown NOW!')""
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'], 'shutdown -s now', 'Shutdown NOW!')""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -977,8 +977,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
-    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
-    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -s now', 'Shutdown NOW!')""
+    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])"",
+    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'], 'shutdown -s now', 'Shutdown NOW!')""
 }",
 "{
     ""user"":{
@@ -1100,7 +1100,7 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
    }
 }",
 "{
-   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -h now', 'ORA')""
+   ""on"":""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password']) if parametri['on'] == 'ON' else cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'], 'shutdown -h now', 'ORA')""
 }",
 "{
    ""requestId"":""data['requestId']"",
@@ -1135,8 +1135,8 @@ INSERT INTO TB_NET_DEVICE_TYPE (TYPE_CODE,TYPE_DESCRIPTION,SYNC_RESPONSE,QUERY_R
 }",
 "{
     ""online"": ""cmd_ping(dev['net_ip'])"",
-    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'])"",
-    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_usr'], dev['net_psw'], 'shutdown -h now', 'ORA')""
+    ""on"": ""cmd_pc('on', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'])"",
+    ""off"": ""cmd_pc('off', dev['net_mac'], dev['net_ip'], dev['net_config']['user'], dev['net_config']['password'], 'shutdown -h now', 'ORA')""
 }",
 "{
     ""user"":{

@@ -49,9 +49,9 @@ class WiFiInfo(BaseHandler):
                 response = WiFiInfo.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(WiFiInfo.tipo_operazione))
+                    response['output'] = get_string(24, da_sostituire="tipo_operazione", da_aggiungere=', '.join(WiFiInfo.tipo_operazione))
                 else:
-                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
+                    response['output'] = get_string(23, da_sostituire="tipo_operazione")
         else:
             if body != "":
                 response['output'] = get_string(22)
@@ -124,7 +124,7 @@ class WiFiInfo(BaseHandler):
                         if trovato:
                             wifi['net_code'] = "SSID duplicato"
                         DbManager.insert_tb_net_device(wifi['ssid'], ap['net_ip'], wifi['ssid'],
-                                                       wifi['net_mac_info'],  net_config=net_config)
+                                                       wifi['net_mac_info'])
                 wifi_ap_all_list = wifi_ap_all_list + wifi_info['result']
         response['wifi_ap'] = wifi_ap_all_list
         wifi = DbManager.select_tb_wifi()

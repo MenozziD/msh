@@ -48,9 +48,9 @@ class Settings(BaseHandler):
                 response = Settings.check_operation_param(response, data)
             else:
                 if 'tipo_operazione' in data:
-                    response['output'] = get_string(24, da_sostiuire="tipo_operazione", da_aggiungere=', '.join(Settings.tipo_operazione))
+                    response['output'] = get_string(24, da_sostituire="tipo_operazione", da_aggiungere=', '.join(Settings.tipo_operazione))
                 else:
-                    response['output'] = get_string(23, da_sostiuire="tipo_operazione")
+                    response['output'] = get_string(23, da_sostituire="tipo_operazione")
         else:
             if body != "":
                 response['output'] = get_string(22)
@@ -83,7 +83,7 @@ class Settings(BaseHandler):
         if 'settings' in data:
             response['output'] = 'OK'
         else:
-            response['output'] = get_string(23, da_sostiuire="settings")
+            response['output'] = get_string(23, da_sostituire="settings")
         return response
 
     @staticmethod
