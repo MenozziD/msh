@@ -43,7 +43,7 @@
 									    Password &egrave un campo obbligatorio
 								    </div>
 								</div>
-								<button class="btn btn-lg btn-info btn-block text-uppercase mb-3" type="button" onclick="login()">Sign in</button>
+								<button class="btn btn-lg btn-primary btn-block text-uppercase mb-3" type="button" onclick="login()">Sign in</button>
                                 <h5 id="errore" class="text-center d-none"></h5>
 							</form>
 						</div>

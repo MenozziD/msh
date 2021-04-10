@@ -1,0 +1,17 @@
+Ubuntu 20.04.01 Server
+IP:192.168.20.89
+apt-get install docker docker.io
+Copia in /home/temp/docker la dir C:\Progetti\msh\Docker\test_image
+cd /home/temp/docker/test_image
+docker build . --tag=deb-test:v0.0.1
+## PC ATTIVO A SCHERMO CHIUSO ##########
+Per disabilitare la sospensione alla chiusura dello schermo bisogna editare il file /etc/systemd/logind.conf.
+Innanzitutto facciamo una copia di backup, per poter ripristinare velocemente la situazione iniziale. Da terminale digitiamo:
+sudo cp /etc/systemd/logind.conf /etc/systemd/logind.conf.old
+Quindi andiamo ad aprire il file con un editor di testo (nell’esempio seguente nano):
+sudo nano /etc/systemd/logind.conf
+Modifichiamo la riga «#HandleLidSwitch=suspend» in «HandleLidSwitch=ignore» (in pratica de-commentando la riga e modificando l’azione predefinita).
+Poi eliminiamo il cancelletto per de-commentare il parametro «LidSwitchIgnoreInhibited=yes».
+Infine salviamo e chiudiamo il file (con nano premiamo CTRL+O e CTRL+X per uscire).
+Le modifiche saranno immediate, senza bisogno di riavviare.
+#######################################

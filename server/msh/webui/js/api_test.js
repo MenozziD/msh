@@ -73,7 +73,7 @@ function net(type_op){
                 $('#errore').text(json["output"]);
                 if (type_op === 'cmd'){
                     $('#cmd-result-ico').html("<img src=\"/static/image/err.png\" class=\"my-auto icona-result \" alt=\"ico\">");
-                    $('#cmd-result-text').text("Esito Comando: "+json["result"]);
+                    $('#cmd-result-text').text(json["output"]);
                     $('#cmd-result').removeClass("d-none");
                 }
             }

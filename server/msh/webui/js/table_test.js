@@ -6,11 +6,13 @@ function generateString(struct_tabella, mex_tipe, indice){
 }
 
 function abilButton(struct_tabella){
+    console.log(struct_tabella);
     if (JSON.stringify(struct_tabella['table'][struct_tabella['table_key']]) !== JSON.stringify(struct_tabella['new_list']))
         $('#' + struct_tabella['id'] + '-alert').removeClass("d-none");
     else
         $('#' + struct_tabella['id'] + '-alert').addClass("d-none");
 }
+
 
 function createTable(struttura, struct_tabella){
     let template = Handlebars.compile($('#table-' + struct_tabella['id'] + '-template')[0].innerHTML);
@@ -184,7 +186,9 @@ function cambioVal(ind, struct_tabella, key){
             struct_tabella['new_list'][ind][key][editables[i]['name']] = new_value;
         }
     }
+
     if (struct_tabella['checkbox_action'] === "to_set"){
+
         for (let i=0; i < struct_tabella['new_list'].length; i++){
             if (i !== ind)
                 struct_tabella['new_list'][i]['to_set'] = false;
@@ -195,10 +199,20 @@ function cambioVal(ind, struct_tabella, key){
         }
     }
     abilButton(struct_tabella);
+
 }
 
 function setDelete(ind, struct_tabella){
-    struct_tabella['new_list'][ind]['to_delete'] = true;
+    if (struct_tabella['new_list'][ind]['to_delete'] === false)
+    {
+        struct_tabella['new_list'][ind]['to_delete'] = true;
+        $("#btn-del").value="ANNULLA";
+    }
+    else
+    {
+        struct_tabella['new_list'][ind]['to_delete'] = false;
+        $("#btn-del").value="RESET";
+    }
     abilButton(struct_tabella);
 }
 

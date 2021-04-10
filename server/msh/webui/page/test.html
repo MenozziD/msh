@@ -17,10 +17,12 @@
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
     <!-- <link rel="stylesheet" href=file:///C:/Progetti/msh/server/msh/webui/css/home_test.css"> -->
     <link rel="stylesheet" href="/static/css/home_test.css">
+    <link rel="stylesheet" href="/static/css/sin.css">
     <script src="/static/js/api_test.js"></script>
     <script src="/static/js/cross_test.js"></script>
     <script src="/static/js/table_test.js"></script>
     <script src="/static/js/strutture.js"></script>
+    <script src="/static/js/sin.js"></script>
     <!--
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/api_test.js"></script>
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/cross_test.js"></script>
@@ -69,6 +71,12 @@
                       Impostazioni
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a id="lnk_sin" class="nav-link" onclick="carica_pag('sin')">
+                      <span data-feather="airplay"></span>
+                      HomeSin
+                    </a>
+                  </li>
                 </ul>
             </div>
         </nav>
@@ -90,6 +98,11 @@
                  </div>
                 <div id="table-device" class="col-md-6 d-none"></div>
                 <div id="detail-device" class="col-md-6 d-none" style="padding-left: 2.5%;"></div>
+                <div id="table-sin" class="col-md-6 d-none">
+                    <button type="button" class="col-md-2 btn btn-info btn-block btn-tb-sm btn-ricerca" onclick="addNode()">
+                        <img src="/static/image/err.png" class="img-fluid my-auto icona-panel" alt="ico">
+                    </button>
+                </div>
             </div>
             <script id="table-device-template" type="text/x-handlebars-template">
                 <div id="cmd-result" class="p-1 bg-border rounded shadow-sm row card-mod d-none" >
@@ -206,7 +219,7 @@
                 <div id="detail-device-card" class="p-2 bg-border rounded shadow-sm row" >
                     <h2 class="col-md-5 h2-dt">DETTAGLIO</h2>
                     <div  class="col-md-3 mt-1">
-                        <button type="button" class="btn btn-danger btn-block btn-tb-sm btn-del" onclick="setDelete('{{indice}}', device_tabella)">
+                        <button id="btn-del" type="button" class="btn btn-danger btn-block btn-tb-sm btn-del" onclick="setDelete('{{indice}}', device_tabella)">
                             <img src="/static/image/trash.png" class="img-fluid my-auto icona-panel-del" alt="ico">
                             ELIMINA
                         </button>
@@ -583,6 +596,25 @@
             </div>
             {{/if}}
             </script>
+            <script id="table-sin-template" type="text/x-handlebars-template">
+            {{#if visibility}}
+            <h2 id="title_sin" class="mt-2">Sinottico</h2>
+            {{/if}}
+            </script>
+            <script id="div-node" type="text/x-handlebars-template">
+                <div id="{{id}}" class="mydiv">
+                    <div id="{{h_id}}" class="mydivheader"></div>
+                    <div class="">
+                        <img src="/static/image/nodo.png" class="icona-nodo">
+                        <p>Obj</p>
+                    </div>
+                    <div class="dropdown{{@index}} ">
+                        <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="commands_device{{@index}}" onclick="viewDrop('{{@index}}', 'commands', device_tabella, 'cambioVal(id, struct_tabella)')"></button>
+                        <ul class="dropdown-menu scrollable-menu" id="drop_commands_device{{@index}}"></ul>
+                    </div>
+                </div>
+            </script>
+
         </main>
     </div>
     <div class="modal bd-example-modal-lg" id="modal_recap_change_device">

@@ -92,7 +92,13 @@ docker image ls | awk '{print $3}' | xargs docker image rm
 docker container ls --all | awk '{print $1}' | xargs docker container rm
 
 # Creazione di un'immagine
-docker build . --tag=msh:v0.0.1
+docker build . --tag=msh-arm:v0.0.1
+
+# Per eseguire immagini arm su macchina linux
+sudo apt-get install qemu-user-static
+
+# Per immagine RASPBIAN JESSIE
+# FROM raspbian/jessie
 
 # Esecuzione di un'immagine arm con qemu (funziona solo su macchina linux)
 docker run -v /usr/bin/qemu-arm:/usr/bin/qemu-arm --rm -ti arm32v7/debian:latest
@@ -100,6 +106,9 @@ docker run -v /usr/bin/qemu-arm:/usr/bin/qemu-arm --rm -ti arm32v7/debian:latest
 # Creazione di un'immagine ed esecuzione
 docker build . --build-arg ngrok_auth_token='TOKEN' --build-arg google_actions_project_id='ID_PROJECT' --tag=raspberrypi:v0.0.1
 docker run -d --name raspberrypi -p 8080:65177 raspberrypi:v0.0.1
+
+# Creazione container debian
+docker container run -it debian bash
 
 # Stoppare/Avviare il container
 docker container stop raspberry-x64
@@ -111,7 +120,7 @@ docker inspect raspberry-x64
 docker netwrok ls
 
 # Mostra chi fa parte della rete
-docker netwrok inspect bridge
+docker network inspect bridge
 
 # Operazioni sulle macchine che runnano Docker
 docker-machine ls

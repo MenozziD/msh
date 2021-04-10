@@ -67,7 +67,7 @@ function carica(){
 
 function carica_pag(lnk_pag){
     //Disattivo Colorazione Selezionato
-    let lista_lnk=['home','set','dev','user','device'];
+    let lista_lnk=['home','set','dev','user','device','sin'];
 
     for (let i=0;i<lista_lnk.length;i++)
         $('#lnk_'.concat(lista_lnk[i])).attr('class', 'nav-link');
@@ -78,7 +78,14 @@ function carica_pag(lnk_pag){
     if(lnk_pag==='device') {
         $('#title').html('ELENCO DISPOSITIVI');
         net('list');
+        $('#table-sin').addClass('d-none');
         $('#table-device').removeClass("d-none");
+    }
+    if(lnk_pag==='sin') {
+        $('#title').html('SINOTTICO');
+        net('list');
+        $('#table-device').addClass('d-none');
+        $('#table-sin').removeClass("d-none");
     }
 
 }
