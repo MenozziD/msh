@@ -1,18 +1,22 @@
 .mydiv {
   position: absolute;
-  z-index: 9;
   background-color: #f1f1f1;
   /*text-align: center;*/
   border: 1px solid #d3d3d3;
+  width: 10%;
 }
 
 .mydivheader {
-  padding: 5px;
+  padding: 5%;
   cursor: move;
-  z-index: 10;
   background-color: #2196F3;
   color: #fff;
 }
 .icona-nodo{
     width: 15%;
+}
+
+.sinottico {
+  position: absolute;
+  border: 1px solid #000000;
 }

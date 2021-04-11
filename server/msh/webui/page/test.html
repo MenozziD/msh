@@ -30,10 +30,10 @@
     <script src="file:///C:/Progetti/msh/server/msh/webui/js/strutture.js"></script>
     -->
   </head>
-  <body onload="feather.replace();carica()" class="zoomed">
+  <body onload="carica()" class="zoomed">
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
-        <img src="/static/image/logo.png" class="icona-titolo">
+        <img src="/static/image/logo.png" class="icona-titolo" alt="Logo casa">
         MSHub
       </a>
       <ul class="navbar-nav px-3">
@@ -83,28 +83,24 @@
         <!-- FORM PRINCIPALE -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="container row" id="form-main">
-                <div id="l_head" class="col-md-12 row">
-                    <h2 id="title" class="col-md-4 mt-2"></h2>
-                    <div  class="col-md-2 mt-2">
+                <div id="table-device" class="col-md-6 d-none"></div>
+                <div id="detail-device" class="col-md-6 d-none" style="padding-left: 2.5%;"></div>
+                <div id="table-sin" class="col-md-12 d-none"></div>
+            </div>
+            <script id="table-device-template" type="text/x-handlebars-template">
+                <div class="col-md-12 row mt-2">
+                    <h2 class="col-md-8">DISPOSITIVI</h2>
+                    <div  class="col-md-4">
                         <button type="button" class="btn btn-info btn-block btn-tb-sm btn-ricerca" onclick="net('scan')">
                             <img src="/static/image/loupe.png" class="img-fluid my-auto icona-panel" alt="ico">
                             RICERCA
                         </button>
                     </div>
-                    <div id="scan-result" class="col-md-6 p-1 bg-border rounded shadow-sm card-advise row d-none">
-                        <h6 id="scan-result-text" class="col-md-11 mb-4"></h6>
-                        <button type="button" onclick="$('#scan-result').attr('class', 'd-none');" class="close col-md-1">&times;</button>
-                    </div>
-                 </div>
-                <div id="table-device" class="col-md-6 d-none"></div>
-                <div id="detail-device" class="col-md-6 d-none" style="padding-left: 2.5%;"></div>
-                <div id="table-sin" class="col-md-6 d-none">
-                    <button type="button" class="col-md-2 btn btn-info btn-block btn-tb-sm btn-ricerca" onclick="addNode()">
-                        <img src="/static/image/err.png" class="img-fluid my-auto icona-panel" alt="ico">
-                    </button>
                 </div>
-            </div>
-            <script id="table-device-template" type="text/x-handlebars-template">
+                <div id="scan-result" class="p-1 bg-border rounded shadow-sm card-advise row d-none">
+                    <h6 id="scan-result-text" class="col-md-11 mb-4"></h6>
+                    <button type="button" onclick="$('#scan-result').attr('class', 'd-none');" class="close col-md-1">&times;</button>
+                </div>
                 <div id="cmd-result" class="p-1 bg-border rounded shadow-sm row card-mod d-none" >
                     <div id="cmd-result-ico" class="col-md-1"></div>
                     <div class="col-md-10">
@@ -597,50 +593,45 @@
             {{/if}}
             </script>
             <script id="table-sin-template" type="text/x-handlebars-template">
-            {{#if visibility}}
-            <h2 id="title_sin" class="mt-2">Sinottico</h2>
-            {{/if}}
-            </script>
-            <script id="div-node" type="text/x-handlebars-template">
-                <div id="{{id}}" class="mydiv">
-                    <div id="{{h_id}}" class="mydivheader"></div>
-                    <div class="">
-                        <img src="/static/image/nodo.png" class="icona-nodo">
-                        <p>Obj</p>
+                <div class="col-md-12 row mt-2">
+                    <h2 class="col-md-3">SINOTTICO</h2>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-info btn-block btn-tb-sm btn-ricerca" onclick="addNode()">
+                             <img src="/static/image/err.png" class="img-fluid my-auto icona-panel" alt="ico">
+                            AGGIUNGI DISPOSITIVO
+                        </button>
                     </div>
-                    <div class="dropdown{{@index}} ">
-                        <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="commands_device{{@index}}" onclick="viewDrop('{{@index}}', 'commands', device_tabella, 'cambioVal(id, struct_tabella)')"></button>
-                        <ul class="dropdown-menu scrollable-menu" id="drop_commands_device{{@index}}"></ul>
-                    </div>
+                    <div  class="col-md-6"></div>
+                </div>
+                <div id="sinottico" class="col-md-12 row mt-2 sinottico">
                 </div>
             </script>
-
         </main>
     </div>
     <div class="modal bd-example-modal-lg" id="modal_recap_change_device">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="col-11 modal-title text-center">
-                    RIEPILOGO MODIFICHE
-            </h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <h5 id="recap_device" class="col-12" style="white-space: pre-wrap"></h5>
-          </div>
-          <div class="modal-footer">
-              <div class="col-md-2"></div>
-              <div class="col-md-4">
-                <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="col-11 modal-title text-center">
+                        RIEPILOGO MODIFICHE
+                </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
-              <div class="col-md-4">
-                <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('update')" data-dismiss="modal">CONFERMA</button>
+              <div class="modal-body">
+                <h5 id="recap_device" class="col-12" style="white-space: pre-wrap"></h5>
               </div>
-              <div class="col-md-2"></div>
-          </div>
+              <div class="modal-footer">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn btn-danger btn-lg btn-block" data-dismiss="modal">ANNULLA</button>
+                  </div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn btn-success btn-lg btn-block" onclick="net('update')" data-dismiss="modal">CONFERMA</button>
+                  </div>
+                  <div class="col-md-2"></div>
+              </div>
+            </div>
         </div>
-    </div>
     </div>
     <div class="modal bd-example-modal-md" id="modal_confirm">
         <div class="modal-dialog modal-md">
@@ -671,6 +662,21 @@
     {{#each this}}
         <li class="dropdown-item font-weight-bold">{{this}}</li>
     {{/each}}
+    </script>
+    <script id="div-node" type="text/x-handlebars-template">
+        <div id="{{id}}" class="mydiv">
+            <div id="{{h_id}}" class="mydivheader row ml-0 mr-0">
+                <img src="/static/image/nodo.png" class="icona-nodo" alt="Icona nodo" />
+                <p class="mb-0">Nick</p></div>
+            <div>
+                <p class="mb-0">Temperatura: fff</p>
+                <p class="mb-0">Stato: On</p>
+            </div>
+            <div class="dropdown{{@index}} ">
+                <button class="btn btn-info btn-sm btn-block dropdown-toggle dropdown-tb font-weight-bold" type="button" data-toggle="dropdown" id="commands_device{{@index}}" onclick="viewDrop('{{@index}}', 'commands', device_tabella, 'cambioVal(id, struct_tabella)')"></button>
+                <ul class="dropdown-menu scrollable-menu" id="drop_commands_device{{@index}}"></ul>
+            </div>
+        </div>
     </script>
   </body>
 </html>

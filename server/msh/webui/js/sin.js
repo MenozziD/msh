@@ -10,7 +10,7 @@ function getRandomInt(min, max) {
 }
 
 function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   if (document.getElementById(elmnt.id + "header")) {
     /* if present, the header is where you move the DIV from:*/
     document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
@@ -38,9 +38,14 @@ function dragElement(elmnt) {
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    let new_x = elmnt.offsetLeft - pos1;
+    let new_y = elmnt.offsetTop - pos2;
+    let element = $("#" + elmnt.id);
+    if ( new_x <= (parseInt($("#sinottico").css("width")) - parseFloat(element.css("width"))) && new_x > 0 && new_y >= 0 && new_y <= (screen.height / 2.5) - parseFloat(element.css("height")))  {
+      // set the element's new position:
+        elmnt.style.left = new_x + "px";
+        elmnt.style.top = new_y + "px";
+    }
   }
 
   function closeDragElement() {
@@ -58,11 +63,11 @@ function allDraggable(){
 
 function addNode(){
     let template = Handlebars.compile($('#div-node')[0].innerHTML);
-    var nodeIndex=getRandomInt(0, 5000);
+    let nodeIndex=getRandomInt(0, 5000);
     let node = {
         'id': "mydiv"+String(nodeIndex),
         'h_id': "mydiv"+String(nodeIndex)+"header"
     };
-    $('#table-sin').html($('#table-sin')[0].innerHTML+template(node));
+    $('#sinottico').html($('#sinottico')[0].innerHTML+template(node));
     allDraggable();
 }

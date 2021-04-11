@@ -1,4 +1,5 @@
 function carica(){
+    feather.replace();
     $.blockUI.defaults.css.width = '0%';
     $.blockUI.defaults.css.height = '0%';
     $.blockUI.defaults.css.left = '50%';
@@ -76,22 +77,24 @@ function carica_pag(lnk_pag){
     $('#lnk_'.concat(lnk_pag)).attr('class', 'nav-link active');
 
     if(lnk_pag==='device') {
-        $('#title').html('ELENCO DISPOSITIVI');
-        net('list');
         $('#table-sin').addClass('d-none');
         $('#table-device').removeClass("d-none");
     }
     if(lnk_pag==='sin') {
-        $('#title').html('SINOTTICO');
-        net('list');
         $('#table-device').addClass('d-none');
-        $('#table-sin').removeClass("d-none");
+        $('#detail-device').addClass('d-none');
+        let table_sin = $('#table-sin');
+        let template = Handlebars.compile($('#table-sin-template')[0].innerHTML);
+        table_sin.html(template({}));
+        $("#sinottico").css("height", screen.height / 2.5);
+        table_sin.removeClass("d-none");
     }
 
 }
 
 function carica_detail(index) {
     index=parseInt(index);
+    let detail_device = $('#detail-device');
     let idevice=device_tabella['record_per_pagina']*(device_tabella['table']['current_page']-1)+index;
     let template = Handlebars.compile($('#detail-device-template')[0].innerHTML);
     let device_user = {
@@ -99,8 +102,8 @@ function carica_detail(index) {
         'indice': idevice,
         'user_role': device_tabella['table']['user_role']
     };
-    $('#detail-device').html(template(device_user));
-    $('#detail-device').removeClass("d-none");
+    detail_device.html(template(device_user));
+    detail_device.removeClass("d-none");
     abilButton(device_tabella);
     /*let device = device_tabella['table'][device_tabella['table_key']][index];
     $("#code").val(device['net_code']);
