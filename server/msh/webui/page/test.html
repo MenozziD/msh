@@ -14,7 +14,19 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!--
+        "toggle-right"  ESP_RELE
+        "monitor"       PC
+        "thermometer"   ESP_TEMP
+        "lock"          ESP_LOCK
+        "wifi"          WIFI
+        "zap"           MEROSS SMART PLUG
+        "hard-drive"    AP
+        "airplay"       PS4
+        "loader"        ESP_LIGHT/XIAOMI BULB
+    -->
+
     <!-- <link rel="stylesheet" href=file:///C:/Progetti/msh/server/msh/webui/css/home_test.css"> -->
     <link rel="stylesheet" href="/static/css/home_test.css">
     <link rel="stylesheet" href="/static/css/sin.css">
@@ -665,9 +677,14 @@
     </script>
     <script id="div-node" type="text/x-handlebars-template">
         <div id="{{id}}" class="mydiv">
-            <div id="{{h_id}}" class="mydivheader row ml-0 mr-0">
-                <img src="/static/image/nodo.png" class="icona-nodo" alt="Icona nodo" />
-                <p class="mb-0">Nick</p></div>
+            <div id="{{h_id}}" class="mydivheader">
+                <!-- <img src="/static/image/nodo.png" class="icona-nodo" alt="Icona nodo" />-->
+                    <p class="mb-0">
+                      <span data-feather="hash" stroke="#4FF759"></span>
+                      Nick
+                        <a style="cursor: pointer; float: right;" onclick="disabilDraggable('{{h_id}}')"><span class="ml-0" data-feather="anchor" ></span></a>
+                    </p>
+            </div>
             <div>
                 <p class="mb-0">Temperatura: fff</p>
                 <p class="mb-0">Stato: On</p>

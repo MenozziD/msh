@@ -61,6 +61,11 @@ function allDraggable(){
     });
 }
 
+function disabilDraggable(id){
+    document.getElementById(id).onmousedown = null;
+    $("#" + id).css("cursor", "auto");
+}
+
 function addNode(){
     let template = Handlebars.compile($('#div-node')[0].innerHTML);
     let nodeIndex=getRandomInt(0, 5000);
@@ -70,4 +75,5 @@ function addNode(){
     };
     $('#sinottico').html($('#sinottico')[0].innerHTML+template(node));
     allDraggable();
+    feather.replace();
 }
