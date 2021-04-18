@@ -2,6 +2,7 @@
 //dragElement(document.getElementById("mydiv"));
 
 //var nodeIndex=0;
+let nodes = []
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -56,23 +57,43 @@ function dragElement(elmnt) {
 }
 
 function allDraggable(){
-    $(".mydiv").each(function(){
-       dragElement(document.getElementById($(this).attr("id")));
-    });
+    for (let i = 0; i < nodes.length; i++){
+        if (nodes[i]['draggable'])
+            dragElement(document.getElementById("mydiv" + nodes[i]["id"]));
+    }
 }
 
-function disabilDraggable(id){
-    document.getElementById(id).onmousedown = null;
-    $("#" + id).css("cursor", "auto");
+function setDrag(index)
+{
+    if (nodes[index]['draggable'] == false)
+        enableDraggable(index);
+    else
+        disabilDraggable(index);
+}
+
+function disabilDraggable(index){
+    nodes[index]['draggable'] = false;
+    $("#mydiv" + nodes[index]['id'] + "header").prop('onmousedown', null);
+    $("#mydiv" + nodes[index]['id'] + "header").css("cursor", "auto");
+    $("#icon" + nodes[index]['id']).replaceWith(feather.icons['anchor'].toSvg().replace("2000/svg\"", "2000/svg\" id=\"icon" + nodes[index]['id'] + "\""));
+}
+
+function enableDraggable(index){
+    nodes[index]['draggable'] = true;
+    $("#mydiv" + nodes[index]['id'] + "header").css("cursor", "move");
+    $("#icon" + nodes[index]['id']).replaceWith(feather.icons['move'].toSvg().replace("2000/svg\"", "2000/svg\" id=\"icon" + nodes[index]['id'] + "\""));
+    dragElement(document.getElementById("mydiv" + nodes[index]['id']));
 }
 
 function addNode(){
     let template = Handlebars.compile($('#div-node')[0].innerHTML);
     let nodeIndex=getRandomInt(0, 5000);
     let node = {
-        'id': "mydiv"+String(nodeIndex),
-        'h_id': "mydiv"+String(nodeIndex)+"header"
+        'id': String(nodeIndex),
+        'indice': nodes.length,
+        'draggable': true
     };
+    nodes.push(node);
     $('#sinottico').html($('#sinottico')[0].innerHTML+template(node));
     allDraggable();
     feather.replace();
